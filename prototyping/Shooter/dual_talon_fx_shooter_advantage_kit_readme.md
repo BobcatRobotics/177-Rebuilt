@@ -131,36 +131,22 @@ public class ShooterReal implements ShooterIO {
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
   public ShooterReal() {
-    topMotor.getConfigurator().apply(ShooterConfigs.top());
-    bottomMotor.getConfigurator().apply(ShooterConfigs.bottom());
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.topVelocityRPM = topMotor.getVelocity().getValue() * 60.0;
-    inputs.bottomVelocityRPM = bottomMotor.getVelocity().getValue() * 60.0;
-
-    inputs.topAppliedVolts = topMotor.getMotorVoltage().getValue();
-    inputs.bottomAppliedVolts = bottomMotor.getMotorVoltage().getValue();
-
-    inputs.topConnected = topMotor.isConnected();
-    inputs.bottomConnected = bottomMotor.isConnected();
   }
 
   @Override
   public void setTopVelocity(double rpm) {
-    topMotor.setControl(velocityRequest.withVelocity(rpm / 60.0));
   }
 
   @Override
   public void setBottomVelocity(double rpm) {
-    bottomMotor.setControl(velocityRequest.withVelocity(rpm / 60.0));
   }
 
   @Override
   public void stop() {
-    topMotor.stopMotor();
-    bottomMotor.stopMotor();
   }
 }
 ```
@@ -185,35 +171,18 @@ public class ShooterSim implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    topSim.update(0.02);
-    bottomSim.update(0.02);
-
-    inputs.topVelocityRPM = topSim.getAngularVelocityRPM();
-    inputs.bottomVelocityRPM = bottomSim.getAngularVelocityRPM();
-
-    inputs.topAppliedVolts = topVolts;
-    inputs.bottomAppliedVolts = bottomVolts;
-
-    inputs.topConnected = true;
-    inputs.bottomConnected = true;
   }
 
   @Override
   public void setTopVoltage(double volts) {
-    topVolts = volts;
-    topSim.setInputVoltage(volts);
   }
 
   @Override
   public void setBottomVoltage(double volts) {
-    bottomVolts = volts;
-    bottomSim.setInputVoltage(volts);
   }
 
   @Override
   public void stop() {
-    setTopVoltage(0);
-    setBottomVoltage(0);
   }
 }
 ```
@@ -248,34 +217,16 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Shooter", inputs);
-
-    Logger.recordOutput("Shooter/State", desiredState.name());
-    Logger.recordOutput("Shooter/ManualMode", manualMode);
-
-    if (manualMode) {
-      io.setTopVoltage(manualTopVolts);
-      io.setBottomVoltage(manualBottomVolts);
-    } else {
-      io.setTopVelocity(desiredState.topRPM);
-      io.setBottomVelocity(desiredState.bottomRPM);
     }
   }
 
   public void setManualVoltage(double top, double bottom) {
-    manualMode = true;
-    manualTopVolts = top;
-    manualBottomVolts = bottom;
   }
 
   public void exitManualMode() {
-    manualMode = false;
   }
 
   public void setState(ShooterState state) {
-    manualMode = false;
-    desiredState = state;
   }
 
   public boolean atSetpoint() {

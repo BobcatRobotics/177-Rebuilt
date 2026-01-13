@@ -129,21 +129,14 @@ public class IntakeReal implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.intakeVelocityRPM = intakeMotor.getVelocity().getValue() * 60.0;
-
-    inputs.intakeAppliedVolts = intakeMotor.getMotorVoltage().getValue();
-
-    inputs.intakeConnected = intakeMotor.isConnected();
   }
 
   @Override
   public void setIntakeVoltage(double volts) {
-    intakeMotor.setVoltage(volts);
   }
 
   @Override
   public void stop() {
-    intakeMotor.stopMotor();
   }
 }
 ```
@@ -162,24 +155,14 @@ public class IntakeSim implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    intakeSim.update(0.02);
-
-    inputs.intakeVelocityRPM = intakeSim.getAngularVelocityRPM();
-
-    inputs.intakeAppliedVolts = intakeVolts;
-
-    inputs.intakeConnected = true;
   }
 
   @Override
   public void setIntakeVoltage(double volts) {
-    intakeVolts = volts;
-    intakeSim.setInputVoltage(volts);
   }
 
   @Override
   public void stop() {
-    setIntakeVoltage(0);
   }
 }
 ```
@@ -213,27 +196,12 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Intake", inputs);
-
-    Logger.recordOutput("Intake/State", desiredState.name());
-    Logger.recordOutput("Intake/ManualMode", manualMode);
-
-    if (manualMode) {
-      io.setLeftVoltage(manualIntakeVolts);
-    } else {
-      io.setLeftVoltage(desiredState.intakeVolts);
-    }
   }
 
   public void setManualVoltage(double intakeVoltage) {
-    manualMode = true;
-    manualIntakeVolts = intakeVoltage;
   }
 
   public void setState(IntakeState state) {
-    manualMode = false;
-    desiredState = state;
   }
 }
 ```

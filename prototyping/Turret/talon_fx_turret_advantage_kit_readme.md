@@ -121,25 +121,18 @@ public class TurretReal implements TurretIO {
   private final PositionVoltage positionRequest = new PositionVoltage(0);
 
   public TurretReal() {
-    motor.getConfigurator().apply(TurretConfigs.turret());
   }
 
   @Override
   public void updateInputs(TurretIOInputs inputs) {
-    inputs.positionDeg = motor.getPosition().getValue() * 360.0;
-    inputs.velocityDegPerSec = motor.getVelocity().getValue() * 360.0;
-    inputs.appliedVolts = motor.getMotorVoltage().getValue();
-    inputs.motorConnected = motor.isConnected();
   }
 
   @Override
   public void setPosition(double angleDeg) {
-    motor.setControl(positionRequest.withPosition(angleDeg / 360.0));
   }
 
   @Override
   public void stop() {
-    motor.stopMotor();
   }
 }
 ```
@@ -166,23 +159,14 @@ public class TurretSim implements TurretIO {
 
   @Override
   public void updateInputs(TurretIOInputs inputs) {
-    sim.update(0.02);
-
-    inputs.positionDeg = Units.radiansToDegrees(sim.getAngleRads());
-    inputs.velocityDegPerSec = Units.radiansToDegrees(sim.getVelocityRadPerSec());
-    inputs.appliedVolts = appliedVolts;
-    inputs.motorConnected = true;
-  }
+    sim.update(0.02)l  }
 
   @Override
   public void setVoltage(double volts) {
-    appliedVolts = volts;
-    sim.setInputVoltage(volts);
   }
 
   @Override
   public void stop() {
-    setVoltage(0);
   }
 }
 ```
@@ -210,31 +194,15 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Turret", inputs);
-
-    Logger.recordOutput("Turret/State", desiredState.name());
-    Logger.recordOutput("Turret/ManualMode", manualMode);
-
-    if (manualMode) {
-      io.setVoltage(manualVolts);
-    } else {
-      io.setPosition(desiredState.angleDeg);
-    }
   }
 
   public void setManualVoltage(double volts) {
-    manualMode = true;
-    manualVolts = volts;
   }
 
   public void exitManualMode() {
-    manualMode = false;
   }
 
   public void setState(TurretState state) {
-    manualMode = false;
-    desiredState = state;
   }
 
   public boolean atSetpoint() {
