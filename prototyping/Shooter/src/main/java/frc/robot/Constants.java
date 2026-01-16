@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -28,5 +31,35 @@ public final class Constants {
 
         /** Replaying from a log file. */
         REPLAY
+    }
+
+    public final static class ShooterConstants {
+
+        public static final InvertedValue topMotorInvert = InvertedValue.CounterClockwise_Positive;
+        public static final NeutralModeValue topMotorBrakeMode = NeutralModeValue.Brake;
+        public static final double kTopP = 0;
+        public static final double kTopS = 0;
+        public static final double kTopV = 0;
+        public static final double topCurrentLimit = 0;
+
+        public static final InvertedValue bottomMotorInvert = InvertedValue.CounterClockwise_Positive;
+        public static final NeutralModeValue bottomMotorBrakeMode = NeutralModeValue.Brake;
+        public static final double kBottomP = 0;
+        public static final double kBottomS = 0;
+        public static final double kBottomV = 0;
+        public static final double bottomCurrentLimit = 0;
+
+        public static final InvertedValue kickerMotorInvert = InvertedValue.CounterClockwise_Positive;
+        public static final NeutralModeValue kickerMotorBrakeMode = NeutralModeValue.Brake;
+        public static final double kKickerP = 0;
+        public static final double kKickerS = 0;
+        public static final double kKickerV = 0;
+        public static final double kickerCurrentLimit = 0;
+
+
+
+        
+    
+
     }
 }

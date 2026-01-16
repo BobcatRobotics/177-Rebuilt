@@ -23,8 +23,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 // import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterReal;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  */
 public class RobotContainer {
   // Subsystems
+  private final Shooter m_shooter = new Shooter(new ShooterReal());
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -76,6 +82,24 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // Default command, normal field-relative drive
+    controller.povLeft().onTrue(
+      new RunCommand(() -> m_shooter.setState(ShooterState.HUB), m_shooter)
+    ).onFalse(
+       new InstantCommand(() -> m_shooter.stop(), m_shooter)
+    );
+
+    controller.povRight().onTrue(
+      new RunCommand(() -> m_shooter.setState(ShooterState.MID), m_shooter)
+    ).onFalse(
+       new InstantCommand(() -> m_shooter.stop(), m_shooter)
+    );
+
+    controller.povDown().onTrue(
+      new RunCommand(() -> m_shooter.setState(ShooterState.FAR), m_shooter)
+    ).onFalse(
+       new InstantCommand(() -> m_shooter.stop(), m_shooter)
+    );
+
   }
 
   /**
