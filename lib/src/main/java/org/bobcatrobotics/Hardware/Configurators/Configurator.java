@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.bobcatrobotics.Hardware.Configurators.Modules.ModuleJson;
 import org.bobcatrobotics.Hardware.Configurators.Motors.MotorJson;
 import org.bobcatrobotics.Hardware.Configurators.Sensors.Distance.DistanceJson;
 import org.bobcatrobotics.Hardware.Configurators.Sensors.Encoders.EncoderJson;
@@ -82,6 +83,14 @@ public class Configurator {
     public DistanceJson loadDistanceConfigurationFromFile() {
         return loadConfig(DistanceJson.class, new DistanceJson(), "DistanceConfig");
     }
+
+    /**
+     * Loads a Module configuration from disk.
+     */
+    public ModuleJson loadModuleConfigurationFromFile() {
+        return loadConfig(ModuleJson.class, new ModuleJson(), "ModuleConfig");
+    }
+
 
     /**
      * Resolves the configuration file, applying simulation-only overrides if present.
