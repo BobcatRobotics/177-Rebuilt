@@ -6,7 +6,15 @@ public interface ShooterIO {
 
   @AutoLog
   class ShooterIOInputs {
-    public double velocityRPM = 0.0;
+    public double velocityLeftRPS = 0.0;
+    public double velocityRightRPS = 0.0;
+
+    
+    public double velocityTopWheelRPS = 0.0;
+    
+    public double velocityBottomWheelRPS = 0.0;
+
+
     public double positionDeg = 0.0;
     public boolean velocityConnected = false;
     public boolean positionConnected = false;
@@ -14,6 +22,8 @@ public interface ShooterIO {
 
   default void updateInputs(ShooterIOInputs inputs) {
   }
+
+   public default void setOutput(double shooterOutput, double backspinOutput, double angleOutput){}
 
   public default void setPosition(double position) {
   }

@@ -30,6 +30,9 @@ public class Shooter extends SubsystemBase {
     setVelocity(state);
   }
 
+  public void setManualOutput(double shooterOutput, double backspinOutput, double angleOutput){
+    io.setOutput( shooterOutput, backspinOutput, angleOutput);
+  }  
   public void setPosition(ShooterState.State state) {
     desiredState.setState(state);
     io.setPosition(desiredState.getOutput().position);
@@ -38,6 +41,9 @@ public class Shooter extends SubsystemBase {
   public void setVelocity(ShooterState.State state) {
     desiredState.setState(state);
     io.setVelocity(desiredState.getOutput().speed);
+  }
+    public void setVelocity(double velocity) {
+    io.setVelocity(velocity);
   }
 
   public void holdPosition(){
