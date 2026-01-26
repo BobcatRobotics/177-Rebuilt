@@ -18,10 +18,13 @@ This guide is written for high school FRC teams to **safely tune a shooter** usi
 3. **Set Up AdvantageKit/AdvantageScope**
    - Enable logging.
    - Log these signals:
-     - `Shooter/VelocityRPS`
-     - `Shooter/VelocitySetpointRPS`
-     - `Shooter/StatorCurrent`
-     - `Shooter/AppliedTorque` (if available)
+
+      | Signal | Description |
+      |-----|-------------|
+      | `Shooter/VelocityRPS` | Measured flywheel speed |
+      | `Shooter/VelocitySetpointRPS` | Target speed |
+      | `Shooter/StatorCurrent` | Motor current (torque proxy) |
+      | `Shooter/AppliedTorque` | Optional (if available) |
 
 ---
 
@@ -33,9 +36,10 @@ kP = 0
 kI = 0
 kD = 0
 ```
-2. Slowly ramp the shooter from 0 → target speed (e.g., 4500 RPM).
+2. Slowly ramp the shooter from 0 → target speed (e.g., 1200 RPM).
 3. Observe torque/current:
    - `kS` = torque needed to start spinning.
+   - `kA` = inertia feed forward, used to calculate the amount of motor torque or voltage required to achieve the desired accelration. Improves the responsiveness of the velocity by proactively commanding torque based on acceleration rather than waiting for error to build up.
    - `kV` = torque needed to hold speed.
 4. Write down FF numbers.
 
@@ -109,7 +113,6 @@ config.CurrentLimits.StatorCurrentLimitEnable = true;
 - Work in pairs: one controls robot, one monitors plots.
 - Log all runs.
 - Only change one gain at a time.
-- Keep robot in safe mode while adjusting.
 
 ---
 

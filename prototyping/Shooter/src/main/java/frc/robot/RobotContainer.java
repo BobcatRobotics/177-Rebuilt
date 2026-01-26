@@ -20,12 +20,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterReal;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -86,10 +86,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_shooter.setDefaultCommand(new RunCommand(()-> m_shooter.setVelocity(250),m_shooter)
-        );
-    controller.b().onTrue(new RunCommand(()->m_shooter.setManualOutput(0.4,0.7,0.7),m_shooter)).onFalse(new InstantCommand(()-> m_shooter.stop()));
-
+    ShooterState.State desired = ShooterState.State.MANUAL;
+    m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.setVelocity(desired), m_shooter));
   }
 
   /**

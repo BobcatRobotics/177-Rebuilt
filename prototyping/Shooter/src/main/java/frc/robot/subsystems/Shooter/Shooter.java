@@ -20,30 +20,19 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.periodic();
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
-    Logger.recordOutput("Shooter/State", desiredState.currentState);
+    Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
   }
 
   public void setState(ShooterState.State state){
-    setPosition(state);
     setVelocity(state);
-  }
-
-  public void setManualOutput(double shooterOutput, double backspinOutput, double angleOutput){
-    io.setOutput( shooterOutput, backspinOutput, angleOutput);
-  }  
-  public void setPosition(ShooterState.State state) {
-    desiredState.setState(state);
-    io.setPosition(desiredState.getOutput().position);
   }
 
   public void setVelocity(ShooterState.State state) {
     desiredState.setState(state);
-    io.setVelocity(desiredState.getOutput().speed);
-  }
-    public void setVelocity(double velocity) {
-    io.setVelocity(velocity);
+    io.setVelocity(desiredState);
   }
 
   public void holdPosition(){

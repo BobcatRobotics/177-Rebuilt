@@ -37,21 +37,28 @@ public final class Constants {
     }
 
     public final static class ShooterConstants {
-        public static final InvertedValue bottomRightMotorInvert = InvertedValue.CounterClockwise_Positive;
-        public static final NeutralModeValue bottomRightMotorBrakeMode = NeutralModeValue.Coast;
-        public static final double kBottomRightP = 7.5;
-        public static final double kBottomRightS = 0;
-        public static final double kBottomRightV = 0.25;
-        public static final double bottomRightCurrentLimit = 40;
 
-        public static final InvertedValue bottomMotorLeftInvert = InvertedValue.Clockwise_Positive;
-        public static final NeutralModeValue bottomMotorLeftBrakeMode = NeutralModeValue.Coast;
-        public static final double kBottomLeftP = 7.5;
-        public static final double kBottomLeftS = 0;
-        public static final double kBottomLeftV = 0.25;
+        // Speed Constants
+        public static final double idleFlywheelSpeedRPS = 0;
+        public static final double idleIntakeSpeedRPS = 0;
+        public static final double idleBackspinSpeedRPS = 0;
+        public static final double targetFlywheelSpeedRPS = 250;
+        public static final double targetIntakeSpeedRPS = 50;
+        public static final double targetBackspinSpeedRPS = 50;
+        // Motor Constants
+        public static final InvertedValue shooterMainMotorRightInvert = InvertedValue.CounterClockwise_Positive;
+        public static final NeutralModeValue shooterMainMotorRightBrakeMode = NeutralModeValue.Coast;
+        public static final InvertedValue shooterMainMotorLeftInvert = InvertedValue.Clockwise_Positive;
+        public static final NeutralModeValue shooterMainMotorLeftBrakeMode = NeutralModeValue.Coast;
+        public static final double kshooterMainP = 7.5;
+        public static final double kshooterMainI = 7.5;
+        public static final double kshooterMainD = 7.5;
+        public static final double kshooterMainS = 0;
+        public static final double kshooterMainV = 0.25;
+        public static final double kshooterMainA = 0.0;
+        public static final double bottomRightCurrentLimit = 40;
         public static final double bottomLeftCurrentLimit = 40;
-        public static final double idlePosition = 0.0;
-        public static final double idleSpeed = 0.0;
+
 
         public static final InvertedValue topTopMotorInvert = InvertedValue.Clockwise_Positive;
         public static final NeutralModeValue topTopMotorBrakeMode = NeutralModeValue.Coast;

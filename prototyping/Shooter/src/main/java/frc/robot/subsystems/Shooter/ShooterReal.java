@@ -1,180 +1,246 @@
 package frc.robot.subsystems.Shooter;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.bobcatrobotics.Util.Tunables.TunableDouble;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;;
 
 public class ShooterReal implements ShooterIO {
 
-  private final TalonFX bottomMotorLeft = new TalonFX(17);
-  private final TalonFX bottomMotorRight = new TalonFX(22);
+  private final TalonFX shooterMainMotorLeft = new TalonFX(17);
+  private final TalonFX shooterMainMotorRight = new TalonFX(22);
 
-  private final TalonFX TopMotorBottomWheel = new TalonFX(30);
-  private final TalonFX TopMotorTopWheel = new TalonFX(2);
+  private final TalonFX shooterIntakeWheelMotor = new TalonFX(30);
+  private final TalonFX backspinWheelMotor = new TalonFX(2);
 
-  private final VelocityTorqueCurrentFOC requestVelocity = new VelocityTorqueCurrentFOC(0);
-  private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
-  private StatusSignal<AngularVelocity> velocityRightRPS;
-  private StatusSignal<AngularVelocity> velocityLeftRPS;
-  private StatusSignal<AngularVelocity> velocityTopTopWheelRPS;
-  private StatusSignal<AngularVelocity> velocityTopBottomWheelRPS;
+  private final VelocityTorqueCurrentFOC velShooterRequest = new VelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC velBackspinRequest = new VelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
+  private StatusSignal<AngularVelocity> velocityOfMainFlywheeRightRPS;
+  private StatusSignal<AngularVelocity> velocityOfMainFlywhelLeftRPS;
+  private StatusSignal<AngularVelocity> velocityOfbackspinWheelMotorRPS;
+  private StatusSignal<AngularVelocity> velocityOfIntakeWheelRPS;
 
-  private StatusSignal<Angle> poositionDeg;
-  private Alert LicenseTopWheelAlert = new Alert(
-      "License Motor Top TOp WHeel is Not Found",
-      AlertType.kError);
-  private Alert LicenseBottomWheelAlert = new Alert(
-      "License Motor Top Bottom Wheel is Not Found",
-      AlertType.kError);
-
-  private Alert LicenseRightAlert = new Alert(
-      "License Motor Bottom Right is Not Found",
-      AlertType.kError);
-  private Alert LicenseLeftAlert = new Alert(
-      "License Motor Bottom Left is Not Found",
-      AlertType.kError);
+  // Defines tunable values , particularly for configurations of motors ( IE PIDs
+  // )
+  private TunableDouble shooterMainMotorsPIDkP;
+  private TunableDouble shooterMainMotorsPIDkI;
+  private TunableDouble shooterMainMotorsPIDkD;
+  private TunableDouble shooterMainMotorsPIDkV;
+  private TunableDouble shooterMainMotorsPIDkS;
+  private TunableDouble shooterMainMotorsPIDkA;
+  private TunableDouble shooterIntakeMotorsPIDkP;
+  private TunableDouble shooterIntakeMotorsPIDkI;
+  private TunableDouble shooterIntakeMotorsPIDkD;
+  private TunableDouble shooterIntakeMotorsPIDkV;
+  private TunableDouble shooterIntakeMotorsPIDkS;
+  private TunableDouble shooterIntakeMotorsPIDkA;
+  private TunableDouble shooterBackspinMotorsPIDkP;
+  private TunableDouble shooterBackspinMotorsPIDkI;
+  private TunableDouble shooterBackspinMotorsPIDkD;
+  private TunableDouble shooterBackspinMotorsPIDkV;
+  private TunableDouble shooterBackspinMotorsPIDkS;
+  private TunableDouble shooterBackspinMotorsPIDkA;
 
   public ShooterReal() {
-    // Top motor configurations
-    TalonFXConfiguration shooterLeftConfig = new TalonFXConfiguration();
-    bottomMotorLeft.getConfigurator().apply(shooterLeftConfig); // reset to default
-    shooterLeftConfig.MotorOutput.Inverted = ShooterConstants.bottomMotorLeftInvert;
-    shooterLeftConfig.MotorOutput.NeutralMode = ShooterConstants.bottomMotorLeftBrakeMode;
-    shooterLeftConfig.Slot0.kP = ShooterConstants.kBottomLeftP;
-    shooterLeftConfig.Slot0.kV = ShooterConstants.kBottomLeftV;
-    shooterLeftConfig.Slot0.kS = ShooterConstants.kBottomLeftS;
-    shooterLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    shooterLeftConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.bottomLeftCurrentLimit;
-    bottomMotorLeft.getConfigurator().apply(shooterLeftConfig);
-    // Bottom motor configurations
-    TalonFXConfiguration bottomConfigs = new TalonFXConfiguration();
-    bottomMotorRight.getConfigurator().apply(bottomConfigs); // reset to default
-    bottomConfigs.MotorOutput.Inverted = ShooterConstants.bottomRightMotorInvert;
-    bottomConfigs.MotorOutput.NeutralMode = ShooterConstants.bottomRightMotorBrakeMode;
-    bottomConfigs.Slot0.kP = ShooterConstants.kBottomRightP;
-    bottomConfigs.Slot0.kV = ShooterConstants.kBottomRightV;
-    bottomConfigs.Slot0.kS = ShooterConstants.kBottomRightS;
-    bottomConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    bottomConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.bottomRightCurrentLimit;
-    bottomMotorRight.getConfigurator().apply(bottomConfigs);
 
-    // Top motor configurations
-    TalonFXConfiguration topWheelConfigs = new TalonFXConfiguration();
-    TopMotorTopWheel.getConfigurator().apply(topWheelConfigs); // reset to default
-    topWheelConfigs.MotorOutput.Inverted = ShooterConstants.topTopMotorInvert;
-    topWheelConfigs.MotorOutput.NeutralMode = ShooterConstants.topTopMotorBrakeMode;
-    topWheelConfigs.Slot0.kP = ShooterConstants.kTopTopP;
-    topWheelConfigs.Slot0.kV = ShooterConstants.kTopTopV;
-    topWheelConfigs.Slot0.kS = ShooterConstants.kTopTopS;
-    topWheelConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    topWheelConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.topTopCurrentLimit;
-    TopMotorTopWheel.getConfigurator().apply(topWheelConfigs);
-    // Bottom motor configurations
-    TalonFXConfiguration TopBottomConfigs = new TalonFXConfiguration();
-    TopMotorBottomWheel.getConfigurator().apply(TopBottomConfigs); // reset to default
-    TopBottomConfigs.MotorOutput.Inverted = ShooterConstants.topBottomMotorInvert;
-    TopBottomConfigs.MotorOutput.NeutralMode = ShooterConstants.topBottomMotorBrakeMode;
-    TopBottomConfigs.Slot0.kP = ShooterConstants.kTopBottomP;
-    TopBottomConfigs.Slot0.kV = ShooterConstants.kTopBottomS;
-    TopBottomConfigs.Slot0.kS = ShooterConstants.kTopBottomV;
-    TopBottomConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    TopBottomConfigs.CurrentLimits.StatorCurrentLimit = ShooterConstants.topBottomCurrentLimit;
-    TopMotorBottomWheel.getConfigurator().apply(TopBottomConfigs);
+    shooterMainMotorsPIDkP = new TunableDouble("Shooter/MainMotor/PID/kP", Constants.ShooterConstants.kshooterMainP);
+    shooterMainMotorsPIDkI = new TunableDouble("Shooter/MainMotor/PID/kI", Constants.ShooterConstants.kshooterMainI);
+    shooterMainMotorsPIDkD = new TunableDouble("Shooter/MainMotor/PID/kD", Constants.ShooterConstants.kshooterMainD);
+    shooterMainMotorsPIDkV = new TunableDouble("Shooter/MainMotor/PID/kV", Constants.ShooterConstants.kshooterMainV);
+    shooterMainMotorsPIDkS = new TunableDouble("Shooter/MainMotor/PID/kS", Constants.ShooterConstants.kshooterMainS);
+    shooterMainMotorsPIDkA = new TunableDouble("Shooter/MainMotor/PID/kA", Constants.ShooterConstants.kshooterMainA);
+
+    shooterIntakeMotorsPIDkP = new TunableDouble("Shooter/Intake/PID/kP", 0.0);
+    shooterIntakeMotorsPIDkI = new TunableDouble("Shooter/Intake/PID/kI", 0.0);
+    shooterIntakeMotorsPIDkD = new TunableDouble("Shooter/Intake/PID/kD", 0.0);
+    shooterIntakeMotorsPIDkV = new TunableDouble("Shooter/Intake/PID/kV", 0.0);
+    shooterIntakeMotorsPIDkS = new TunableDouble("Shooter/Intake/PID/kS", 0.0);
+    shooterIntakeMotorsPIDkA = new TunableDouble("Shooter/Intake/PID/kA", 0.0);
+
+    shooterBackspinMotorsPIDkP = new TunableDouble("Shooter/BackSpin/PID/kP", 0.0);
+    shooterBackspinMotorsPIDkI = new TunableDouble("Shooter/BackSpin/PID/kI", 0.0);
+    shooterBackspinMotorsPIDkD = new TunableDouble("Shooter/BackSpin/PID/kD", 0.0);
+    shooterBackspinMotorsPIDkV = new TunableDouble("Shooter/BackSpin/PID/kV", 0.0);
+    shooterBackspinMotorsPIDkS = new TunableDouble("Shooter/BackSpin/PID/kS", 0.0);
+    shooterBackspinMotorsPIDkA = new TunableDouble("Shooter/BackSpin/PID/kA", 0.0);
+
+    configureShooterFlywheel();
+    configureIntakeWheel();
+    configurebackspinWheelMotor();
 
     // Apply to signals
-    velocityRightRPS = bottomMotorRight.getVelocity();
-    velocityLeftRPS = bottomMotorLeft.getVelocity();
-    velocityTopTopWheelRPS = TopMotorTopWheel.getVelocity();
-    velocityTopBottomWheelRPS = TopMotorBottomWheel.getVelocity();
+    velocityOfMainFlywheeRightRPS = shooterMainMotorRight.getVelocity();
+    velocityOfMainFlywhelLeftRPS = shooterMainMotorLeft.getVelocity();
+    velocityOfbackspinWheelMotorRPS = backspinWheelMotor.getVelocity();
+    velocityOfIntakeWheelRPS = shooterIntakeWheelMotor.getVelocity();
     // Set polling frequency and optimizations
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityRightRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityLeftRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityTopTopWheelRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityTopBottomWheelRPS);
-    bottomMotorLeft.optimizeBusUtilization();
-    bottomMotorRight.optimizeBusUtilization();
-    TopMotorBottomWheel.optimizeBusUtilization();
-    TopMotorTopWheel.optimizeBusUtilization();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfMainFlywheeRightRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfMainFlywhelLeftRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfbackspinWheelMotorRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfIntakeWheelRPS);
+    shooterMainMotorLeft.optimizeBusUtilization();
+    shooterMainMotorRight.optimizeBusUtilization();
+    shooterIntakeWheelMotor.optimizeBusUtilization();
+    backspinWheelMotor.optimizeBusUtilization();
+    Logger.recordOutput("Motor/TopTopWheel/Licensed", backspinWheelMotor.getIsProLicensed().getValue());
+    Logger.recordOutput("Motor/TopBottomWheel/Licensed", shooterIntakeWheelMotor.getIsProLicensed().getValue());
+    Logger.recordOutput("Motor/BottomLeft/Licensed", shooterMainMotorLeft.getIsProLicensed().getValue());
+    Logger.recordOutput("Motor/BottomRight/Licensed", shooterMainMotorRight.getIsProLicensed().getValue());
+  }
 
-    LicenseTopWheelAlert.set(TopMotorTopWheel.getIsProLicensed().getValue());
-    LicenseBottomWheelAlert.set(TopMotorBottomWheel.getIsProLicensed().getValue());
-    Logger.recordOutput("Motor/TopTopWheel/Licensed", TopMotorTopWheel.getIsProLicensed().getValue());
-    Logger.recordOutput("Motor/TopBottomWheel/Licensed", TopMotorBottomWheel.getIsProLicensed().getValue());
+  /**
+   * Configures the left and right motors of the "main" flywheel these are the
+   * forward bottom most motors.
+   */
+  public void configureShooterFlywheel() {
+    // Top motor configurations
+    TalonFXConfiguration shooterLeftConfig = new TalonFXConfiguration();
+    shooterMainMotorLeft.getConfigurator().apply(shooterLeftConfig); // reset to default
+    shooterLeftConfig.MotorOutput.Inverted = ShooterConstants.shooterMainMotorLeftInvert;
+    shooterLeftConfig.MotorOutput.NeutralMode = ShooterConstants.shooterMainMotorLeftBrakeMode;
+    shooterLeftConfig.Slot0.kP = shooterMainMotorsPIDkP.get();
+    shooterLeftConfig.Slot0.kI = shooterMainMotorsPIDkI.get();
+    shooterLeftConfig.Slot0.kD = shooterMainMotorsPIDkD.get();
+    shooterLeftConfig.Slot0.kV = shooterMainMotorsPIDkV.get();
+    shooterLeftConfig.Slot0.kS = shooterMainMotorsPIDkS.get();
+    shooterLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterLeftConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.bottomLeftCurrentLimit;
+    shooterMainMotorLeft.getConfigurator().apply(shooterLeftConfig);
+    // Bottom motor configurations
+    TalonFXConfiguration shooterRightConfig = new TalonFXConfiguration();
+    shooterMainMotorRight.getConfigurator().apply(shooterRightConfig); // reset to default
+    shooterRightConfig.MotorOutput.Inverted = ShooterConstants.shooterMainMotorRightInvert;
+    shooterRightConfig.MotorOutput.NeutralMode = ShooterConstants.shooterMainMotorRightBrakeMode;
+    shooterRightConfig.Slot0.kP = shooterMainMotorsPIDkP.get();
+    shooterRightConfig.Slot0.kI = shooterMainMotorsPIDkI.get();
+    shooterRightConfig.Slot0.kD = shooterMainMotorsPIDkD.get();
+    shooterRightConfig.Slot0.kV = shooterMainMotorsPIDkV.get();
+    shooterRightConfig.Slot0.kS = shooterMainMotorsPIDkS.get();
+    shooterRightConfig.Slot0.kA = shooterMainMotorsPIDkA.get();
+    shooterRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterRightConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.bottomRightCurrentLimit;
+    shooterMainMotorRight.getConfigurator().apply(shooterRightConfig);
+  }
 
-    LicenseLeftAlert.set(bottomMotorLeft.getIsProLicensed().getValue());
-    LicenseRightAlert.set(bottomMotorRight.getIsProLicensed().getValue());
-    Logger.recordOutput("Motor/BottomLeft/Licensed", bottomMotorLeft.getIsProLicensed().getValue());
-    Logger.recordOutput("Motor/BottomRight/Licensed", bottomMotorRight.getIsProLicensed().getValue());
+  public void configureIntakeWheel() {
+    // Bottom motor configurations
+    TalonFXConfiguration shooterIntakeWheelMotorConfig = new TalonFXConfiguration();
+    shooterIntakeWheelMotor.getConfigurator().apply(shooterIntakeWheelMotorConfig); // reset to default
+    shooterIntakeWheelMotorConfig.MotorOutput.Inverted = ShooterConstants.topBottomMotorInvert;
+    shooterIntakeWheelMotorConfig.MotorOutput.NeutralMode = ShooterConstants.topBottomMotorBrakeMode;
+     shooterIntakeWheelMotorConfig.Slot0.kP = shooterIntakeMotorsPIDkP.get();
+    shooterIntakeWheelMotorConfig.Slot0.kI = shooterIntakeMotorsPIDkI.get();
+    shooterIntakeWheelMotorConfig.Slot0.kD = shooterIntakeMotorsPIDkD.get();
+    shooterIntakeWheelMotorConfig.Slot0.kV = shooterIntakeMotorsPIDkV.get();
+    shooterIntakeWheelMotorConfig.Slot0.kS = shooterIntakeMotorsPIDkS.get();
+    shooterIntakeWheelMotorConfig.Slot0.kA = shooterIntakeMotorsPIDkA.get();
+    shooterIntakeWheelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterIntakeWheelMotorConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.topBottomCurrentLimit;
+    shooterIntakeWheelMotor.getConfigurator().apply(shooterIntakeWheelMotorConfig);
+  }
+
+  public void configurebackspinWheelMotor() {
+    // Top motor configurations
+    TalonFXConfiguration shooterBackspinWheelConfig = new TalonFXConfiguration();
+    backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig); // reset to default
+    shooterBackspinWheelConfig.MotorOutput.Inverted = ShooterConstants.topTopMotorInvert;
+    shooterBackspinWheelConfig.MotorOutput.NeutralMode = ShooterConstants.topTopMotorBrakeMode;
+    shooterBackspinWheelConfig.Slot0.kP = ShooterConstants.kTopTopP;
+    shooterBackspinWheelConfig.Slot0.kV = ShooterConstants.kTopTopV;
+    shooterBackspinWheelConfig.Slot0.kS = ShooterConstants.kTopTopS;
+    shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.topTopCurrentLimit;
+    backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig);
+
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        velocityLeftRPS, velocityRightRPS);
+        velocityOfMainFlywhelLeftRPS, velocityOfMainFlywheeRightRPS);
 
-    inputs.velocityLeftRPS = velocityLeftRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfMainFlywhelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotation.per(Seconds));
 
-    inputs.velocityRightRPS = velocityRightRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfMainFlywhelRightRPS = velocityOfMainFlywheeRightRPS.getValue().in(Rotation.per(Seconds));
 
-    inputs.velocityTopWheelRPS = velocityTopTopWheelRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfbackspinWheelMotorRPS = velocityOfbackspinWheelMotorRPS.getValue().in(Rotation.per(Seconds));
 
-    inputs.velocityBottomWheelRPS = velocityTopBottomWheelRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfIntakeWheelRPS = velocityOfIntakeWheelRPS.getValue().in(Rotation.per(Seconds));
+
+    inputs.backspinConnected = backspinWheelMotor.isConnected();
+    inputs.intakeConnected = shooterIntakeWheelMotor.isConnected();
+    inputs.mainFlywhelLeftConnected = shooterMainMotorRight.isConnected();
+    inputs.mainFlywhelRightConnected = shooterMainMotorRight.isConnected();
   }
 
   public void setOutput(double shooterOutput, double backspinOutput, double angleOutput) {
-    bottomMotorLeft.set(shooterOutput);
-    bottomMotorRight.set(shooterOutput);
-    
-    TopMotorTopWheel.set(backspinOutput);
-    TopMotorBottomWheel.set(angleOutput);
+    shooterMainMotorLeft.set(shooterOutput);
+    shooterMainMotorRight.set(shooterOutput);
+
+    backspinWheelMotor.set(backspinOutput);
+    shooterIntakeWheelMotor.set(angleOutput);
   }
 
-  public void setPosition(double position) {
-    requestPosition.withPosition(position);
+  public void setVelocity(ShooterState desiredState) {
+    setVelocity(desiredState.getFlywheelSpeed(), desiredState.getIntakeSpeed(), desiredState.getBackspinSpeed());
   }
 
-  public void setVelocity(double velocity) {
-    bottomMotorLeft.setControl(requestVelocity.withVelocity(velocity));
-    bottomMotorRight.setControl(requestVelocity.withVelocity(velocity));
+  private void setVelocity(double shooterFlywheelSpeed, double shooterIntakeSpeed, double shooterBackspinSpeed) {
+    shooterMainMotorLeft.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
+    shooterMainMotorRight.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
 
-    TopMotorBottomWheel.setControl(requestVelocity.withVelocity(velocity));
-    TopMotorTopWheel.setControl(requestVelocity.withVelocity(velocity));
+    shooterIntakeWheelMotor.setControl(velIntakeRequest.withVelocity(shooterIntakeSpeed));
+    backspinWheelMotor.setControl(velBackspinRequest.withVelocity(shooterBackspinSpeed));
   }
 
   public void holdPosition() {
-    setPosition(getPosition());
-  }
-
-  public double getPosition() {
-    return Rotation2d.fromRotations(bottomMotorLeft.getPosition().getValueAsDouble()).getDegrees();
-  }
-
-  public double getVelocity() {
-    return bottomMotorLeft.getVelocity().getValueAsDouble();
   }
 
   @Override
   public void stop() {
-    bottomMotorLeft.stopMotor();
-    bottomMotorRight.stopMotor();
-    TopMotorBottomWheel.stopMotor();
-    TopMotorTopWheel.stopMotor();
+    shooterMainMotorLeft.stopMotor();
+    shooterMainMotorRight.stopMotor();
+    shooterIntakeWheelMotor.stopMotor();
+    backspinWheelMotor.stopMotor();
   }
+
+  public void periodic() {
+    if (shooterMainMotorsPIDkP.hasChanged()
+        || shooterMainMotorsPIDkI.hasChanged()
+        || shooterMainMotorsPIDkD.hasChanged()
+        || shooterMainMotorsPIDkS.hasChanged()
+        || shooterMainMotorsPIDkV.hasChanged()
+        || shooterMainMotorsPIDkA.hasChanged()) {
+      configureShooterFlywheel();
+    }
+    if (shooterIntakeMotorsPIDkP.hasChanged()
+        || shooterIntakeMotorsPIDkI.hasChanged()
+        || shooterIntakeMotorsPIDkD.hasChanged()
+        || shooterIntakeMotorsPIDkS.hasChanged()
+        || shooterIntakeMotorsPIDkV.hasChanged()
+        || shooterIntakeMotorsPIDkA.hasChanged()) {
+      configureIntakeWheel();
+    }
+    if (shooterBackspinMotorsPIDkP.hasChanged()
+        || shooterBackspinMotorsPIDkI.hasChanged()
+        || shooterBackspinMotorsPIDkD.hasChanged()
+        || shooterBackspinMotorsPIDkS.hasChanged()
+        || shooterBackspinMotorsPIDkV.hasChanged()
+        || shooterBackspinMotorsPIDkA.hasChanged()) {
+      configurebackspinWheelMotor();
+    }
+  }
+
 }
