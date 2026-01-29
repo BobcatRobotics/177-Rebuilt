@@ -24,22 +24,51 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
+
   }
 
-  public void setState(ShooterState.State state){
-    setVelocity(state);
+  public void setState(ShooterState state) {
+    desiredState = state;
+    setVelocity(desiredState.getCurrentState());
   }
 
-  public void setVelocity(ShooterState.State state) {
+  private void setVelocity(ShooterState.State state) {
     desiredState.setState(state);
     io.setVelocity(desiredState);
   }
 
-  public void holdPosition(){
+  private void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
+    io.setVelocity(ShooterSpeed, ShooterIntakeSpeed, ShooterBackspinSpeed);
+  }
+
+  public void setMainWheelSpeed(double shooterFlywheelSpeed) {
+    io.setMainWheelSpeed(shooterFlywheelSpeed);
+  }
+
+  public void setBackspinSpeed(double shooterBackspinSpeed) {
+    io.setBackspinSpeed(shooterBackspinSpeed);
+  }
+
+  public void setIntakeSpeed(double shooterIntakeSpeed) {
+    io.setIntakeSpeed(shooterIntakeSpeed);
+  }
+
+  public void holdPosition() {
     io.holdPosition();
   }
 
   public void stop() {
     io.stop();
+  }
+
+  public void stopMainWheel(){
+    io.stopMainWheel();
+  }
+  public void stopBackspinWheel(){
+    io.stopBackspinWheel();
+
+  }
+  public void stopIntakeWheel(){
+    io.stopBackspinWheel();
   }
 }

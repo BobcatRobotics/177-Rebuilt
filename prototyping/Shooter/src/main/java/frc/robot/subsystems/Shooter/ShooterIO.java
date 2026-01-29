@@ -22,13 +22,34 @@ public interface ShooterIO {
   public default void setVelocity(ShooterState desiredState) {
   }
 
+  public default void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
+  }
+
+  public default void setMainWheelSpeed(double shooterFlywheelSpeed) {
+  }
+
+  public default void setBackspinSpeed(double shooterBackspinSpeed) {
+  }
+
+  public default void setIntakeSpeed(double shooterIntakeSpeed) {
+  }
+
   public default void holdPosition() {
 
   }
-  public default void periodic(){
-    
+
+  public default void periodic() {
+
   }
 
   default void stop() {
+  }
+
+    public default void stopMainWheel(){
+  }
+  public default void stopBackspinWheel(){
+
+  }
+  public default void stopIntakeWheel(){
   }
 }

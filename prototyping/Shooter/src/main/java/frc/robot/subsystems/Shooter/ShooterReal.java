@@ -62,19 +62,13 @@ public class ShooterReal implements ShooterIO {
     shooterMainMotorsPIDkS = new TunableDouble("Shooter/MainMotor/PID/kS", Constants.ShooterConstants.kshooterMainS);
     shooterMainMotorsPIDkA = new TunableDouble("Shooter/MainMotor/PID/kA", Constants.ShooterConstants.kshooterMainA);
 
-    shooterIntakeMotorsPIDkP = new TunableDouble("Shooter/Intake/PID/kP", 0.0);
-    shooterIntakeMotorsPIDkI = new TunableDouble("Shooter/Intake/PID/kI", 0.0);
-    shooterIntakeMotorsPIDkD = new TunableDouble("Shooter/Intake/PID/kD", 0.0);
-    shooterIntakeMotorsPIDkV = new TunableDouble("Shooter/Intake/PID/kV", 0.0);
-    shooterIntakeMotorsPIDkS = new TunableDouble("Shooter/Intake/PID/kS", 0.0);
-    shooterIntakeMotorsPIDkA = new TunableDouble("Shooter/Intake/PID/kA", 0.0);
+    shooterIntakeMotorsPIDkP = new TunableDouble("Shooter/Intake/PID/kP", Constants.ShooterConstants.kTopBottomP);
+    shooterIntakeMotorsPIDkV = new TunableDouble("Shooter/Intake/PID/kV", Constants.ShooterConstants.kTopBottomV);
+    shooterIntakeMotorsPIDkS = new TunableDouble("Shooter/Intake/PID/kS", Constants.ShooterConstants.kTopBottomS);
 
-    shooterBackspinMotorsPIDkP = new TunableDouble("Shooter/BackSpin/PID/kP", 0.0);
-    shooterBackspinMotorsPIDkI = new TunableDouble("Shooter/BackSpin/PID/kI", 0.0);
-    shooterBackspinMotorsPIDkD = new TunableDouble("Shooter/BackSpin/PID/kD", 0.0);
-    shooterBackspinMotorsPIDkV = new TunableDouble("Shooter/BackSpin/PID/kV", 0.0);
-    shooterBackspinMotorsPIDkS = new TunableDouble("Shooter/BackSpin/PID/kS", 0.0);
-    shooterBackspinMotorsPIDkA = new TunableDouble("Shooter/BackSpin/PID/kA", 0.0);
+    shooterBackspinMotorsPIDkP = new TunableDouble("Shooter/BackSpin/PID/kP", Constants.ShooterConstants.kTopTopP);
+    shooterBackspinMotorsPIDkV = new TunableDouble("Shooter/BackSpin/PID/kV", Constants.ShooterConstants.kTopTopV);
+    shooterBackspinMotorsPIDkS = new TunableDouble("Shooter/BackSpin/PID/kS", Constants.ShooterConstants.kTopTopS);
 
     configureShooterFlywheel();
     configureIntakeWheel();
@@ -140,12 +134,9 @@ public class ShooterReal implements ShooterIO {
     shooterIntakeWheelMotor.getConfigurator().apply(shooterIntakeWheelMotorConfig); // reset to default
     shooterIntakeWheelMotorConfig.MotorOutput.Inverted = ShooterConstants.topBottomMotorInvert;
     shooterIntakeWheelMotorConfig.MotorOutput.NeutralMode = ShooterConstants.topBottomMotorBrakeMode;
-     shooterIntakeWheelMotorConfig.Slot0.kP = shooterIntakeMotorsPIDkP.get();
-    shooterIntakeWheelMotorConfig.Slot0.kI = shooterIntakeMotorsPIDkI.get();
-    shooterIntakeWheelMotorConfig.Slot0.kD = shooterIntakeMotorsPIDkD.get();
+    shooterIntakeWheelMotorConfig.Slot0.kP = shooterIntakeMotorsPIDkP.get();
     shooterIntakeWheelMotorConfig.Slot0.kV = shooterIntakeMotorsPIDkV.get();
     shooterIntakeWheelMotorConfig.Slot0.kS = shooterIntakeMotorsPIDkS.get();
-    shooterIntakeWheelMotorConfig.Slot0.kA = shooterIntakeMotorsPIDkA.get();
     shooterIntakeWheelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     shooterIntakeWheelMotorConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.topBottomCurrentLimit;
     shooterIntakeWheelMotor.getConfigurator().apply(shooterIntakeWheelMotorConfig);
@@ -157,9 +148,9 @@ public class ShooterReal implements ShooterIO {
     backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig); // reset to default
     shooterBackspinWheelConfig.MotorOutput.Inverted = ShooterConstants.topTopMotorInvert;
     shooterBackspinWheelConfig.MotorOutput.NeutralMode = ShooterConstants.topTopMotorBrakeMode;
-    shooterBackspinWheelConfig.Slot0.kP = ShooterConstants.kTopTopP;
-    shooterBackspinWheelConfig.Slot0.kV = ShooterConstants.kTopTopV;
-    shooterBackspinWheelConfig.Slot0.kS = ShooterConstants.kTopTopS;
+    shooterBackspinWheelConfig.Slot0.kP = shooterBackspinMotorsPIDkP.get();
+    shooterBackspinWheelConfig.Slot0.kV = shooterBackspinMotorsPIDkV.get();
+    shooterBackspinWheelConfig.Slot0.kS = shooterBackspinMotorsPIDkS.get();
     shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.topTopCurrentLimit;
     backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig);
@@ -197,12 +188,23 @@ public class ShooterReal implements ShooterIO {
     setVelocity(desiredState.getFlywheelSpeed(), desiredState.getIntakeSpeed(), desiredState.getBackspinSpeed());
   }
 
-  private void setVelocity(double shooterFlywheelSpeed, double shooterIntakeSpeed, double shooterBackspinSpeed) {
+  public void setVelocity(double shooterFlywheelSpeed, double shooterIntakeSpeed, double shooterBackspinSpeed) {
+    setMainWheelSpeed(shooterFlywheelSpeed);
+    setIntakeSpeed(shooterIntakeSpeed);
+    setBackspinSpeed(shooterBackspinSpeed);
+  }
+
+  public void setMainWheelSpeed(double shooterFlywheelSpeed) {
     shooterMainMotorLeft.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
     shooterMainMotorRight.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
+  }
 
-    shooterIntakeWheelMotor.setControl(velIntakeRequest.withVelocity(shooterIntakeSpeed));
+  public void setBackspinSpeed(double shooterBackspinSpeed) {
     backspinWheelMotor.setControl(velBackspinRequest.withVelocity(shooterBackspinSpeed));
+  }
+
+  public void setIntakeSpeed(double shooterIntakeSpeed) {
+    shooterIntakeWheelMotor.setControl(velIntakeRequest.withVelocity(shooterIntakeSpeed));
   }
 
   public void holdPosition() {
@@ -210,37 +212,28 @@ public class ShooterReal implements ShooterIO {
 
   @Override
   public void stop() {
+    stopMainWheel();
+
+    stopBackspinWheel();
+
+    stopIntakeWheel();
+  }
+
+  public void stopMainWheel() {
     shooterMainMotorLeft.stopMotor();
     shooterMainMotorRight.stopMotor();
-    shooterIntakeWheelMotor.stopMotor();
+  }
+
+  public void stopBackspinWheel() {
     backspinWheelMotor.stopMotor();
+
+  }
+
+  public void stopIntakeWheel() {
+    shooterIntakeWheelMotor.stopMotor();
   }
 
   public void periodic() {
-    if (shooterMainMotorsPIDkP.hasChanged()
-        || shooterMainMotorsPIDkI.hasChanged()
-        || shooterMainMotorsPIDkD.hasChanged()
-        || shooterMainMotorsPIDkS.hasChanged()
-        || shooterMainMotorsPIDkV.hasChanged()
-        || shooterMainMotorsPIDkA.hasChanged()) {
-      configureShooterFlywheel();
-    }
-    if (shooterIntakeMotorsPIDkP.hasChanged()
-        || shooterIntakeMotorsPIDkI.hasChanged()
-        || shooterIntakeMotorsPIDkD.hasChanged()
-        || shooterIntakeMotorsPIDkS.hasChanged()
-        || shooterIntakeMotorsPIDkV.hasChanged()
-        || shooterIntakeMotorsPIDkA.hasChanged()) {
-      configureIntakeWheel();
-    }
-    if (shooterBackspinMotorsPIDkP.hasChanged()
-        || shooterBackspinMotorsPIDkI.hasChanged()
-        || shooterBackspinMotorsPIDkD.hasChanged()
-        || shooterBackspinMotorsPIDkS.hasChanged()
-        || shooterBackspinMotorsPIDkV.hasChanged()
-        || shooterBackspinMotorsPIDkA.hasChanged()) {
-      configurebackspinWheelMotor();
-    }
   }
 
 }

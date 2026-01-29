@@ -1,6 +1,9 @@
 package frc.robot.subsystems.Shooter;
 
 import frc.robot.Constants;
+
+import java.util.function.DoubleConsumer;
+
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
 public class ShooterState {
@@ -21,9 +24,11 @@ public class ShooterState {
   private State currentState = State.IDLE;
 
   // Manual control values
-  private TunableDouble manualFlywheelSpeed = new TunableDouble("Shooter/manualFlywheelSpeed", 0.0);
-  private TunableDouble manualIntakeSpeed = new TunableDouble("Shooter/manualIntakeSpeed", 0.0);
-  private TunableDouble manualBackspinSpeed = new TunableDouble("Shooter/manualBackspinSpeed", 0.0);
+  private TunableDouble manualFlywheelSpeed = new TunableDouble("/Shooter/manualFlywheelSpeed", 0.0);
+  private TunableDouble manualIntakeSpeed = new TunableDouble("/Shooter/manualIntakeSpeed", 0.0);
+  private TunableDouble manualBackspinSpeed = new TunableDouble("/Shooter/manualBackspinSpeed", 0.0);
+
+  
 
   /** Set the shooter to a predefined state */
   public void setState(State state) {
@@ -37,12 +42,13 @@ public class ShooterState {
       double flywheelSpeed,
       double intakeSpeed,
       double backspinSpeed) {
-    manualFlywheelSpeed = new TunableDouble("Shooter/manualFlywheelSpeed", flywheelSpeed);
-    manualIntakeSpeed = new TunableDouble("Shooter/manualIntakeSpeed", intakeSpeed);
-    manualBackspinSpeed = new TunableDouble("Shooter/manualBackspinSpeed", backspinSpeed);
+    manualFlywheelSpeed = new TunableDouble("/Shooter/manualFlywheelSpeed", flywheelSpeed);
+    manualIntakeSpeed = new TunableDouble("/Shooter/manualIntakeSpeed", intakeSpeed);
+    manualBackspinSpeed = new TunableDouble("/Shooter/manualBackspinSpeed", backspinSpeed);
 
     currentState = State.MANUAL;
   }
+
 
   /** Returns the shooter outputs based on the current state */
   public ShooterGoal getOutput() {
