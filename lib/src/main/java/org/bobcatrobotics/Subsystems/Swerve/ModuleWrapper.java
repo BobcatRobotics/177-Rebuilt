@@ -40,7 +40,6 @@ public class ModuleWrapper {
         driveGains = new Slot0Configs()
                 .withKP(config.driveGains.kP).withKI(config.driveGains.kI).withKD(config.driveGains.kD)
                 .withKS(config.driveGains.kS).withKV(config.driveGains.kV);
-        
         this.steerMotorInverted = config.module.steerInverted ;
         this.driveMotorInverted = config.module.driveInverted ;
         this.encoderInverted = config.module.encoderInverted ;

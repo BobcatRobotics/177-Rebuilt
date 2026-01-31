@@ -15,5 +15,4 @@ public class ModuleConfigurationJson {
     public boolean driveInverted = false;
     public boolean steerInverted = false;
     public boolean encoderInverted = false;
-    
 }
