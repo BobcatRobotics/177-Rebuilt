@@ -87,29 +87,46 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     ShooterState idleState = new ShooterState();
-    ShooterState.State desired = ShooterState.State.MANUAL;
+    ShooterState.State desired = ShooterState.State.MANUALBOTH;
     idleState.setState(desired);
     idleState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
         Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
     m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.setState(idleState), m_shooter));
 
     // CONTROL WHEELS INDIVIDUALLY
-    controller.y().whileTrue(new RunCommand(() -> m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed()), m_shooter))
+    controller.y().whileTrue(new RunCommand(() -> {
+      for (int i = 0; i < idleState.getOutput().size(); i++) {
+        m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed(i));
+      }
+    }, m_shooter))
         .onFalse(new InstantCommand(() -> m_shooter.stopMainWheel()));
-    controller.b().whileTrue(new RunCommand(() -> m_shooter.setBackspinSpeed(idleState.getBackspinSpeed()), m_shooter))
+    controller.b().whileTrue(new RunCommand(() -> {
+      for (int i = 0; i < idleState.getOutput().size(); i++) {
+        m_shooter.setBackspinSpeed(idleState.getBackspinSpeed(i));
+      }
+    }, m_shooter))
         .onFalse(new InstantCommand(() -> m_shooter.stopBackspinWheel()));
-    controller.x().whileTrue(new RunCommand(() -> m_shooter.setIntakeSpeed(idleState.getIntakeSpeed()), m_shooter))
+    controller.x().whileTrue(new RunCommand(() -> {
+      for (int i = 0; i < idleState.getOutput().size(); i++) {
+        m_shooter.setIntakeSpeed(idleState.getIntakeSpeed(i));
+      }
+    }, m_shooter))
         .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
 
     // Control wheels with intake A button will spin up the backspin and main
     // flywheels, right bumper will allow intaking.
-    controller.rightBumper()
-        .whileTrue(new RunCommand(() -> m_shooter.setIntakeSpeed(idleState.getIntakeSpeed()), m_shooter))
+    controller.rightBumper().whileTrue(new RunCommand(() -> {
+      for (int i = 0; i < idleState.getOutput().size(); i++) {
+        m_shooter.setIntakeSpeed(idleState.getIntakeSpeed(i));
+      }
+    }, m_shooter))
         .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
     controller.a()
         .whileTrue(new RunCommand(() -> {
-          m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed());
-          m_shooter.setBackspinSpeed(idleState.getBackspinSpeed());
+          for (int i = 0; i < idleState.getOutput().size(); i++) {
+            m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed(i));
+            m_shooter.setBackspinSpeed(idleState.getBackspinSpeed(i));
+          }
         }, m_shooter)).onFalse(new InstantCommand(() -> {
           m_shooter.stopBackspinWheel();
           m_shooter.stopIntakeWheel();
