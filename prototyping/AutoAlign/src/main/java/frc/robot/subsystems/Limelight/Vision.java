@@ -8,8 +8,8 @@ package frc.robot.subsystems.Limelight;
 // the WPILib BSD license file in the root directory of this project.
 
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+// import edu.wpi.first.apriltag.AprilTagFieldLayout;
+// import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -49,8 +49,9 @@ public class Vision extends SubsystemBase {
   public boolean apriltagPipeline;
   private double xyStdDev;
   private double thetaStdDev = AprilTagVisionConstants.limelightConstants.thetaMultiTagStdDev;
-  private AprilTagFieldLayout aprilTagFieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+  // private AprilTagFieldLayout aprilTagFieldLayout =
+  //   AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+;
 
   public Vision(Drive swerve, VisionIO io) {
     this.io = io;
@@ -106,12 +107,17 @@ public class Vision extends SubsystemBase {
         trackedTagID.add(rawTrackedTags[i].id);
       }
 
-      Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
-      for (int i = 0; i < trackedTagID.size(); i++) {
-        trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
-      }
+      // Pose2d[] trackedTagPoses = new Pose2d[rawTrackedTags.length];
+      // for (int i = 0; i < trackedTagID.size(); i++) {
+      //   trackedTagPoses[i] = aprilTagFieldLayout.getTagPose(trackedTagID.get(i)).get().toPose2d();
+      // }
 
-      Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
+      //  Logger.recordOutput("limelight" + inputs.name + "/visionTargets", trackedTagPoses);
+
+      
+
+      
+
     }
 
     if (
