@@ -69,8 +69,8 @@ public class ShooterReal implements ShooterIO {
     shooterLeftMainMotorsPIDkS = new TunableDouble("/Shooter/MainMotor/Left/PID/kS", Constants.ShooterConstants.LeftShooterConstants.kshooterMainkS);
     shooterLeftMainMotorsPIDkA = new TunableDouble("/Shooter/MainMotor/Left/PID/kA", Constants.ShooterConstants.LeftShooterConstants.kshooterMainkA);
     shooterLeftIntakeMotorsPIDkP = new TunableDouble("/Shooter/Intake/Left/PID/kP", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkP);
-    shooterLeftIntakeMotorsPIDkI = new TunableDouble("/Shooter/Intake/Left/PID/kP", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkI);
-    shooterLeftIntakeMotorsPIDkD = new TunableDouble("/Shooter/Intake/Left/PID/kP", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkD);
+    shooterLeftIntakeMotorsPIDkI = new TunableDouble("/Shooter/Intake/Left/PID/kI", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkI);
+    shooterLeftIntakeMotorsPIDkD = new TunableDouble("/Shooter/Intake/Left/PID/kD", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkD);
     shooterLeftIntakeMotorsPIDkV = new TunableDouble("/Shooter/Intake/Left/PID/kV", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkV);
     shooterLeftIntakeMotorsPIDkS = new TunableDouble("/Shooter/Intake/Left/PID/kS", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkS);
     shooterLeftIntakeMotorsPIDkA = new TunableDouble("/Shooter/Intake/Left/PID/kA", Constants.ShooterConstants.LeftShooterConstants.shooterIntakeMotorkA);
@@ -123,12 +123,12 @@ public class ShooterReal implements ShooterIO {
     shooterRightIntakeMotorsPIDkV = new TunableDouble("/Shooter/Intake/Right/PID/kV", Constants.ShooterConstants.RightShooterConstants.shooterIntakeMotorkV);
     shooterRightIntakeMotorsPIDkS = new TunableDouble("/Shooter/Intake/Right/PID/kS", Constants.ShooterConstants.RightShooterConstants.shooterIntakeMotorkS);
     shooterRightIntakeMotorsPIDkA = new TunableDouble("/Shooter/Intake/Right/PID/kA", Constants.ShooterConstants.RightShooterConstants.shooterIntakeMotorkA);
-    shooterRightBackspinMotorsPIDkP = new TunableDouble("/Shooter/BackSpin/Right/PID/kP", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkP);
-    shooterRightBackspinMotorsPIDkI = new TunableDouble("/Shooter/BackSpin/Right/PID/kI", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkI);
-    shooterRightBackspinMotorsPIDkD = new TunableDouble("/Shooter/BackSpin/Right/PID/kD", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkD);
-    shooterRightBackspinMotorsPIDkV = new TunableDouble("/Shooter/BackSpin/Right/PID/kV", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkV);
-    shooterRightBackspinMotorsPIDkS = new TunableDouble("/Shooter/BackSpin/Right/PID/kS", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkS);
-    shooterRightBackspinMotorsPIDkA = new TunableDouble("/Shooter/BackSpin/Right/PID/kA", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorkA);
+    shooterRightBackspinMotorsPIDkP = new TunableDouble("/Shooter/BackSpin/Right/PID/kP", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkP);
+    shooterRightBackspinMotorsPIDkI = new TunableDouble("/Shooter/BackSpin/Right/PID/kI", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkI);
+    shooterRightBackspinMotorsPIDkD = new TunableDouble("/Shooter/BackSpin/Right/PID/kD", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkD);
+    shooterRightBackspinMotorsPIDkV = new TunableDouble("/Shooter/BackSpin/Right/PID/kV", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkV);
+    shooterRightBackspinMotorsPIDkS = new TunableDouble("/Shooter/BackSpin/Right/PID/kS", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkS);
+    shooterRightBackspinMotorsPIDkA = new TunableDouble("/Shooter/BackSpin/Right/PID/kA", Constants.ShooterConstants.RightShooterConstants.shooterBackspinMotorRightMountedkA);
     
     Slot0Configs flyweelConfigRight = new Slot0Configs();
     flyweelConfigRight.kP = shooterRightMainMotorsPIDkP.get();

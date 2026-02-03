@@ -56,39 +56,39 @@ public final class Constants {
             public static final boolean shooterMainMotorLeftMountedInvertState = true;
             public static final boolean shooterMainMotorRightMountedInvertState = false;
             public static final boolean shooterMainMotorLeftMountedIsCoast = true;
-            public static final boolean shooterMainMotorRightMountedIsCoast = true;
-            public static final double kshooterMainkP = 1.25;
-            public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.0165;
-            public static final double kshooterMainkS = 0;
-            public static final double kshooterMainkV = 0;
-            public static final double kshooterMainkA = 0;
+            public static final boolean shooterMainMotorRightMountedIsCoast = true; 
+            public static final double kshooterMainkP = 1.25;  // 0.05 -> 0.15. recommended 0.08
+            public static final double kshooterMainkI = 0; // 0.0 -> 0.01 recommended 0.0
+            public static final double kshooterMainkD = 0.0165; // 0.001 - 0.005 recommended 0.002
+            public static final double kshooterMainkS = 0; // 0.15 -> 0.3  recommnded 0.22
+            public static final double kshooterMainkV = 0; // 0.10 -> 0.13 ( per RPS , scaled) recommended 0.105
+            public static final double kshooterMainkA = 0; // 0.0 -> 0.1
             // Backspin Motor Settings
             public static final double shooterBackspinMotorCurrentLimit = 40;
             // -> Use only if the motor is mounted on left side of the shooter
             public static final boolean shooterBackspinMotorLeftMountedInvertedState = true;
             public static final boolean shooterBackspinMotorLeftMountedIsCoast = true;
-            public static final double shooterBackspinMotorLeftMountedkP = 5;
+            public static final double shooterBackspinMotorLeftMountedkP = 5; // 0.08
             public static final double shooterBackspinMotorLeftMountedkI = 0;
-            public static final double shooterBackspinMotorLeftMountedkD = 0;
-            public static final double shooterBackspinMotorLeftMountedkS = 0;
-            public static final double shooterBackspinMotorLeftMountedkV = 0;
+            public static final double shooterBackspinMotorLeftMountedkD = 0; // 0.002
+            public static final double shooterBackspinMotorLeftMountedkS = 0; // 0.15 – 0.25 V recommnded 0.18
+            public static final double shooterBackspinMotorLeftMountedkV = 0; // 0.085 – 0.110 V / RPS recommended 0.095
             public static final double shooterBackspinMotorLeftMountedkA = 0;
             // -> Use only if the motor is mounted on right side of the shooter
             public static final boolean shooterBackspinMotorRightMountedIsCoast = true;
             public static final boolean shooterBackspinMotorRightMountedInvertedState = false;
-            public static final double shooterBackspinMotorRightMountedkP = 5;
+            public static final double shooterBackspinMotorRightMountedkP = 5; // 0.08
             public static final double shooterBackspinMotorRightMountedkI = 0;
-            public static final double shooterBackspinMotorRightMountedkD = 0;
-            public static final double shooterBackspinMotorRightMountedkS = 0;
-            public static final double shooterBackspinMotorRightMountedkV = 0;
+            public static final double shooterBackspinMotorRightMountedkD = 0; // 0.002
+            public static final double shooterBackspinMotorRightMountedkS = 0; // 0.15 – 0.25 V recommnded 0.18
+            public static final double shooterBackspinMotorRightMountedkV = 0; // 0.085 – 0.110 V / RPS recommended 0.095
             public static final double shooterBackspinMotorRightMountedkA = 0;
             // Intake Motor Settings
-            public static final double shooterIntakeMotorkP = 5;
+            public static final double shooterIntakeMotorkP = 5; // recommnded 0.04
             public static final double shooterIntakeMotorkI = 0;
             public static final double shooterIntakeMotorkD = 0;
-            public static final double shooterIntakeMotorkS = 0;
-            public static final double shooterIntakeMotorkV = 0;
+            public static final double shooterIntakeMotorkS = 0; // 0.12 – 0.20 V recommnded 0.18
+            public static final double shooterIntakeMotorkV = 0; // 0.07 – 0.095 V / RPS recommended 0.095
             public static final double shooterIntakeMotorkA = 0;
             // -> Use only if the motor is mounted on left side of the shooter
             public static final boolean shooterIntakeMotorLeftMountedInvertedState = true;
@@ -115,31 +115,37 @@ public final class Constants {
             public static final boolean shooterMainMotorRightMountedInvertState = false;
             public static final boolean shooterMainMotorLeftMountedIsCoast = true;
             public static final boolean shooterMainMotorRightMountedIsCoast = true;
-            public static final double kshooterMainkP = 1.25;
-            public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.0165;
-            public static final double kshooterMainkS = 0;
-            public static final double kshooterMainkV = 0;
-            public static final double kshooterMainkA = 0;
+            public static final double kshooterMainkP = 1.25;  // 0.05 -> 0.15. recommended 0.08
+            public static final double kshooterMainkI = 0; // 0.0 -> 0.01 recommended 0.0
+            public static final double kshooterMainkD = 0.0165; // 0.001 - 0.005 recommended 0.002
+            public static final double kshooterMainkS = 0; // 0.15 -> 0.3  recommnded 0.22
+            public static final double kshooterMainkV = 0; // 0.10 -> 0.13 ( per RPS , scaled) recommended 0.105
+            public static final double kshooterMainkA = 0; // 0.0 -> 0.1
             // Backspin Motor Settings
-            public static final double shooterBackspinMotorkP = 5;
-            public static final double shooterBackspinMotorkI = 0;
-            public static final double shooterBackspinMotorkD = 0;
-            public static final double shooterBackspinMotorkS = 0;
-            public static final double shooterBackspinMotorkV = 0;
-            public static final double shooterBackspinMotorkA = 0;
             // -> Use only if the motor is mounted on left side of the shooter
             public static final boolean shooterBackspinMotorLeftMountedInvertedState = true;
             public static final boolean shooterBackspinMotorLeftMountedIsCoast = true;
+            public static final double shooterBackspinMotorLeftMountedkP = 5; // 0.08
+            public static final double shooterBackspinMotorLeftMountedkI = 0;
+            public static final double shooterBackspinMotorLeftMountedkD = 0; // 0.002
+            public static final double shooterBackspinMotorLeftMountedkS = 0; // 0.15 – 0.25 V recommnded 0.18
+            public static final double shooterBackspinMotorLeftMountedkV = 0; // 0.085 – 0.110 V / RPS recommended 0.095
+            public static final double shooterBackspinMotorLeftMountedkA = 0;
             // -> Use only if the motor is mounted on right side of the shooter
             public static final boolean shooterBackspinMotorRightMountedIsCoast = true;
             public static final boolean shooterBackspinMotorRightMountedInvertedState = false;
+            public static final double shooterBackspinMotorRightMountedkP = 5; // 0.08
+            public static final double shooterBackspinMotorRightMountedkI = 0;
+            public static final double shooterBackspinMotorRightMountedkD = 0; // 0.002
+            public static final double shooterBackspinMotorRightMountedkS = 0; // 0.15 – 0.25 V recommnded 0.18
+            public static final double shooterBackspinMotorRightMountedkV = 0; // 0.085 – 0.110 V / RPS recommended 0.095
+            public static final double shooterBackspinMotorRightMountedkA = 0;
             // Intake Motor Settings
-            public static final double shooterIntakeMotorkP = 5;
+            public static final double shooterIntakeMotorkP = 5; // recommnded 0.04
             public static final double shooterIntakeMotorkI = 0;
             public static final double shooterIntakeMotorkD = 0;
-            public static final double shooterIntakeMotorkS = 0;
-            public static final double shooterIntakeMotorkV = 0;
+            public static final double shooterIntakeMotorkS = 0; // 0.12 – 0.20 V recommnded 0.18
+            public static final double shooterIntakeMotorkV = 0; // 0.07 – 0.095 V / RPS recommended 0.095
             public static final double shooterIntakeMotorkA = 0;
             // -> Use only if the motor is mounted on left side of the shooter
             public static final boolean shooterIntakeMotorLeftMountedInvertedState = true;

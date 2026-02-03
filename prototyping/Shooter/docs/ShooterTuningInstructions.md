@@ -116,3 +116,26 @@ config.CurrentLimits.StatorCurrentLimitEnable = true;
 
 ---
 
+
+
+
+
+🎯 How to Tune kV in 60 Seconds
+
+Disable PID (P = I = D = 0)
+
+Apply only FF
+
+Slowly increase setpoint
+
+Watch:
+
+If actual speed < setpoint → increase kV
+
+If actual speed > setpoint → decrease kV
+
+kS is right when:
+
+Wheel just starts spinning cleanly
+
+No buzzing / hesitation at low speed

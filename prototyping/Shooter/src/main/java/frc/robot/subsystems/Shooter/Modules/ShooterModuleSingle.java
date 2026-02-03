@@ -1,7 +1,11 @@
 package frc.robot.subsystems.Shooter.Modules;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volt;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -13,8 +17,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.units.measure.Acceleration;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 import frc.robot.subsystems.Shooter.ShooterState;;
 
@@ -35,12 +42,22 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
   private StatusSignal<Current> statorCurrentOfMainFlywheelLeftAmps;
   private StatusSignal<Current> statorCurrentOfBackspinAmps;
   private StatusSignal<Current> statorCurrentofIntakeAmps;
+  private StatusSignal<Voltage> outputOfMainFlywheelLeftVolts;
+  private StatusSignal<Voltage> outputOfBackspinVolts;
+  private StatusSignal<Voltage> outputOfIntakeVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelLeft;
+  private StatusSignal<AngularAcceleration> accelerationOfBackspin;
+  private StatusSignal<AngularAcceleration> accelerationOfIntake;
 
   public Configurator flywheelConfig;
   public Configurator backspinConfig;
   public Configurator intakeConfig;
 
   public int shooterIndex;
+
+  public double mainFlywheelSetpoint = 0;
+  public double backspinSetpoint = 0;
+  public double intakeSetpoint = 0;
 
   public ShooterModuleSingle(Configurator flywheelConfig, Configurator backspinConfig, Configurator intakeConfig,
       int shooterIndex) {
@@ -61,13 +78,25 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
     statorCurrentOfMainFlywheelLeftAmps = shooterMainMotorLeft.getStatorCurrent();
     statorCurrentOfBackspinAmps = backspinWheelMotor.getStatorCurrent();
     statorCurrentofIntakeAmps = shooterIntakeWheelMotor.getStatorCurrent();
+    outputOfMainFlywheelLeftVolts = shooterMainMotorLeft.getMotorVoltage();
+    outputOfBackspinVolts = backspinWheelMotor.getMotorVoltage();
+    outputOfIntakeVolts = shooterIntakeWheelMotor.getMotorVoltage();
+    accelerationOfMainFlywheelLeft = shooterMainMotorLeft.getAcceleration();
+    accelerationOfBackspin = backspinWheelMotor.getAcceleration();
+    accelerationOfIntake = shooterIntakeWheelMotor.getAcceleration();
     // Set polling frequency and optimizations
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfMainFlywhelLeftRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfbackspinWheelMotorRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfIntakeWheelRPS);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentOfMainFlywheelLeftAmps);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentOfBackspinAmps);
-    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentofIntakeAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, velocityOfMainFlywhelLeftRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, velocityOfbackspinWheelMotorRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, velocityOfIntakeWheelRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, statorCurrentOfMainFlywheelLeftAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, statorCurrentOfBackspinAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, statorCurrentofIntakeAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, outputOfMainFlywheelLeftVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, outputOfBackspinVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, outputOfIntakeVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, accelerationOfMainFlywheelLeft);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, accelerationOfBackspin);
+    BaseStatusSignal.setUpdateFrequencyForAll(250, accelerationOfIntake);
     shooterMainMotorLeft.optimizeBusUtilization();
     shooterIntakeWheelMotor.optimizeBusUtilization();
     backspinWheelMotor.optimizeBusUtilization();
@@ -154,16 +183,34 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
 
   public void updateInputs(ShooterIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        velocityOfMainFlywhelLeftRPS);
+        velocityOfMainFlywhelLeftRPS,velocityOfbackspinWheelMotorRPS,velocityOfIntakeWheelRPS,
+        statorCurrentOfMainFlywheelLeftAmps,statorCurrentOfBackspinAmps,statorCurrentofIntakeAmps,
+        outputOfMainFlywheelLeftVolts,outputOfBackspinVolts,outputOfIntakeVolts,
+        accelerationOfMainFlywheelLeft,accelerationOfBackspin,accelerationOfIntake);
+
     inputs.velocityOfMainFlywhelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotation.per(Seconds));
     inputs.velocityOfbackspinWheelMotorRPS = velocityOfbackspinWheelMotorRPS.getValue().in(Rotation.per(Seconds));
     inputs.velocityOfIntakeWheelRPS = velocityOfIntakeWheelRPS.getValue().in(Rotation.per(Seconds));
+
+    inputs.velocityOfMainFlywhelLeftRPSError = mainFlywheelSetpoint - velocityOfMainFlywhelLeftRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfbackspinWheelMotorRPSError = backspinSetpoint -  velocityOfbackspinWheelMotorRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfIntakeWheelRPSError = intakeSetpoint - velocityOfIntakeWheelRPS.getValue().in(Rotation.per(Seconds));
+
+    inputs.outputOfMainFlywhelLeft = shooterMainMotorLeft.getMotorVoltage().getValue().in(Volts);
+    inputs.outputOfbackspinWheelMotor = backspinWheelMotor.getMotorVoltage().getValue().in(Volts);
+    inputs.outputOfIntakeWheel = shooterIntakeWheelMotor.getMotorVoltage().getValue().in(Volts);
+
+    inputs.accelerationOfMainFlywhelLeft = shooterMainMotorLeft.getAcceleration().getValue().in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfbackspinWheelMotor = backspinWheelMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfIntakeWheel = shooterIntakeWheelMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond);
+
+    inputs.mainFlywheelLeftStatorCurrent = shooterMainMotorLeft.getStatorCurrent().getValue().in(Amps);
+    inputs.mainBackspinStatorCurrent = backspinWheelMotor.getStatorCurrent().getValue().in(Amps);
+    inputs.mainIntakeStatorCurrent = shooterIntakeWheelMotor.getStatorCurrent().getValue().in(Amps);
+
     inputs.backspinConnected = backspinWheelMotor.isConnected();
     inputs.intakeConnected = shooterIntakeWheelMotor.isConnected();
     inputs.mainFlywhelLeftConnected = shooterMainMotorLeft.isConnected();
-    inputs.mainFlywheelLeftStatorCurrent = 0.0;
-    inputs.mainBackspinStatorCurrent = 0.0;
-    inputs.mainIntakeStatorCurrent = 0.0;
   }
 
   public void setOutput(double shooterOutput, double backspinOutput, double angleOutput) {
@@ -185,14 +232,17 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
+    mainFlywheelSetpoint = shooterFlywheelSpeed;
     shooterMainMotorLeft.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
   }
 
   public void setBackspinSpeed(double shooterBackspinSpeed) {
+    backspinSetpoint = shooterBackspinSpeed;
     backspinWheelMotor.setControl(velBackspinRequest.withVelocity(shooterBackspinSpeed));
   }
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {
+    intakeSetpoint = shooterIntakeSpeed;
     // shooterIntakeWheelMotor.setControl(velIntakeRequest.withVelocity(shooterIntakeSpeed));
     shooterIntakeWheelMotor.set(shooterIntakeSpeed);
   }
@@ -201,15 +251,18 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
   }
 
   public void stopMainWheel() {
+    mainFlywheelSetpoint = 0;
     shooterMainMotorLeft.stopMotor();
   }
 
   public void stopBackspinWheel() {
+    backspinSetpoint = 0;
     backspinWheelMotor.stopMotor();
 
   }
 
   public void stopIntakeWheel() {
+    intakeSetpoint = 0;
     shooterIntakeWheelMotor.stopMotor();
   }
 }
