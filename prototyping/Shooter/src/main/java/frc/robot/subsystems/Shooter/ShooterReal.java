@@ -132,6 +132,8 @@ public class ShooterReal implements ShooterIO {
     slot0.kD = shooterRightMainMotorsPIDkD.get();
     slot0.kV = shooterRightMainMotorsPIDkV.get();
     slot0.kS = shooterRightMainMotorsPIDkS.get();
+    
+    singleMotorShooterRight.configureShooterFlywheel(slot0);
     //left
     slot0.kP = shooterLeftMainMotorsPIDkP.get();
     slot0.kI = shooterLeftMainMotorsPIDkI.get();
@@ -141,7 +143,6 @@ public class ShooterReal implements ShooterIO {
 
 
     singleMotorShooterLeft.configureShooterFlywheel(slot0);
-    singleMotorShooterRight.configureShooterFlywheel(slot0);
 
   }
 
@@ -151,13 +152,13 @@ public class ShooterReal implements ShooterIO {
     slot0.kP = shooterRightIntakeMotorsPIDkP.get();
     slot0.kV = shooterRightIntakeMotorsPIDkV.get();
     slot0.kS = shooterRightIntakeMotorsPIDkS.get();
+    singleMotorShooterRight.configureIntakeWheel(slot0, true);
     //left
     slot0.kP = shooterLeftIntakeMotorsPIDkP.get();
     slot0.kV = shooterLeftIntakeMotorsPIDkV.get();
     slot0.kS = shooterLeftIntakeMotorsPIDkS.get();
 
     singleMotorShooterLeft.configureIntakeWheel(slot0, false);
-    singleMotorShooterRight.configureIntakeWheel(slot0, true);
 
   }
 
@@ -167,12 +168,12 @@ public class ShooterReal implements ShooterIO {
     slot0.kP = shooterRightBackspinMotorsPIDkP.get();
     slot0.kV = shooterRightBackspinMotorsPIDkV.get();
     slot0.kS = shooterRightBackspinMotorsPIDkS.get();
+    singleMotorShooterRight.configurebackspinWheelMotor(slot0);
     //left
     slot0.kP = shooterLeftBackspinMotorsPIDkP.get();
     slot0.kV = shooterLeftBackspinMotorsPIDkV.get();
     slot0.kS = shooterLeftBackspinMotorsPIDkS.get();
     singleMotorShooterLeft.configurebackspinWheelMotor(slot0);
-    singleMotorShooterRight.configurebackspinWheelMotor(slot0);
   }
 
   @Override

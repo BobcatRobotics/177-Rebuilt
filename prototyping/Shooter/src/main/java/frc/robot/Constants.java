@@ -46,7 +46,11 @@ public final class Constants {
         public static final double targetFlywheelSpeedRPS = 52.5;
         public static final double targetIntakeSpeedRPS = 0.2;
         public static final double targetBackspinSpeedRPS = 30;
-        // 75, -20, 30 - min values 
+        // 76.5, -21.5, 0.3 - min values - Right
+        //kP left: 1.27, kD left: 0.0175
+        //kP Right: 1.3, kD Right: 0.03, kV: 0.07
+        //Right: bsSpeed: -6.0, fW speed: 66, int speed: 50
+
 
         // ID Constants
         public static final int FlywheelIDLeft = 29;
