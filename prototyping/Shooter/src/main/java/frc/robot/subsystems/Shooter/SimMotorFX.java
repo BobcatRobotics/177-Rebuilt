@@ -1,34 +1,51 @@
 package frc.robot.subsystems.Shooter;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+
 // --- Simulated Motor Class ---
 public class SimMotorFX {
-    private double velocity;
-    private double lastVelocity;
-    private double acceleration;
-    private double voltage;
-    private double current;    
+    private static final DCMotor motorModel = DCMotor.getKrakenX60(1);
+    private static final DCMotorSim sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
+            motorModel);
+    private double appliedVolts = 0.0;
+    private double velocity = 0.0;
+    private double acceleration = 0.0;
+    private double position = 0.0;
+    private double supplyCurrent = 0.0;
+
+    private double appliedTorque = 0.0;
+
+    private double falconStallTorqueInNm = 4.69;
+    private double krakenStallTorqueInNm = 7.16;
+    private double falconFreeSpeedInRPM = 6380;
+    private double krakenFreeSpeedInRPM = 6050;
+
+    public SimMotorFX() {
+        setTorque(0);
+    }
 
     // Update based on a target setpoint
-    public void update(double setpoint) {
-        double dt = 0.02; // 20ms loop
-        double maxAccel = 50; // max RPS^2 for simulation
-        acceleration = clamp((setpoint - velocity) / dt, -maxAccel, maxAccel);
-        lastVelocity = velocity;
-        velocity += acceleration * dt;
+    public void update() {
+        appliedVolts = motorModel.getVoltage(appliedTorque,
+                Units.RotationsPerSecond.convertFrom(sim.getAngularVelocityRadPerSec(), RadiansPerSecond));
 
-        // Simple linear approximation for voltage/current
-        voltage = setpoint * 12.0; // scale velocity to volts
-        current = Math.abs(velocity) * 10; // fake current proportional to speed
-    }
-    
-    // Helper method to clamp a value between min and max
-    private double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
-    }
+        // Update sim state
+        sim.setInputVoltage(MathUtil.clamp(appliedVolts, -12.0, 12.0));
+        sim.update(0.02);
 
-    public void setVoltage(double volts) {
-        voltage = volts;
-        velocity = volts / 12.0; // simple linear scaling
+        supplyCurrent = sim.getCurrentDrawAmps();
+        position = Units.Rotations.convertFrom(sim.getAngularPositionRad(), Radians);
+        velocity = Units.RotationsPerSecond.convertFrom(sim.getAngularVelocityRadPerSec(), RadiansPerSecond);
+        acceleration = Units.RotationsPerSecondPerSecond.convertFrom(sim.getAngularAccelerationRadPerSecSq(),
+                RadiansPerSecondPerSecond);
     }
 
     public double getVelocity() {
@@ -40,10 +57,20 @@ public class SimMotorFX {
     }
 
     public double getVoltage() {
-        return voltage;
+        return appliedVolts;
     }
 
     public double getCurrent() {
-        return current;
+        return supplyCurrent;
+    }
+
+    public double getPosition() {
+        return position;
+    }
+
+    public double setTorque(double velocityInRPS) {
+        double velocityInRMP = velocityInRPS * 60;
+        appliedTorque = falconStallTorqueInNm * (1 - (velocityInRMP / falconFreeSpeedInRPM));
+        return appliedTorque;
     }
 }
