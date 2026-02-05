@@ -2,15 +2,20 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.Limelight.Vision;
+import frc.robot.subsystems.Shooter.Shooter;
 
 public class ShootOnTheMove {
     private static final double HOOD_ANGLE_RAD = Math.toRadians(45.0); // Need to get
     
-    public void update(Pose2d robotPose, ChassisSpeeds robotSpeed) {
+    public void update(Pose2d robotPose, ChassisSpeeds robotSpeed, Shooter shooter) {
 
         // 1. LATENCY COMP
         double latency = 0.15; // Need to tune
@@ -49,7 +54,7 @@ public class ShootOnTheMove {
         double totalExitVelocity = requiredHorizontalSpeed / Math.cos(HOOD_ANGLE_RAD);
         
         // 7. SET OUTPUT
-        shooter.setRPM(calcRPM(totalExitVelocity));
+        shooter.setVelocity(totalExitVelocity, intakeVelocity, backSpinVelocity); //Shooter Table or Ratio Method
     }
     
     public Rotation2d getTargetRotation(Pose2d robotPose) {

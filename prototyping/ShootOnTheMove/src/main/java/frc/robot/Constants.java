@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.VisionObservation;
 import frc.robot.util.VisionObservation.LLTYPE;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -39,6 +40,8 @@ public final class Constants {
 
          public static final double aprilTagWidth = Units.inchesToMeters(6.50);
          public static final int aprilTagCount = 32;
+
+        public static final Translation2d GOAL_LOCATION = new Translation2d();
     }
 
     public static final class LimelightConstants{
