@@ -37,8 +37,6 @@ public final class Constants {
     }
 
     public final static class ShooterConstants {
-
-        // Speed Constants
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleIntakeSpeedRPS = 0;
         public static final double idleBackspinSpeedRPS = 0;

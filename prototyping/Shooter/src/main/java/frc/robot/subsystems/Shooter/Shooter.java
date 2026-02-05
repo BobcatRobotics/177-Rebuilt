@@ -24,8 +24,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.periodic();
     io.updateInputs(LeftInputs,RightInputs);
-    Logger.processInputs("Shooter/Left", LeftInputs);
-    Logger.processInputs("Shooter/Right", RightInputs);
+    Logger.processInputs("Shooter/LeftInputs", LeftInputs);
+    Logger.processInputs("Shooter/RightInputs", RightInputs);
     
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
@@ -74,5 +74,10 @@ public class Shooter extends SubsystemBase {
   }
   public void stopIntakeWheel(){
     io.stopBackspinWheel();
+  }
+
+  @Override
+  public void simulationPeriodic(){
+    io.simulationPeriodic();
   }
 }
