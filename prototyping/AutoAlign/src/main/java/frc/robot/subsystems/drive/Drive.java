@@ -232,7 +232,7 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-
+      /* 
       // update robot heading for megatag2
       LimelightHelpers.SetRobotOrientation("", gyroInputs.yawPosition.getDegrees(), 0, 0, 0, 0, 0);
       LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
@@ -255,6 +255,7 @@ public class Drive extends SubsystemBase {
             mt2.pose,
             mt2.timestampSeconds);
       }
+            */
     }
 
     // Update gyro alert
