@@ -240,7 +240,6 @@ public class ShooterModuleSingle implements ShooterModuleInterface {
   public void setIntakeSpeed(double shooterIntakeSpeed) {
     intakeSetpoint = shooterIntakeSpeed;
     shooterIntakeWheelMotor.setControl(velIntakeRequest.withVelocity(shooterIntakeSpeed));
-    //shooterIntakeWheelMotor.set(shooterIntakeSpeed);
   }
 
   public void holdPosition() {
