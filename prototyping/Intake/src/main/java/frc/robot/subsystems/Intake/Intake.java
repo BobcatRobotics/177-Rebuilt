@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -32,6 +32,10 @@ public class Intake extends SubsystemBase {
   public void setVelocity(IntakeState.State state) {
     desiredState.setState(state);
     io.setVelocity(desiredState.getOutput().speed);
+  }
+
+  public void runIntake(){
+    io.runIntake();
   }
 
   public void stop() {

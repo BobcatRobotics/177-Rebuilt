@@ -37,7 +37,8 @@ import frc.robot.subsystems.Intake.IntakeReal;
  */
 public class RobotContainer {
   // Subsystems
-  private final Intake intake;
+  private final Intake Intake;
+
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
@@ -50,15 +51,15 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        intake = new Intake( new IntakeReal());
+        intake = new Intake(new IntakeReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        intake = new Intake( new IntakeIO(){});
+        intake = new Intake(new IntakeIO(){});
         break;
       default:
         // Replayed robot, disable IO implementations
-        intake = new Intake( new IntakeIO(){});
+        intake = new Intake(new IntakeIO(){});
         break;
     }
 
@@ -81,6 +82,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // Default command, normal field-relative drive
+    
+    //Intake Commands
+    Command runIntake = new RunCommand(() -> Intake.runIntake(Constants.IntakeConstants));
+    controller.y().onTrue(runIntake).onFalse(stopMotor);
+
+    //Positional Commands
+    Command MoveUp = new RunCommand(() -> Intake.PositionUp(Constants.IntakeConstants));
+    Command MoveDown = new RunCommand(() -> Intake.PositionDown(Constants.IntakeConstants));
+    controller.y().onTrue(MoveDown).onFalse(stopMotor);
+    controller.x().onTrue(MoveUp).onFalse(stopMotor);
+
   }
 
   /**
@@ -96,3 +108,4 @@ public class RobotContainer {
   public void teleopPeriodic() {
   }
 }
+// she gon call me baby boo --- IGNORE ---

@@ -61,14 +61,12 @@ public class RobotContainer {
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        turret = new Turret(new TurretIO() {
-        });
+        turret = new Turret(new TurretIO() {});
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        turret = new Turret(new TurretIO() {
-        });
+        turret = new Turret(new TurretIO() {});
         break;
     }
 
@@ -90,6 +88,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
   }
 
   /**

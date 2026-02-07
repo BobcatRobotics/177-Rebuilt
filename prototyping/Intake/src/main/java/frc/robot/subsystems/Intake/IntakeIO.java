@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -15,6 +15,10 @@ public interface IntakeIO {
   }
 
   public default void setVelocity(double velocity) {
+  }
+
+  public void runIntake(double speed){
+
   }
 
   default void stop() {

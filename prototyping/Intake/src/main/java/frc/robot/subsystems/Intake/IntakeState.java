@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import frc.robot.Constants;
 
@@ -37,6 +37,9 @@ public class IntakeState {
       }
       case MANUAL -> {
         goal.speed = manualSpeed;
+      }
+      case TARGETTING -> {
+        goal.speed = targetSpeed;
       }
     }
     return goal;

@@ -19,6 +19,7 @@ import frc.robot.Constants.TurretConstants;;
 public class TurretReal implements TurretIO {
 
   private final TalonFX positionMotor = new TalonFX(10);
+  private final TalonFX velocityMotor = new TalonFX(id); // Add id
   private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
   private StatusSignal<AngularVelocity> velocityRPS;
   private StatusSignal<Angle> poositionDeg;
