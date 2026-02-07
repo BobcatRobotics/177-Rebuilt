@@ -15,58 +15,85 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
+import frc.robot.Constants.HopperConstants;
+
 public class HopperReal implements HopperIO {
 
-  private final TalonFX positionMotor = new TalonFX(10);
-  private final TalonFX velocityMotor = new TalonFX(11);
+  private final TalonFX hopperTopMotor = new TalonFX(11);
+  private final TalonFX hopperBottomMotor = new TalonFX(12);
 
-  private final VelocityTorqueCurrentFOC requestVelocity = new VelocityTorqueCurrentFOC(0);
-  private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
-  private StatusSignal<AngularVelocity> velocityRPS;
-  private StatusSignal<Angle> poositionDeg;
+  private final VelocityTorqueCurrentFOC topRequestVelocity = new VelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC bottomRequestVelocity = new VelocityTorqueCurrentFOC(0);
+
+  private StatusSignal<AngularVelocity> topVelocityRPS;
+  private StatusSignal<AngularVelocity> bottomVelocityRPS;
 
   public HopperReal() {
-    // Bottom motor configurations
-    TalonFXConfiguration bottomConfigs = new TalonFXConfiguration();
-    velocityMotor.getConfigurator().apply(bottomConfigs); // reset to default
-    bottomConfigs.MotorOutput.Inverted = HopperConstants.bottomMotorInvert;
-    bottomConfigs.MotorOutput.NeutralMode = HopperConstants.bottomMotorBrakeMode;
-    bottomConfigs.Slot0.kP = HopperConstants.kBottomP;
-    bottomConfigs.Slot0.kV = HopperConstants.kBottomV;
-    bottomConfigs.Slot0.kS = HopperConstants.kBottomS;
-    bottomConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
-    bottomConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.bottomCurrentLimit;
-    velocityMotor.getConfigurator().apply(bottomConfigs);
+    // motor configurations both use same configuration change if wrong
+    TalonFXConfiguration hopperBottomMotorConfigs = new TalonFXConfiguration();
+    hopperBottomMotor.getConfigurator().apply(hopperBottomMotorConfigs); // reset to default
+    hopperBottomMotorConfigs.MotorOutput.Inverted = HopperConstants.hopperMotorInvert;
+    hopperBottomMotorConfigs.MotorOutput.NeutralMode = HopperConstants.hopperMotorBrakeMode;
+    hopperBottomMotorConfigs.Slot0.kP = HopperConstants.kTopP;
+    hopperBottomMotorConfigs.Slot0.kV = HopperConstants.kTopV;
+    hopperBottomMotorConfigs.Slot0.kS = HopperConstants.kTopS;
+    hopperBottomMotorConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    hopperBottomMotorConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.hopperCurrentLimit;
+    hopperTopMotor.getConfigurator().apply(hopperBottomMotorConfigs);
+
+//invert the top motor
+   TalonFXConfiguration hopperTopMotorConfigs = new TalonFXConfiguration();
+    hopperBottomMotor.getConfigurator().apply(hopperTopMotorConfigs); // reset to default
+    hopperTopMotorConfigs.MotorOutput.Inverted = HopperConstants.hopperMotorInvert;
+    hopperTopMotorConfigs.MotorOutput.NeutralMode = HopperConstants.hopperMotorBrakeMode;
+    hopperTopMotorConfigs.Slot0.kP = HopperConstants.kTopP;
+    hopperTopMotorConfigs.Slot0.kV = HopperConstants.kTopV;
+    hopperTopMotorConfigs.Slot0.kS = HopperConstants.kTopS;
+    hopperTopMotorConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
+    hopperTopMotorConfigs.CurrentLimits.StatorCurrentLimit = HopperConstants.hopperCurrentLimit;
+    hopperTopMotor.getConfigurator().apply(hopperTopMotorConfigs);
     // Apply to signals
-    velocityRPS = velocityMotor.getVelocity();
+    topVelocityRPS = hopperTopMotor.getVelocity();
+    bottomVelocityRPS = hopperBottomMotor.getVelocity();
     // Set polling frequency and optimizations
-    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityRPS);
-    positionMotor.optimizeBusUtilization();
-    velocityMotor.optimizeBusUtilization();
+    BaseStatusSignal.setUpdateFrequencyForAll(50, topVelocityRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, bottomVelocityRPS);
+    hopperTopMotor.optimizeBusUtilization();
+    hopperBottomMotor.optimizeBusUtilization();
   }
 
   @Override
-  public void updateInputs(ShooterIOInputs inputs) {
+  public void updateInputs(HopperIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        velocityRPS, poositionDeg);
+        topVelocityRPS, bottomVelocityRPS);
 
-    inputs.velocityRPM = velocityRPS.getValue().in(Rotation.per(Minute));
-    inputs.positionDeg = poositionDeg.getValue().in(Degrees);
-    inputs.velocityConnected = velocityMotor.isConnected();
-    inputs.positionConnected = positionMotor.isConnected();
+    inputs.topVelocityRPM = topVelocityRPS.getValue().in(Rotation.per(Minute));
+    inputs.bottomVelocityRPM = bottomVelocityRPS.getValue().in(Rotation.per(Minute));
+    inputs.topMotorConnected = hopperTopMotor.isConnected();
+    inputs.bottomMotorConnected = hopperBottomMotor.isConnected();
   }
 
 
-  public void setVelocity(double velocity) {
-    requestVelocity.withVelocity(velocity);
+  public void setTopVelocity(double velocity) {
+    topRequestVelocity.withVelocity(velocity);
   }
 
-  public double getVelocity() {
-    return velocityMotor.getVelocity().getValueAsDouble();
+  public void setBottomVelocity(double velocity) {
+    bottomRequestVelocity.withVelocity(velocity);
   }
+
+  public double getTopVelocity() {
+    return hopperTopMotor.getVelocity().getValueAsDouble();
+  }
+
+  public double getBottomVelocity() {
+    return hopperBottomMotor.getVelocity().getValueAsDouble();
+  }
+
 
   @Override
   public void stop() {
-    velocityMotor.stopMotor();
+    hopperTopMotor.stopMotor();
+    hopperBottomMotor.stopMotor();
   }
 }
