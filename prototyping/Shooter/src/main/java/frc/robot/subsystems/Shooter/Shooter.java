@@ -25,8 +25,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.periodic();
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter/inputs", inputs);
-    
+    Logger.processInputs("Shooter/"+ name + "/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
   }
