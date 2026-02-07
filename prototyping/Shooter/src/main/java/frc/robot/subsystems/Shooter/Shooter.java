@@ -8,24 +8,24 @@ import frc.robot.subsystems.Shooter.ShooterState.State;
 public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged LeftInputs = new ShooterIOInputsAutoLogged();
-    private final ShooterIOInputsAutoLogged RightInputs = new ShooterIOInputsAutoLogged();
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
 
   private ShooterState desiredState;
+  private String name;
 
-  public Shooter(ShooterIO io) {
+  public Shooter(ShooterIO io, String name) {
     this.io = io;
-    desiredState = new ShooterState();
+    this.name = name;
+    desiredState = new ShooterState(name);
     desiredState.setState(State.IDLE);
   }
 
   @Override
   public void periodic() {
     io.periodic();
-    io.updateInputs(LeftInputs,RightInputs);
-    Logger.processInputs("Shooter/LeftInputs", LeftInputs);
-    Logger.processInputs("Shooter/RightInputs", RightInputs);
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter/inputs", inputs);
     
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
@@ -41,8 +41,8 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
-    io.setVelocity(ShooterSpeed, ShooterIntakeSpeed, ShooterBackspinSpeed);
+  private void setVelocity(double ShooterSpeed, double ShooterBackspinSpeed) {
+    io.setVelocity(ShooterSpeed, ShooterBackspinSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
@@ -52,11 +52,7 @@ public class Shooter extends SubsystemBase {
   public void setBackspinSpeed(double shooterBackspinSpeed) {
     io.setBackspinSpeed(shooterBackspinSpeed);
   }
-
-  public void setIntakeSpeed(double shooterIntakeSpeed) {
-    io.setIntakeSpeed(shooterIntakeSpeed);
-  }
-
+  
   public void holdPosition() {
     io.holdPosition();
   }

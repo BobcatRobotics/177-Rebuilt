@@ -1,198 +1,245 @@
 package frc.robot.subsystems.Shooter;
 
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
+
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
-import frc.robot.subsystems.Shooter.Modules.ShooterModuleSingle;
 
 public class ShooterReal implements ShooterIO {
-
-  private ShooterModuleSingle singleMotorShooterLeft;
-  private ShooterModuleSingle singleMotorShooterRight;
+  private final TalonFX shooterFlywheelInner;
+  private final TalonFX shooterFlywheelOuter;
+  private final TalonFX backspinWheelMotor;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
-  private TunableDouble shooterLeftMainMotorsPIDkP;
-  private TunableDouble shooterLeftMainMotorsPIDkI;
-  private TunableDouble shooterLeftMainMotorsPIDkD;
-  private TunableDouble shooterLeftMainMotorsPIDkV;
-  private TunableDouble shooterLeftMainMotorsPIDkS;
-  private TunableDouble shooterLeftMainMotorsPIDkA;
-  private TunableDouble shooterLeftIntakeMotorsPIDkP;
-  private TunableDouble shooterLeftIntakeMotorsPIDkI;
-  private TunableDouble shooterLeftIntakeMotorsPIDkD;
-  private TunableDouble shooterLeftIntakeMotorsPIDkV;
-  private TunableDouble shooterLeftIntakeMotorsPIDkS;
-  private TunableDouble shooterLeftIntakeMotorsPIDkA;
-  private TunableDouble shooterLeftBackspinMotorsPIDkP;
-  private TunableDouble shooterLeftBackspinMotorsPIDkI;
-  private TunableDouble shooterLeftBackspinMotorsPIDkD;
-  private TunableDouble shooterLeftBackspinMotorsPIDkV;
-  private TunableDouble shooterLeftBackspinMotorsPIDkS;
-  private TunableDouble shooterLeftBackspinMotorsPIDkA;
+  private TunableDouble shooterMainMotorsPIDkP;
+  private TunableDouble shooterMainMotorsPIDkI;
+  private TunableDouble shooterMainMotorsPIDkD;
+  private TunableDouble shooterMainMotorsPIDkV;
+  private TunableDouble shooterMainMotorsPIDkS;
+  private TunableDouble shooterMainMotorsPIDkA;
+  private TunableDouble shooterIntakeMotorsPIDkP;
+  private TunableDouble shooterIntakeMotorsPIDkI;
+  private TunableDouble shooterIntakeMotorsPIDkD;
+  private TunableDouble shooterIntakeMotorsPIDkV;
+  private TunableDouble shooterIntakeMotorsPIDkS;
+  private TunableDouble shooterIntakeMotorsPIDkA;
+  private TunableDouble shooterBackspinMotorsPIDkP;
+  private TunableDouble shooterBackspinMotorsPIDkI;
+  private TunableDouble shooterBackspinMotorsPIDkD;
+  private TunableDouble shooterBackspinMotorsPIDkV;
+  private TunableDouble shooterBackspinMotorsPIDkS;
+  private TunableDouble shooterBackspinMotorsPIDkA;
 
-  private TunableDouble shooterRightMainMotorsPIDkP;
-  private TunableDouble shooterRightMainMotorsPIDkI;
-  private TunableDouble shooterRightMainMotorsPIDkD;
-  private TunableDouble shooterRightMainMotorsPIDkV;
-  private TunableDouble shooterRightMainMotorsPIDkS;
-  private TunableDouble shooterRightMainMotorsPIDkA;
-  private TunableDouble shooterRightIntakeMotorsPIDkP;
-  private TunableDouble shooterRightIntakeMotorsPIDkI;
-  private TunableDouble shooterRightIntakeMotorsPIDkD;
-  private TunableDouble shooterRightIntakeMotorsPIDkV;
-  private TunableDouble shooterRightIntakeMotorsPIDkS;
-  private TunableDouble shooterRightIntakeMotorsPIDkA;
-  private TunableDouble shooterRightBackspinMotorsPIDkP;
-  private TunableDouble shooterRightBackspinMotorsPIDkI;
-  private TunableDouble shooterRightBackspinMotorsPIDkD;
-  private TunableDouble shooterRightBackspinMotorsPIDkV;
-  private TunableDouble shooterRightBackspinMotorsPIDkS;
-  private TunableDouble shooterRightBackspinMotorsPIDkA;
+  private final VelocityTorqueCurrentFOC velShooterRequest = new VelocityTorqueCurrentFOC(0);
+  private final VelocityTorqueCurrentFOC velBackspinRequest = new VelocityTorqueCurrentFOC(0);
+  // private final DutyCycleOut velIntakeRequest = new DutyCycleOut(0);
+  private StatusSignal<AngularVelocity> velocityOfMainFlywhelInnerRPS;
+  private StatusSignal<AngularVelocity> velocityOfMainFlywhelOuterRPS;
+  private StatusSignal<AngularVelocity> velocityOfbackspinWheelMotorRPS;
+  private StatusSignal<Current> statorCurrentOfMainFlywheelInnerAmps;
+  private StatusSignal<Current> statorCurrentOfMainFlywheelOuterAmps;
+  private StatusSignal<Current> statorCurrentOfBackspinAmps;
+  private StatusSignal<Voltage> outputOfMainFlywheelInnerVolts;
+  private StatusSignal<Voltage> outputOfMainFlywheelOuterVolts;
+  private StatusSignal<Voltage> outputOfBackspinVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelInner;
+  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelOuter;
+  private StatusSignal<AngularAcceleration> accelerationOfBackspin;
+  private StatusSignal<AngularAcceleration> accelerationOfIntake;
 
-  private ModuleConfigurator leftFlywheelConfig;
-  private ModuleConfigurator leftBackspinConfig;
-  private ModuleConfigurator leftIntakeConfig;
-  private ModuleConfigurator rightFlywheelConfig;
-  private ModuleConfigurator rightBackspinConfig;
-  private ModuleConfigurator rightIntakeConfig;
+  public ModuleConfigurator flywheelConfig;
+  public ModuleConfigurator backspinConfig;
 
-  public ShooterReal() {
-    // left
-    shooterLeftMainMotorsPIDkP = new TunableDouble("/Shooter/Left/Flywheel/PID/kP",
-        Constants.ShooterConstants.Left.kshooterMainkP);
-    shooterLeftMainMotorsPIDkI = new TunableDouble("/Shooter/Left/Flywheel/PID/kI",
-        Constants.ShooterConstants.Left.kshooterMainkI);
-    shooterLeftMainMotorsPIDkD = new TunableDouble("/Shooter/Left/Flywheel/PID/kD",
-        Constants.ShooterConstants.Left.kshooterMainkD);
-    shooterLeftMainMotorsPIDkV = new TunableDouble("/Shooter/Left/Flywheel/PID/kV",
-        Constants.ShooterConstants.Left.kshooterMainkV);
-    shooterLeftMainMotorsPIDkS = new TunableDouble("/Shooter/Left/Flywheel/PID/kS",
-        Constants.ShooterConstants.Left.kshooterMainkS);
-    shooterLeftMainMotorsPIDkA = new TunableDouble("/Shooter/Left/Flywheel/PID/kA",
-        Constants.ShooterConstants.Left.kshooterMainkA);
-    shooterLeftIntakeMotorsPIDkP = new TunableDouble("/Shooter/Left/Intake/PID/kP",
-        Constants.ShooterConstants.Left.kIntakeMotorkP);
-    shooterLeftIntakeMotorsPIDkI = new TunableDouble("/Shooter/Left/Intake/PID/kI",
-        Constants.ShooterConstants.Left.kIntakeMotorkI);
-    shooterLeftIntakeMotorsPIDkD = new TunableDouble("/Shooter/Left/Intake/PID/kD",
-        Constants.ShooterConstants.Left.kIntakeMotorkD);
-    shooterLeftIntakeMotorsPIDkV = new TunableDouble("/Shooter/Left/Intake/PID/kV",
-        Constants.ShooterConstants.Left.kIntakeMotorkV);
-    shooterLeftIntakeMotorsPIDkS = new TunableDouble("/Shooter/Left/Intake/PID/kS",
-        Constants.ShooterConstants.Left.kIntakeMotorkS);
-    shooterLeftIntakeMotorsPIDkA = new TunableDouble("/Shooter/Left/Intake/PID/kA",
-        Constants.ShooterConstants.Left.kIntakeMotorkA);
-    shooterLeftBackspinMotorsPIDkP = new TunableDouble("/Shooter/Left/BackSpin/PID/kP",
-        Constants.ShooterConstants.Left.kBackspinMotorkP);
-    shooterLeftBackspinMotorsPIDkI = new TunableDouble("/Shooter/Left/BackSpin/PID/kI",
-        Constants.ShooterConstants.Left.kBackspinMotorkI);
-    shooterLeftBackspinMotorsPIDkD = new TunableDouble("/Shooter/Left/BackSpin/PID/kD",
-        Constants.ShooterConstants.Left.kBackspinMotorkD);
-    shooterLeftBackspinMotorsPIDkV = new TunableDouble("/Shooter/Left/BackSpin/PID/kV",
-        Constants.ShooterConstants.Left.kBackspinMotorkV);
-    shooterLeftBackspinMotorsPIDkS = new TunableDouble("/Shooter/Left/BackSpin/PID/kS",
-        Constants.ShooterConstants.Left.kBackspinMotorkS);
-    shooterLeftBackspinMotorsPIDkA = new TunableDouble("/Shooter/Left/BackSpin/PID/kA",
-        Constants.ShooterConstants.Left.kBackspinMotorkA);
+  public double mainFlywheelSetpoint = 0;
+  public double backspinSetpoint = 0;
+
+  private String name;
+
+  public ShooterReal(String name) {
+    this.name = name;
+
+    if (name == "Left") {
+
+      // left
+      shooterMainMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kP",
+          Constants.ShooterConstants.Left.kshooterMainkP);
+      shooterMainMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kI",
+          Constants.ShooterConstants.Left.kshooterMainkI);
+      shooterMainMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kD",
+          Constants.ShooterConstants.Left.kshooterMainkD);
+      shooterMainMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kV",
+          Constants.ShooterConstants.Left.kshooterMainkV);
+      shooterMainMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kS",
+          Constants.ShooterConstants.Left.kshooterMainkS);
+      shooterMainMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kA",
+          Constants.ShooterConstants.Left.kshooterMainkA);
+      shooterIntakeMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Intake/PID/kP",
+          Constants.ShooterConstants.kIntakeMotorkP);
+      shooterIntakeMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Intake/PID/kI",
+          Constants.ShooterConstants.kIntakeMotorkI);
+      shooterIntakeMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Intake/PID/kD",
+          Constants.ShooterConstants.kIntakeMotorkD);
+      shooterIntakeMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Intake/PID/kV",
+          Constants.ShooterConstants.kIntakeMotorkV);
+      shooterIntakeMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Intake/PID/kS",
+          Constants.ShooterConstants.kIntakeMotorkS);
+      shooterIntakeMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Intake/PID/kA",
+          Constants.ShooterConstants.kIntakeMotorkA);
+      shooterBackspinMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kP",
+          Constants.ShooterConstants.Left.kBackspinMotorkP);
+      shooterBackspinMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kI",
+          Constants.ShooterConstants.Left.kBackspinMotorkI);
+      shooterBackspinMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kD",
+          Constants.ShooterConstants.Left.kBackspinMotorkD);
+      shooterBackspinMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kV",
+          Constants.ShooterConstants.Left.kBackspinMotorkV);
+      shooterBackspinMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kS",
+          Constants.ShooterConstants.Left.kBackspinMotorkS);
+      shooterBackspinMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kA",
+          Constants.ShooterConstants.Left.kBackspinMotorkA);
+    } else {
+
+      // left
+      shooterMainMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kP",
+          Constants.ShooterConstants.Right.kshooterMainkP);
+      shooterMainMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kI",
+          Constants.ShooterConstants.Right.kshooterMainkI);
+      shooterMainMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kD",
+          Constants.ShooterConstants.Right.kshooterMainkD);
+      shooterMainMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kV",
+          Constants.ShooterConstants.Right.kshooterMainkV);
+      shooterMainMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kS",
+          Constants.ShooterConstants.Right.kshooterMainkS);
+      shooterMainMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Flywheel/PID/kA",
+          Constants.ShooterConstants.Right.kshooterMainkA);
+      shooterIntakeMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Intake/PID/kP",
+          Constants.ShooterConstants.kIntakeMotorkP);
+      shooterIntakeMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Intake/PID/kI",
+          Constants.ShooterConstants.kIntakeMotorkI);
+      shooterIntakeMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Intake/PID/kD",
+          Constants.ShooterConstants.kIntakeMotorkD);
+      shooterIntakeMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Intake/PID/kV",
+          Constants.ShooterConstants.kIntakeMotorkV);
+      shooterIntakeMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Intake/PID/kS",
+          Constants.ShooterConstants.kIntakeMotorkS);
+      shooterIntakeMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Intake/PID/kA",
+          Constants.ShooterConstants.kIntakeMotorkA);
+      shooterBackspinMotorsPIDkP = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kP",
+          Constants.ShooterConstants.Right.kBackspinMotorkP);
+      shooterBackspinMotorsPIDkI = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kI",
+          Constants.ShooterConstants.Right.kBackspinMotorkI);
+      shooterBackspinMotorsPIDkD = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kD",
+          Constants.ShooterConstants.Right.kBackspinMotorkD);
+      shooterBackspinMotorsPIDkV = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kV",
+          Constants.ShooterConstants.Right.kBackspinMotorkV);
+      shooterBackspinMotorsPIDkS = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kS",
+          Constants.ShooterConstants.Right.kBackspinMotorkS);
+      shooterBackspinMotorsPIDkA = new TunableDouble("/Shooter/" + name + "/Backspin/PID/kA",
+          Constants.ShooterConstants.Right.kBackspinMotorkA);
+    }
 
     Slot0Configs flyweelConfigLeft = new Slot0Configs();
-    flyweelConfigLeft.kP = shooterLeftMainMotorsPIDkP.get();
-    flyweelConfigLeft.kI = shooterLeftMainMotorsPIDkI.get();
-    flyweelConfigLeft.kD = shooterLeftMainMotorsPIDkD.get();
-    flyweelConfigLeft.kV = shooterLeftMainMotorsPIDkV.get();
-    flyweelConfigLeft.kS = shooterLeftMainMotorsPIDkS.get();
-    flyweelConfigLeft.kA = shooterLeftMainMotorsPIDkA.get();
+    flyweelConfigLeft.kP = shooterMainMotorsPIDkP.get();
+    flyweelConfigLeft.kI = shooterMainMotorsPIDkI.get();
+    flyweelConfigLeft.kD = shooterMainMotorsPIDkD.get();
+    flyweelConfigLeft.kV = shooterMainMotorsPIDkV.get();
+    flyweelConfigLeft.kS = shooterMainMotorsPIDkS.get();
+    flyweelConfigLeft.kA = shooterMainMotorsPIDkA.get();
     Slot0Configs intakeConfigLeft = new Slot0Configs();
-    intakeConfigLeft.kP = shooterLeftIntakeMotorsPIDkP.get();
-    intakeConfigLeft.kI = shooterLeftIntakeMotorsPIDkI.get();
-    intakeConfigLeft.kD = shooterLeftIntakeMotorsPIDkD.get();
-    intakeConfigLeft.kV = shooterLeftIntakeMotorsPIDkV.get();
-    intakeConfigLeft.kS = shooterLeftIntakeMotorsPIDkS.get();
-    intakeConfigLeft.kA = shooterLeftIntakeMotorsPIDkA.get();
+    intakeConfigLeft.kP = shooterIntakeMotorsPIDkP.get();
+    intakeConfigLeft.kI = shooterIntakeMotorsPIDkI.get();
+    intakeConfigLeft.kD = shooterIntakeMotorsPIDkD.get();
+    intakeConfigLeft.kV = shooterIntakeMotorsPIDkV.get();
+    intakeConfigLeft.kS = shooterIntakeMotorsPIDkS.get();
+    intakeConfigLeft.kA = shooterIntakeMotorsPIDkA.get();
     Slot0Configs backspinConfigLeft = new Slot0Configs();
-    backspinConfigLeft.kP = shooterLeftBackspinMotorsPIDkP.get();
-    backspinConfigLeft.kI = shooterLeftBackspinMotorsPIDkI.get();
-    backspinConfigLeft.kD = shooterLeftBackspinMotorsPIDkD.get();
-    backspinConfigLeft.kV = shooterLeftBackspinMotorsPIDkV.get();
-    backspinConfigLeft.kS = shooterLeftBackspinMotorsPIDkS.get();
-    backspinConfigLeft.kA = shooterLeftBackspinMotorsPIDkA.get();
+    backspinConfigLeft.kP = shooterBackspinMotorsPIDkP.get();
+    backspinConfigLeft.kI = shooterBackspinMotorsPIDkI.get();
+    backspinConfigLeft.kD = shooterBackspinMotorsPIDkD.get();
+    backspinConfigLeft.kV = shooterBackspinMotorsPIDkV.get();
+    backspinConfigLeft.kS = shooterBackspinMotorsPIDkS.get();
+    backspinConfigLeft.kA = shooterBackspinMotorsPIDkA.get();
+    flywheelConfig = new ModuleConfigurator(flyweelConfigLeft, Constants.ShooterConstants.Left.FlywheelInnerIDLeft,
+        Constants.ShooterConstants.Left.FlywheelOuterIDLeft, false, false, true, 40);
+    backspinConfig = new ModuleConfigurator(backspinConfigLeft, Constants.ShooterConstants.Left.BackspinIDLeft, false,
+        true, 40);
+    shooterFlywheelOuter = new TalonFX(flywheelConfig.getMotorOuterId(), new CANBus("rio"));
+    shooterFlywheelInner = new TalonFX(flywheelConfig.getMotorInnerId(), new CANBus("rio"));
+    backspinWheelMotor = new TalonFX(backspinConfig.getMotorId(), new CANBus("rio"));
+    configureShooterFlywheel();
+    configurebackspinWheelMotor();
 
-    leftFlywheelConfig = new ModuleConfigurator(flyweelConfigLeft, 0, false, true, 40);
-    leftIntakeConfig = new ModuleConfigurator(intakeConfigLeft, 0, false, true, 40);
-    leftBackspinConfig = new ModuleConfigurator(backspinConfigLeft, 0, false, true, 40);
+    // Apply to signals
+    velocityOfMainFlywhelInnerRPS = shooterFlywheelInner.getVelocity();
+    velocityOfMainFlywhelOuterRPS = shooterFlywheelOuter.getVelocity();
+    velocityOfbackspinWheelMotorRPS = backspinWheelMotor.getVelocity();
+    // Set polling frequency and optimizations
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfMainFlywhelInnerRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfMainFlywhelOuterRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, velocityOfbackspinWheelMotorRPS);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentOfMainFlywheelInnerAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentOfMainFlywheelOuterAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, statorCurrentOfBackspinAmps);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, outputOfMainFlywheelInnerVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, outputOfMainFlywheelOuterVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, outputOfBackspinVolts);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, accelerationOfMainFlywheelInner);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, accelerationOfMainFlywheelOuter);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, accelerationOfBackspin);
+    shooterFlywheelInner.optimizeBusUtilization();
+    shooterFlywheelOuter.optimizeBusUtilization();
+    backspinWheelMotor.optimizeBusUtilization();
 
-    singleMotorShooterLeft = new ShooterModuleSingle(leftFlywheelConfig, leftBackspinConfig, leftIntakeConfig, 0);
-    // right
-    shooterRightMainMotorsPIDkP = new TunableDouble("/Shooter/Right/Flywheel/PID/kP",
-        Constants.ShooterConstants.Right.kshooterMainkP);
-    shooterRightMainMotorsPIDkI = new TunableDouble("/Shooter/Right/Flywheel/PID/kI",
-        Constants.ShooterConstants.Right.kshooterMainkI);
-    shooterRightMainMotorsPIDkD = new TunableDouble("/Shooter/Right/Flywheel/PID/kD",
-        Constants.ShooterConstants.Right.kshooterMainkD);
-    shooterRightMainMotorsPIDkV = new TunableDouble("/Shooter/Right/Flywheel/PID/kV",
-        Constants.ShooterConstants.Right.kshooterMainkV);
-    shooterRightMainMotorsPIDkS = new TunableDouble("/Shooter/Right/Flywheel/PID/kS",
-        Constants.ShooterConstants.Right.kshooterMainkS);
-    shooterRightMainMotorsPIDkA = new TunableDouble("/Shooter/Right/Flywheel/PID/kA",
-        Constants.ShooterConstants.Right.kshooterMainkA);
-    shooterRightIntakeMotorsPIDkP = new TunableDouble("/Shooter/Right/Intake/PID/kP",
-        Constants.ShooterConstants.Right.kIntakeMotorkP);
-    shooterRightIntakeMotorsPIDkI = new TunableDouble("/Shooter/Right/Intake/PID/kI",
-        Constants.ShooterConstants.Right.kIntakeMotorkI);
-    shooterRightIntakeMotorsPIDkD = new TunableDouble("/Shooter/Right/Intake/PID/kD",
-        Constants.ShooterConstants.Right.kIntakeMotorkD);
-    shooterRightIntakeMotorsPIDkV = new TunableDouble("/Shooter/Right/Intake/PID/kV",
-        Constants.ShooterConstants.Right.kIntakeMotorkV);
-    shooterRightIntakeMotorsPIDkS = new TunableDouble("/Shooter/Right/Intake/PID/kS",
-        Constants.ShooterConstants.Right.kIntakeMotorkS);
-    shooterRightIntakeMotorsPIDkA = new TunableDouble("/Shooter/Right/Intake/PID/kA",
-        Constants.ShooterConstants.Right.kIntakeMotorkA);
-    shooterRightBackspinMotorsPIDkP = new TunableDouble("/Shooter/Right/Backspin/PID/kP",
-        Constants.ShooterConstants.Right.kBackspinMotorkP);
-    shooterRightBackspinMotorsPIDkI = new TunableDouble("/Shooter/Right/Backspin/PID/kI",
-        Constants.ShooterConstants.Right.kBackspinMotorkI);
-    shooterRightBackspinMotorsPIDkD = new TunableDouble("/Shooter/Right/Backspin/PID/kD",
-        Constants.ShooterConstants.Right.kBackspinMotorkD);
-    shooterRightBackspinMotorsPIDkV = new TunableDouble("/Shooter/Right/Backspin/PID/kV",
-        Constants.ShooterConstants.Right.kBackspinMotorkV);
-    shooterRightBackspinMotorsPIDkS = new TunableDouble("/Shooter/Right/Backspin/PID/kS",
-        Constants.ShooterConstants.Right.kBackspinMotorkS);
-    shooterRightBackspinMotorsPIDkA = new TunableDouble("/Shooter/Right/Backspin/PID/kA",
-        Constants.ShooterConstants.Right.kBackspinMotorkA);
+  }
 
-    Slot0Configs flyweelConfigRight = new Slot0Configs();
-    flyweelConfigRight.kP = shooterRightMainMotorsPIDkP.get();
-    flyweelConfigRight.kI = shooterRightMainMotorsPIDkI.get();
-    flyweelConfigRight.kD = shooterRightMainMotorsPIDkD.get();
-    flyweelConfigRight.kV = shooterRightMainMotorsPIDkV.get();
-    flyweelConfigRight.kS = shooterRightMainMotorsPIDkS.get();
-    flyweelConfigRight.kA = shooterRightMainMotorsPIDkA.get();
-    Slot0Configs intakeConfigRight = new Slot0Configs();
-    intakeConfigRight.kP = shooterRightIntakeMotorsPIDkP.get();
-    intakeConfigRight.kI = shooterRightIntakeMotorsPIDkI.get();
-    intakeConfigRight.kD = shooterRightIntakeMotorsPIDkD.get();
-    intakeConfigRight.kV = shooterRightIntakeMotorsPIDkV.get();
-    intakeConfigRight.kS = shooterRightIntakeMotorsPIDkS.get();
-    intakeConfigRight.kA = shooterRightIntakeMotorsPIDkA.get();
-    Slot0Configs backspinConfigRight = new Slot0Configs();
-    backspinConfigRight.kP = shooterRightBackspinMotorsPIDkP.get();
-    backspinConfigRight.kI = shooterRightBackspinMotorsPIDkI.get();
-    backspinConfigRight.kD = shooterRightBackspinMotorsPIDkD.get();
-    backspinConfigRight.kV = shooterRightBackspinMotorsPIDkV.get();
-    backspinConfigRight.kS = shooterRightBackspinMotorsPIDkS.get();
-    backspinConfigRight.kA = shooterRightBackspinMotorsPIDkA.get();
+  public void configurebackspinWheelMotor() {
+    Slot0Configs slot0 = new Slot0Configs();
+    // left
+    slot0.kP = shooterBackspinMotorsPIDkP.get();
+    slot0.kI = shooterBackspinMotorsPIDkP.get();
+    slot0.kD = shooterBackspinMotorsPIDkP.get();
+    slot0.kV = shooterBackspinMotorsPIDkP.get();
+    slot0.kS = shooterBackspinMotorsPIDkP.get();
+    slot0.kA = shooterBackspinMotorsPIDkP.get();
 
-    rightFlywheelConfig = new ModuleConfigurator(flyweelConfigRight,
-        Constants.ShooterConstants.Right.FlywheelIDRight, false, true, 40);
-    rightIntakeConfig = new ModuleConfigurator(intakeConfigRight,
-        Constants.ShooterConstants.Right.intakeIDRight, false, true, 40);
-    rightBackspinConfig = new ModuleConfigurator(backspinConfigRight,
-        Constants.ShooterConstants.Right.BackspinIDRight, false, true, 40);
-
-    singleMotorShooterRight = new ShooterModuleSingle(rightFlywheelConfig, rightBackspinConfig, rightIntakeConfig, 1);
-
+    // Top motor configurations
+    TalonFXConfiguration shooterBackspinWheelConfig = new TalonFXConfiguration();
+    backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig); // reset to default
+    if (backspinConfig.isInnerInverted()) {
+      shooterBackspinWheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    } else {
+      shooterBackspinWheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    }
+    if (backspinConfig.isCoast()) {
+      shooterBackspinWheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      shooterBackspinWheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    }
+    shooterBackspinWheelConfig.Slot0 = slot0;
+    shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterBackspinWheelConfig.CurrentLimits.StatorCurrentLimit = backspinConfig.getCurrentLimit();
+    backspinWheelMotor.getConfigurator().apply(shooterBackspinWheelConfig);
   }
 
   /**
@@ -201,191 +248,125 @@ public class ShooterReal implements ShooterIO {
    */
   public void configureShooterFlywheel() {
     Slot0Configs slot0 = new Slot0Configs();
-    // right
-    slot0.kP = shooterRightMainMotorsPIDkP.get();
-    slot0.kI = shooterRightMainMotorsPIDkI.get();
-    slot0.kD = shooterRightMainMotorsPIDkD.get();
-    slot0.kV = shooterRightMainMotorsPIDkV.get();
-    slot0.kS = shooterRightMainMotorsPIDkS.get();    
-    rightFlywheelConfig = rightFlywheelConfig.apply(slot0);
-    singleMotorShooterRight.configureShooterFlywheel(rightFlywheelConfig);
-    //left
-    slot0.kP = shooterLeftMainMotorsPIDkP.get();
-    slot0.kI = shooterLeftMainMotorsPIDkI.get();
-    slot0.kD = shooterLeftMainMotorsPIDkD.get();
-    slot0.kV = shooterLeftMainMotorsPIDkV.get();
-    slot0.kS = shooterLeftMainMotorsPIDkS.get();
-    leftFlywheelConfig = leftFlywheelConfig.apply(slot0);
-    singleMotorShooterLeft.configureShooterFlywheel(leftFlywheelConfig);
+    // left
+    slot0.kP = shooterMainMotorsPIDkP.get();
+    slot0.kI = shooterMainMotorsPIDkI.get();
+    slot0.kD = shooterMainMotorsPIDkD.get();
+    slot0.kV = shooterMainMotorsPIDkV.get();
+    slot0.kS = shooterMainMotorsPIDkS.get();
+
+    // Top motor configurations
+    TalonFXConfiguration shooterInnerConfig = new TalonFXConfiguration();
+    shooterFlywheelInner.getConfigurator().apply(shooterInnerConfig); // reset to default
+    if (flywheelConfig.isInnerInverted()) {
+      shooterInnerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    } else {
+      shooterInnerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    }
+    if (flywheelConfig.isCoast()) {
+      shooterInnerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      shooterInnerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    }
+    shooterInnerConfig.Slot0 = slot0;
+    shooterInnerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterInnerConfig.CurrentLimits.StatorCurrentLimit = flywheelConfig.getCurrentLimit();
+    shooterFlywheelInner.getConfigurator().apply(shooterInnerConfig);
+
+    TalonFXConfiguration shooterOuterConfig = new TalonFXConfiguration();
+    shooterFlywheelOuter.getConfigurator().apply(shooterOuterConfig); // reset to default
+    if (flywheelConfig.isOuterInverted()) {
+      shooterOuterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    } else {
+      shooterOuterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    }
+    if (flywheelConfig.isCoast()) {
+      shooterOuterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    } else {
+      shooterOuterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    }
+    shooterOuterConfig.Slot0 = slot0;
+    shooterOuterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    shooterOuterConfig.CurrentLimits.StatorCurrentLimit = flywheelConfig.getCurrentLimit();
+    shooterFlywheelOuter.getConfigurator().apply(shooterOuterConfig);
 
   }
 
-  public void configureIntakeWheel() {
-    Slot0Configs slot0 = new Slot0Configs();
-    // right
-    slot0.kP = shooterRightIntakeMotorsPIDkP.get();
-    slot0.kI = shooterRightIntakeMotorsPIDkI.get();
-    slot0.kD = shooterRightIntakeMotorsPIDkD.get();
-    slot0.kV = shooterRightIntakeMotorsPIDkV.get();
-    slot0.kS = shooterRightIntakeMotorsPIDkS.get();
-    slot0.kA = shooterRightIntakeMotorsPIDkA.get();
-    rightFlywheelConfig = rightFlywheelConfig.apply(slot0);
-    singleMotorShooterRight.configureIntakeWheel(rightFlywheelConfig);
-    //left
-    slot0.kP = shooterLeftIntakeMotorsPIDkP.get();
-    slot0.kI = shooterLeftIntakeMotorsPIDkP.get();
-    slot0.kD = shooterLeftIntakeMotorsPIDkP.get();
-    slot0.kV = shooterLeftIntakeMotorsPIDkP.get();
-    slot0.kS = shooterLeftIntakeMotorsPIDkP.get();
-    slot0.kA = shooterLeftIntakeMotorsPIDkP.get();
-    leftFlywheelConfig = leftFlywheelConfig.apply(slot0);
-    singleMotorShooterLeft.configureIntakeWheel(leftFlywheelConfig);
+  public void updateInputs(ShooterIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        velocityOfMainFlywhelInnerRPS, velocityOfMainFlywhelOuterRPS, velocityOfbackspinWheelMotorRPS,
+        statorCurrentOfMainFlywheelInnerAmps, statorCurrentOfMainFlywheelOuterAmps, statorCurrentOfBackspinAmps,
+        outputOfMainFlywheelInnerVolts, outputOfMainFlywheelOuterVolts, outputOfBackspinVolts,
+        accelerationOfMainFlywheelInner, accelerationOfMainFlywheelOuter, accelerationOfBackspin, accelerationOfIntake);
 
+    inputs.velocityOfMainFlywheelInnerRPS = velocityOfMainFlywhelInnerRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfMainFlywheelOuterRPS = velocityOfMainFlywhelOuterRPS.getValue().in(Rotation.per(Seconds));
+    inputs.velocityOfbackspinWheelMotorRPS = velocityOfbackspinWheelMotorRPS.getValue().in(Rotation.per(Seconds));
+
+    inputs.backspinConnected = backspinWheelMotor.isConnected();
+    inputs.mainFlywhelOuterConnected = shooterFlywheelOuter.isConnected();
+    inputs.mainFlywhelInnerConected = shooterFlywheelInner.isConnected();
   }
 
-  public void configurebackspinWheelMotor() {
-    Slot0Configs slot0 = new Slot0Configs();
-    // right
-    slot0.kP = shooterRightBackspinMotorsPIDkP.get();
-    slot0.kI = shooterRightBackspinMotorsPIDkP.get();
-    slot0.kD = shooterRightBackspinMotorsPIDkP.get();
-    slot0.kV = shooterRightBackspinMotorsPIDkP.get();
-    slot0.kS = shooterRightBackspinMotorsPIDkP.get();
-    slot0.kA = shooterRightBackspinMotorsPIDkP.get();
-    rightFlywheelConfig = rightFlywheelConfig.apply(slot0);
-    singleMotorShooterRight.configurebackspinWheelMotor(rightFlywheelConfig);
-    //left
-    slot0.kP = shooterLeftBackspinMotorsPIDkP.get();
-    slot0.kI = shooterLeftBackspinMotorsPIDkP.get();
-    slot0.kD = shooterLeftBackspinMotorsPIDkP.get();
-    slot0.kV = shooterLeftBackspinMotorsPIDkP.get();
-    slot0.kS = shooterLeftBackspinMotorsPIDkP.get();
-    slot0.kA = shooterLeftBackspinMotorsPIDkP.get();
-    leftFlywheelConfig = leftFlywheelConfig.apply(slot0);
-    singleMotorShooterLeft.configurebackspinWheelMotor(leftFlywheelConfig);
+  public void setOutput(double shooterOutput, double backspinOutput) {
+    shooterFlywheelInner.set(shooterOutput);
+    shooterFlywheelOuter.set(shooterOutput);
 
-  }
-
-  @Override
-  public void updateInputs(ShooterIOInputs LeftInputs, ShooterIOInputs RightInputs) {
-    singleMotorShooterLeft.updateInputs(LeftInputs);
-    singleMotorShooterRight.updateInputs(RightInputs);
-  }
-
-  public void setOutput(double shooterOutput, double backspinOutput, double angleOutput) {
-    singleMotorShooterLeft.setOutput(shooterOutput, backspinOutput, angleOutput);
-    singleMotorShooterRight.setOutput(shooterOutput, backspinOutput, angleOutput);
+    backspinWheelMotor.set(backspinOutput);
   }
 
   public void setVelocity(ShooterState desiredState) {
-    for (int i = 0; i < desiredState.getOutput().size(); i++) {
-      setVelocity(desiredState, i);
-    }
+    setVelocity(desiredState.getFlywheelSpeed(),
+        desiredState.getBackspinSpeed());
   }
 
-  public void setVelocity(ShooterState desiredState, int index) {
-    setVelocity(desiredState.getFlywheelSpeed(index), desiredState.getIntakeSpeed(index),
-        desiredState.getBackspinSpeed(index));
-  }
-
-  public void setVelocity(double shooterFlywheelSpeed, double shooterIntakeSpeed, double shooterBackspinSpeed) {
+  public void setVelocity(double shooterFlywheelSpeed, double shooterBackspinSpeed) {
     setMainWheelSpeed(shooterFlywheelSpeed);
-    setIntakeSpeed(shooterIntakeSpeed);
     setBackspinSpeed(shooterBackspinSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
-    singleMotorShooterLeft.setMainWheelSpeed(shooterFlywheelSpeed);
-    singleMotorShooterRight.setMainWheelSpeed(shooterFlywheelSpeed);
-
+    mainFlywheelSetpoint = shooterFlywheelSpeed;
+    shooterFlywheelInner.setControl(velShooterRequest.withVelocity(shooterFlywheelSpeed));
   }
 
   public void setBackspinSpeed(double shooterBackspinSpeed) {
-    singleMotorShooterLeft.setBackspinSpeed(shooterBackspinSpeed);
-    singleMotorShooterRight.setBackspinSpeed(shooterBackspinSpeed);
+    backspinSetpoint = shooterBackspinSpeed;
+    backspinWheelMotor.setControl(velBackspinRequest.withVelocity(shooterBackspinSpeed));
   }
 
-  public void setIntakeSpeed(double shooterIntakeSpeed) {
-    singleMotorShooterLeft.setIntakeSpeed(shooterIntakeSpeed);
-    singleMotorShooterRight.setIntakeSpeed(shooterIntakeSpeed);
-
-  }
-
-  @Override
-  public void stop() {
-    stopMainWheel();
-    stopBackspinWheel();
-    stopIntakeWheel();
+  public void holdPosition() {
   }
 
   public void stopMainWheel() {
-    singleMotorShooterLeft.stopMainWheel();
-    singleMotorShooterRight.stopMainWheel();
-
+    mainFlywheelSetpoint = 0;
+    shooterFlywheelInner.stopMotor();
   }
 
   public void stopBackspinWheel() {
-    singleMotorShooterLeft.stopBackspinWheel();
-    singleMotorShooterRight.stopBackspinWheel();
-  }
-
-  public void stopIntakeWheel() {
-    singleMotorShooterLeft.stopIntakeWheel();
-    singleMotorShooterRight.stopIntakeWheel();
+    backspinSetpoint = 0;
+    backspinWheelMotor.stopMotor();
 
   }
 
   @Override
   public void periodic() {
-    // right
-    if (shooterRightMainMotorsPIDkP.hasChanged()
-        || shooterRightMainMotorsPIDkI.hasChanged()
-        || shooterRightMainMotorsPIDkD.hasChanged()
-        || shooterRightMainMotorsPIDkS.hasChanged()
-        || shooterRightMainMotorsPIDkV.hasChanged()
-        || shooterRightMainMotorsPIDkA.hasChanged()) {
-      configureShooterFlywheel();
-    }
-    if (shooterRightIntakeMotorsPIDkP.hasChanged()
-        || shooterRightIntakeMotorsPIDkI.hasChanged()
-        || shooterRightIntakeMotorsPIDkD.hasChanged()
-        || shooterRightIntakeMotorsPIDkS.hasChanged()
-        || shooterRightIntakeMotorsPIDkV.hasChanged()
-        || shooterRightIntakeMotorsPIDkA.hasChanged()) {
-      configureIntakeWheel();
-    }
-    if (shooterRightBackspinMotorsPIDkP.hasChanged()
-        || shooterRightBackspinMotorsPIDkI.hasChanged()
-        || shooterRightBackspinMotorsPIDkD.hasChanged()
-        || shooterRightBackspinMotorsPIDkS.hasChanged()
-        || shooterRightBackspinMotorsPIDkV.hasChanged()
-        || shooterRightBackspinMotorsPIDkA.hasChanged()) {
-      configurebackspinWheelMotor();
-    }
 
     // left
-    if (shooterLeftMainMotorsPIDkP.hasChanged()
-        || shooterLeftMainMotorsPIDkI.hasChanged()
-        || shooterLeftMainMotorsPIDkD.hasChanged()
-        || shooterLeftMainMotorsPIDkS.hasChanged()
-        || shooterLeftMainMotorsPIDkV.hasChanged()
-        || shooterLeftMainMotorsPIDkA.hasChanged()) {
+    if (shooterMainMotorsPIDkP.hasChanged()
+        || shooterMainMotorsPIDkI.hasChanged()
+        || shooterMainMotorsPIDkD.hasChanged()
+        || shooterMainMotorsPIDkS.hasChanged()
+        || shooterMainMotorsPIDkV.hasChanged()
+        || shooterMainMotorsPIDkA.hasChanged()) {
       configureShooterFlywheel();
     }
-    if (shooterLeftIntakeMotorsPIDkP.hasChanged()
-        || shooterLeftIntakeMotorsPIDkI.hasChanged()
-        || shooterLeftIntakeMotorsPIDkD.hasChanged()
-        || shooterLeftIntakeMotorsPIDkS.hasChanged()
-        || shooterLeftIntakeMotorsPIDkV.hasChanged()
-        || shooterLeftIntakeMotorsPIDkA.hasChanged()) {
-      configureIntakeWheel();
-    }
-    if (shooterLeftBackspinMotorsPIDkP.hasChanged()
-        || shooterLeftBackspinMotorsPIDkI.hasChanged()
-        || shooterLeftBackspinMotorsPIDkD.hasChanged()
-        || shooterLeftBackspinMotorsPIDkS.hasChanged()
-        || shooterLeftBackspinMotorsPIDkV.hasChanged()
-        || shooterLeftBackspinMotorsPIDkA.hasChanged()) {
+    if (shooterBackspinMotorsPIDkP.hasChanged()
+        || shooterBackspinMotorsPIDkI.hasChanged()
+        || shooterBackspinMotorsPIDkD.hasChanged()
+        || shooterBackspinMotorsPIDkS.hasChanged()
+        || shooterBackspinMotorsPIDkV.hasChanged()
+        || shooterBackspinMotorsPIDkA.hasChanged()) {
       configurebackspinWheelMotor();
     }
   }

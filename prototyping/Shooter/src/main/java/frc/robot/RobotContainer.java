@@ -14,6 +14,8 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 // import frc.robot.subsystems.roller.RollerSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -39,7 +41,8 @@ import frc.robot.subsystems.Shooter.ShooterState;
  */
 public class RobotContainer {
   // Subsystems
-  private final Shooter m_shooter;
+  private final Shooter m_lefShooter;
+  private final Shooter m_rightShooter;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -54,17 +57,21 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_shooter = new Shooter(new ShooterReal());
+        m_lefShooter = new Shooter(new ShooterReal("Left"),"Left");
+        m_rightShooter = new Shooter(new ShooterReal("Right"),"Right");
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_shooter = new Shooter(new ShooterReal());
+        m_lefShooter = new Shooter(new ShooterReal("Left"),"Left");
+        m_rightShooter = new Shooter(new ShooterReal("Right"),"right");
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        m_shooter = new Shooter(new ShooterIO() {
-        });
+        m_lefShooter = new Shooter(new ShooterIO() {
+        },"Left");
+        m_rightShooter = new Shooter(new ShooterIO() {
+        },"Right");
         break;
     }
 
@@ -86,57 +93,31 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    ShooterState idleState = new ShooterState();
-    ShooterState.State desired = ShooterState.State.MANUALBOTH;
-    idleState.setState(desired);
-    idleState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+    ShooterState idleStateLeft = new ShooterState("Left");
+    ShooterState.State desired = ShooterState.State.MANUAL;
+    idleStateLeft.setState(desired);
+    idleStateLeft.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
         Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
-    m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.setState(idleState), m_shooter));
+    m_lefShooter.setDefaultCommand(new RunCommand(() -> m_lefShooter.setState(idleStateLeft), m_lefShooter));
+
+    ShooterState idleStateRight = new ShooterState("Right");
+    idleStateRight.setState(desired);
+    idleStateRight.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+        Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
+    m_rightShooter.setDefaultCommand(new RunCommand(() -> m_rightShooter.setState(idleStateRight), m_rightShooter));
 
 
-
-    ShooterState desiredState = new ShooterState();
-    desiredState.setState(desired);
-
+    ShooterState desiredStateLeft = new ShooterState("Left");
+    desiredStateLeft.setState(desired);
+    ShooterState desiredStateRight= new ShooterState("Right");
+    desiredStateLeft.setState(desired);
 
     // CONTROL WHEELS INDIVIDUALLY
     controller.y().whileTrue(new RunCommand(() -> {
-      for (int i = 0; i < desiredState.getOutput().size(); i++) {
-        m_shooter.setMainWheelSpeed(desiredState.getFlywheelSpeed(i));
-      }
-    }, m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopMainWheel()));
-    controller.b().whileTrue(new RunCommand(() -> {
-      for (int i = 0; i < desiredState.getOutput().size(); i++) {
-        m_shooter.setBackspinSpeed(desiredState.getBackspinSpeed(i));
-      }
-    }, m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopBackspinWheel()));
-    controller.x().whileTrue(new RunCommand(() -> {
-      for (int i = 0; i < desiredState.getOutput().size(); i++) {
-        m_shooter.setIntakeSpeed(desiredState.getIntakeSpeed(i));
-      }
-    }, m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
-
-    // Control wheels with intake A button will spin up the backspin and main
-    // flywheels, right bumper will allow intaking.
-    controller.rightBumper().whileTrue(new RunCommand(() -> {
-      for (int i = 0; i < desiredState.getOutput().size(); i++) {
-        m_shooter.setIntakeSpeed(desiredState.getIntakeSpeed(i));
-      }
-    }, m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
-    controller.a()
-        .whileTrue(new RunCommand(() -> {
-          for (int i = 0; i < desiredState.getOutput().size(); i++) {
-            m_shooter.setMainWheelSpeed(desiredState.getFlywheelSpeed(i));
-            m_shooter.setBackspinSpeed(desiredState.getBackspinSpeed(i));
-          }
-        }, m_shooter)).onFalse(new InstantCommand(() -> {
-          m_shooter.stopBackspinWheel();
-          m_shooter.stopIntakeWheel();
-        }));
+        m_lefShooter.setMainWheelSpeed(desiredStateLeft.getFlywheelSpeed());
+    }, m_lefShooter).alongWith(new RunCommand(() -> {
+        m_rightShooter.setMainWheelSpeed(desiredStateRight.getFlywheelSpeed());
+    }, m_rightShooter)));
   }
 
   /**
