@@ -22,11 +22,11 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
+import frc.robot.subsystems.Shooter.ShooterIntake;
 import frc.robot.subsystems.Shooter.ShooterReal;
 import frc.robot.subsystems.Shooter.ShooterState;
 
@@ -43,6 +43,12 @@ public class RobotContainer {
   // Subsystems
   private final Shooter m_lefShooter;
   private final Shooter m_rightShooter;
+  private final Shooter m_shooterIntake;
+
+  private ShooterState.State desired = ShooterState.State.MANUAL;
+  private ShooterState desiredStateLeft;
+  private ShooterState desiredStateRight;
+  private ShooterState desiredStateIntake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -54,24 +60,45 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    desiredStateLeft = new ShooterState("Left");
+    desiredStateLeft.setState(desired);
+    desiredStateRight = new ShooterState("Right");
+    desiredStateLeft.setState(desired);
+    desiredStateIntake = new ShooterState("Intake");
+    desiredStateLeft.setState(desired);
+
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_lefShooter = new Shooter(new ShooterReal("Left"),"Left");
-        m_rightShooter = new Shooter(new ShooterReal("Right"),"Right");
+        m_lefShooter = new Shooter(new ShooterReal("Left"));
+        m_lefShooter.applyState();
+        m_rightShooter = new Shooter(new ShooterReal("Right"));
+        m_rightShooter.applyState();
+        m_shooterIntake = new Shooter(new ShooterIntake("Intake"));
+        m_shooterIntake.applyState();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_lefShooter = new Shooter(new ShooterReal("Left"),"Left");
-        m_rightShooter = new Shooter(new ShooterReal("Right"),"right");
+        m_lefShooter = new Shooter(new ShooterReal("Left"));
+        m_lefShooter.applyState();
+        m_rightShooter = new Shooter(new ShooterReal("Right"));
+        m_rightShooter.applyState();
+        m_shooterIntake = new Shooter(new ShooterIntake("Intake"));
+        m_shooterIntake.applyState();
         break;
 
       default:
         // Replayed robot, disable IO implementations
         m_lefShooter = new Shooter(new ShooterIO() {
-        },"Left");
+        });
+        m_lefShooter.applyState();
         m_rightShooter = new Shooter(new ShooterIO() {
-        },"Right");
+        });
+        m_rightShooter.applyState();
+        m_shooterIntake = new Shooter(new ShooterIO() {
+        });
+        m_shooterIntake.applyState();
         break;
     }
 
@@ -93,31 +120,33 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    ShooterState idleStateLeft = new ShooterState("Left");
-    ShooterState.State desired = ShooterState.State.MANUAL;
-    idleStateLeft.setState(desired);
-    idleStateLeft.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+    desiredStateLeft.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
         Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
-    m_lefShooter.setDefaultCommand(new RunCommand(() -> m_lefShooter.setState(idleStateLeft), m_lefShooter));
+    m_lefShooter.setDefaultCommand(new RunCommand(() -> m_lefShooter.setState(desiredStateLeft), m_lefShooter));
 
-    ShooterState idleStateRight = new ShooterState("Right");
-    idleStateRight.setState(desired);
-    idleStateRight.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+    desiredStateRight.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
         Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
-    m_rightShooter.setDefaultCommand(new RunCommand(() -> m_rightShooter.setState(idleStateRight), m_rightShooter));
+    m_rightShooter.setDefaultCommand(new RunCommand(() -> m_rightShooter.setState(desiredStateRight), m_rightShooter));
 
+    desiredStateIntake.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+        Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
+    m_shooterIntake.setDefaultCommand(new RunCommand(() -> m_shooterIntake.setState(desiredStateIntake), m_shooterIntake));
 
-    ShooterState desiredStateLeft = new ShooterState("Left");
-    desiredStateLeft.setState(desired);
-    ShooterState desiredStateRight= new ShooterState("Right");
-    desiredStateLeft.setState(desired);
 
     // CONTROL WHEELS INDIVIDUALLY
     controller.y().whileTrue(new RunCommand(() -> {
-        m_lefShooter.setMainWheelSpeed(desiredStateLeft.getFlywheelSpeed());
+      m_lefShooter.setMainWheelSpeed(desiredStateLeft.getFlywheelSpeed());
     }, m_lefShooter).alongWith(new RunCommand(() -> {
-        m_rightShooter.setMainWheelSpeed(desiredStateRight.getFlywheelSpeed());
+      m_rightShooter.setMainWheelSpeed(desiredStateRight.getFlywheelSpeed());
     }, m_rightShooter)));
+    controller.x().whileTrue(new RunCommand(() -> {
+      m_lefShooter.setBackspinSpeed(desiredStateLeft.getBackspinSpeed());
+    }, m_lefShooter).alongWith(new RunCommand(() -> {
+      m_rightShooter.setBackspinSpeed(desiredStateRight.getBackspinSpeed());
+    }, m_rightShooter)));
+    controller.a().whileTrue(new RunCommand(() -> {
+      m_lefShooter.setIntakeSpeed(desiredStateIntake.getIntakeSpeed());
+    }, m_lefShooter));
   }
 
   /**

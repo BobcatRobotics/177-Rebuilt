@@ -10,22 +10,26 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-
   private ShooterState desiredState;
   private String name;
 
-  public Shooter(ShooterIO io, String name) {
+  public Shooter(ShooterIO io) {
     this.io = io;
-    this.name = name;
+  }
+
+  public void applyState(){
+    this.name = io.getName();
     desiredState = new ShooterState(name);
     desiredState.setState(State.IDLE);
   }
+
+
 
   @Override
   public void periodic() {
     io.periodic();
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter/"+ name + "/inputs", inputs);
+    Logger.processInputs("Shooter/" + name + "/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
   }
@@ -40,8 +44,8 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double ShooterSpeed, double ShooterBackspinSpeed) {
-    io.setVelocity(ShooterSpeed, ShooterBackspinSpeed);
+  private void setVelocity(double ShooterSpeed, double ShooterBackspinSpeed, double ShooterIntakeSpeed) {
+    io.setVelocity(ShooterSpeed, ShooterBackspinSpeed, ShooterIntakeSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
@@ -51,7 +55,11 @@ public class Shooter extends SubsystemBase {
   public void setBackspinSpeed(double shooterBackspinSpeed) {
     io.setBackspinSpeed(shooterBackspinSpeed);
   }
-  
+
+  public void setIntakeSpeed(double shooterIntakeSpeed) {
+    io.setIntakeSpeed(shooterIntakeSpeed);
+  }
+
   public void holdPosition() {
     io.holdPosition();
   }
@@ -60,19 +68,21 @@ public class Shooter extends SubsystemBase {
     io.stop();
   }
 
-  public void stopMainWheel(){
+  public void stopMainWheel() {
     io.stopMainWheel();
   }
-  public void stopBackspinWheel(){
+
+  public void stopBackspinWheel() {
     io.stopBackspinWheel();
 
   }
-  public void stopIntakeWheel(){
+
+  public void stopIntakeWheel() {
     io.stopBackspinWheel();
   }
 
   @Override
-  public void simulationPeriodic(){
+  public void simulationPeriodic() {
     io.simulationPeriodic();
   }
 }

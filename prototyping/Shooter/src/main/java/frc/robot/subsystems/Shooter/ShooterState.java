@@ -25,15 +25,19 @@ public class ShooterState {
   private State currentState = State.IDLE;
 
   private String name;
-  public ShooterState(String name){
-    this.name = name;
-  }
 
   // Manual control values
-  private TunableDouble manualFlywheelSpeed = new TunableDouble("/Shooter/" + name + "/Flywheel/manualFlywheelSpeedTarget", 0.0);
-  private TunableDouble manualIntakeSpeed = new TunableDouble("/Shooter/" + name + "/Intake/manualIntakeSpeedTarget", 0.0);
-  private TunableDouble manualBackspinSpeed = new TunableDouble("/Shooter/" + name + "/Backspin/manualBackspinSpeedTarget", 0.0);
-  
+  private TunableDouble manualFlywheelSpeed ;
+  private TunableDouble manualIntakeSpeed;
+  private TunableDouble manualBackspinSpeed;
+
+  public ShooterState(String name) {
+    this.name = name;
+    manualFlywheelSpeed = new TunableDouble("/Shooter/" + name + "/Flywheel/manualFlywheelSpeedTarget", 0.0);
+    manualIntakeSpeed = new TunableDouble("/Shooter/" + name + "/Intake/manualIntakeSpeedTarget", 0.0);
+    manualBackspinSpeed = new TunableDouble("/Shooter/" + name + "/Backspin/manualBackspinSpeedTarget", 0.0);
+  }
+
   /** Set the shooter to a predefined state */
   public void setState(State state) {
     this.currentState = state;
@@ -52,7 +56,6 @@ public class ShooterState {
     currentState = State.MANUAL;
   }
 
-
   /** Returns the shooter outputs based on the current state */
   public ShooterGoal getOutput() {
     ShooterGoal goal = new ShooterGoal();
@@ -63,7 +66,7 @@ public class ShooterState {
         goal.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
         goal.backspinSpeed = Constants.ShooterConstants.idleBackspinSpeedRPS;
       }
-      case MANUAL-> {
+      case MANUAL -> {
         goal.flywheelSpeed = manualFlywheelSpeed.get();
         goal.intakeSpeed = manualIntakeSpeed.get();
         goal.backspinSpeed = manualBackspinSpeed.get();
