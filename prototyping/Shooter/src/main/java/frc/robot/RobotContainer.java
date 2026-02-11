@@ -13,6 +13,8 @@
 // GNU General Public License for more details.
 
 package frc.robot;
+import java.util.ArrayList;
+import java.util.List;
 
 // import frc.robot.subsystems.roller.RollerSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -20,13 +22,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterReal;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Shooter.Modules.ModuleType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,7 +41,14 @@ import frc.robot.subsystems.Shooter.ShooterState;
  */
 public class RobotContainer {
   // Subsystems
-  private final Shooter m_shooter;
+  private final Shooter m_lefShooter;
+  private final Shooter m_rightShooter;
+  private final Shooter m_shooterIntake;
+
+  private ShooterState.State desired = ShooterState.State.MANUAL;
+  private ShooterState desiredStateLeft;
+  private ShooterState desiredStateRight;
+  private ShooterState desiredStateIntake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -51,20 +60,65 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    List<ModuleType> leftShooterTypes = new ArrayList<ModuleType>();
+    leftShooterTypes.add(ModuleType.FLYWHEEL);
+    leftShooterTypes.add(ModuleType.BACKSPIN);
+    List<ModuleType> rightShooterTypes = new ArrayList<ModuleType>();
+    rightShooterTypes.add(ModuleType.FLYWHEEL);
+    rightShooterTypes.add(ModuleType.BACKSPIN);
+    List<ModuleType> intakeShooterTypes = new ArrayList<ModuleType>();
+    intakeShooterTypes.add(ModuleType.INTAKE);
+
+    desiredStateLeft = new ShooterState("Left", leftShooterTypes);
+    desiredStateLeft.setState(desired);
+    desiredStateRight = new ShooterState("Right", rightShooterTypes);
+    desiredStateLeft.setState(desired);
+    desiredStateIntake = new ShooterState("Intake", intakeShooterTypes);
+    desiredStateLeft.setState(desired);
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_shooter = new Shooter(new ShooterReal());
+
+        m_lefShooter = new Shooter(new ShooterReal("Left",leftShooterTypes));
+        m_lefShooter.applyState();
+
+        m_rightShooter = new Shooter(new ShooterReal("Right", rightShooterTypes));
+        m_rightShooter.applyState();
+
+        m_shooterIntake = new Shooter(new ShooterReal("Intake", intakeShooterTypes));
+        m_shooterIntake.applyState();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_shooter = new Shooter(new ShooterReal());
+        List<ModuleType> leftShooterSimTypes = new ArrayList<ModuleType>();
+        leftShooterSimTypes.add(ModuleType.FLYWHEEL);
+        leftShooterSimTypes.add(ModuleType.BACKSPIN);
+        m_lefShooter = new Shooter(new ShooterReal("Left",leftShooterSimTypes));
+        m_lefShooter.applyState();
+        List<ModuleType> rightShooterSimTypes = new ArrayList<ModuleType>();
+        rightShooterSimTypes.add(ModuleType.FLYWHEEL);
+        rightShooterSimTypes.add(ModuleType.BACKSPIN);
+        m_rightShooter = new Shooter(new ShooterReal("Right", rightShooterSimTypes));
+        m_rightShooter.applyState();
+        List<ModuleType> intakeShooterSimTypes = new ArrayList<ModuleType>();
+        intakeShooterSimTypes.add(ModuleType.INTAKE);
+        m_shooterIntake = new Shooter(new ShooterReal("Intake", intakeShooterSimTypes));
+        m_shooterIntake.applyState();
         break;
 
       default:
         // Replayed robot, disable IO implementations
-        m_shooter = new Shooter(new ShooterIO() {
+        m_lefShooter = new Shooter(new ShooterIO() {
         });
+        m_lefShooter.applyState();
+        m_rightShooter = new Shooter(new ShooterIO() {
+        });
+        m_rightShooter.applyState();
+        m_shooterIntake = new Shooter(new ShooterIO() {
+        });
+        m_shooterIntake.applyState();
         break;
     }
 
@@ -86,34 +140,33 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    ShooterState idleState = new ShooterState();
-    ShooterState.State desired = ShooterState.State.MANUAL;
-    idleState.setState(desired);
-    idleState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
-        Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRPS);
-    m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.setState(idleState), m_shooter));
+    desiredStateLeft.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPM,
+        Constants.ShooterConstants.idleIntakeSpeedRPM, Constants.ShooterConstants.idleBackspinSpeedRPM);
+    m_lefShooter.setDefaultCommand(new RunCommand(() -> m_lefShooter.setState(desiredStateLeft), m_lefShooter));
+
+    desiredStateRight.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPM,
+        Constants.ShooterConstants.idleIntakeSpeedRPM, Constants.ShooterConstants.idleBackspinSpeedRPM);
+    m_rightShooter.setDefaultCommand(new RunCommand(() -> m_rightShooter.setState(desiredStateRight), m_rightShooter));
+
+    desiredStateIntake.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPM,
+        Constants.ShooterConstants.idleIntakeSpeedRPM, Constants.ShooterConstants.idleBackspinSpeedRPM);
+    m_shooterIntake.setDefaultCommand(new RunCommand(() -> m_shooterIntake.setState(desiredStateIntake), m_shooterIntake));
+
 
     // CONTROL WHEELS INDIVIDUALLY
-    controller.y().whileTrue(new RunCommand(() -> m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed()), m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopMainWheel()));
-    controller.b().whileTrue(new RunCommand(() -> m_shooter.setBackspinSpeed(idleState.getBackspinSpeed()), m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopBackspinWheel()));
-    controller.x().whileTrue(new RunCommand(() -> m_shooter.setIntakeSpeed(idleState.getIntakeSpeed()), m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
-
-    // Control wheels with intake A button will spin up the backspin and main
-    // flywheels, right bumper will allow intaking.
-    controller.rightBumper()
-        .whileTrue(new RunCommand(() -> m_shooter.setIntakeSpeed(idleState.getIntakeSpeed()), m_shooter))
-        .onFalse(new InstantCommand(() -> m_shooter.stopIntakeWheel()));
-    controller.a()
-        .whileTrue(new RunCommand(() -> {
-          m_shooter.setMainWheelSpeed(idleState.getFlywheelSpeed());
-          m_shooter.setBackspinSpeed(idleState.getBackspinSpeed());
-        }, m_shooter)).onFalse(new InstantCommand(() -> {
-          m_shooter.stopBackspinWheel();
-          m_shooter.stopIntakeWheel();
-        }));
+    controller.y().whileTrue(new RunCommand(() -> {
+      m_lefShooter.setMainWheelSpeed(desiredStateLeft.getFlywheelSpeed());
+    }, m_lefShooter).alongWith(new RunCommand(() -> {
+      m_rightShooter.setMainWheelSpeed(desiredStateRight.getFlywheelSpeed());
+    }, m_rightShooter)));
+    controller.x().whileTrue(new RunCommand(() -> {
+      m_lefShooter.setBackspinSpeed(desiredStateLeft.getBackspinSpeed());
+    }, m_lefShooter).alongWith(new RunCommand(() -> {
+      m_rightShooter.setBackspinSpeed(desiredStateRight.getBackspinSpeed());
+    }, m_rightShooter)));
+    controller.a().whileTrue(new RunCommand(() -> {
+      m_lefShooter.setIntakeSpeed(desiredStateIntake.getIntakeSpeed());
+    }, m_lefShooter));
   }
 
   /**
