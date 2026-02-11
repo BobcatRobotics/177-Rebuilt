@@ -146,7 +146,7 @@ public class Drive extends SubsystemBase {
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
-
+        
     // Configure SysId
     sysId =
         new SysIdRoutine(
@@ -158,14 +158,12 @@ public class Drive extends SubsystemBase {
             new SysIdRoutine.Mechanism(
                 (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
-
    public Rotation3d getRotation3d() {
     return new Rotation3d(
         0,
         0,
         poseEstimator.getEstimatedPosition().getRotation().getRadians());
   }
-
   public void updatePose(VisionObservation visionObservation) {
     poseEstimator.addVisionMeasurement(
         visionObservation.getPose(),
@@ -347,7 +345,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 

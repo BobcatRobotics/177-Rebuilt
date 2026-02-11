@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter/RightInputs", RightInputs);
     
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
-
+    Logger.recordOutput("Shooter/Wheel_Speed", )
   }
 
   public void setState(ShooterState state) {
