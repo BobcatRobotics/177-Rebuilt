@@ -4,37 +4,43 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 public final class ModuleConfigurator {
     private final Slot0Configs slotConfig;
-    private final int motorLeftId;
-    private final int motorRightId;
-    private final boolean isInverted;
+    private final int motorInnerId;
+    private final int motorOuterId;
+    private final boolean isInnerInverted;
+    private final boolean isOuterInverted;
     private final boolean isCoast;
     private final double currentLimit;
+
     public ModuleConfigurator(
             Slot0Configs slotConfig,
-            int motorId,
+            int motorInnerId,
             boolean isInverted,
             boolean isCoast,
             double currentLimit) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
-        this.motorLeftId = motorId;
-        this.motorRightId = motorId;
-        this.isInverted = isInverted;
+        this.motorInnerId = motorInnerId;
+        this.motorOuterId = motorInnerId;
+        this.isInnerInverted = isInverted;
+        this.isOuterInverted = isInverted;
         this.isCoast = isCoast;
         this.currentLimit = currentLimit;
     }
+
     public ModuleConfigurator(
             Slot0Configs slotConfig,
-            int motorLeftId,
-            int motorRightId,
-            boolean isInverted,
+            int motorInnerId,
+            int motorOuterId,
+            boolean isInnerInverted,
+            boolean isOuterInverted,
             boolean isCoast,
             double currentLimit) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
-        this.motorLeftId = motorLeftId;
-        this.motorRightId = motorRightId;
-        this.isInverted = isInverted;
+        this.motorInnerId = motorInnerId;
+        this.motorOuterId = motorOuterId;
+        this.isInnerInverted = isInnerInverted;
+        this.isOuterInverted = isOuterInverted;
         this.isCoast = isCoast;
         this.currentLimit = currentLimit;
     }
@@ -45,15 +51,24 @@ public final class ModuleConfigurator {
         return slotConfig;
     }
 
-    public int getMotorRightId() {
-        return motorRightId;
-    }
-    public int getMotorLeftId() {
-        return motorLeftId;
+    public int getMotorOuterId() {
+        return motorInnerId;
     }
 
-    public boolean isInverted() {
-        return isInverted;
+    public int getMotorInnerId() {
+        return motorOuterId;
+    }
+
+    public boolean isInnerInverted() {
+        return isInnerInverted;
+    }
+
+    public boolean isOuterInverted() {
+        return isOuterInverted;
+    }
+
+    public int getMotorId() {
+        return motorInnerId;
     }
 
     public boolean isCoast() {
@@ -64,8 +79,9 @@ public final class ModuleConfigurator {
         return currentLimit;
     }
 
-    public ModuleConfigurator apply(Slot0Configs slot){
-        return new ModuleConfigurator(slot, motorLeftId, isInverted, isCoast, currentLimit) ;
+    public ModuleConfigurator apply(Slot0Configs slot) {
+        return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
+                currentLimit);
     }
 
 }

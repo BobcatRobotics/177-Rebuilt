@@ -12,9 +12,14 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 // --- Simulated Motor Class ---
 public class SimMotorFX {
-    private static final DCMotor motorModel = DCMotor.getKrakenX60(1);
-    private static final DCMotorSim sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
-            motorModel);
+    public enum MotorType {
+        FALCON,
+        FALCON_FOC,
+        KRAKEN,
+        KRAKEN_FOC
+    }
+    private final DCMotor motorModel;
+    private final DCMotorSim sim;
     private double appliedVolts = 0.0;
     private double velocity = 0.0;
     private double acceleration = 0.0;
@@ -29,7 +34,27 @@ public class SimMotorFX {
     private double krakenFreeSpeedInRPM = 6050;
 
     public SimMotorFX() {
+        motorModel = DCMotor.getKrakenX60Foc(1);
+        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
+                motorModel);
         setTorque(0);
+    }
+
+    public SimMotorFX(MotorType motorType) {
+        motorModel = selectMotor(motorType);
+
+        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
+                motorModel);
+        setTorque(0);
+    }
+
+    private DCMotor selectMotor(MotorType type) {
+        return switch (type) {
+            case FALCON      -> DCMotor.getFalcon500(1);
+            case FALCON_FOC  -> DCMotor.getFalcon500Foc(1);
+            case KRAKEN      -> DCMotor.getKrakenX60(1);
+            case KRAKEN_FOC  -> DCMotor.getKrakenX60Foc(1);
+        };
     }
 
     // Update based on a target setpoint

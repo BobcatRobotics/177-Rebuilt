@@ -6,6 +6,7 @@ import java.util.List;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.Shooter.Modules.ModuleType;
 
 public class ShooterState {
 
@@ -18,23 +19,34 @@ public class ShooterState {
 
   public enum State {
     IDLE,
-    MANUALBOTH,
-    MANUALLEFT,
-    MANUALRIGHT,
-    TARGETINGBOTH,
-    TARGETINGLEFT,
-    TARGETINGRIGHT
+    MANUAL,
+    TARGETING
   }
 
   private State currentState = State.IDLE;
 
+  private String name;
+
   // Manual control values
-  private TunableDouble manualFlywheelSpeedRight = new TunableDouble("/Shooter/Right/Flywheel/manualFlywheelSpeedTarget", 0.0);
-  private TunableDouble manualIntakeSpeedRight = new TunableDouble("/Shooter/Right/Intake/manualIntakeSpeedTarget", 0.0);
-  private TunableDouble manualBackspinSpeedRight = new TunableDouble("/Shooter/Right/Backspin/manualBackspinSpeedTarget", 0.0);
-  private TunableDouble manualFlywheelSpeedLeft = new TunableDouble("/Shooter/Left/Flywheel/manualFlywheelSpeedTarget", 0.0);
-  private TunableDouble manualIntakeSpeedLeft = new TunableDouble("/Shooter/Left/Intake/manualIntakeSpeedTarget", 0.0);
-  private TunableDouble manualBackspinSpeedLeft = new TunableDouble("/Shooter/Left/Backspin/manualBackspinSpeedTarget", 0.0);
+  private TunableDouble manualFlywheelSpeed;
+  private TunableDouble manualIntakeSpeed;
+  private TunableDouble manualBackspinSpeed;
+
+  private List<ModuleType> moduleTypes;
+
+  public ShooterState(String name, List<ModuleType> moduleTypes) {
+    this.moduleTypes = moduleTypes;
+    this.name = name;
+    if (moduleTypes.contains(ModuleType.FLYWHEEL)) {
+      manualFlywheelSpeed = new TunableDouble("/Shooter/" + name + "/Flywheel/manualFlywheelSpeedTarget", 0.0);
+    }
+    if (moduleTypes.contains(ModuleType.INTAKE)) {
+      manualIntakeSpeed = new TunableDouble("/Shooter/" + name + "/Intake/manualIntakeSpeedTarget", 0.0);
+    }
+    if (moduleTypes.contains(ModuleType.BACKSPIN)) {
+      manualBackspinSpeed = new TunableDouble("/Shooter/" + name + "/Backspin/manualBackspinSpeedTarget", 0.0);
+    }
+  }
 
   /** Set the shooter to a predefined state */
   public void setState(State state) {
@@ -48,99 +60,60 @@ public class ShooterState {
       double flywheelSpeed,
       double intakeSpeed,
       double backspinSpeed) {
-    manualFlywheelSpeedRight = new TunableDouble("/Shooter/Right/Flywheel/manualFlywheelSpeedTarget", flywheelSpeed);
-    manualIntakeSpeedRight = new TunableDouble("/Shooter/Right/Intake/manualIntakeSpeedTarget", intakeSpeed);
-    manualBackspinSpeedRight = new TunableDouble("/Shooter/Right/Backspin/manualBackspinSpeedTarget", backspinSpeed);
-    manualFlywheelSpeedLeft = new TunableDouble("/Shooter/Left/Flywheel/manualFlywheelSpeedTarget", flywheelSpeed);
-    manualIntakeSpeedLeft = new TunableDouble("/Shooter/Left/Intake/manualIntakeSpeedTarget", intakeSpeed);
-    manualBackspinSpeedLeft = new TunableDouble("/Shooter/Left/Backspin/manualBackspinSpeedTarget", backspinSpeed);
-
-    currentState = State.MANUALBOTH;
+    if (moduleTypes.contains(ModuleType.FLYWHEEL)) {
+      manualFlywheelSpeed = new TunableDouble("/Shooter/" + name + "/Flywheel/manualFlywheelSpeedTarget",
+          flywheelSpeed);
+    }
+    if (moduleTypes.contains(ModuleType.INTAKE)) {
+      manualIntakeSpeed = new TunableDouble("/Shooter/" + name + "/Intake/manualIntakeSpeedTarget", intakeSpeed);
+    }
+    if (moduleTypes.contains(ModuleType.BACKSPIN)) {
+      manualBackspinSpeed = new TunableDouble("/Shooter/" + name + "/Backspin/manualBackspinSpeedTarget",
+          backspinSpeed);
+    }
+    currentState = State.MANUAL;
   }
 
-
   /** Returns the shooter outputs based on the current state */
-  public List<ShooterGoal> getOutput() {
-    ShooterGoal leftGoal = new ShooterGoal();
-    ShooterGoal rightGoal = new ShooterGoal();
-    List<ShooterGoal> goals = new ArrayList<ShooterGoal>();
+  public ShooterGoal getOutput() {
+    ShooterGoal goal = new ShooterGoal();
 
     switch (currentState) {
       case IDLE -> {
-        leftGoal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        leftGoal.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
-        leftGoal.backspinSpeed = Constants.ShooterConstants.idleBackspinSpeedRPS;
-        rightGoal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        rightGoal.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
-        rightGoal.backspinSpeed = Constants.ShooterConstants.idleBackspinSpeedRPS;
-        goals.add(leftGoal);
-        goals.add(rightGoal);
+        goal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPM;
+        goal.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPM;
+        goal.backspinSpeed = Constants.ShooterConstants.idleBackspinSpeedRPM;
       }
-      case MANUALLEFT -> {
-        leftGoal.flywheelSpeed = manualFlywheelSpeedLeft.get();
-        leftGoal.intakeSpeed = manualIntakeSpeedLeft.get();
-        leftGoal.backspinSpeed = manualBackspinSpeedLeft.get();
-        goals.add(leftGoal);
+      case MANUAL -> {
+        goal.flywheelSpeed = manualFlywheelSpeed.get();
+        goal.intakeSpeed = manualIntakeSpeed.get();
+        goal.backspinSpeed = manualBackspinSpeed.get();
       }
-      case MANUALRIGHT -> {
-        rightGoal.flywheelSpeed = manualFlywheelSpeedRight.get();
-        rightGoal.intakeSpeed = manualIntakeSpeedRight.get();
-        rightGoal.backspinSpeed = manualBackspinSpeedRight.get();
-        goals.add(rightGoal);
-      }
-      case MANUALBOTH -> {
-        leftGoal.flywheelSpeed = manualFlywheelSpeedLeft.get();
-        leftGoal.intakeSpeed = manualIntakeSpeedLeft.get();
-        leftGoal.backspinSpeed = manualBackspinSpeedLeft.get();
-        rightGoal.flywheelSpeed = manualFlywheelSpeedRight.get();
-        rightGoal.intakeSpeed = manualIntakeSpeedRight.get();
-        rightGoal.backspinSpeed = manualBackspinSpeedRight.get();
-        goals.add(leftGoal);
-        goals.add(rightGoal);
-      }
-      case TARGETINGLEFT -> {
+
+      case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
-        leftGoal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        leftGoal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
-        leftGoal.backspinSpeed = Constants.ShooterConstants.targetBackspinSpeedRPS;
-        goals.add(leftGoal);
-      }
-      case TARGETINGRIGHT -> {
-        // Placeholder – typically filled in by vision / interpolation
-        rightGoal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        rightGoal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
-        rightGoal.backspinSpeed = Constants.ShooterConstants.targetBackspinSpeedRPS;
-        goals.add(rightGoal);
-      }
-      case TARGETINGBOTH -> {
-        // Placeholder – typically filled in by vision / interpolation
-        leftGoal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        leftGoal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
-        leftGoal.backspinSpeed = Constants.ShooterConstants.targetBackspinSpeedRPS;
-        rightGoal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        rightGoal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
-        rightGoal.backspinSpeed = Constants.ShooterConstants.targetBackspinSpeedRPS;
-        goals.add(leftGoal);
-        goals.add(rightGoal);
+        goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPM;
+        goal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPM;
+        goal.backspinSpeed = Constants.ShooterConstants.targetBackspinSpeedRPM;
       }
     }
 
-    return goals;
+    return goal;
   }
 
   public State getCurrentState() {
     return currentState;
   }
 
-  public double getFlywheelSpeed(int index) {
-    return getOutput().get(index).flywheelSpeed;
+  public double getFlywheelSpeed() {
+    return getOutput().flywheelSpeed;
   }
 
-  public double getIntakeSpeed(int index) {
-    return getOutput().get(index).intakeSpeed;
+  public double getIntakeSpeed() {
+    return getOutput().intakeSpeed;
   }
 
-  public double getBackspinSpeed(int index) {
-    return getOutput().get(index).backspinSpeed;
+  public double getBackspinSpeed() {
+    return getOutput().backspinSpeed;
   }
 }
