@@ -12,6 +12,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.Limelight.Vision;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterTable;
 
 public class ShootOnTheMove {
     private static final double HOOD_ANGLE_RAD = Math.toRadians(45.0); // Need to get
@@ -26,8 +27,6 @@ public class ShootOnTheMove {
     }
     
     public void update(Pose2d robotPose, ChassisSpeeds robotSpeed, Shooter shooter) {
-
-        HashMap<Double, Double> shooterTable = new HashMap<>(); // Distance to goal, ideal shooter velocity
 
         // 1. LATENCY COMP
         double latency = 0.15; // Need to tune
@@ -55,8 +54,7 @@ public class ShootOnTheMove {
         double velocityAlongShot = robotVelVec.getX() * Math.cos(targetAngle.getRadians()) 
                                   + robotVelVec.getY() * Math.sin(targetAngle.getRadians());
 
-        // 4. CALCULATE IDEAL SHOT (Stationary)
-        double idealHorizontalSpeed = shooterTable.get(dist); //Need to make table
+        double idealHorizontalSpeed = ShooterTable.getSpeed(dist); //Need to make table
 
         // 5. COMPENSATE FOR MOTION
         // Add the velocity component (positive if moving toward goal, negative if away)
