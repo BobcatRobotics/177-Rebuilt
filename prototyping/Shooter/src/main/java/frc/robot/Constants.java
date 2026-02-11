@@ -47,7 +47,7 @@ public final class Constants {
         
         public static final int intakeIDLeft = 21;
         public static final InvertedValue shooterIntakeInvert = InvertedValue.CounterClockwise_Positive;
-        public static final NeutralModeValue topBottomMotorBrakeMode = NeutralModeValue.Coast;
+        public static final NeutralModeValue topBottomMotorBrakeMode = NeutralModeValue.Brake;
         public static final double kIntakeMotorkP = 0;
         public static final double kIntakeMotorkI = 0;
         public static final double kIntakeMotorkD = 0;
@@ -68,12 +68,12 @@ public final class Constants {
             public static final InvertedValue shooterFlywheelInnerInvert = InvertedValue.CounterClockwise_Positive;
             public static final NeutralModeValue shooterMainMotorRightBrakeMode = NeutralModeValue.Coast;
             public static final NeutralModeValue shooterMainMotorLeftBrakeMode = NeutralModeValue.Coast;
-            public static final double kshooterMainkP = 0;
+            public static final double kshooterMainkP = 0.63;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0;
             public static final double kshooterMainkS = 0;
-            public static final double kshooterMainkV = 0;
-            public static final double kshooterMainkA = 0;
+            public static final double kshooterMainkV = 0.26;
+            public static final double kshooterMainkA = 0.74;
             public static final double bottomRightCurrentLimit = 40;
             public static final double bottomLeftCurrentLimit = 40;
 
@@ -101,12 +101,12 @@ public final class Constants {
             public static final InvertedValue shooterFlywheelInnerInvert = InvertedValue.Clockwise_Positive;
             public static final NeutralModeValue shooterMainMotorRightBrakeMode = NeutralModeValue.Coast;
             public static final NeutralModeValue shooterMainMotorLeftBrakeMode = NeutralModeValue.Coast;
-            public static final double kshooterMainkP = 0;
+            public static final double kshooterMainkP = 0.63;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0;
             public static final double kshooterMainkS = 0;
-            public static final double kshooterMainkV = 0;
-            public static final double kshooterMainkA = 0;
+            public static final double kshooterMainkV = 0.26;
+            public static final double kshooterMainkA = 0.74;
             public static final double bottomRightCurrentLimit = 40;
             public static final double bottomLeftCurrentLimit = 40;
 
