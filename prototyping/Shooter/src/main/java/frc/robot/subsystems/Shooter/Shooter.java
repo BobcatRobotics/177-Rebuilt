@@ -19,7 +19,8 @@ public class Shooter extends SubsystemBase {
 
   public void applyState(){
     this.name = io.getName();
-    desiredState = new ShooterState(name);
+
+    desiredState = new ShooterState(name,io.getModuleTypes());
     desiredState.setState(State.IDLE);
   }
 
