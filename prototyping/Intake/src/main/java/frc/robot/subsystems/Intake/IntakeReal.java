@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Minute;
@@ -62,6 +62,21 @@ public class IntakeReal implements IntakeIO {
 
   public double getVelocity() {
     return velocityMotor.getVelocity().getValueAsDouble();
+  }
+
+  //Runs the velocity motor
+  public void runIntake(){
+     velocityMotor.runIntake();
+     return velocityMotor.CurrentLimits();
+  }
+
+  //idle state to Manual state
+  public void setDown(){
+    positionMotor.setState(State.IDLE);
+  }
+
+  public void PositionUp(){
+    positionMotor.setState(State.MANUAL);
   }
 
   @Override
