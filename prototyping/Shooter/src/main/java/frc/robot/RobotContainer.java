@@ -44,11 +44,13 @@ public class RobotContainer {
   private final Shooter m_lefShooter;
   private final Shooter m_rightShooter;
   private final Shooter m_shooterIntake;
+  private final Shooter m_shooterFlywheel;
 
   private ShooterState.State desired = ShooterState.State.MANUAL;
   private ShooterState desiredStateLeft;
   private ShooterState desiredStateRight;
   private ShooterState desiredStateIntake;
+  private ShooterState desiredStateFlywheel;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -62,13 +64,13 @@ public class RobotContainer {
   public RobotContainer() {
 
     List<ModuleType> leftShooterTypes = new ArrayList<ModuleType>();
-    leftShooterTypes.add(ModuleType.FLYWHEEL);
     leftShooterTypes.add(ModuleType.BACKSPIN);
     List<ModuleType> rightShooterTypes = new ArrayList<ModuleType>();
-    rightShooterTypes.add(ModuleType.FLYWHEEL);
     rightShooterTypes.add(ModuleType.BACKSPIN);
     List<ModuleType> intakeShooterTypes = new ArrayList<ModuleType>();
     intakeShooterTypes.add(ModuleType.INTAKE);
+    List<ModuleType> flywheelShooterTypes = new ArrayList<ModuleType>();
+    flywheelShooterTypes.add(ModuleType.FLYWHEEL);
 
     desiredStateLeft = new ShooterState("Left", leftShooterTypes);
     desiredStateLeft.setState(desired);
@@ -76,11 +78,11 @@ public class RobotContainer {
     desiredStateLeft.setState(desired);
     desiredStateIntake = new ShooterState("Intake", intakeShooterTypes);
     desiredStateLeft.setState(desired);
-
+    desiredStateLeft = new ShooterState("Flywheel", flywheelShooterTypes);
+    desiredStateLeft.setState(desired);
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-
         m_lefShooter = new Shooter(new ShooterReal("Left",leftShooterTypes));
         m_lefShooter.applyState();
 
@@ -89,16 +91,17 @@ public class RobotContainer {
 
         m_shooterIntake = new Shooter(new ShooterReal("Intake", intakeShooterTypes));
         m_shooterIntake.applyState();
+
+        m_shooterFlywheel = new Shooter(new ShooterReal("Flywheel", flywheelShooterTypes));
+        m_shooterFlywheel.applyState();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
         List<ModuleType> leftShooterSimTypes = new ArrayList<ModuleType>();
-        leftShooterSimTypes.add(ModuleType.FLYWHEEL);
         leftShooterSimTypes.add(ModuleType.BACKSPIN);
         m_lefShooter = new Shooter(new ShooterReal("Left",leftShooterSimTypes));
         m_lefShooter.applyState();
         List<ModuleType> rightShooterSimTypes = new ArrayList<ModuleType>();
-        rightShooterSimTypes.add(ModuleType.FLYWHEEL);
         rightShooterSimTypes.add(ModuleType.BACKSPIN);
         m_rightShooter = new Shooter(new ShooterReal("Right", rightShooterSimTypes));
         m_rightShooter.applyState();
@@ -106,6 +109,11 @@ public class RobotContainer {
         intakeShooterSimTypes.add(ModuleType.INTAKE);
         m_shooterIntake = new Shooter(new ShooterReal("Intake", intakeShooterSimTypes));
         m_shooterIntake.applyState();
+
+        
+
+        m_shooterFlywheel = new Shooter(new ShooterReal("Flywheel", flywheelShooterTypes));
+        m_shooterFlywheel.applyState();
         break;
 
       default:
@@ -119,6 +127,10 @@ public class RobotContainer {
         m_shooterIntake = new Shooter(new ShooterIO() {
         });
         m_shooterIntake.applyState();
+
+        m_shooterFlywheel = new Shooter(new ShooterIO() {
+        });
+        m_shooterFlywheel.applyState();
         break;
     }
 

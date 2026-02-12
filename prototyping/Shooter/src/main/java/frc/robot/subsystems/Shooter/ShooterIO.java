@@ -11,28 +11,34 @@ public interface ShooterIO {
 
   @AutoLog
   class ShooterIOInputs {
-    public double velocityOfMainFlywheelInnerRPM = 0.0;
+    public double velocityOfMainFlywheelInnerRPMLeft = 0.0;
+     public double velocityOfMainFlywheelInnerRPMRight = 0.0;
     public double velocityOfbackspinWheelMotorRPM = 0.0;
     public double velocityOfIntakeWheelMotorRPM = 0.0;
 
 
-    public double velocityOfMainFlywhelInnerRPMError = 0.0;
+    public double velocityOfMainFlywhelInnerRPMErrorRight = 0.0;
+    public double velocityOfMainFlywhelInnerRPMErrorLeft = 0.0;
     public double velocityOfbackspinWheelMotorRPMError = 0.0;
     public double velocityOfIntakeWheelMotorRPMError = 0.0;
 
-    public double outputOfMainFlywhelInner = 0.0;
+    public double outputOfMainFlywhelInnerLeft = 0.0;
+    public double outputOfMainFlywhelInnerRight = 0.0;
     public double outputOfbackspinWheelMotor = 0.0;
      public double outputOfIntakeWheelInner = 0.0;
 
-    public double accelerationOfMainFlywhelInner = 0.0;
+    public double accelerationOfMainFlywhelInnerLeft = 0.0;
+    public double accelerationOfMainFlywhelInnerRight = 0.0;
     public double accelerationOfbackspinWheelMotor = 0.0;
     public double accelerationOfIntakeWheelMotor = 0.0;
 
-    public double mainFlywheelInnerStatorCurrent = 0.0;
+    public double mainFlywheelInnerStatorCurrentLeft = 0.0;
+    public double mainFlywheelInnerStatorCurrentRight = 0.0;
     public double mainBackspinStatorCurrent = 0.0;
     public double mainIntakeStatorCurrent = 0.0;
 
-    public boolean mainFlywhelInnerConected = false;
+    public boolean mainFlywhelInnerConectedLeft = false;
+    public boolean mainFlywhelInnerConectedRight = false;
     public boolean backspinConnected = false;
     public boolean intakeConnected = false;
   }

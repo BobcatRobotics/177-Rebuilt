@@ -85,9 +85,15 @@ public class ShooterState {
         goal.backspinSpeed = Constants.ShooterConstants.idleBackspinSpeedRPM;
       }
       case MANUAL -> {
-        goal.flywheelSpeed = manualFlywheelSpeed.get();
-        goal.intakeSpeed = manualIntakeSpeed.get();
-        goal.backspinSpeed = manualBackspinSpeed.get();
+        if (moduleTypes.contains(ModuleType.FLYWHEEL)) {
+          goal.flywheelSpeed = manualFlywheelSpeed.get();
+        }
+        if (moduleTypes.contains(ModuleType.INTAKE)) {
+          goal.intakeSpeed = manualIntakeSpeed.get();
+        }
+        if (moduleTypes.contains(ModuleType.BACKSPIN)) {
+          goal.backspinSpeed = manualBackspinSpeed.get();
+        }
       }
 
       case TARGETING -> {
