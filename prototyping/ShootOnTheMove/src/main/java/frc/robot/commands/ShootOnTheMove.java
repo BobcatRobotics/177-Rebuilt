@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,9 +12,19 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.Limelight.Vision;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterTable;
 
 public class ShootOnTheMove {
     private static final double HOOD_ANGLE_RAD = Math.toRadians(45.0); // Need to get
+    private Pose2d robotPose = new Pose2d();
+    private ChassisSpeeds robotSpeed = new ChassisSpeeds();
+    private Shooter shooter = new Shooter(null);
+
+    public ShootOnTheMove(Pose2d robotPose, ChassisSpeeds robotSpeed, Shooter shooter) {
+        this.robotPose = robotPose;
+        this.robotSpeed = robotSpeed;
+        this.shooter = shooter;
+    }
     
     public void update(Pose2d robotPose, ChassisSpeeds robotSpeed, Shooter shooter) {
 
@@ -43,7 +54,6 @@ public class ShootOnTheMove {
         double velocityAlongShot = robotVelVec.getX() * Math.cos(targetAngle.getRadians()) 
                                   + robotVelVec.getY() * Math.sin(targetAngle.getRadians());
 
-        // 4. CALCULATE IDEAL SHOT (Stationary)
         double idealHorizontalSpeed = ShooterTable.getSpeed(dist); //Need to make table
 
         // 5. COMPENSATE FOR MOTION
@@ -54,7 +64,7 @@ public class ShootOnTheMove {
         double totalExitVelocity = requiredHorizontalSpeed / Math.cos(HOOD_ANGLE_RAD);
         
         // 7. SET OUTPUT
-        shooter.setVelocity(totalExitVelocity, intakeVelocity, backSpinVelocity); //Shooter Table or Ratio Method
+        shooter.setMainWheelSpeed(totalExitVelocity); //Shooter Table or Ratio Method
     }
     
     public Rotation2d getTargetRotation(Pose2d robotPose) {

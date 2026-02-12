@@ -8,27 +8,31 @@ import frc.robot.subsystems.Shooter.ShooterState.State;
 public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged LeftInputs = new ShooterIOInputsAutoLogged();
-    private final ShooterIOInputsAutoLogged RightInputs = new ShooterIOInputsAutoLogged();
-
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private ShooterState desiredState;
+  private String name;
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    desiredState = new ShooterState();
+  }
+
+  public void applyState(){
+    this.name = io.getName();
+
+    desiredState = new ShooterState(name,io.getModuleTypes());
     desiredState.setState(State.IDLE);
   }
+
+
 
   @Override
   public void periodic() {
     io.periodic();
-    io.updateInputs(LeftInputs,RightInputs);
-    Logger.processInputs("Shooter/LeftInputs", LeftInputs);
-    Logger.processInputs("Shooter/RightInputs", RightInputs);
-    
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter/" + name + "/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
-
+    Logger.recordOutput("Shooter/Wheel_Speed", )
   }
 
   public void setState(ShooterState state) {
@@ -41,8 +45,8 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
-    io.setVelocity(ShooterSpeed, ShooterIntakeSpeed, ShooterBackspinSpeed);
+  private void setVelocity(double ShooterSpeed, double ShooterBackspinSpeed, double ShooterIntakeSpeed) {
+    io.setVelocity(ShooterSpeed, ShooterBackspinSpeed, ShooterIntakeSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
@@ -65,19 +69,21 @@ public class Shooter extends SubsystemBase {
     io.stop();
   }
 
-  public void stopMainWheel(){
+  public void stopMainWheel() {
     io.stopMainWheel();
   }
-  public void stopBackspinWheel(){
+
+  public void stopBackspinWheel() {
     io.stopBackspinWheel();
 
   }
-  public void stopIntakeWheel(){
+
+  public void stopIntakeWheel() {
     io.stopBackspinWheel();
   }
 
   @Override
-  public void simulationPeriodic(){
+  public void simulationPeriodic() {
     io.simulationPeriodic();
   }
 }

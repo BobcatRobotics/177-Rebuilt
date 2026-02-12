@@ -40,10 +40,16 @@ public final class Constants {
         public static final double kTopP = 0;
         public static final double kTopV = 0;
         public static final double kTopS = 0;
-        public static final double topCurrentLimit = 0;
+        public static final double hopperCurrentLimit = 0;
 
         public static final double idleHopperSpeed = 0.0;
         public static final double intakeHopperSpeed = 1.0;
         public static final double outtakeHopperSpeed = -1.0;
+
+        public static final double topMotorTargetVelocity = 0;
+        public static final double bottomMotorTargetVelocity = 0;
+
+        public static final double idleTopTargetVelocity = 0;
+        public static final double idleBottomTargetVelocity = 0;
     }
 }

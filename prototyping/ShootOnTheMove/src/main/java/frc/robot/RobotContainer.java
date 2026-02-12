@@ -24,14 +24,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 // import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -48,6 +51,7 @@ import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
 import org.bobcatrobotics.Subsystems.Swerve.ModuleWrapper;
 import frc.robot.subsystems.Limelight.limelightConstants;
+import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.Constants.LimelightConstants;
 
 /**
@@ -68,10 +72,11 @@ public class RobotContainer {
     private final Drive drive;
     private final AntiTipping antiTipping;
     private Vision vision;
+    private Shooter shooter;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
-
+    private final CommandXboxController operator = new CommandXboxController(1);
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -208,6 +213,8 @@ public class RobotContainer {
                                 () -> -controller.getLeftX(), () -> -controller.getRightX(), antiTipping),
                         () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0, () -> 0, () -> 0,
                                 antiTipping)));
+
+        operator.a().whileTrue(new RunCommand(() -> new ShootOnTheMove(drive.getPose(), drive.getChassisSpeeds(), shooter)));
     }
 
     /**
