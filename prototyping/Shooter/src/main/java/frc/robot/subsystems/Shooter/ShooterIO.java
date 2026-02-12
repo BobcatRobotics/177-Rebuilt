@@ -1,8 +1,5 @@
 package frc.robot.subsystems.Shooter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ShooterIO {
@@ -13,20 +10,20 @@ public interface ShooterIO {
     public double velocityOfMainFlywheelRightRPS = 0;
     public double velocityOfbackspinWheelMotorLeftRPS = 0;
     public double velocityOfbackspinWheelMotorRightRPS = 0;
-    public double velocityOfIntakeRPS= 0;
-    public double accelerationOfMainFlywheelLeft= 0;
-      public double accelerationOfMainFlywheelRight = 0;
-      public double accelerationOfBackspinLeft = 0;
-      public double accelerationOfIntake = 0;
+    public double velocityOfIntakeRPS = 0;
+    public double accelerationOfMainFlywheelLeft = 0;
+    public double accelerationOfMainFlywheelRight = 0;
+    public double accelerationOfBackspinLeft = 0;
+    public double accelerationOfIntake = 0;
     public double statorCurrentOfBackspinLeftAmps = 0;
     public double statorCurrentOfBackspinRightAmps = 0;
     public double statorCurrentOfMainFlywheelLeftAmps = 0;
     public double statorCurrentOfMainFlywheelRightAmps = 0;
     public double statorCurrentOfIntakeAmps = 0;
-    public boolean backspinWheelMotorRightConnected =false;
-    public boolean backspinWheelMotorLeftConnected =false;
-    public boolean shooterFlywheelInnerLeftConnected =false;
-    public boolean shooterFlywheelInnerRightConnected =false;
+    public boolean backspinWheelMotorRightConnected = false;
+    public boolean backspinWheelMotorLeftConnected = false;
+    public boolean shooterFlywheelInnerLeftConnected = false;
+    public boolean shooterFlywheelInnerRightConnected = false;
     public boolean shooterIntakeMotorConnected = false;
     public double outputOfBackspinLeftVolts = 0;
     public double outputOfBackspinRightVolts = 0;

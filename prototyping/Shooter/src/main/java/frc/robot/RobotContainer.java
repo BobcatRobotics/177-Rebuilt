@@ -110,7 +110,7 @@ public class RobotContainer {
     controller.b().whileTrue(new RunCommand(() -> {
       m_Shooter.setBackspinSpeedRight(desiredState.getBackspinSpeedOfRight());
     }, m_Shooter));
-    controller.a().whileTrue(new RunCommand(() -> {
+    controller.rightBumper().whileTrue(new RunCommand(() -> {
       m_Shooter.setIntakeSpeed(desiredState.getIntakeSpeed());
     }, m_Shooter));
   }

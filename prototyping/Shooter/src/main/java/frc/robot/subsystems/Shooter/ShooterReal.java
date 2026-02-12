@@ -37,8 +37,9 @@ public class ShooterReal implements ShooterIO {
   // )
   private VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velShooterRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velBackspinRequest = new VelocityTorqueCurrentFOC(0);
-  // private final DutyCycleOut velIntakeRequest = new DutyCycleOut(0);
+  private VelocityTorqueCurrentFOC velBackspinLeftRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velBackspinRightRequest = new VelocityTorqueCurrentFOC(0);
+
   private StatusSignal<AngularVelocity> velocityOfMainFlywhelLeftRPS;
   private StatusSignal<Current> statorCurrentOfMainFlywheelLeftAmps;
   private StatusSignal<Voltage> outputOfMainFlywheelLeftVolts;
@@ -61,8 +62,6 @@ public class ShooterReal implements ShooterIO {
   private StatusSignal<Current> statorCurrentOfBackspinRightAmps;
   private StatusSignal<Voltage> outputOfBackspinRightVolts;
   private StatusSignal<AngularAcceleration> accelerationOfBackspinRight;
-
-
 
   public double mainFlywheelSetpoint = 0;
   public double intakeSetpoint = 0;
@@ -294,12 +293,12 @@ public class ShooterReal implements ShooterIO {
 
   public void setBackspinSpeedOfLeft(double shooterBackspinSpeedInRPS) {
     backspinSetpointLeft = shooterBackspinSpeedInRPS;
-    backspinWheelMotorLeft.setControl(velBackspinRequest.withVelocity(backspinSetpointLeft));
+    backspinWheelMotorLeft.setControl(velBackspinLeftRequest.withVelocity(backspinSetpointLeft));
   }
 
   public void setBackspinSpeedOfRight(double shooterBackspinSpeedInRPS) {
     backspinSetpointRight = shooterBackspinSpeedInRPS;
-    backspinWheelMotorRight.setControl(velBackspinRequest.withVelocity(backspinSetpointRight));
+    backspinWheelMotorRight.setControl(velBackspinRightRequest.withVelocity(backspinSetpointRight));
   }
 
   public void setIntakeSpeed(double shooterIntakeSpeedInRPS) {
