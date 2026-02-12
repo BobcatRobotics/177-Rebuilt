@@ -11,16 +11,14 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private ShooterState desiredState;
-  private String name;
 
   public Shooter(ShooterIO io) {
     this.io = io;
   }
 
   public void applyState(){
-    this.name = io.getName();
 
-    desiredState = new ShooterState(name,io.getModuleTypes());
+    desiredState = new ShooterState();
     desiredState.setState(State.IDLE);
   }
 
@@ -30,7 +28,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.periodic();
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter/" + name + "/inputs", inputs);
+    Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
   }
@@ -45,16 +43,19 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double ShooterSpeed, double ShooterBackspinSpeed, double ShooterIntakeSpeed) {
-    io.setVelocity(ShooterSpeed, ShooterBackspinSpeed, ShooterIntakeSpeed);
+  private void setVelocity(double shooterSpeed, double shooterBackspinSpeedLeft,double shooterBackspinSpeedRight, double shooterIntakeSpeed) {
+    io.setVelocity(shooterSpeed, shooterBackspinSpeedLeft,shooterBackspinSpeedRight, shooterIntakeSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
     io.setMainWheelSpeed(shooterFlywheelSpeed);
   }
 
-  public void setBackspinSpeed(double shooterBackspinSpeed) {
-    io.setBackspinSpeed(shooterBackspinSpeed);
+  public void setBackspinSpeedLeft(double shooterBackspinSpeed) {
+    io.setBackspinSpeedLeft(shooterBackspinSpeed);
+  }
+    public void setBackspinSpeedRight(double shooterBackspinSpeed) {
+    io.setBackspinSpeedRight(shooterBackspinSpeed);
   }
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {

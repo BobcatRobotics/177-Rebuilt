@@ -37,88 +37,77 @@ public final class Constants {
     }
 
     public final static class ShooterConstants {
-        public static final double idleFlywheelSpeedRPM = 0;
-        public static final double idleIntakeSpeedRPM = 0;
-        public static final double idleBackspinSpeedRPM = 0;
-        public static final double targetFlywheelSpeedRPM = 3000;
-        public static final double targetIntakeSpeedRPM = 4000;
-        public static final double targetBackspinSpeedRPM = -2000;
+        public static final double idleFlywheelSpeedRPS = 0;
+        public static final double idleIntakeSpeedRPS = 0;
+        public static final double idleBackspinSpeedLeftRPS = 0;
+        public static final double idleBackspinSpeedRightRPS = 0;
 
-        
-        public static final int intakeIDLeft = 21;
-        public static final InvertedValue shooterIntakeInvert = InvertedValue.CounterClockwise_Positive;
-        public static final NeutralModeValue topBottomMotorBrakeMode = NeutralModeValue.Brake;
-        public static final double kIntakeMotorkP = 0;
-        public static final double kIntakeMotorkI = 0;
-        public static final double kIntakeMotorkD = 0;
-        public static final double kIntakeMotorkS = 0;
-        public static final double kIntakeMotorkV = 0;
-        public static final double kIntakeMotorkA = 0;
-        public static final double topBottomCurrentLimit = 40;
 
-        public final static class Left {
-            // ID Constants
-            public static final int FlywheelOuterIDLeft = 16;
-            public static final int FlywheelInnerIDLeft = 13;
-            public static final int BackspinIDLeft = 18;
+        public static final double targetFlywheelSpeedRPS = 50;
+        public static final double targetIntakeSpeedRPS = 30;
+        public static final double targetBackspinSpeedRPS = -20;
 
+        public final static class SharedFlywheel {
+            public static final boolean isInvertedLeft = false;
+            public static final boolean isInvertedRight = true;
+            public static final boolean isCoastLeft = true;
+            public static final boolean isCoastRight = true;
             // Motor Constants
-            
-            public static final InvertedValue shooterFlywheelOuterInvert = InvertedValue.CounterClockwise_Positive;
-            public static final InvertedValue shooterFlywheelInnerInvert = InvertedValue.CounterClockwise_Positive;
-            public static final NeutralModeValue shooterMainMotorRightBrakeMode = NeutralModeValue.Coast;
-            public static final NeutralModeValue shooterMainMotorLeftBrakeMode = NeutralModeValue.Coast;
             public static final double kshooterMainkP = 0.83;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0;
             public static final double kshooterMainkS = 0;
             public static final double kshooterMainkV = 0.52;
             public static final double kshooterMainkA = 0.20;
-            public static final double bottomRightCurrentLimit = 40;
-            public static final double bottomLeftCurrentLimit = 40;
+            public static final double currentLimit = 40;
 
-            public static final InvertedValue shooterBackspinInvert = InvertedValue.Clockwise_Positive;
-            public static final NeutralModeValue topTopMotorBrakeMode = NeutralModeValue.Coast;
+            public static final int FlywheelOuterIDLeft = 16;
+            public static final int FlywheelInnerIDLeft = 13;
+            public static final int FlywheelOuterIDRight = 17;
+            public static final int FlywheelInnerIDRight = 14;
+        }
+
+        public final static class SharedIntake{
+            public static final int intakeIDLeft = 21;
+            public static final double kIntakeMotorkP = 0;
+            public static final double kIntakeMotorkI = 0;
+            public static final double kIntakeMotorkD = 0;
+            public static final double kIntakeMotorkS = 0;
+            public static final double kIntakeMotorkV = 0;
+            public static final double kIntakeMotorkA = 0;
+            public static final double currentLimit = 40;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+        }
+
+        public final static class Left {
+
+            public static final int BackspinID = 18;
+            // Motor Constants
             public static final double kBackspinMotorkP = 0;
             public static final double kBackspinMotorkI = 0;
             public static final double kBackspinMotorkD = 0;
             public static final double kBackspinMotorkS = 0;
             public static final double kBackspinMotorkV = 0;
             public static final double kBackspinMotorkA = 0;
-            public static final double topTopCurrentLimit = 40;
-
+            public static final double currentLimit = 40;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
 
         }
 
         public final static class Right {
             // ID Constants
-            public static final int FlywheelOuterIDRight = 17;
-            public static final int FlywheelInnerIDRight = 14;
-            public static final int BackspinIDRight = 12;
-
-            // Motor Constants
-            public static final InvertedValue shooterFlywheelOuterInvert = InvertedValue.Clockwise_Positive;
-            public static final InvertedValue shooterFlywheelInnerInvert = InvertedValue.Clockwise_Positive;
-            public static final NeutralModeValue shooterMainMotorRightBrakeMode = NeutralModeValue.Coast;
-            public static final NeutralModeValue shooterMainMotorLeftBrakeMode = NeutralModeValue.Coast;
-            public static final double kshooterMainkP = 0.83;
-            public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0;
-            public static final double kshooterMainkS = 0;
-            public static final double kshooterMainkV = 0.52;
-            public static final double kshooterMainkA = 0.20;
-            public static final double bottomRightCurrentLimit = 40;
-            public static final double bottomLeftCurrentLimit = 40;
-
-            public static final InvertedValue shooterBackspinInvert = InvertedValue.CounterClockwise_Positive;
-            public static final NeutralModeValue topTopMotorBrakeMode = NeutralModeValue.Coast;
+            public static final int BackspinID = 12;
             public static final double kBackspinMotorkP = 0;
             public static final double kBackspinMotorkI = 0;
             public static final double kBackspinMotorkD = 0;
             public static final double kBackspinMotorkS = 0;
             public static final double kBackspinMotorkV = 0;
             public static final double kBackspinMotorkA = 0;
-            public static final double topTopCurrentLimit = 40;
+            public static final double currentLimit = 40;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
         }
     }
 }
