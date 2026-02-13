@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Shooter.ShooterState.State;
+import frc.robot.subsystems.Shooter.Modules.SysIdModule;
 
 public class Shooter extends SubsystemBase {
 
@@ -16,36 +17,42 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private ShooterState desiredState;
-  private  SysIdRoutine sysIdFlywheel;
+  private  SysIdModule sysIdFlywheel;
   private  SysIdRoutine sysIdBackspin;
   private  SysIdRoutine sysIdIntake;
 
   public Shooter(ShooterIO io) {
             // Configure SysId
-    sysIdFlywheel = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput("Shooter/SysIdStateFlywheel", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
-    sysIdBackspin = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput("Shooter/SysIdStateBackspin", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (voltage) -> runCharacterization_Backspin(voltage.in(Volts)), null, this));
-      sysIdIntake= new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,
-            null,
-            null,
-            (state) -> Logger.recordOutput("Shooter/SysIdStateIntake", state.toString())),
-        new SysIdRoutine.Mechanism(
-            (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
+      sysIdFlywheel = new SysIdModule(
+              "Shooter/SysIdStateFlywheel",
+              this,
+              this::runCharacterization_Flywheel
+      );
+
+    // sysIdFlywheel = new SysIdRoutine(
+    //     new SysIdRoutine.Config(
+    //         null,
+    //         null,
+    //         null,
+    //         (state) -> Logger.recordOutput("Shooter/SysIdStateFlywheel", state.toString())),
+    //     new SysIdRoutine.Mechanism(
+    //         (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
+    // sysIdBackspin = new SysIdRoutine(
+    //     new SysIdRoutine.Config(
+    //         null,
+    //         null,
+    //         null,
+    //         (state) -> Logger.recordOutput("Shooter/SysIdStateBackspin", state.toString())),
+    //     new SysIdRoutine.Mechanism(
+    //         (voltage) -> runCharacterization_Backspin(voltage.in(Volts)), null, this));
+    //   sysIdIntake= new SysIdRoutine(
+    //     new SysIdRoutine.Config(
+    //         null,
+    //         null,
+    //         null,
+    //         (state) -> Logger.recordOutput("Shooter/SysIdStateIntake", state.toString())),
+    //     new SysIdRoutine.Mechanism(
+    //         (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
 
     this.io = io;
 
