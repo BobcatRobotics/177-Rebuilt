@@ -19,9 +19,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterReal;
@@ -78,7 +81,28 @@ public class RobotContainer {
     }
 
     // Set up auto routines
-    // autoChooser = new LoggedDashboardChooser<>("Auto Choices",null);
+      // A chooser for autonomous commands
+    SendableChooser<Command> m_chooser = new SendableChooser<>();
+        // Set up SysId routines
+    m_chooser.addOption("Flywheel Simple FF Characterization",
+            shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
+    m_chooser.addOption("Backspin Simple FF Characterization",
+            shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
+    m_chooser.addOption("Intake Simple FF Characterization",
+            shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+    m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
+            m_Shooter.sysIdQuasistaticFlywheel(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
+            m_Shooter.sysIdQuasistaticFlywheel(SysIdRoutine.Direction.kReverse));
+    m_chooser.addOption("Backspin SysId (Quasistatic Forward)",
+            m_Shooter.sysIdQuasistaticBackspin(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Backspin SysId (Quasistatic Reverse)",
+            m_Shooter.sysIdQuasistaticBackspin(SysIdRoutine.Direction.kReverse));
+    m_chooser.addOption("Intake SysId (Quasistatic Forward)",
+            m_Shooter.sysIdQuasistaticIntake(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Intake SysId (Quasistatic Reverse)",
+            m_Shooter.sysIdQuasistaticIntake(SysIdRoutine.Direction.kReverse));
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices",m_chooser);
 
     // Set up SysId routines
 
