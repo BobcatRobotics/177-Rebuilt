@@ -82,8 +82,8 @@ public class ShooterState {
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        goal.backspinSpeedLeft = Constants.ShooterConstants.targetBackspinSpeedRPS;
-        goal.backspinSpeedRight = Constants.ShooterConstants.targetBackspinSpeedRPS;
+        goal.backspinSpeedLeft = Constants.ShooterConstants.targetBackspinSpeedLeftRPS;
+        goal.backspinSpeedRight = Constants.ShooterConstants.targetBackspinSpeedRightRPS;
       }
     }
 

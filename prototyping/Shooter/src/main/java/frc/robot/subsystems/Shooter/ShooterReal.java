@@ -36,7 +36,8 @@ public class ShooterReal implements ShooterIO {
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
   private VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velShooterLeftRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velShooterRightRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velBackspinLeftRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velBackspinRightRequest = new VelocityTorqueCurrentFOC(0);
 
@@ -119,7 +120,7 @@ public class ShooterReal implements ShooterIO {
         "/Shooter/Flywheel/Left/PID", g);
     flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedRight,
+        Constants.ShooterConstants.SharedFlywheel.isInvertedLeft,
         Constants.ShooterConstants.SharedFlywheel.isCoastRight,
         Constants.ShooterConstants.SharedFlywheel.currentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
@@ -287,8 +288,8 @@ public class ShooterReal implements ShooterIO {
 
   public void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
     mainFlywheelSetpoint = shooterFlywheelSpeedInRPS;
-    shooterFlywheelInnerLeft.setControl(velShooterRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelInnerRight.setControl(velShooterRequest.withVelocity(mainFlywheelSetpoint));
+    shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
+    shooterFlywheelInnerRight.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
   }
 
   public void setBackspinSpeedOfLeft(double shooterBackspinSpeedInRPS) {
