@@ -1,45 +1,36 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.Intake;
 
 import frc.robot.Constants;
 
 public class IntakeState {
-  public class ShooterGoal {
+  public class IntakeGoal {
     public double position;
     public double speed;
   }
 
   public enum State {
     IDLE,
-    MANUAL,
-    TARGETTING
+    DEPLOYED
   }
 
   public State currentState = State.IDLE;
-  private double manualSpeed = 0.0;
+  private double manualSpeed = 0.0; //Placeholder, might need to make a constant
 
   /** Set the intake to a predefined state */
   public void setState(State state) {
     this.currentState = state;
   }
 
-  /** Set manual speed and switch to MANUAL mode */
-  public void setManualSpeed(double speed) {
-    manualSpeed = speed;
-    currentState = State.MANUAL;
-  }
 
   /** Returns the motor output based on the current state */
-  public ShooterGoal getOutput() {
-    ShooterGoal goal = new ShooterGoal();
+  public IntakeGoal getOutput() {
+    IntakeGoal goal = new IntakeGoal();
     switch (currentState) {
       case IDLE -> {
         goal.speed = Constants.IntakeConstants.idleRollerSpeed;
       }
-      case MANUAL -> {
+      case DEPLOYED -> {
         goal.speed = manualSpeed;
-      }
-      case TARGETTING -> {
-        goal.speed = targetSpeed;
       }
     }
     return goal;
