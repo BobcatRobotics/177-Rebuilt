@@ -175,7 +175,7 @@ public class ShooterRealTriple implements ShooterIO {
         "/Shooter/Flywheel/Outer/PID", g);
     // Flywheel Configuration
     flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
+        Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
         Constants.ShooterConstants.SharedFlywheel.isInvertedRight,
         Constants.ShooterConstants.SharedFlywheel.isCoastRight,
         Constants.ShooterConstants.SharedFlywheel.currentLimit);
@@ -333,7 +333,6 @@ public class ShooterRealTriple implements ShooterIO {
     setMainWheelSpeed(shooterFlywheelSpeed);
     setBackspinSpeedOfLeft(shooterBackspinSpeedOfLeft);
     setBackspinSpeedOfRight(shooterBackspinSpeedOfRight);
-    setBackspinSpeedOfRight(shooterFlywheelSpeed);
     setIntakeSpeed(shooterIntakeSpeed);
   }
 

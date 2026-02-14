@@ -29,6 +29,7 @@ import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealDual;
 import frc.robot.subsystems.Shooter.ShooterRealSingle;
+import frc.robot.subsystems.Shooter.ShooterRealTriple;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 
@@ -69,7 +70,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_Shooter = new Shooter(new ShooterRealDual());
+        m_Shooter = new Shooter(new ShooterRealTriple());
         m_Shooter.applyState();
         break;
       case SIM:
