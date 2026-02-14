@@ -39,13 +39,36 @@ public final class Constants {
 
          public static final double aprilTagWidth = Units.inchesToMeters(6.50);
          public static final int aprilTagCount = 32;
+
+          // hub target location (from blue side origin/FRC WPIBlue origin) in meters
+          public static final double HUBX = 4.7;
+          public static final double HUBY = 4.114;
+
+          // left side blue target location (from blue side origin/FRC WPIBlue origin) in meters
+          public static final double LEFTBLUEX = 0.1;
+          public static final double LEFTBLUEY = 4.114;
+
     }
 
-    public static final class LimelightConstants{
-      public static String name = "";
+    public static final class frontLimelightConstants{
+      public static String name = "limelight-front";
       public static LLTYPE limelightType = LLTYPE.LL4;
-    //   double verticalFOV
-    //   double horizontalFOV 
+      public static double verticalFOV = 55.781; //degrees
+      public static double horizontalFOV = 81.253; //degrees
+      public static double limelightMountHeight = .84;
+     // public static int detectorPiplineIndex = 1;
+      public static int apriltagPipelineIndex = 0;
+    //   int horPixels
+    //   Vector<N3> visionMeasurementStdDevs
+
+
+    }
+
+    public static final class backLimelightConstants{
+      public static String name = "limelight-back";
+      public static LLTYPE limelightType = LLTYPE.LL4;
+      public static double verticalFOV = 0;
+      public static double horizontalFOV = 0; 
       public static double limelightMountHeight = .84;
     //   int detectorPiplineIndex
       public static int apriltagPipelineIndex = 0;

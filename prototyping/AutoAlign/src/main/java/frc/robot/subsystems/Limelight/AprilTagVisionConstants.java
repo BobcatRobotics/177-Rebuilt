@@ -54,6 +54,6 @@ public class AprilTagVisionConstants {
     public static final double multiFunctionConstant = 0.2;
 //update for new ones
     public static final int[] validTags =
-        new int[] {25,26}; // No barge tags
+        new int[] {25,26, 17}; // No barge tags
   }
 }
