@@ -1,15 +1,17 @@
 package frc.robot.subsystems.Shooter;
 
-import static edu.wpi.first.units.Units.Volts;
-
+import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
+import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Shooter.ShooterState.State;
-import frc.robot.subsystems.Shooter.Modules.SysIdModule;
 
 public class Shooter extends SubsystemBase {
 
@@ -17,55 +19,46 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
   private ShooterState desiredState;
-  private  SysIdModule sysIdFlywheel;
-  private  SysIdRoutine sysIdBackspin;
-  private  SysIdRoutine sysIdIntake;
+  private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
 
   public Shooter(ShooterIO io) {
-            // Configure SysId
-      sysIdFlywheel = new SysIdModule(
-              "Shooter/SysIdStateFlywheel",
-              this,
-              this::runCharacterization_Flywheel
-      );
+    // Configure SysId
 
-    // sysIdFlywheel = new SysIdRoutine(
-    //     new SysIdRoutine.Config(
-    //         null,
-    //         null,
-    //         null,
-    //         (state) -> Logger.recordOutput("Shooter/SysIdStateFlywheel", state.toString())),
-    //     new SysIdRoutine.Mechanism(
-    //         (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
-    // sysIdBackspin = new SysIdRoutine(
-    //     new SysIdRoutine.Config(
-    //         null,
-    //         null,
-    //         null,
-    //         (state) -> Logger.recordOutput("Shooter/SysIdStateBackspin", state.toString())),
-    //     new SysIdRoutine.Mechanism(
-    //         (voltage) -> runCharacterization_Backspin(voltage.in(Volts)), null, this));
-    //   sysIdIntake= new SysIdRoutine(
-    //     new SysIdRoutine.Config(
-    //         null,
-    //         null,
-    //         null,
-    //         (state) -> Logger.recordOutput("Shooter/SysIdStateIntake", state.toString())),
-    //     new SysIdRoutine.Mechanism(
-    //         (voltage) -> runCharacterization_Flywheel(voltage.in(Volts)), null, this));
+    SysIdRoutine.Config flyWheelSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Flywheel/SysIdState", state.toString()));
+    SysIdRoutine.Config backspinSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Backspin/SysIdState", state.toString()));
+    SysIdRoutine.Config intakeSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Intake/SysIdState", state.toString()));
+
+    sysIdRegistry.register("SysIdStateFlywheel", new SysIdModule(
+        "Shooter/SysIdStateFlywheel",
+        this,
+        this::runCharacterization_Flywheel, flyWheelSysIdconfig));
+    sysIdRegistry.register("SysIdStateBackspin", new SysIdModule(
+        "Shooter/SysIdStateBackspin",
+        this,
+        this::runCharacterization_Backspin, backspinSysIdconfig));
+    sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
+        "Shooter/SysIdStateIntake",
+        this,
+        this::runCharacterization_Intake, intakeSysIdconfig));
 
     this.io = io;
-
-
   }
 
   public void applyState() {
-
     desiredState = new ShooterState();
     desiredState.setState(State.IDLE);
-
-
-
   }
 
   @Override
@@ -172,40 +165,7 @@ public class Shooter extends SubsystemBase {
     return output;
   }
 
-    /** Returns a command to run a quasistatic test in the specified direction. */
-  public Command sysIdQuasistaticFlywheel(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Flywheel(0.0))
-        .withTimeout(1.0)
-        .andThen(sysIdFlywheel.quasistatic(direction));
-  }
-
-  /** Returns a command to run a dynamic test in the specified direction. */
-  public Command sysIdDynamicFlywheel(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Flywheel(0.0)).withTimeout(1.0).andThen(sysIdFlywheel.dynamic(direction));
-  }
-
-      /** Returns a command to run a quasistatic test in the specified direction. */
-  public Command sysIdQuasistaticBackspin(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Backspin(0.0))
-        .withTimeout(1.0)
-        .andThen(sysIdBackspin.quasistatic(direction));
-  }
-
-  /** Returns a command to run a dynamic test in the specified direction. */
-  public Command sysIdDynamicBackspin(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Backspin(0.0)).withTimeout(1.0).andThen(sysIdBackspin.dynamic(direction));
-  }
-
-
-      /** Returns a command to run a quasistatic test in the specified direction. */
-  public Command sysIdQuasistaticIntake(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Intake(0.0))
-        .withTimeout(1.0)
-        .andThen(sysIdIntake.quasistatic(direction));
-  }
-
-  /** Returns a command to run a dynamic test in the specified direction. */
-  public Command sysIdDynamicIntake(SysIdRoutine.Direction direction) {
-    return Commands.run(() -> runCharacterization_Intake(0.0)).withTimeout(1.0).andThen(sysIdIntake.dynamic(direction));
+  public SysIdRegistry getRegistry() {
+    return sysIdRegistry;
   }
 }

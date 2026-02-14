@@ -14,7 +14,7 @@
 
 package frc.robot;
 
-// import frc.robot.subsystems.roller.RollerSubsystem;
+import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -28,6 +28,7 @@ import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterReal;
+import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 /**
@@ -48,6 +49,10 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController flywheelController = new CommandXboxController(1);
+  private final CommandXboxController backspinController = new CommandXboxController(2);
+  private final CommandXboxController intakeController = new CommandXboxController(3);
+
 
   // Dashboard inputs
   private LoggedDashboardChooser<Command> autoChooser;
@@ -68,7 +73,7 @@ public class RobotContainer {
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_Shooter = new Shooter(new ShooterReal());
+        m_Shooter = new Shooter(new ShooterSim());
         m_Shooter.applyState();
         break;
 
@@ -90,18 +95,36 @@ public class RobotContainer {
             shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
     m_chooser.addOption("Intake Simple FF Characterization",
             shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+
+
     m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
-            m_Shooter.sysIdQuasistaticFlywheel(SysIdRoutine.Direction.kForward));
+            m_Shooter.getRegistry().get("SysIdStateFlywheel").quasistatic(SysIdRoutine.Direction.kForward));
     m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
-            m_Shooter.sysIdQuasistaticFlywheel(SysIdRoutine.Direction.kReverse));
+            m_Shooter.getRegistry().get("SysIdStateFlywheel").quasistatic(SysIdRoutine.Direction.kReverse));
+    m_chooser.addOption("Flywheel SysId (Dynamic Forward)",
+            m_Shooter.getRegistry().get("SysIdStateFlywheel").dynamic(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Flywheel SysId (Dynamic Reverse)",
+            m_Shooter.getRegistry().get("SysIdStateFlywheel").dynamic(SysIdRoutine.Direction.kReverse));
+
+
     m_chooser.addOption("Backspin SysId (Quasistatic Forward)",
-            m_Shooter.sysIdQuasistaticBackspin(SysIdRoutine.Direction.kForward));
+            m_Shooter.getRegistry().get("SysIdStateBackspin").quasistatic(SysIdRoutine.Direction.kForward));
     m_chooser.addOption("Backspin SysId (Quasistatic Reverse)",
-            m_Shooter.sysIdQuasistaticBackspin(SysIdRoutine.Direction.kReverse));
+            m_Shooter.getRegistry().get("SysIdStateBackspin").quasistatic(SysIdRoutine.Direction.kReverse));
+    m_chooser.addOption("Backspin SysId (Dynamic Forward)",
+            m_Shooter.getRegistry().get("SysIdStateBackspin").dynamic(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Backspin SysId (Dynamic Reverse)",
+            m_Shooter.getRegistry().get("SysIdStateBackspin").dynamic(SysIdRoutine.Direction.kReverse));
+
+
     m_chooser.addOption("Intake SysId (Quasistatic Forward)",
-            m_Shooter.sysIdQuasistaticIntake(SysIdRoutine.Direction.kForward));
+            m_Shooter.getRegistry().get("SysIdStateIntake").quasistatic(SysIdRoutine.Direction.kForward));
     m_chooser.addOption("Intake SysId (Quasistatic Reverse)",
-            m_Shooter.sysIdQuasistaticIntake(SysIdRoutine.Direction.kReverse));
+            m_Shooter.getRegistry().get("SysIdStateIntake").quasistatic(SysIdRoutine.Direction.kReverse));
+    m_chooser.addOption("Intake SysId (Dynamic Forward)",
+            m_Shooter.getRegistry().get("SysIdStateIntake").dynamic(SysIdRoutine.Direction.kForward));
+    m_chooser.addOption("Intake SysId (Dynamic Reverse)",
+            m_Shooter.getRegistry().get("SysIdStateIntake").dynamic(SysIdRoutine.Direction.kReverse));
     autoChooser = new LoggedDashboardChooser<>("Auto Choices",m_chooser);
 
     // Set up SysId routines
@@ -137,7 +160,28 @@ public class RobotContainer {
     controller.rightBumper().whileTrue(new RunCommand(() -> {
       m_Shooter.setIntakeSpeed(desiredState.getIntakeSpeed());
     }, m_Shooter));
-  }
+
+    var sysIdFlywheelTests = m_Shooter.getRegistry().get("SysIdStateFlywheel").generateAllTests();
+    flywheelController.a().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QF));
+    flywheelController.b().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QR));
+    flywheelController.x().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DF));
+    flywheelController.y().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DR));
+    flywheelController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
+
+    var sysIdBackspinTests = m_Shooter.getRegistry().get("SysIdStateBackspin").generateAllTests();
+    backspinController.a().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QF));
+    backspinController.b().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QR));
+    backspinController.x().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DF));
+    backspinController.y().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DR));
+    backspinController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
+
+    var sysIdIntakeTests = m_Shooter.getRegistry().get("SysIdStateIntake").generateAllTests();
+    intakeController.a().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QF));
+    intakeController.b().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QR));
+    intakeController.x().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DF));
+    intakeController.y().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DR));
+    intakeController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

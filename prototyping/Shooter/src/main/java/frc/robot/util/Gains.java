@@ -59,7 +59,6 @@ public final class Gains {
         slot0.kV = kV;
         slot0.kA = kA;
     }
-    
 
     // Builder Pattern for clean construction
     public static class Builder {

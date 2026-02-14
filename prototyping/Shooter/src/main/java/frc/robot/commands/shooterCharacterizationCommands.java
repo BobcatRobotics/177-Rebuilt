@@ -5,10 +5,11 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.Shooter.Shooter;
 
 public class shooterCharacterizationCommands {
@@ -64,11 +65,15 @@ public class shooterCharacterizationCommands {
                             }
                             double kS = (sumY * sumX2 - sumX * sumXY) / (n * sumX2 - sumX * sumX);
                             double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                            double kP = 0.2 * (1/kV);
 
                             NumberFormat formatter = new DecimalFormat("#0.00000");
-                            System.out.println("********** Drive FF Characterization Results **********");
+                            System.out.println("********** Flywheel FF Characterization Results **********");
                             System.out.println("\tkS: " + formatter.format(kS));
                             System.out.println("\tkV: " + formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Flywheel/kS",formatter.format(kS));
+                            Logger.recordOutput("Shooter/Characterization/Flywheel/kV",formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Flywheel/kP",formatter.format(kP));
                         }));
     }
 
@@ -122,11 +127,15 @@ public class shooterCharacterizationCommands {
                             }
                             double kS = (sumY * sumX2 - sumX * sumXY) / (n * sumX2 - sumX * sumX);
                             double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                            double kP = 0.2 * (1/kV);
 
                             NumberFormat formatter = new DecimalFormat("#0.00000");
-                            System.out.println("********** Drive FF Characterization Results **********");
+                            System.out.println("********** Backspin FF Characterization Results **********");
                             System.out.println("\tkS: " + formatter.format(kS));
                             System.out.println("\tkV: " + formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Backspin/kS",formatter.format(kS));
+                            Logger.recordOutput("Shooter/Characterization/Backspin/kV",formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Backspin/kP",formatter.format(kP));
                         }));
     }
 
@@ -180,11 +189,15 @@ public class shooterCharacterizationCommands {
                             }
                             double kS = (sumY * sumX2 - sumX * sumXY) / (n * sumX2 - sumX * sumX);
                             double kV = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                            double kP = 0.2 * (1/kV);
 
                             NumberFormat formatter = new DecimalFormat("#0.00000");
-                            System.out.println("********** Drive FF Characterization Results **********");
+                            System.out.println("********** Intake FF Characterization Results **********");
                             System.out.println("\tkS: " + formatter.format(kS));
                             System.out.println("\tkV: " + formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Intake/kS",formatter.format(kS));
+                            Logger.recordOutput("Shooter/Characterization/Intake/kV",formatter.format(kV));
+                            Logger.recordOutput("Shooter/Characterization/Intake/kP",formatter.format(kP));
                         }));
     }
 

@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -97,5 +99,10 @@ public class SimMotorFX {
         double velocityInRMP = velocityInRPS * 60;
         appliedTorque = falconStallTorqueInNm * (1 - (velocityInRMP / falconFreeSpeedInRPM));
         return appliedTorque;
+    }
+
+    public TalonFX apply(TalonFX motor){
+        motor.setVoltage(appliedVolts);
+        return motor;
     }
 }

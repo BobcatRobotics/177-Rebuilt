@@ -28,18 +28,24 @@ import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import frc.robot.subsystems.Shooter.Modules.TunablePID;
 import frc.robot.util.Gains;
 
-public class ShooterReal implements ShooterIO {
+public class ShooterSim implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
+  private SimMotorFX shooterFlywheelInnerLeftSim;
   public ModuleConfigurator flywheelConfigLeft;
   private TalonFX shooterFlywheelInnerRight;
+  private SimMotorFX shooterFlywheelInnerRightSim;
   public ModuleConfigurator flywheelConfigRight;
   private TalonFX shooterFlywheelOuterRight;
+  private SimMotorFX shooterFlywheelOuterRightSim;
   public ModuleConfigurator flywheelConfigOuterRight;
   private TalonFX shooterIntakeMotor;
+  private SimMotorFX shooterIntakeMotorSim;
   public ModuleConfigurator intakeWheelConfig;
   private TalonFX backspinWheelMotorLeft;
+  private SimMotorFX backspinWheelMotorLeftSim;
   public ModuleConfigurator backspinMConfigLeft;
   private TalonFX backspinWheelMotorRight;
+  private SimMotorFX backspinWheelMotorRightSim;
   public ModuleConfigurator backspinMConfigRight;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
@@ -94,7 +100,7 @@ public class ShooterReal implements ShooterIO {
   private TunablePID backspinLeftPID;
   private TunablePID backspinRightPID;
 
-  public ShooterReal() {
+  public ShooterSim() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
         .kP(Constants.ShooterConstants.SharedFlywheel.kshooterMainkP)
@@ -149,6 +155,7 @@ public class ShooterReal implements ShooterIO {
     accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
     flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
+    shooterFlywheelInnerLeftSim = new SimMotorFX();
   }
 
   public void setupRightFlywheel(Gains g) {
@@ -168,6 +175,8 @@ public class ShooterReal implements ShooterIO {
     accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
     flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
         statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
+
+    shooterFlywheelInnerRightSim = new SimMotorFX();
   }
 
   public void setupOuterRightFlywheel(Gains g) {
@@ -188,6 +197,7 @@ public class ShooterReal implements ShooterIO {
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
+    shooterFlywheelOuterRightSim = new SimMotorFX();
   }
 
   public void setupIntake(Gains g) {
@@ -248,6 +258,12 @@ public class ShooterReal implements ShooterIO {
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
+    shooterFlywheelInnerLeftSim.update();
+    shooterFlywheelInnerLeft = shooterFlywheelInnerLeftSim.apply(shooterFlywheelInnerLeft);
+    shooterFlywheelInnerRightSim.update();
+    shooterFlywheelInnerRight = shooterFlywheelInnerRightSim.apply(shooterFlywheelInnerRight);
+    shooterFlywheelOuterRightSim.update();
+    shooterFlywheelOuterRight = shooterFlywheelOuterRightSim.apply(shooterFlywheelOuterRight);
 
     BaseStatusSignal.refreshAll(
         velocityOfMainFlywhelLeftRPS,
@@ -274,10 +290,9 @@ public class ShooterReal implements ShooterIO {
         outputOfMainFlywheelOuterRightVolts,
         outputOfIntakeVolts);
 
-    inputs.velocityOfMainFlywheelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
-    inputs.velocityOfMainFlywheelRightRPS = velocityOfMainFlywheelRightRPS.getValue().in(Rotations.per(Seconds));
-    inputs.velocityOfMainFlywheelOuterRightRPS = velocityOfMainFlywheelOuterRightRPS.getValue()
-        .in(Rotations.per(Seconds));
+    inputs.velocityOfMainFlywheelLeftRPS = shooterFlywheelInnerLeftSim.getVelocity();
+    inputs.velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRightSim.getVelocity();
+    inputs.velocityOfMainFlywheelOuterRightRPS = shooterFlywheelOuterRightSim.getVelocity();
     inputs.velocityOfbackspinWheelMotorLeftRPS = velocityOfbackspinWheelMotorLeftRPS.getValue()
         .in(Rotations.per(Seconds));
     inputs.velocityOfbackspinWheelMotorRightRPS = velocityOfbackspinWheelMotorRightRPS.getValue()
@@ -426,9 +441,9 @@ public class ShooterReal implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Flywheel() {
-    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        shooterFlywheelInnerRight.getVelocity().getValue().in(RotationsPerSecond) +
-        shooterFlywheelOuterRight.getVelocity().getValue().in(RotationsPerSecond)) / 3;
+    double avg = (shooterFlywheelInnerLeftSim.getVelocity() +
+        shooterFlywheelInnerRightSim.getVelocity() +
+        shooterFlywheelOuterRightSim.getVelocity()) / 3;
     return avg;
   }
 
@@ -446,9 +461,9 @@ public class ShooterReal implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Backspin() {
-    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 3;
+    double avg = (shooterFlywheelInnerLeftSim.getVelocity() +
+        backspinWheelMotorLeftSim.getVelocity() +
+        backspinWheelMotorRightSim.getVelocity()) / 3;
     return avg;
   }
 
@@ -462,7 +477,7 @@ public class ShooterReal implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Intake() {
-    double avg = shooterIntakeMotor.getVelocity().getValue().in(RotationsPerSecond);
+    double avg = shooterIntakeMotorSim.getVelocity();
     return avg;
   }
 }
