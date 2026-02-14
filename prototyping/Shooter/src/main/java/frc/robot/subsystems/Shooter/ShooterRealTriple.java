@@ -28,7 +28,7 @@ import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import frc.robot.subsystems.Shooter.Modules.TunablePID;
 import frc.robot.util.Gains;
 
-public class ShooterReal implements ShooterIO {
+public class ShooterRealTriple implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
   public ModuleConfigurator flywheelConfigLeft;
   private TalonFX shooterFlywheelInnerRight;
@@ -94,7 +94,7 @@ public class ShooterReal implements ShooterIO {
   private TunablePID backspinLeftPID;
   private TunablePID backspinRightPID;
 
-  public ShooterReal() {
+  public ShooterRealTriple() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
         .kP(Constants.ShooterConstants.SharedFlywheel.kshooterMainkP)
@@ -393,6 +393,9 @@ public class ShooterReal implements ShooterIO {
     if (flywheelRighPID.hasChanged()) {
       flywheelConfigRight.updateMotorPID(shooterFlywheelInnerRight, flywheelRighPID);
     }
+    if (flywheelOuterRightPID.hasChanged()) {
+      flywheelConfigOuterRight.updateMotorPID(shooterFlywheelOuterRight, flywheelOuterRightPID);
+    }
 
     if (backspinLeftPID.hasChanged()) {
       backspinMConfigLeft.updateMotorPID(backspinWheelMotorRight, backspinLeftPID);
@@ -446,8 +449,7 @@ public class ShooterReal implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Backspin() {
-    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
+    double avg = (backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
         backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 3;
     return avg;
   }

@@ -27,7 +27,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
-import frc.robot.subsystems.Shooter.ShooterReal;
+import frc.robot.subsystems.Shooter.ShooterRealDual;
+import frc.robot.subsystems.Shooter.ShooterRealSingle;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 
@@ -68,7 +69,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_Shooter = new Shooter(new ShooterReal());
+        m_Shooter = new Shooter(new ShooterRealDual());
         m_Shooter.applyState();
         break;
       case SIM:

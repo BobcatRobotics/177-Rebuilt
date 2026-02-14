@@ -28,24 +28,17 @@ import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import frc.robot.subsystems.Shooter.Modules.TunablePID;
 import frc.robot.util.Gains;
 
-public class ShooterSim implements ShooterIO {
+public class ShooterRealDual implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
-  private SimMotorFX shooterFlywheelInnerLeftSim;
   public ModuleConfigurator flywheelConfigLeft;
   private TalonFX shooterFlywheelInnerRight;
-  private SimMotorFX shooterFlywheelInnerRightSim;
   public ModuleConfigurator flywheelConfigRight;
-  private TalonFX shooterFlywheelOuterRight;
-  private SimMotorFX shooterFlywheelOuterRightSim;
-  public ModuleConfigurator flywheelConfigOuterRight;
+
   private TalonFX shooterIntakeMotor;
-  private SimMotorFX shooterIntakeMotorSim;
   public ModuleConfigurator intakeWheelConfig;
   private TalonFX backspinWheelMotorLeft;
-  private SimMotorFX backspinWheelMotorLeftSim;
   public ModuleConfigurator backspinMConfigLeft;
   private TalonFX backspinWheelMotorRight;
-  private SimMotorFX backspinWheelMotorRightSim;
   public ModuleConfigurator backspinMConfigRight;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
@@ -53,7 +46,6 @@ public class ShooterSim implements ShooterIO {
   private VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velShooterLeftRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velShooterRightRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterOuterRightRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velBackspinLeftRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velBackspinRightRequest = new VelocityTorqueCurrentFOC(0);
 
@@ -83,11 +75,6 @@ public class ShooterSim implements ShooterIO {
   private StatusSignal<Voltage> outputOfBackspinRightVolts;
   private StatusSignal<AngularAcceleration> accelerationOfBackspinRight;
 
-  private StatusSignal<AngularVelocity> velocityOfMainFlywheelOuterRightRPS;
-  private StatusSignal<Current> statorCurrentOfMainFlywheelOuterRightAmps;
-  private StatusSignal<Voltage> outputOfMainFlywheelOuterRightVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelOuterRight;
-
   public double mainFlywheelSetpoint = 0;
   public double intakeSetpoint = 0;
   public double backspinSetpointRight = 0;
@@ -95,12 +82,11 @@ public class ShooterSim implements ShooterIO {
 
   private TunablePID flywheelLeftPID;
   private TunablePID flywheelRighPID;
-  private TunablePID flywheelOuterRightPID;
   private TunablePID intakePID;
   private TunablePID backspinLeftPID;
   private TunablePID backspinRightPID;
 
-  public ShooterSim() {
+  public ShooterRealDual() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
         .kP(Constants.ShooterConstants.SharedFlywheel.kshooterMainkP)
@@ -133,7 +119,6 @@ public class ShooterSim implements ShooterIO {
 
     setupLeftFlywheel(flywheelGains);
     setupRightFlywheel(flywheelGains);
-    setupOuterRightFlywheel(flywheelGains);
     setupIntake(intakeGains);
     setupLeftBackspin(backspinLeftGains);
     setupRightBackspin(backspinRightGains);
@@ -155,7 +140,6 @@ public class ShooterSim implements ShooterIO {
     accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
     flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
-    shooterFlywheelInnerLeftSim = new SimMotorFX();
   }
 
   public void setupRightFlywheel(Gains g) {
@@ -175,30 +159,8 @@ public class ShooterSim implements ShooterIO {
     accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
     flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
         statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
-
-    shooterFlywheelInnerRightSim = new SimMotorFX();
   }
 
-  public void setupOuterRightFlywheel(Gains g) {
-    flywheelOuterRightPID = new TunablePID(
-        "/Shooter/Flywheel/Outer/PID", g);
-    // Flywheel Configuration
-    flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedRight,
-        Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.currentLimit);
-    shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, flywheelOuterRightPID);
-    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-    outputOfMainFlywheelOuterRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
-    accelerationOfMainFlywheelOuterRight = shooterFlywheelInnerRight.getAcceleration();
-    flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
-        statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
-        accelerationOfMainFlywheelOuterRight);
-    shooterFlywheelOuterRightSim = new SimMotorFX();
-  }
 
   public void setupIntake(Gains g) {
     // Intake Configuration
@@ -258,23 +220,15 @@ public class ShooterSim implements ShooterIO {
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
-    shooterFlywheelInnerLeftSim.update();
-    shooterFlywheelInnerLeft = shooterFlywheelInnerLeftSim.apply(shooterFlywheelInnerLeft);
-    shooterFlywheelInnerRightSim.update();
-    shooterFlywheelInnerRight = shooterFlywheelInnerRightSim.apply(shooterFlywheelInnerRight);
-    shooterFlywheelOuterRightSim.update();
-    shooterFlywheelOuterRight = shooterFlywheelOuterRightSim.apply(shooterFlywheelOuterRight);
 
     BaseStatusSignal.refreshAll(
         velocityOfMainFlywhelLeftRPS,
         velocityOfMainFlywheelRightRPS,
         velocityOfbackspinWheelMotorLeftRPS,
         velocityOfbackspinWheelMotorRightRPS,
-        velocityOfMainFlywheelOuterRightRPS,
         velocityOfIntakeRPS,
         accelerationOfMainFlywheelLeft,
         accelerationOfMainFlywheelRight,
-        accelerationOfMainFlywheelOuterRight,
         accelerationOfBackspinLeft,
         accelerationOfBackspinRight,
         accelerationOfIntake,
@@ -282,17 +236,14 @@ public class ShooterSim implements ShooterIO {
         statorCurrentOfBackspinRightAmps,
         statorCurrentOfMainFlywheelLeftAmps,
         statorCurrentOfMainFlywheelRightAmps,
-        statorCurrentOfMainFlywheelOuterRightAmps,
         outputOfBackspinLeftVolts,
         outputOfBackspinRightVolts,
         outputOfMainFlywheelLeftVolts,
         outputOfMainFlywheelRightVolts,
-        outputOfMainFlywheelOuterRightVolts,
         outputOfIntakeVolts);
 
-    inputs.velocityOfMainFlywheelLeftRPS = shooterFlywheelInnerLeftSim.getVelocity();
-    inputs.velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRightSim.getVelocity();
-    inputs.velocityOfMainFlywheelOuterRightRPS = shooterFlywheelOuterRightSim.getVelocity();
+    inputs.velocityOfMainFlywheelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
+    inputs.velocityOfMainFlywheelRightRPS = velocityOfMainFlywheelRightRPS.getValue().in(Rotations.per(Seconds));
     inputs.velocityOfbackspinWheelMotorLeftRPS = velocityOfbackspinWheelMotorLeftRPS.getValue()
         .in(Rotations.per(Seconds));
     inputs.velocityOfbackspinWheelMotorRightRPS = velocityOfbackspinWheelMotorRightRPS.getValue()
@@ -310,21 +261,18 @@ public class ShooterSim implements ShooterIO {
     inputs.statorCurrentOfBackspinRightAmps = statorCurrentOfBackspinRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfMainFlywheelLeftAmps = statorCurrentOfMainFlywheelLeftAmps.getValue().in(Amps);
     inputs.statorCurrentOfMainFlywheelRightAmps = statorCurrentOfMainFlywheelRightAmps.getValue().in(Amps);
-    inputs.statorCurrentOfMainFlywheelOuterRightAmps = statorCurrentOfMainFlywheelOuterRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfIntakeAmps = statorCurrentOfIntakeAmps.getValue().in(Amps);
 
     inputs.backspinWheelMotorRightConnected = backspinWheelMotorRight.isConnected();
     inputs.backspinWheelMotorLeftConnected = backspinWheelMotorLeft.isConnected();
     inputs.shooterFlywheelInnerLeftConnected = shooterFlywheelInnerLeft.isConnected();
     inputs.shooterFlywheelInnerRightConnected = shooterFlywheelInnerRight.isConnected();
-    inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterRight.isConnected();
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
 
     inputs.outputOfBackspinLeftVolts = outputOfBackspinLeftVolts.getValue().in(Volts);
     inputs.outputOfBackspinRightVolts = outputOfBackspinRightVolts.getValue().in(Volts);
     inputs.outputOfMainFlywheelLeftVolts = outputOfMainFlywheelLeftVolts.getValue().in(Volts);
     inputs.outputOfMainFlywheelRightVolts = outputOfMainFlywheelRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterRightVolts.getValue().in(Volts);
     inputs.outputOfIntakeVolts = outputOfIntakeVolts.getValue().in(Volts);
 
   }
@@ -332,7 +280,6 @@ public class ShooterSim implements ShooterIO {
   public void setOutput(double shooterOutput, double backspinOutputLeft, double backspinOutputRight) {
     shooterFlywheelInnerLeft.set(shooterOutput);
     shooterFlywheelInnerRight.set(shooterOutput);
-    shooterFlywheelOuterRight.set(shooterOutput);
     backspinWheelMotorLeft.set(backspinOutputLeft);
     backspinWheelMotorRight.set(backspinOutputRight);
   }
@@ -348,7 +295,6 @@ public class ShooterSim implements ShooterIO {
     setMainWheelSpeed(shooterFlywheelSpeed);
     setBackspinSpeedOfLeft(shooterBackspinSpeedOfLeft);
     setBackspinSpeedOfRight(shooterBackspinSpeedOfRight);
-    setBackspinSpeedOfRight(shooterFlywheelSpeed);
     setIntakeSpeed(shooterIntakeSpeed);
   }
 
@@ -356,7 +302,6 @@ public class ShooterSim implements ShooterIO {
     mainFlywheelSetpoint = shooterFlywheelSpeedInRPS;
     shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
     shooterFlywheelInnerRight.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint));
   }
 
   public void setBackspinSpeedOfLeft(double shooterBackspinSpeedInRPS) {
@@ -381,7 +326,6 @@ public class ShooterSim implements ShooterIO {
     mainFlywheelSetpoint = 0;
     shooterFlywheelInnerLeft.stopMotor();
     shooterFlywheelInnerRight.stopMotor();
-    shooterFlywheelOuterRight.stopMotor();
   }
 
   public void stopBackspinLeftWheel() {
@@ -433,17 +377,12 @@ public class ShooterSim implements ShooterIO {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    shooterFlywheelOuterRight.setControl(switch (ClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
   }
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Flywheel() {
-    double avg = (shooterFlywheelInnerLeftSim.getVelocity() +
-        shooterFlywheelInnerRightSim.getVelocity() +
-        shooterFlywheelOuterRightSim.getVelocity()) / 3;
+    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond) +
+        shooterFlywheelInnerRight.getVelocity().getValue().in(RotationsPerSecond) ) / 2;
     return avg;
   }
 
@@ -461,8 +400,9 @@ public class ShooterSim implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Backspin() {
-    double avg = (        backspinWheelMotorLeftSim.getVelocity() +
-        backspinWheelMotorRightSim.getVelocity()) / 2;
+    double avg = (
+        backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
+        backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     return avg;
   }
 
@@ -476,7 +416,7 @@ public class ShooterSim implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Intake() {
-    double avg = shooterIntakeMotorSim.getVelocity();
+    double avg = shooterIntakeMotor.getVelocity().getValue().in(RotationsPerSecond);
     return avg;
   }
 }
