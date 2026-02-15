@@ -11,10 +11,12 @@ public interface ShooterIO {
     public double velocityOfbackspinWheelMotorLeftRPS = 0;
     public double velocityOfbackspinWheelMotorRightRPS = 0;
     public double velocityOfMainFlywheelOuterRightRPS = 0;
+    public double velocityOfMainFlywheelOuterLeftRPS = 0;
     public double velocityOfIntakeRPS = 0;
     public double accelerationOfMainFlywheelLeft = 0;
     public double accelerationOfMainFlywheelRight = 0;
     public double accelerationOfMainFlywheelOuterRight = 0;
+    public double accelerationOfMainFlywheelOuterLeft = 0;
     public double accelerationOfBackspinLeft = 0;
     public double accelerationOfIntake = 0;
     public double statorCurrentOfBackspinLeftAmps = 0;
@@ -22,18 +24,21 @@ public interface ShooterIO {
     public double statorCurrentOfMainFlywheelLeftAmps = 0;
     public double statorCurrentOfMainFlywheelRightAmps = 0;
     public double statorCurrentOfMainFlywheelOuterRightAmps = 0;
+    public double statorCurrentOfMainFlywheelOuterLeftAmps = 0;
     public double statorCurrentOfIntakeAmps = 0;
     public boolean backspinWheelMotorRightConnected = false;
     public boolean backspinWheelMotorLeftConnected = false;
     public boolean shooterFlywheelInnerLeftConnected = false;
     public boolean shooterFlywheelInnerRightConnected = false;
     public boolean shooterFlywheelOuterRightConnected = false;
+    public boolean shooterFlywheelOuterLeftConnected = false;
     public boolean shooterIntakeMotorConnected = false;
     public double outputOfBackspinLeftVolts = 0;
     public double outputOfBackspinRightVolts = 0;
     public double outputOfMainFlywheelLeftVolts = 0;
     public double outputOfMainFlywheelRightVolts = 0;
     public double outputOfMainFlywheelOuterRightVolts = 0;
+    public double outputOfMainFlywheelOuterLeftVolts = 0;
     public double outputOfIntakeVolts = 0;
   }
 

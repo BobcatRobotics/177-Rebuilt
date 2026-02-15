@@ -28,6 +28,7 @@ import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealDual;
+import frc.robot.subsystems.Shooter.ShooterRealQuad;
 import frc.robot.subsystems.Shooter.ShooterRealSingle;
 import frc.robot.subsystems.Shooter.ShooterRealTriple;
 import frc.robot.subsystems.Shooter.ShooterSim;
@@ -70,12 +71,12 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        m_Shooter = new Shooter(new ShooterRealTriple());
+        m_Shooter = new Shooter(new ShooterRealQuad());
         m_Shooter.applyState();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_Shooter = new Shooter(new ShooterSim());
+        m_Shooter = new Shooter(new ShooterRealQuad());
         m_Shooter.applyState();
         break;
 
@@ -92,11 +93,11 @@ public class RobotContainer {
     SendableChooser<Command> m_chooser = new SendableChooser<>();
         // Set up SysId routines
     m_chooser.addOption("Flywheel Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
+            shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter).withTimeout(15));
     m_chooser.addOption("Backspin Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
+            shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter).withTimeout(15));
     m_chooser.addOption("Intake Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+            shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter).withTimeout(15));
 
 
     m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",

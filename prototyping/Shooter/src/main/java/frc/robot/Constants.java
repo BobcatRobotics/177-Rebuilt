@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -49,32 +46,32 @@ public final class Constants {
         public static final double targetBackspinSpeedRightRPS = 20;
 
         public final static class SharedFlywheel {
-            public static final boolean isInvertedLeft = true;
-            public static final boolean isInvertedRight = false;
+            public static final boolean isInvertedLeft = false;
+            public static final boolean isInvertedRight = true;
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
             // Motor Constants
-            public static final double kshooterMainkP = 1.61690;
+            public static final double kshooterMainkP = 0.00;
             public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.055;
-            public static final double kshooterMainkS = 0.23231;
-            public static final double kshooterMainkV = 0.12369;
+            public static final double kshooterMainkD = 0.000;
+            public static final double kshooterMainkS = 0.0;
+            public static final double kshooterMainkV = 0.0;
             public static final double kshooterMainkA = 0;
             public static final double currentLimit = 40;
 
-            public static final int FlywheelOuterIDLeft = 16;
-            public static final int FlywheelInnerIDLeft = 13;
-            public static final int FlywheelOuterIDRight = 17;
+            public static final int FlywheelOuterIDLeft = 10;
+            public static final int FlywheelInnerIDLeft = 17;
+            public static final int FlywheelOuterIDRight = 16;
             public static final int FlywheelInnerIDRight = 14;
         }
 
         public final static class SharedIntake{
-            public static final int intakeIDLeft = 21;
-            public static final double kIntakeMotorkP = 1.65567;
+            public static final int intakeIDLeft = 30;
+            public static final double kIntakeMotorkP = 0.00;
             public static final double kIntakeMotorkI = 0;
-            public static final double kIntakeMotorkD = 0.09;
-            public static final double kIntakeMotorkS = 0.22810;
-            public static final double kIntakeMotorkV = 0.12080;
+            public static final double kIntakeMotorkD = 0.00;
+            public static final double kIntakeMotorkS = 0.0;
+            public static final double kIntakeMotorkV = 0.0;
             public static final double kIntakeMotorkA = 0;
             public static final double currentLimit = 40;
             public static final boolean isInverted = false;
@@ -83,13 +80,13 @@ public final class Constants {
 
         public final static class Left {
 
-            public static final int BackspinID = 18;
+            public static final int BackspinID = 28;
             // Motor Constants
-            public static final double kBackspinMotorkP = 1.07020;
+            public static final double kBackspinMotorkP = 0.0;
             public static final double kBackspinMotorkI = 0;
-            public static final double kBackspinMotorkD = 0.04;
-            public static final double kBackspinMotorkS = 0.25794;
-            public static final double kBackspinMotorkV = 0.18688;
+            public static final double kBackspinMotorkD = 0.0;
+            public static final double kBackspinMotorkS = 0.0;
+            public static final double kBackspinMotorkV = 0.0;
             public static final double kBackspinMotorkA = 0;
             public static final double currentLimit = 40;
             public static final boolean isInverted = true;
@@ -99,7 +96,7 @@ public final class Constants {
 
         public final static class Right {
             // ID Constants
-            public static final int BackspinID = 12;
+            public static final int BackspinID = 2;
             public static final double kBackspinMotorkP = 1.07020;
             public static final double kBackspinMotorkI = 0;
             public static final double kBackspinMotorkD = 0.04;
