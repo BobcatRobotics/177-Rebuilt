@@ -34,22 +34,35 @@ public final class Constants {
     }
 
     public static final class HopperConstants{
-
-        public static final InvertedValue hopperMotorInvert = InvertedValue.Clockwise_Positive;
-        public static final NeutralModeValue hopperMotorBrakeMode = NeutralModeValue.Brake;
-        public static final double kTopP = 0;
-        public static final double kTopV = 0;
-        public static final double kTopS = 0;
-        public static final double hopperCurrentLimit = 0;
+        public static final class Top {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static final double kHopperP = 0;
+            public static final double kHopperI = 0;
+            public static final double kHopperD = 0;
+            public static final double kHopperV = 0;
+            public static final double kHopperS = 0;
+            public static final double kHopperA = 0;
+            public static final double hopperCurrentLimit = 40;
+            public static final int hopperMotorId = 11;
+        }
+        public static final class Bottom {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static final double kHopperP = 0;
+            public static final double kHopperI = 0;
+            public static final double kHopperD = 0;
+            public static final double kHopperV = 0;
+            public static final double kHopperS = 0;
+            public static final double kHopperA = 0;
+            public static final double hopperCurrentLimit = 40;
+            public static final int hopperMotorId = 11;
+        }
 
         public static final double idleHopperSpeed = 0.0;
-        public static final double intakeHopperSpeed = 1.0;
-        public static final double outtakeHopperSpeed = -1.0;
-
         public static final double topMotorTargetVelocity = 0;
         public static final double bottomMotorTargetVelocity = 0;
 
-        public static final double idleTopTargetVelocity = 0;
-        public static final double idleBottomTargetVelocity = 0;
+        
     }
 }

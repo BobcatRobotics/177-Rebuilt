@@ -1,57 +1,89 @@
-// package frc.robot.subystems.Hopper;
+package frc.robot.subystems.Hopper;
 
-// import frc.robot.Constants;
 
-// public class HopperState {
-//   public class ShooterGoal {
-//     public double position;
-//     public double speed;
-//   }
+import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
-//   public enum State {
-//     IDLE,
-//     MANUAL,
-//     TARGETTING
-//   }
+import frc.robot.Constants;
 
-//   public State currentState = State.IDLE;
-//   private double manualSpeed = 0.0;
+public class HopperState {
 
-//   /** Set the intake to a predefined state */
-//   public void setState(State state) {
-//     this.currentState = state;
-//   }
+  /** Output goal for the shooter subsystem */
+  public static class ShooterGoal {
+    public double hopperSpeedTop;
+    public double hopperSpeedBottom;
+  }
 
-//   /** Set manual speed and switch to MANUAL mode */
-//   public void setManualSpeed(double speed) {
-//     manualSpeed = speed;
-//     currentState = State.MANUAL;
-//   }
+  public enum State {
+    IDLE,
+    MANUAL,
+    TARGETING
+  }
 
-//   public void setManualPosition(double position) {
-//     manualPosition = position;
-//     currentState = State.MANUAL;
-//   }
+  private State currentState = State.IDLE;
 
-//   /** Returns the motor output based on the current state */
-//   public ShooterGoal getOutput() {
-//     ShooterGoal goal = new ShooterGoal();
-//     switch (currentState) {
-//       case IDLE -> {
-//         goal.speed = Constants.ShooterConstants.idleSpeed;
-//       }
-//       case MANUAL -> {
-//         goal.speed = manualSpeed;
-//       }
-//     }
-//     return goal;
-//   }
 
-//   public State getCurrentState() {
-//     return currentState;
-//   }
+  // Manual control values
+  private TunableDouble manualHopperSpeedTop;
+  private TunableDouble manualHopperSpeedBottom;
 
-//   public double getSpeed(){
-//     return manualSpeed;
-//   }
-// }
+
+  public HopperState() {
+       manualHopperSpeedTop = new TunableDouble("/Hopper/Top/manualBackspinSetPointTop", 0.0);
+      manualHopperSpeedBottom = new TunableDouble("/Hopper/Bottom/manualBackspinSetPointBottom", 0.0);
+
+  }
+
+  /** Set the shooter to a predefined state */
+  public void setState(State state) {
+    this.currentState = state;
+  }
+
+  /**
+   * Set all shooter speeds at once and switch to MANUAL mode
+   */
+  public void setManualSpeeds(
+      double hopperSpeedTop,
+      double hopperSpeedBottom) {
+       manualHopperSpeedTop = new TunableDouble("/Hopper/Top/manualBackspinSetPointTop",
+          hopperSpeedTop);
+      manualHopperSpeedBottom = new TunableDouble("/Hopper/Bottom/manualBackspinSetPointBottom",
+          hopperSpeedBottom);
+    currentState = State.MANUAL;
+  }
+
+  /** Returns the shooter outputs based on the current state */
+  public ShooterGoal getOutput() {
+    ShooterGoal goal = new ShooterGoal();
+
+    switch (currentState) {
+      case IDLE -> {
+         goal.hopperSpeedTop = Constants.HopperConstants.idleHopperSpeed;
+        goal.hopperSpeedBottom = Constants.HopperConstants.idleHopperSpeed;
+      }
+      case MANUAL -> {
+          goal.hopperSpeedTop = manualHopperSpeedTop.get();
+        goal.hopperSpeedBottom = manualHopperSpeedBottom.get();
+      }
+
+      case TARGETING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        goal.hopperSpeedTop = Constants.HopperConstants.topMotorTargetVelocity;
+        goal.hopperSpeedBottom = Constants.HopperConstants.bottomMotorTargetVelocity;
+      }
+    }
+
+    return goal;
+  }
+
+  public State getCurrentState() {
+    return currentState;
+  }
+
+
+  public double getHopperSpeedOfTop() {
+    return getOutput().hopperSpeedTop;
+  }
+  public double getHopperSpeedOfBottom() {
+    return getOutput().hopperSpeedBottom;
+  }
+}
