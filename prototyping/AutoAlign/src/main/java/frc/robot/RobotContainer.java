@@ -48,7 +48,7 @@ import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
 import org.bobcatrobotics.Subsystems.Swerve.ModuleWrapper;
 import frc.robot.subsystems.Limelight.limelightConstants;
-import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -60,14 +60,12 @@ import frc.robot.Constants.LimelightConstants;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    // target location (from blue side origin/FRC WPIBlue origin) in meters
-    private final double TARGETX = 4.7;
-    private final double TARGETY = 4.114;
-
+   
     // Subsystems
     private final Drive drive;
     private final AntiTipping antiTipping;
-    private Vision vision;
+    private Vision frontCamera;
+    private Vision backCamera;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -94,8 +92,24 @@ public class RobotContainer {
                         new ModuleIOTalonFX(newFrontRight.addModuleConstants(TunerConstants.FrontRight)),
                         new ModuleIOTalonFX(newBackLeft.addModuleConstants(TunerConstants.BackLeft)),
                         new ModuleIOTalonFX(newBackRight.addModuleConstants(TunerConstants.BackRight)));
-                // Vision
-                vision = new Vision(drive, new VisionIOLimelight(new limelightConstants(Constants.LimelightConstants.name, Constants.LimelightConstants.limelightType, Constants.LimelightConstants.limelightMountHeight, Constants.LimelightConstants.apriltagPipelineIndex)));
+                // Front Camera
+                frontCamera = new Vision(drive, new VisionIOLimelight(new limelightConstants(
+                Constants.frontLimelightConstants.name, 
+                Constants.frontLimelightConstants.limelightType, 
+                Constants.frontLimelightConstants.verticalFOV, 
+                Constants.frontLimelightConstants.horizontalFOV,
+                Constants.frontLimelightConstants.limelightMountHeight,
+                Constants.frontLimelightConstants.apriltagPipelineIndex
+                )));
+                // Back Camera
+                backCamera = new Vision(drive, new VisionIOLimelight(new limelightConstants(
+                Constants.backLimelightConstants.name, 
+                Constants.backLimelightConstants.limelightType, 
+                Constants.backLimelightConstants.verticalFOV, 
+                Constants.backLimelightConstants.horizontalFOV,
+                Constants.backLimelightConstants.limelightMountHeight, 
+                Constants.backLimelightConstants.apriltagPipelineIndex
+                )));
 
                 break;
             case SIM:
@@ -177,7 +191,6 @@ public class RobotContainer {
 
 
         // AUTO ALIGN when Y button is held
-        // TODO check arc tan values (probably, but might, doesn't need a phase shift or anything)
         // atan2 to get correct aiming angle to center of hub based on robot pose
         controller.y().whileTrue(
                         DriveCommands.joystickDriveAtAngle(
@@ -186,8 +199,21 @@ public class RobotContainer {
                                 () -> -controller.getLeftX(),
                                 () -> new Rotation2d(
                                         Math.atan2(
-                                                TARGETY - LimelightHelpers.getBotPose2d_wpiBlue("").getY(),
-                                                TARGETX - LimelightHelpers.getBotPose2d_wpiBlue("").getX()
+                                                Constants.FieldConstants.HUBX - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getY(),
+                                                Constants.FieldConstants.HUBY - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getX()
+                                                )) //vision.getTargetX(0)
+                                ));
+
+        // AUTO ALIGN to pass balls when rightbumper button is held
+        controller.rightBumper().whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                                drive,
+                                () -> -controller.getLeftY(),
+                                () -> -controller.getLeftX(),
+                                () -> new Rotation2d(
+                                        Math.atan2(
+                                                Constants.FieldConstants.HUBX - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getY(),
+                                                Constants.FieldConstants.HUBY - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getX()
                                                 )) //vision.getTargetX(0)
                                 ));
 

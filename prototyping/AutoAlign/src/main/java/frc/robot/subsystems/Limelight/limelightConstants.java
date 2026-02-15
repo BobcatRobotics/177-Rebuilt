@@ -7,8 +7,8 @@ import frc.robot.util.VisionObservation.LLTYPE;
 public class limelightConstants {
   public final String name;
   public final LLTYPE limelightType;
-  // public final double verticalFOV;
-  // public final double horizontalFOV;
+  public final double verticalFOV;
+  public final double horizontalFOV;
   public final double limelightMountHeight;
   // public final int detectorPiplineIndex;
   public final int apriltagPipelineIndex;
@@ -21,21 +21,19 @@ public class limelightConstants {
    * @param name the limelight name
    * @param limelightType the limelight hardware/type
    * @param limelightMountHeight the height the limelight is mounted at (meters)
-   * @param apriltagPipelineIndex the default pipeline index for april tag detection
    */
   public limelightConstants(
       String name,
       LLTYPE limelightType,
-      // double verticalFOV,
-      // double horizontalFOV,
+      double verticalFOV,
+      double horizontalFOV,
       double limelightMountHeight,
-      // int detectorPiplineIndex,
       int apriltagPipelineIndex
       ) {
     this.name = name;
-    // this.verticalFOV = verticalFOV; // degrees obviously
-    // this.horizontalFOV = horizontalFOV;
-    this.limelightMountHeight = 0.84;
+    this.verticalFOV = verticalFOV; // degrees obviously
+    this.horizontalFOV = horizontalFOV;
+    this.limelightMountHeight = limelightMountHeight;
     // this.detectorPiplineIndex = detectorPiplineIndex;
     this.apriltagPipelineIndex = apriltagPipelineIndex;
     // this.horPixels = horPixels;
