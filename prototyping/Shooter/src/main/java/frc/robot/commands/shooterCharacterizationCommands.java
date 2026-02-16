@@ -191,8 +191,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command characterizeAll(Shooter shooter) {
-        return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Flywheel(shooter))
-                .alongWith(feedforwardCharacterization_Flywheel(shooter))
-                .alongWith(feedforwardCharacterization_Flywheel(shooter));
+        return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Backspin(shooter))
+                .alongWith(feedforwardCharacterization_Intake(shooter));
     }
 }
