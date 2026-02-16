@@ -45,193 +45,210 @@ import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
-  private final Shooter m_Shooter;
+        // Subsystems
+        private final Shooter m_Shooter;
 
-  private ShooterState.State desired = ShooterState.State.MANUAL;
-  private ShooterState desiredState;
+        private ShooterState.State desired = ShooterState.State.MANUAL;
+        private ShooterState desiredState;
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
-  private final CommandXboxController flywheelController = new CommandXboxController(1);
-  private final CommandXboxController backspinController = new CommandXboxController(2);
-  private final CommandXboxController intakeController = new CommandXboxController(3);
+        // Controller
+        private final CommandXboxController controller = new CommandXboxController(0);
+        private final CommandXboxController flywheelController = new CommandXboxController(1);
+        private final CommandXboxController backspinController = new CommandXboxController(2);
+        private final CommandXboxController intakeController = new CommandXboxController(3);
 
+        // Dashboard inputs
+        private LoggedDashboardChooser<Command> autoChooser;
 
-  // Dashboard inputs
-  private LoggedDashboardChooser<Command> autoChooser;
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        public RobotContainer() {
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
+                desiredState = new ShooterState();
+                desiredState.setState(desired);
 
-    desiredState = new ShooterState();
-    desiredState.setState(desired);
+                switch (Constants.currentMode) {
+                        case REAL:
+                                // Real robot, instantiate hardware IO implementations
+                                m_Shooter = new Shooter(new ShooterRealQuad());
+                                m_Shooter.applyState();
+                                break;
+                        case SIM:
+                                // Sim robot, instantiate physics sim IO implementations
+                                m_Shooter = new Shooter(new ShooterSim());
+                                m_Shooter.applyState();
+                                break;
 
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        m_Shooter = new Shooter(new ShooterRealQuad());
-        m_Shooter.applyState();
-        break;
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        m_Shooter = new Shooter(new ShooterSim());
-        m_Shooter.applyState();
-        break;
+                        default:
+                                // Replayed robot, disable IO implementations
+                                m_Shooter = new Shooter(new ShooterIO() {
+                                });
+                                m_Shooter.applyState();
+                                break;
+                }
 
-      default:
-        // Replayed robot, disable IO implementations
-        m_Shooter = new Shooter(new ShooterIO() {
-        });
-        m_Shooter.applyState();
-        break;
-    }
+                // Set up auto routines
+                // A chooser for autonomous commands
+                SendableChooser<Command> m_chooser = new SendableChooser<>();
+                // Set up SysId routines
+                m_chooser.addOption("Simple FF Characterization",
+                                shooterCharacterizationCommands.characterizeAll(m_Shooter).withTimeout(15));
+                m_chooser.addOption("Flywheel Simple FF Characterization",
+                                shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)
+                                                .withTimeout(15));
+                m_chooser.addOption("Backspin Simple FF Characterization",
+                                shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter)
+                                                .withTimeout(15));
+                m_chooser.addOption("Intake Simple FF Characterization",
+                                shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter)
+                                                .withTimeout(15));
 
-    // Set up auto routines
-      // A chooser for autonomous commands
-    SendableChooser<Command> m_chooser = new SendableChooser<>();
-        // Set up SysId routines
-    m_chooser.addOption("Flywheel Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter).withTimeout(15));
-    m_chooser.addOption("Backspin Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter).withTimeout(15));
-    m_chooser.addOption("Intake Simple FF Characterization",
-            shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter).withTimeout(15));
+                m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateFlywheel")
+                                                .quasistatic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateFlywheel")
+                                                .quasistatic(SysIdRoutine.Direction.kReverse));
+                m_chooser.addOption("Flywheel SysId (Dynamic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateFlywheel")
+                                                .dynamic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Flywheel SysId (Dynamic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateFlywheel")
+                                                .dynamic(SysIdRoutine.Direction.kReverse));
 
+                m_chooser.addOption("Backspin SysId (Quasistatic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateBackspin")
+                                                .quasistatic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Backspin SysId (Quasistatic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateBackspin")
+                                                .quasistatic(SysIdRoutine.Direction.kReverse));
+                m_chooser.addOption("Backspin SysId (Dynamic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateBackspin")
+                                                .dynamic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Backspin SysId (Dynamic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateBackspin")
+                                                .dynamic(SysIdRoutine.Direction.kReverse));
 
-    m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateFlywheel").quasistatic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateFlywheel").quasistatic(SysIdRoutine.Direction.kReverse));
-    m_chooser.addOption("Flywheel SysId (Dynamic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateFlywheel").dynamic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Flywheel SysId (Dynamic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateFlywheel").dynamic(SysIdRoutine.Direction.kReverse));
+                m_chooser.addOption("Intake SysId (Quasistatic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateIntake")
+                                                .quasistatic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Intake SysId (Quasistatic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateIntake")
+                                                .quasistatic(SysIdRoutine.Direction.kReverse));
+                m_chooser.addOption("Intake SysId (Dynamic Forward)",
+                                m_Shooter.getRegistry().get("SysIdStateIntake")
+                                                .dynamic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Intake SysId (Dynamic Reverse)",
+                                m_Shooter.getRegistry().get("SysIdStateIntake")
+                                                .dynamic(SysIdRoutine.Direction.kReverse));
+                autoChooser = new LoggedDashboardChooser<>("Auto Choices", m_chooser);
 
+                // Set up SysId routines
 
-    m_chooser.addOption("Backspin SysId (Quasistatic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateBackspin").quasistatic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Backspin SysId (Quasistatic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateBackspin").quasistatic(SysIdRoutine.Direction.kReverse));
-    m_chooser.addOption("Backspin SysId (Dynamic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateBackspin").dynamic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Backspin SysId (Dynamic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateBackspin").dynamic(SysIdRoutine.Direction.kReverse));
+                // Configure the button bindings
+                configureButtonBindings();
+        }
 
+        /**
+         * Use this method to define your button->command mappings. Buttons can be
+         * created by
+         * instantiating a {@link GenericHID} or one of its subclasses
+         * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+         * passing it to a
+         * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+         */
+        private void configureButtonBindings() {
+                desiredState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
+                                Constants.ShooterConstants.idleIntakeSpeedRPS,
+                                Constants.ShooterConstants.idleBackspinSpeedRightRPS,
+                                Constants.ShooterConstants.idleBackspinSpeedLeftRPS);
+                m_Shooter.setDefaultCommand(new RunCommand(() -> {
+                        desiredState.setState(ShooterState.State.IDLE);
+                        m_Shooter.setState(desiredState);
+                }, m_Shooter));
 
-    m_chooser.addOption("Intake SysId (Quasistatic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateIntake").quasistatic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Intake SysId (Quasistatic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateIntake").quasistatic(SysIdRoutine.Direction.kReverse));
-    m_chooser.addOption("Intake SysId (Dynamic Forward)",
-            m_Shooter.getRegistry().get("SysIdStateIntake").dynamic(SysIdRoutine.Direction.kForward));
-    m_chooser.addOption("Intake SysId (Dynamic Reverse)",
-            m_Shooter.getRegistry().get("SysIdStateIntake").dynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices",m_chooser);
+                // CONTROL WHEELS INDIVIDUALLY
+                controller.y().whileTrue(new RunCommand(() -> {
+                        desiredState.setState(ShooterState.State.MANUAL);
+                        ShooterGoal goal = new ShooterGoal();
+                        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
+                        goal.backspinSpeedLeft = 0;
+                        goal.intakeSpeed = 0;
+                        goal.backspinSpeedRight = 0;
+                        desiredState.setCurrentSetPoints(goal);
+                        m_Shooter.setState(desiredState);
+                }, m_Shooter));
 
-    // Set up SysId routines
+                controller.x().whileTrue(new RunCommand(() -> {
+                        desiredState.setState(ShooterState.State.MANUAL);
+                        ShooterGoal goal = new ShooterGoal();
+                        goal.flywheelSpeed = 0;
+                        goal.backspinSpeedLeft = 0;
+                        goal.intakeSpeed = desiredState.getIntakeSpeed();
+                        goal.backspinSpeedRight = 0;
+                        desiredState.setCurrentSetPoints(goal);
+                        m_Shooter.setState(desiredState);
+                        m_Shooter.setState(desiredState);
+                }, m_Shooter));
 
-    // Configure the button bindings
-    configureButtonBindings();
-  }
+                controller.b().whileTrue(new RunCommand(() -> {
+                        desiredState.setState(ShooterState.State.MANUAL);
+                        ShooterGoal goal = new ShooterGoal();
+                        goal.flywheelSpeed = 0;
+                        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+                        goal.intakeSpeed = 0;
+                        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
+                        desiredState.setCurrentSetPoints(goal);
+                        m_Shooter.setState(desiredState);
+                }, m_Shooter));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-   * passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    desiredState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
-        Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRightRPS,
-        Constants.ShooterConstants.idleBackspinSpeedLeftRPS);
-    m_Shooter.setDefaultCommand(new RunCommand(() -> {
-            desiredState.setState(ShooterState.State.IDLE);
-            m_Shooter.setState(desiredState);
-    }, m_Shooter));
+                controller.rightBumper().whileTrue(new RunCommand(() -> {
+                        desiredState.setState(ShooterState.State.MANUAL);
+                        ShooterGoal goal = new ShooterGoal();
+                        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
+                        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+                        goal.flywheelSpeed = desiredState.getIntakeSpeed();
+                        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
+                        desiredState.setCurrentSetPoints(goal);
+                        m_Shooter.setState(desiredState);
+                }, m_Shooter));
 
-    // CONTROL WHEELS INDIVIDUALLY
-    controller.y().whileTrue(new RunCommand(() -> {
-        desiredState.setState(ShooterState.State.MANUAL);
-        ShooterGoal goal = new ShooterGoal();
-        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
-        goal.backspinSpeedLeft = 0;
-        goal.intakeSpeed = 0;
-        goal.backspinSpeedRight = 0;
-        desiredState.setCurrentSetPoints(goal);
-        m_Shooter.setState(desiredState);
-    }, m_Shooter));
+                var sysIdFlywheelTests = m_Shooter.getRegistry().get("SysIdStateFlywheel").generateAllTests();
+                flywheelController.a().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QF));
+                flywheelController.b().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QR));
+                flywheelController.x().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DF));
+                flywheelController.y().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DR));
+                flywheelController.rightBumper().onTrue(
+                                shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
 
-    controller.x().whileTrue(new RunCommand(() -> {
-        desiredState.setState(ShooterState.State.MANUAL);
-        ShooterGoal goal = new ShooterGoal();
-        goal.flywheelSpeed = 0;
-        goal.backspinSpeedLeft = 0;
-        goal.intakeSpeed = desiredState.getIntakeSpeed();
-        goal.backspinSpeedRight = 0;
-        desiredState.setCurrentSetPoints(goal);
-        m_Shooter.setState(desiredState);
-      m_Shooter.setState(desiredState);
-    }, m_Shooter));
+                var sysIdBackspinTests = m_Shooter.getRegistry().get("SysIdStateBackspin").generateAllTests();
+                backspinController.a().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QF));
+                backspinController.b().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QR));
+                backspinController.x().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DF));
+                backspinController.y().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DR));
+                backspinController.rightBumper().onTrue(
+                                shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
 
-    controller.b().whileTrue(new RunCommand(() -> {
-        desiredState.setState(ShooterState.State.MANUAL);
-        ShooterGoal goal = new ShooterGoal();
-        goal.flywheelSpeed = 0;
-        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
-        goal.intakeSpeed = 0;
-        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
-        desiredState.setCurrentSetPoints(goal);
-        m_Shooter.setState(desiredState);
-    }, m_Shooter));
+                var sysIdIntakeTests = m_Shooter.getRegistry().get("SysIdStateIntake").generateAllTests();
+                intakeController.a().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QF));
+                intakeController.b().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QR));
+                intakeController.x().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DF));
+                intakeController.y().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DR));
+                intakeController.rightBumper()
+                                .onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+        }
 
-    controller.rightBumper().whileTrue(new RunCommand(() -> {
-        desiredState.setState(ShooterState.State.MANUAL);
-        ShooterGoal goal = new ShooterGoal();
-        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
-        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
-        goal.flywheelSpeed = desiredState.getIntakeSpeed();
-        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
-        desiredState.setCurrentSetPoints(goal);
-        m_Shooter.setState(desiredState);
-    }, m_Shooter));
+        /**
+         * Use this to pass the autonomous command to the main {@link Robot} class.
+         *
+         * @return the command to run in autonomous
+         */
+        public Command getAutonomousCommand() {
+                return autoChooser.get();
+        }
 
-    var sysIdFlywheelTests = m_Shooter.getRegistry().get("SysIdStateFlywheel").generateAllTests();
-    flywheelController.a().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QF));
-    flywheelController.b().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QR));
-    flywheelController.x().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DF));
-    flywheelController.y().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DR));
-    flywheelController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
+        public void teleopPeriodic() {
 
-    var sysIdBackspinTests = m_Shooter.getRegistry().get("SysIdStateBackspin").generateAllTests();
-    backspinController.a().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QF));
-    backspinController.b().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QR));
-    backspinController.x().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DF));
-    backspinController.y().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DR));
-    backspinController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
-
-    var sysIdIntakeTests = m_Shooter.getRegistry().get("SysIdStateIntake").generateAllTests();
-    intakeController.a().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QF));
-    intakeController.b().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QR));
-    intakeController.x().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DF));
-    intakeController.y().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DR));
-    intakeController.rightBumper().onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
-}
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
-
-  public void teleopPeriodic() {
-
-  }
+        }
 }

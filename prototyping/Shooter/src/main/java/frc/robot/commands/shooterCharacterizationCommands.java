@@ -189,4 +189,10 @@ public class shooterCharacterizationCommands {
                 "Shooter/Characterization/Intake",
                 "Intake");
     }
+
+    public static Command characterizeAll(Shooter shooter) {
+        return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Flywheel(shooter))
+                .alongWith(feedforwardCharacterization_Flywheel(shooter))
+                .alongWith(feedforwardCharacterization_Flywheel(shooter));
+    }
 }
