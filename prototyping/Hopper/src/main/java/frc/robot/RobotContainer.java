@@ -85,6 +85,9 @@ public class RobotContainer {
         // Set up SysId routines
     m_chooser.addOption("Hopper Simple FF Characterization",
             hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper).withTimeout(15));
+    m_chooser.addOption("Simple FF Characterization",
+            hopperCharacterizationCommands.characterizeAll(m_Hopper).withTimeout(15));
+
 
     m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
             m_Hopper.getRegistry().get("SysIdStateHopper").quasistatic(SysIdRoutine.Direction.kForward));
