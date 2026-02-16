@@ -33,6 +33,7 @@ import frc.robot.subsystems.Shooter.ShooterRealSingle;
 import frc.robot.subsystems.Shooter.ShooterRealTriple;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -76,7 +77,7 @@ public class RobotContainer {
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
-        m_Shooter = new Shooter(new ShooterRealQuad());
+        m_Shooter = new Shooter(new ShooterSim());
         m_Shooter.applyState();
         break;
 
@@ -148,20 +149,55 @@ public class RobotContainer {
     desiredState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
         Constants.ShooterConstants.idleIntakeSpeedRPS, Constants.ShooterConstants.idleBackspinSpeedRightRPS,
         Constants.ShooterConstants.idleBackspinSpeedLeftRPS);
-    m_Shooter.setDefaultCommand(new RunCommand(() -> m_Shooter.setState(desiredState), m_Shooter));
+    m_Shooter.setDefaultCommand(new RunCommand(() -> {
+            desiredState.setState(ShooterState.State.IDLE);
+            m_Shooter.setState(desiredState);
+    }, m_Shooter));
 
     // CONTROL WHEELS INDIVIDUALLY
     controller.y().whileTrue(new RunCommand(() -> {
-      m_Shooter.setMainWheelSpeed(desiredState.getFlywheelSpeed());
+        desiredState.setState(ShooterState.State.MANUAL);
+        ShooterGoal goal = new ShooterGoal();
+        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
+        goal.backspinSpeedLeft = 0;
+        goal.intakeSpeed = 0;
+        goal.backspinSpeedRight = 0;
+        desiredState.setCurrentSetPoints(goal);
+        m_Shooter.setState(desiredState);
     }, m_Shooter));
+
     controller.x().whileTrue(new RunCommand(() -> {
-      m_Shooter.setBackspinSpeedLeft(desiredState.getBackspinSpeedOfLeft());
+        desiredState.setState(ShooterState.State.MANUAL);
+        ShooterGoal goal = new ShooterGoal();
+        goal.flywheelSpeed = 0;
+        goal.backspinSpeedLeft = 0;
+        goal.intakeSpeed = desiredState.getIntakeSpeed();
+        goal.backspinSpeedRight = 0;
+        desiredState.setCurrentSetPoints(goal);
+        m_Shooter.setState(desiredState);
+      m_Shooter.setState(desiredState);
     }, m_Shooter));
+
     controller.b().whileTrue(new RunCommand(() -> {
-      m_Shooter.setBackspinSpeedRight(desiredState.getBackspinSpeedOfRight());
+        desiredState.setState(ShooterState.State.MANUAL);
+        ShooterGoal goal = new ShooterGoal();
+        goal.flywheelSpeed = 0;
+        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+        goal.intakeSpeed = 0;
+        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
+        desiredState.setCurrentSetPoints(goal);
+        m_Shooter.setState(desiredState);
     }, m_Shooter));
+
     controller.rightBumper().whileTrue(new RunCommand(() -> {
-      m_Shooter.setIntakeSpeed(desiredState.getIntakeSpeed());
+        desiredState.setState(ShooterState.State.MANUAL);
+        ShooterGoal goal = new ShooterGoal();
+        goal.flywheelSpeed = desiredState.getFlywheelSpeed();
+        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+        goal.flywheelSpeed = desiredState.getIntakeSpeed();
+        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
+        desiredState.setCurrentSetPoints(goal);
+        m_Shooter.setState(desiredState);
     }, m_Shooter));
 
     var sysIdFlywheelTests = m_Shooter.getRegistry().get("SysIdStateFlywheel").generateAllTests();

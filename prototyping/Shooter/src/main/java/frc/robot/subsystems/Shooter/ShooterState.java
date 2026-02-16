@@ -21,7 +21,7 @@ public class ShooterState {
   }
 
   private State currentState = State.IDLE;
-
+  private ShooterGoal currentSetpoints = new ShooterGoal();
 
   // Manual control values
   private TunableDouble manualFlywheelSpeed;
@@ -51,43 +51,42 @@ public class ShooterState {
       double intakeSpeed,
       double backspinSpeedLeft,
       double backspinSpeedRight) {
-      manualFlywheelSpeed = new TunableDouble("/Shooter/Flywheel/manualFlywheelSetPoint",
-          flywheelSpeed);
+      manualFlywheelSpeed = new TunableDouble("/Shooter/Flywheel/manualFlywheelSetPoint",flywheelSpeed);
       manualIntakeSpeed = new TunableDouble("/Shooter/Intake/manualIntakeSetPoint", intakeSpeed);
-      manualBackspinSpeedLeft = new TunableDouble("/Shooter/Backspin/manualBackspinSetPointLeft",
-          backspinSpeedLeft);
-      manualBackspinSpeedRight = new TunableDouble("/Shooter/Backspin/manualBackspinSetPointRight",
-          backspinSpeedLeft);
+      manualBackspinSpeedLeft = new TunableDouble("/Shooter/Backspin/manualBackspinSetPointLeft",backspinSpeedLeft);
+      manualBackspinSpeedRight = new TunableDouble("/Shooter/Backspin/manualBackspinSetPointRight",backspinSpeedRight);
     currentState = State.MANUAL;
   }
 
   /** Returns the shooter outputs based on the current state */
-  public ShooterGoal getOutput() {
-    ShooterGoal goal = new ShooterGoal();
+  public void update() {
 
     switch (currentState) {
       case IDLE -> {
-        goal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        goal.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
-        goal.backspinSpeedLeft = Constants.ShooterConstants.idleBackspinSpeedLeftRPS;
-        goal.backspinSpeedRight = Constants.ShooterConstants.idleBackspinSpeedRightRPS;
+        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
+        currentSetpoints.backspinSpeedLeft = Constants.ShooterConstants.idleBackspinSpeedLeftRPS;
+        currentSetpoints.backspinSpeedRight = Constants.ShooterConstants.idleBackspinSpeedRightRPS;
       }
       case MANUAL -> {
-        goal.flywheelSpeed = manualFlywheelSpeed.get();
-        goal.intakeSpeed = manualIntakeSpeed.get();
-        goal.backspinSpeedLeft = manualBackspinSpeedLeft.get();
-        goal.backspinSpeedRight = manualBackspinSpeedRight.get();
+        currentSetpoints.flywheelSpeed = manualFlywheelSpeed.get();
+        currentSetpoints.intakeSpeed = manualIntakeSpeed.get();
+        currentSetpoints.backspinSpeedLeft = manualBackspinSpeedLeft.get();
+        currentSetpoints.backspinSpeedRight = manualBackspinSpeedRight.get();
       }
 
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
-        goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        goal.backspinSpeedLeft = Constants.ShooterConstants.targetBackspinSpeedLeftRPS;
-        goal.backspinSpeedRight = Constants.ShooterConstants.targetBackspinSpeedRightRPS;
+        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
+        currentSetpoints.backspinSpeedLeft = Constants.ShooterConstants.targetBackspinSpeedLeftRPS;
+        currentSetpoints.backspinSpeedRight = Constants.ShooterConstants.targetBackspinSpeedRightRPS;
       }
     }
+  }
 
-    return goal;
+  public void setCurrentSetPoints(ShooterGoal goal){
+    currentSetpoints = goal;
   }
 
   public State getCurrentState() {
@@ -95,17 +94,17 @@ public class ShooterState {
   }
 
   public double getFlywheelSpeed() {
-    return getOutput().flywheelSpeed;
+    return currentSetpoints.flywheelSpeed;
   }
 
   public double getIntakeSpeed() {
-    return getOutput().intakeSpeed;
+    return currentSetpoints.intakeSpeed;
   }
 
   public double getBackspinSpeedOfLeft() {
-    return getOutput().backspinSpeedLeft;
+    return currentSetpoints.backspinSpeedLeft;
   }
   public double getBackspinSpeedOfRight() {
-    return getOutput().backspinSpeedRight;
+    return currentSetpoints.backspinSpeedRight;
   }
 }

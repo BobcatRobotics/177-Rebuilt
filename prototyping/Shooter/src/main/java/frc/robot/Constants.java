@@ -41,7 +41,7 @@ public final class Constants {
 
 
         public static final double targetFlywheelSpeedRPS = 50;
-        public static final double targetIntakeSpeedRPS = 30;
+        public static final double targetIntakeSpeedRPS = -30;
         public static final double targetBackspinSpeedLeftRPS = 20;
         public static final double targetBackspinSpeedRightRPS = 20;
 
@@ -51,11 +51,11 @@ public final class Constants {
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
             // Motor Constants
-            public static final double kshooterMainkP = 0.00;
+            public static final double kshooterMainkP = 1.49014;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0.000;
-            public static final double kshooterMainkS = 0.0;
-            public static final double kshooterMainkV = 0.0;
+            public static final double kshooterMainkS = 0.21405;
+            public static final double kshooterMainkV = 0.13422;
             public static final double kshooterMainkA = 0;
             public static final double currentLimit = 40;
 
@@ -67,11 +67,11 @@ public final class Constants {
 
         public final static class SharedIntake{
             public static final int intakeIDLeft = 30;
-            public static final double kIntakeMotorkP = 0.00;
+            public static final double kIntakeMotorkP = 2.55996;
             public static final double kIntakeMotorkI = 0;
             public static final double kIntakeMotorkD = 0.00;
-            public static final double kIntakeMotorkS = 0.0;
-            public static final double kIntakeMotorkV = 0.0;
+            public static final double kIntakeMotorkS = 0.19856;
+            public static final double kIntakeMotorkV = 0.12821;
             public static final double kIntakeMotorkA = 0;
             public static final double currentLimit = 40;
             public static final boolean isInverted = false;
@@ -82,11 +82,11 @@ public final class Constants {
 
             public static final int BackspinID = 28;
             // Motor Constants
-            public static final double kBackspinMotorkP = 0.0;
-            public static final double kBackspinMotorkI = 0;
+            public static final double kBackspinMotorkP = 0.97578;
+            public static final double kBackspinMotorkI = 0.0;
             public static final double kBackspinMotorkD = 0.0;
-            public static final double kBackspinMotorkS = 0.0;
-            public static final double kBackspinMotorkV = 0.0;
+            public static final double kBackspinMotorkS = 0.21264;
+            public static final double kBackspinMotorkV = 0.20496;
             public static final double kBackspinMotorkA = 0;
             public static final double currentLimit = 40;
             public static final boolean isInverted = true;
@@ -97,11 +97,11 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int BackspinID = 2;
-            public static final double kBackspinMotorkP = 1.07020;
-            public static final double kBackspinMotorkI = 0;
-            public static final double kBackspinMotorkD = 0.04;
-            public static final double kBackspinMotorkS = 0.25794;
-            public static final double kBackspinMotorkV = 0.18688;
+            public static final double kBackspinMotorkP = 0.97578;
+            public static final double kBackspinMotorkI = 0.0;
+            public static final double kBackspinMotorkD = 0.0;
+            public static final double kBackspinMotorkS = 0.21264;
+            public static final double kBackspinMotorkV = 0.20496;
             public static final double kBackspinMotorkA = 0;
             public static final double currentLimit = 40;
             public static final boolean isInverted = false;

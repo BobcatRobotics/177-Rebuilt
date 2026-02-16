@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -18,7 +19,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -342,7 +342,7 @@ public class ShooterRealQuad implements ShooterIO {
     inputs.shooterFlywheelInnerLeftConnected = shooterFlywheelInnerLeft.isConnected();
     inputs.shooterFlywheelInnerRightConnected = shooterFlywheelInnerRight.isConnected();
     inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterRight.isConnected();
-    inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterLeft.isConnected();
+    inputs.shooterFlywheelOuterLeftConnected = shooterFlywheelOuterLeft.isConnected();
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
 
     inputs.outputOfBackspinLeftVolts = outputOfBackspinLeftVolts.getValue().in(Volts);
@@ -388,11 +388,13 @@ public class ShooterRealQuad implements ShooterIO {
 
   public void setBackspinSpeedOfLeft(double shooterBackspinSpeedInRPS) {
     backspinSetpointLeft = shooterBackspinSpeedInRPS;
+    Logger.recordOutput("/Shooter/Backspin/LeftSetPointSpeed",backspinSetpointLeft);
     backspinWheelMotorLeft.setControl(velBackspinLeftRequest.withVelocity(backspinSetpointLeft));
   }
 
   public void setBackspinSpeedOfRight(double shooterBackspinSpeedInRPS) {
     backspinSetpointRight = shooterBackspinSpeedInRPS;
+    Logger.recordOutput("/Shooter/Backspin/RightSetPointSpeed",backspinSetpointRight);
     backspinWheelMotorRight.setControl(velBackspinRightRequest.withVelocity(backspinSetpointRight));
   }
 
@@ -413,11 +415,15 @@ public class ShooterRealQuad implements ShooterIO {
 
   public void stopBackspinLeftWheel() {
     backspinSetpointLeft = 0;
+    
+    Logger.recordOutput("/Shooter/Backspin/LeftSetPointSpeed",backspinSetpointLeft);
     backspinWheelMotorLeft.stopMotor();
   }
 
   public void stopBackspinRightWheel() {
     backspinSetpointRight = 0;
+    
+    Logger.recordOutput("/Shooter/Backspin/RightSetPointSpeed",backspinSetpointRight);
     backspinWheelMotorRight.stopMotor();
   }
 
