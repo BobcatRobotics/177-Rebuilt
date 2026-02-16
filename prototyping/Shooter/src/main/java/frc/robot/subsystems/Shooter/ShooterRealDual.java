@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Util.Tunables.Gains;
+import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -25,8 +27,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
-import frc.robot.subsystems.Shooter.Modules.TunablePID;
-import frc.robot.util.Gains;
 
 public class ShooterRealDual implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;

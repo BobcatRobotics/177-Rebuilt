@@ -1,10 +1,6 @@
-package frc.robot.subsystems.Shooter.Modules;
-
-import org.bobcatrobotics.Util.Tunables.TunableDouble;
+package org.bobcatrobotics.Util.Tunables;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-
-import frc.robot.util.Gains;
 
 public class TunablePID {
   final TunableDouble kP, kI, kD, kS, kV, kA;
@@ -36,4 +32,5 @@ public class TunablePID {
         || kA.hasChanged();
   }
 }
+
 

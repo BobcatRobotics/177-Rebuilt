@@ -31,8 +31,8 @@ import edu.wpi.first.units.measure.Angle;
 
 import frc.robot.Constants.HopperConstants;
 import frc.robot.subystems.Hopper.Modules.ModuleConfigurator;
-import frc.robot.subystems.Hopper.Modules.TunablePID;
-import frc.robot.util.Gains;
+import org.bobcatrobotics.Util.Tunables.Gains;
+import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class HopperSim implements HopperIO {
 

@@ -23,8 +23,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
-import frc.robot.subsystems.Shooter.Modules.TunablePID;
-import frc.robot.util.Gains;
+import org.bobcatrobotics.Util.Tunables.Gains;
+import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class ShooterSim implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
