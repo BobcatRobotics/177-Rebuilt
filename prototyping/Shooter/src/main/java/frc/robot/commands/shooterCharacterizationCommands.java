@@ -11,45 +11,26 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Shooter.Shooter;
+import org.ejml.simple.SimpleMatrix;
 
 public class shooterCharacterizationCommands {
     private static final double FF_START_DELAY = 2.0; // Secs
     private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
 
     private static double[] solve3x3(double[][] m, double[] b) {
+        SimpleMatrix A = new SimpleMatrix(m);
+        SimpleMatrix B = new SimpleMatrix(3, 1, true, b);
 
-        double det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
-                m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
-                m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
-
-        if (Math.abs(det) < 1e-9) {
-            throw new RuntimeException("Characterization failed: singular matrix (bad data)");
-        }
-
-        double invdet = 1.0 / det;
-
-        double[][] inv = new double[3][3];
-
-        inv[0][0] = (m[1][1] * m[2][2] - m[1][2] * m[2][1]) * invdet;
-        inv[0][1] = -(m[0][1] * m[2][2] - m[0][2] * m[2][1]) * invdet;
-        inv[0][2] = (m[0][1] * m[1][2] - m[0][2] * m[1][1]) * invdet;
-
-        inv[1][0] = -(m[1][0] * m[2][2] - m[1][2] * m[2][0]) * invdet;
-        inv[1][1] = (m[0][0] * m[2][2] - m[0][2] * m[2][0]) * invdet;
-        inv[1][2] = -(m[0][0] * m[1][2] - m[0][2] * m[1][0]) * invdet;
-
-        inv[2][0] = (m[1][0] * m[2][1] - m[1][1] * m[2][0]) * invdet;
-        inv[2][1] = -(m[0][0] * m[2][1] - m[0][1] * m[2][0]) * invdet;
-        inv[2][2] = (m[0][0] * m[1][1] - m[0][1] * m[1][0]) * invdet;
+        SimpleMatrix X = A.solve(B);
 
         return new double[] {
-                inv[0][0] * b[0] + inv[0][1] * b[1] + inv[0][2] * b[2],
-                inv[1][0] * b[0] + inv[1][1] * b[1] + inv[1][2] * b[2],
-                inv[2][0] * b[0] + inv[2][1] * b[1] + inv[2][2] * b[2]
+                X.get(0),
+                X.get(1),
+                X.get(2)
         };
     }
 
-    private static Command characterize(
+    private static Command characterizeVelocity(
             Shooter shooter,
             Runnable zeroVoltage,
             java.util.function.DoubleConsumer applyVoltage,
@@ -161,7 +142,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Flywheel(Shooter shooter) {
-        return characterize(
+        return characterizeVelocity(
                 shooter,
                 () -> shooter.runCharacterization_Flywheel(0.0),
                 shooter::runCharacterization_Flywheel,
@@ -171,7 +152,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Backspin(Shooter shooter) {
-        return characterize(
+        return characterizeVelocity(
                 shooter,
                 () -> shooter.runCharacterization_Backspin(0.0),
                 shooter::runCharacterization_Backspin,
@@ -181,7 +162,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Intake(Shooter shooter) {
-        return characterize(
+        return characterizeVelocity(
                 shooter,
                 () -> shooter.runCharacterization_Intake(0.0),
                 shooter::runCharacterization_Intake,
@@ -190,7 +171,7 @@ public class shooterCharacterizationCommands {
                 "Intake");
     }
 
-    public static Command characterizeAll(Shooter shooter) {
+    public static Command characterizeVelocityForAll(Shooter shooter) {
         return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Backspin(shooter))
                 .alongWith(feedforwardCharacterization_Intake(shooter));
     }
