@@ -16,14 +16,16 @@ public final class ModuleConfigurator {
     private final boolean isInnerInverted;
     private final boolean isOuterInverted;
     private final boolean isCoast;
-    private final double currentLimit;
+    private final double supplyCurrentLimit;
+    private final double statorCurrentLimit;
 
     public ModuleConfigurator(
             Slot0Configs slotConfig,
             int motorInnerId,
             boolean isInverted,
             boolean isCoast,
-            double currentLimit) {
+            double statorCurrentLimit,
+            double supplyCurrentLimit) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -31,7 +33,8 @@ public final class ModuleConfigurator {
         this.isInnerInverted = isInverted;
         this.isOuterInverted = isInverted;
         this.isCoast = isCoast;
-        this.currentLimit = currentLimit;
+        this.statorCurrentLimit = statorCurrentLimit;
+        this.supplyCurrentLimit = supplyCurrentLimit;
     }
 
     public ModuleConfigurator(
@@ -41,7 +44,8 @@ public final class ModuleConfigurator {
             boolean isInnerInverted,
             boolean isOuterInverted,
             boolean isCoast,
-            double currentLimit) {
+            double statorCurrentLimit,
+            double supplyCurrentLimit) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -49,7 +53,8 @@ public final class ModuleConfigurator {
         this.isInnerInverted = isInnerInverted;
         this.isOuterInverted = isOuterInverted;
         this.isCoast = isCoast;
-        this.currentLimit = currentLimit;
+        this.statorCurrentLimit = statorCurrentLimit;
+        this.supplyCurrentLimit = supplyCurrentLimit;
     }
 
     /* ---------------- Getters (defensive) ---------------- */
@@ -82,13 +87,17 @@ public final class ModuleConfigurator {
         return isCoast;
     }
 
-    public double getCurrentLimit() {
-        return currentLimit;
+    public double getSupplyCurrentLimit() {
+        return statorCurrentLimit;
+    }
+    public double getStatorCurrentLimit() {
+        return supplyCurrentLimit;
     }
 
     public ModuleConfigurator apply(Slot0Configs slot) {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
-                currentLimit);
+                statorCurrentLimit,
+                supplyCurrentLimit);
     }
 
     public void configureMotor(
@@ -111,9 +120,11 @@ public final class ModuleConfigurator {
                 ? NeutralModeValue.Coast
                 : NeutralModeValue.Brake;
 
-        fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
+        fxConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        fxConfig.CurrentLimits.SupplyCurrentLimit = getSupplyCurrentLimit();
 
+        fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        fxConfig.CurrentLimits.StatorCurrentLimit = getStatorCurrentLimit();
         motor.getConfigurator().apply(fxConfig);
     }
     

@@ -139,7 +139,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
         Constants.ShooterConstants.SharedFlywheel.isInvertedLeft,
         Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.currentLimit);
+        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
+        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, flywheelLeftPID);
     velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
@@ -158,7 +159,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
         Constants.ShooterConstants.SharedFlywheel.isInvertedRight,
         Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.currentLimit);
+        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
+        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerRight = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigRight.configureMotor(shooterFlywheelInnerRight, flywheelRighPID);
     velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
@@ -177,7 +179,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
         Constants.ShooterConstants.SharedFlywheel.isInvertedRight,
         Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.currentLimit);
+        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
+        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, flywheelOuterRightPID);
     velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
@@ -197,7 +200,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedIntake.intakeIDLeft,
         Constants.ShooterConstants.SharedIntake.isInverted,
         Constants.ShooterConstants.SharedIntake.isCoast,
-        Constants.ShooterConstants.SharedIntake.currentLimit);
+        Constants.ShooterConstants.SharedIntake.statorCurrentLimit,
+        Constants.ShooterConstants.SharedIntake.supplyCurrentLimit);
     shooterIntakeMotor = new TalonFX(intakeWheelConfig.getMotorInnerId(), new CANBus("rio"));
     intakeWheelConfig.configureMotor(shooterIntakeMotor, intakePID);
     velocityOfIntakeRPS = shooterIntakeMotor.getVelocity();
@@ -216,7 +220,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.Left.BackspinID,
         Constants.ShooterConstants.Left.isInverted,
         Constants.ShooterConstants.Left.isCoast,
-        Constants.ShooterConstants.Left.currentLimit);
+        Constants.ShooterConstants.Left.statorCurrentLimit,
+        Constants.ShooterConstants.Left.supplyCurrentLimit);
     backspinWheelMotorLeft = new TalonFX(backspinMConfigLeft.getMotorInnerId(), new CANBus("rio"));
     backspinMConfigLeft.configureMotor(backspinWheelMotorLeft, backspinLeftPID);
     velocityOfbackspinWheelMotorLeftRPS = backspinWheelMotorLeft.getVelocity();
@@ -235,7 +240,8 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.Right.BackspinID,
         Constants.ShooterConstants.Right.isInverted,
         Constants.ShooterConstants.Right.isCoast,
-        Constants.ShooterConstants.Right.currentLimit);
+        Constants.ShooterConstants.Right.statorCurrentLimit,
+        Constants.ShooterConstants.Right.supplyCurrentLimit);
     backspinWheelMotorRight = new TalonFX(backspinMConfigRight.getMotorInnerId(), new CANBus("rio"));
     backspinMConfigRight.configureMotor(backspinWheelMotorRight, backspinRightPID);
     velocityOfbackspinWheelMotorRightRPS = backspinWheelMotorRight.getVelocity();
