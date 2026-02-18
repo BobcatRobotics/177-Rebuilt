@@ -30,7 +30,7 @@ public class shooterCharacterizationCommands {
         };
     }
 
-    private static Command characterizeVelocity(
+    private static Command characterize(
             Shooter shooter,
             Runnable zeroVoltage,
             java.util.function.DoubleConsumer applyVoltage,
@@ -142,7 +142,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Flywheel(Shooter shooter) {
-        return characterizeVelocity(
+        return characterize(
                 shooter,
                 () -> shooter.runCharacterization_Flywheel(0.0),
                 shooter::runCharacterization_Flywheel,
@@ -152,7 +152,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Backspin(Shooter shooter) {
-        return characterizeVelocity(
+        return characterize(
                 shooter,
                 () -> shooter.runCharacterization_Backspin(0.0),
                 shooter::runCharacterization_Backspin,
@@ -162,7 +162,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command feedforwardCharacterization_Intake(Shooter shooter) {
-        return characterizeVelocity(
+        return characterize(
                 shooter,
                 () -> shooter.runCharacterization_Intake(0.0),
                 shooter::runCharacterization_Intake,
@@ -171,7 +171,7 @@ public class shooterCharacterizationCommands {
                 "Intake");
     }
 
-    public static Command characterizeVelocityForAll(Shooter shooter) {
+    public static Command characterizeForAll(Shooter shooter) {
         return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Backspin(shooter))
                 .alongWith(feedforwardCharacterization_Intake(shooter));
     }

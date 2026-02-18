@@ -93,7 +93,7 @@ public class RobotContainer {
                 SendableChooser<Command> m_chooser = new SendableChooser<>();
                 // Set up SysId routines
                 m_chooser.addOption("Simple FF Characterization",
-                                shooterCharacterizationCommands.characterizeVelocityForAll(m_Shooter).withTimeout(15));
+                                shooterCharacterizationCommands.characterizeForAll(m_Shooter).withTimeout(15));
                 m_chooser.addOption("Flywheel Simple FF Characterization",
                                 shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)
                                                 .withTimeout(15));
