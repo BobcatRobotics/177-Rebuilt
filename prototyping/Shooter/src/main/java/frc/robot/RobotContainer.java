@@ -208,7 +208,7 @@ public class RobotContainer {
                         ShooterGoal goal = new ShooterGoal();
                         goal.flywheelSpeed = desiredState.getFlywheelSpeed();
                         goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
-                        goal.flywheelSpeed = desiredState.getIntakeSpeed();
+                        goal.intakeSpeed = desiredState.getIntakeSpeed();
                         goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
                         desiredState.setCurrentSetPoints(goal);
                         m_Shooter.setState(desiredState);

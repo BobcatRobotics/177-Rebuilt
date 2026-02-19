@@ -58,7 +58,7 @@ public final class Constants {
             public static final double kshooterMainkV = 0.13422;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 40;
+            public static final double supplyCurrentLimit = 60;
 
             public static final int FlywheelOuterIDLeft = 10;
             public static final int FlywheelInnerIDLeft = 17;
@@ -67,16 +67,16 @@ public final class Constants {
         }
 
         public final static class SharedIntake{
-            public static final int intakeIDLeft = 30;
+            public static final int intakeIDLeft = 18;
             public static final double kIntakeMotorkP = 2.55996;
             public static final double kIntakeMotorkI = 0;
             public static final double kIntakeMotorkD = 0.00;
             public static final double kIntakeMotorkS = 0.19856;
             public static final double kIntakeMotorkV = 0.12821;
             public static final double kIntakeMotorkA = 0;
-            public static final double statorCurrentLimit = 60;
-            public static final double supplyCurrentLimit = 40;
-            public static final boolean isInverted = false;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final boolean isInverted = true;
             public static final boolean isCoast = true;
         }
 
@@ -90,7 +90,7 @@ public final class Constants {
             public static final double kBackspinMotorkS = 0.21264;
             public static final double kBackspinMotorkV = 0.20496;
             public static final double kBackspinMotorkA = 0;
-            public static final double statorCurrentLimit = 40;
+            public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;

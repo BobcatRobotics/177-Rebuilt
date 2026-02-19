@@ -172,7 +172,7 @@ public class shooterCharacterizationCommands {
     }
 
     public static Command characterizeForAll(Shooter shooter) {
-        return feedforwardCharacterization_Flywheel(shooter).alongWith(feedforwardCharacterization_Backspin(shooter))
-                .alongWith(feedforwardCharacterization_Intake(shooter));
+        return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Backspin(shooter))
+                .andThen(feedforwardCharacterization_Intake(shooter));
     }
 }
