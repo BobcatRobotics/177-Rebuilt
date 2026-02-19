@@ -58,7 +58,7 @@ public final class Constants {
             public static final double kshooterMainkV = 0.13422;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
+            public static final double supplyCurrentLimit = 70;
 
             public static final int FlywheelOuterIDLeft = 10;
             public static final int FlywheelInnerIDLeft = 17;
@@ -75,7 +75,7 @@ public final class Constants {
             public static final double kIntakeMotorkV = 0.12821;
             public static final double kIntakeMotorkA = 0;
             public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
+            public static final double supplyCurrentLimit = 70;
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
         }
@@ -91,7 +91,7 @@ public final class Constants {
             public static final double kBackspinMotorkV = 0.20496;
             public static final double kBackspinMotorkA = 0;
             public static final double statorCurrentLimit = 60;
-            public static final double supplyCurrentLimit = 40;
+            public static final double supplyCurrentLimit = 70;
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
 
