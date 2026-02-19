@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShootOnTheMove;
+import frc.robot.commands.SoTMCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -214,7 +215,7 @@ public class RobotContainer {
                         () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0, () -> 0, () -> 0,
                                 antiTipping)));
 
-        operator.a().whileTrue(new RunCommand(() -> new ShootOnTheMove(drive.getPose(), drive.getChassisSpeeds(), shooter)));
+        operator.a().toggleOnTrue(new RunCommand(() -> new SoTMCommand(shooter, drive)));
     }
 
     /**
