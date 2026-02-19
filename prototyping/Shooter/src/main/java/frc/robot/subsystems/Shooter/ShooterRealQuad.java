@@ -491,10 +491,10 @@ public class ShooterRealQuad implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Flywheel() {
-    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        shooterFlywheelInnerRight.getVelocity().getValue().in(RotationsPerSecond) +
-        shooterFlywheelOuterRight.getVelocity().getValue().in(RotationsPerSecond)+
-        shooterFlywheelOuterLeft.getVelocity().getValue().in(RotationsPerSecond)) / 4;
+    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond)
+                + shooterFlywheelInnerRight.getVelocity().getValue().in(RotationsPerSecond)
+                + shooterFlywheelOuterLeft.getVelocity().getValue().in(RotationsPerSecond)
+                + shooterFlywheelOuterRight.getVelocity().getValue().in(RotationsPerSecond)) / 4;
     return avg;
   }
 
@@ -513,7 +513,7 @@ public class ShooterRealQuad implements ShooterIO {
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Backspin() {
     double avg = (backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 3;
+        backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     return avg;
   }
 
