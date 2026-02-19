@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -28,7 +29,7 @@ import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
-public class ShooterRealQuad implements ShooterIO {
+public class ShooterRealMasterFollowers implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
   public ModuleConfigurator flywheelConfigLeft;
   private TalonFX shooterFlywheelInnerRight;
@@ -105,7 +106,7 @@ public class ShooterRealQuad implements ShooterIO {
   private TunablePID backspinLeftPID;
   private TunablePID backspinRightPID;
 
-  public ShooterRealQuad() {
+  public ShooterRealMasterFollowers() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
         .kP(Constants.ShooterConstants.SharedFlywheel.kshooterMainkP)
@@ -143,6 +144,10 @@ public class ShooterRealQuad implements ShooterIO {
     setupIntake(intakeGains);
     setupLeftBackspin(backspinLeftGains);
     setupRightBackspin(backspinRightGains);
+
+
+
+    
   }
 
   public void setupLeftFlywheel(Gains g) {
@@ -182,6 +187,9 @@ public class ShooterRealQuad implements ShooterIO {
     accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
     flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
         statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
+    
+    
+    shooterFlywheelInnerRight.setControl(new StrictFollower(Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft));
   }
 
   public void setupOuterRightFlywheel(Gains g) {
@@ -203,6 +211,8 @@ public class ShooterRealQuad implements ShooterIO {
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
+    
+    shooterFlywheelOuterRight.setControl(new StrictFollower(Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft));
   }
 
     public void setupOuterLeftFlywheel(Gains g) {
@@ -224,6 +234,8 @@ public class ShooterRealQuad implements ShooterIO {
     flywheelConfigOuterLeft.configureSignals(shooterFlywheelOuterLeft, 50.0, velocityOfMainFlywheelOuterLeftRPS,
         statorCurrentOfMainFlywheelOuterLeftAmps, outputOfMainFlywheelOuterLeftVolts,
         accelerationOfMainFlywheelOuterLeft);
+    
+    shooterFlywheelOuterLeft.setControl(new StrictFollower(Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft));
   }
 
   public void setupIntake(Gains g) {
@@ -264,6 +276,7 @@ public class ShooterRealQuad implements ShooterIO {
     accelerationOfBackspinLeft = backspinWheelMotorLeft.getAcceleration();
     backspinMConfigLeft.configureSignals(backspinWheelMotorLeft, 50.0, velocityOfbackspinWheelMotorLeftRPS,
         statorCurrentOfBackspinLeftAmps, outputOfBackspinLeftVolts, accelerationOfBackspinLeft);
+    backspinWheelMotorLeft.setControl(new StrictFollower(Constants.ShooterConstants.Right.BackspinID));
   }
 
   public void setupRightBackspin(Gains g) {
@@ -364,10 +377,6 @@ public class ShooterRealQuad implements ShooterIO {
 
   public void setOutput(double shooterOutput, double backspinOutputLeft, double backspinOutputRight) {
     shooterFlywheelInnerLeft.set(shooterOutput);
-    shooterFlywheelInnerRight.set(shooterOutput);
-    shooterFlywheelOuterRight.set(shooterOutput);
-    shooterFlywheelOuterLeft.set(shooterOutput);
-    backspinWheelMotorLeft.set(backspinOutputLeft);
     backspinWheelMotorRight.set(backspinOutputRight);
   }
 
@@ -388,15 +397,11 @@ public class ShooterRealQuad implements ShooterIO {
   public void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
     mainFlywheelSetpoint = shooterFlywheelSpeedInRPS;
     shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelInnerRight.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterLeft.setControl(velShooterOuterLeftRequest.withVelocity(mainFlywheelSetpoint));
   }
 
   public void setBackspinSpeedOfLeft(double shooterBackspinSpeedInRPS) {
     backspinSetpointLeft = shooterBackspinSpeedInRPS;
     Logger.recordOutput("/Shooter/Backspin/LeftSetPointSpeed",backspinSetpointLeft);
-    backspinWheelMotorLeft.setControl(velBackspinLeftRequest.withVelocity(backspinSetpointLeft));
   }
 
   public void setBackspinSpeedOfRight(double shooterBackspinSpeedInRPS) {
@@ -475,18 +480,6 @@ public class ShooterRealQuad implements ShooterIO {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    shooterFlywheelInnerRight.setControl(switch (ClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
-    shooterFlywheelOuterRight.setControl(switch (ClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
-    shooterFlywheelOuterLeft.setControl(switch (ClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
   }
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
@@ -504,16 +497,11 @@ public class ShooterRealQuad implements ShooterIO {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    backspinWheelMotorRight.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
   }
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Backspin() {
-    double avg = (backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
+    double avg = (backspinWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) + backspinWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     return avg;
   }
 
