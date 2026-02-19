@@ -8,7 +8,7 @@ import frc.robot.Constants;
 public class HopperState {
 
   /** Output goal for the shooter subsystem */
-  public static class ShooterGoal {
+  public static class HopperGoal {
     public double hopperSpeedTop;
     public double hopperSpeedBottom;
   }
@@ -20,6 +20,7 @@ public class HopperState {
   }
 
   private State currentState = State.IDLE;
+  private HopperGoal currentSetpoints = new HopperGoal();
 
 
   // Manual control values
@@ -51,28 +52,25 @@ public class HopperState {
     currentState = State.MANUAL;
   }
 
-  /** Returns the shooter outputs based on the current state */
-  public ShooterGoal getOutput() {
-    ShooterGoal goal = new ShooterGoal();
+   /** Returns the shooter outputs based on the current state */
+  public void update() {
 
     switch (currentState) {
       case IDLE -> {
-         goal.hopperSpeedTop = Constants.HopperConstants.idleHopperSpeed;
-        goal.hopperSpeedBottom = Constants.HopperConstants.idleHopperSpeed;
+         currentSetpoints.hopperSpeedTop = Constants.HopperConstants.idleHopperSpeed;
+        currentSetpoints.hopperSpeedBottom = Constants.HopperConstants.idleHopperSpeed;
       }
       case MANUAL -> {
-          goal.hopperSpeedTop = manualHopperSpeedTop.get();
-        goal.hopperSpeedBottom = manualHopperSpeedBottom.get();
+          currentSetpoints.hopperSpeedTop = manualHopperSpeedTop.get();
+        currentSetpoints.hopperSpeedBottom = manualHopperSpeedBottom.get();
       }
 
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
-        goal.hopperSpeedTop = Constants.HopperConstants.topMotorTargetVelocity;
-        goal.hopperSpeedBottom = Constants.HopperConstants.bottomMotorTargetVelocity;
+        currentSetpoints.hopperSpeedTop = Constants.HopperConstants.topMotorTargetVelocity;
+        currentSetpoints.hopperSpeedBottom = Constants.HopperConstants.bottomMotorTargetVelocity;
       }
     }
-
-    return goal;
   }
 
   public State getCurrentState() {
@@ -81,9 +79,9 @@ public class HopperState {
 
 
   public double getHopperSpeedOfTop() {
-    return getOutput().hopperSpeedTop;
+    return currentSetpoints.hopperSpeedTop;
   }
   public double getHopperSpeedOfBottom() {
-    return getOutput().hopperSpeedBottom;
+    return currentSetpoints.hopperSpeedBottom;
   }
 }

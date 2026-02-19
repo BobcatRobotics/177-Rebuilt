@@ -35,15 +35,15 @@ public class Shooter extends SubsystemBase {
         null, // timeout
         state -> Logger.recordOutput("Shooter/Intake/SysIdState", state.toString()));
 
-    sysIdRegistry.register("SysIdStateFlywheel", new SysIdModule(
+    sysIdRegistry.register("SysIdStateShooterFlywheel", new SysIdModule(
         "Shooter/SysIdStateFlywheel",
         this,
         this::runCharacterization_Flywheel, flyWheelSysIdconfig));
-    sysIdRegistry.register("SysIdStateBackspin", new SysIdModule(
+    sysIdRegistry.register("SysIdStateShooterBackspin", new SysIdModule(
         "Shooter/SysIdStateBackspin",
         this,
         this::runCharacterization_Backspin, backspinSysIdconfig));
-    sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
+    sysIdRegistry.register("SysIdStateShooterIntake", new SysIdModule(
         "Shooter/SysIdStateIntake",
         this,
         this::runCharacterization_Intake, intakeSysIdconfig));

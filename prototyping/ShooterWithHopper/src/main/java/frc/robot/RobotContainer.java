@@ -24,18 +24,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
+import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealDual;
 import frc.robot.subsystems.Hopper.HopperState;
+import frc.robot.subsystems.Hopper.HopperState.HopperGoal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
-import frc.robot.subsystems.Shooter.ShooterRealDual;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
-import frc.robot.subsystems.Shooter.ShooterRealSingle;
-import frc.robot.subsystems.Shooter.ShooterRealTriple;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
@@ -50,25 +48,24 @@ import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-        //Shooter
+        // Shooter
         private final Shooter m_Shooter;
 
         private ShooterState.State desiredShooter = ShooterState.State.MANUAL;
         private ShooterState desiredShooterState;
 
-        //Hopper
+        // Hopper
         private final Hopper m_Hopper;
 
         private HopperState.State desiredHopper = HopperState.State.MANUAL;
         private HopperState desiredHopperState;
-
-        
 
         // Controller
         private final CommandXboxController controller = new CommandXboxController(0);
         private final CommandXboxController flywheelController = new CommandXboxController(1);
         private final CommandXboxController backspinController = new CommandXboxController(2);
         private final CommandXboxController intakeController = new CommandXboxController(3);
+        private final CommandXboxController hopperController = new CommandXboxController(4);
 
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
@@ -90,12 +87,14 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
                                 m_Hopper = new Hopper(new HopperRealDual());
+                                m_Hopper.applyState();
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
                                 m_Shooter = new Shooter(new ShooterSim());
                                 m_Shooter.applyState();
                                 m_Hopper = new Hopper(new HopperRealDual());
+                                m_Hopper.applyState();
                                 break;
 
                         default:
@@ -103,9 +102,10 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterIO() {
                                 });
                                 m_Shooter.applyState();
-                                m_Hopper = new Hopper(new HopperIO(){
-                                
+                                m_Hopper = new Hopper(new HopperIO() {
+
                                 });
+                                m_Hopper.applyState();
                                 break;
                 }
 
@@ -113,75 +113,77 @@ public class RobotContainer {
                 // A chooser for autonomous commands
                 SendableChooser<Command> m_chooser = new SendableChooser<>();
                 // Set up SysId routines
-                m_chooser.addOption("Simple FF Characterization",
+                m_chooser.addOption("Shooter Simple FF Characterization",
                                 shooterCharacterizationCommands.characterizeForAll(m_Shooter).withTimeout(15));
-                m_chooser.addOption("Flywheel Simple FF Characterization",
+                m_chooser.addOption("Shooter Flywheel Simple FF Characterization",
                                 shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)
                                                 .withTimeout(15));
-                m_chooser.addOption("Backspin Simple FF Characterization",
+                m_chooser.addOption("Shooter Backspin Simple FF Characterization",
                                 shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter)
                                                 .withTimeout(15));
-                m_chooser.addOption("Intake Simple FF Characterization",
+                m_chooser.addOption("Shooter Intake Simple FF Characterization",
                                 shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter)
                                                 .withTimeout(15));
 
-                m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
+                m_chooser.addOption("Shooter Flywheel SysId (Quasistatic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateFlywheel")
                                                 .quasistatic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
+                m_chooser.addOption("Shooter Flywheel SysId (Quasistatic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateFlywheel")
                                                 .quasistatic(SysIdRoutine.Direction.kReverse));
-                m_chooser.addOption("Flywheel SysId (Dynamic Forward)",
+                m_chooser.addOption("Shooter Flywheel SysId (Dynamic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateFlywheel")
                                                 .dynamic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Flywheel SysId (Dynamic Reverse)",
+                m_chooser.addOption("Shooter Flywheel SysId (Dynamic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateFlywheel")
                                                 .dynamic(SysIdRoutine.Direction.kReverse));
 
-                m_chooser.addOption("Backspin SysId (Quasistatic Forward)",
+                m_chooser.addOption("Shooter Backspin SysId (Quasistatic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateBackspin")
                                                 .quasistatic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Backspin SysId (Quasistatic Reverse)",
+                m_chooser.addOption("Shooter Backspin SysId (Quasistatic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateBackspin")
                                                 .quasistatic(SysIdRoutine.Direction.kReverse));
-                m_chooser.addOption("Backspin SysId (Dynamic Forward)",
+                m_chooser.addOption("Shooter Backspin SysId (Dynamic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateBackspin")
                                                 .dynamic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Backspin SysId (Dynamic Reverse)",
+                m_chooser.addOption("Shooter Backspin SysId (Dynamic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateBackspin")
                                                 .dynamic(SysIdRoutine.Direction.kReverse));
 
-                m_chooser.addOption("Intake SysId (Quasistatic Forward)",
+                m_chooser.addOption("Shooter Intake SysId (Quasistatic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateIntake")
                                                 .quasistatic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Intake SysId (Quasistatic Reverse)",
+                m_chooser.addOption("Shooter Intake SysId (Quasistatic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateIntake")
                                                 .quasistatic(SysIdRoutine.Direction.kReverse));
-                m_chooser.addOption("Intake SysId (Dynamic Forward)",
+                m_chooser.addOption("Shooter Intake SysId (Dynamic Forward)",
                                 m_Shooter.getRegistry().get("SysIdStateIntake")
                                                 .dynamic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Intake SysId (Dynamic Reverse)",
+                m_chooser.addOption("Shooter Intake SysId (Dynamic Reverse)",
                                 m_Shooter.getRegistry().get("SysIdStateIntake")
                                                 .dynamic(SysIdRoutine.Direction.kReverse));
 
-
-                                                
-        // Set up SysId routines
+                // Set up SysId routines
                 m_chooser.addOption("Hopper Simple FF Characterization",
-                        hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper).withTimeout(15));
-                m_chooser.addOption("Simple FF Characterization",
-                        hopperCharacterizationCommands.characterizeAll(m_Hopper).withTimeout(15));
+                                hopperCharacterizationCommands.characterizeAll(m_Hopper).withTimeout(15));
+                m_chooser.addOption("Hopper Simple Flywheel FF Characterization",
+                                hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)
+                                                .withTimeout(15));
 
+                m_chooser.addOption("Hopper Flywheel SysId (Quasistatic Forward)",
+                                m_Hopper.getRegistry().get("SysIdStateHopper")
+                                                .quasistatic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Hopper Flywheel SysId (Quasistatic Reverse)",
+                                m_Hopper.getRegistry().get("SysIdStateHopper")
+                                                .quasistatic(SysIdRoutine.Direction.kReverse));
 
-                m_chooser.addOption("Flywheel SysId (Quasistatic Forward)",
-                        m_Hopper.getRegistry().get("SysIdStateHopper").quasistatic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Flywheel SysId (Quasistatic Reverse)",
-                        m_Hopper.getRegistry().get("SysIdStateHopper").quasistatic(SysIdRoutine.Direction.kReverse));
-
-                m_chooser.addOption("Flywheel SysId (Dynamic Forward)",
-                        m_Hopper.getRegistry().get("SysIdStateHopper").dynamic(SysIdRoutine.Direction.kForward));
-                m_chooser.addOption("Flywheel SysId (Dynamic Reverse)",
-                        m_Hopper.getRegistry().get("SysIdStateHopper").dynamic(SysIdRoutine.Direction.kReverse));
+                m_chooser.addOption("Hopper Flywheel SysId (Dynamic Forward)",
+                                m_Hopper.getRegistry().get("SysIdStateHopper")
+                                                .dynamic(SysIdRoutine.Direction.kForward));
+                m_chooser.addOption("Hopper Flywheel SysId (Dynamic Reverse)",
+                                m_Hopper.getRegistry().get("SysIdStateHopper")
+                                                .dynamic(SysIdRoutine.Direction.kReverse));
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", m_chooser);
 
                 // Set up SysId routines
@@ -207,6 +209,10 @@ public class RobotContainer {
                         desiredShooterState.setState(ShooterState.State.IDLE);
                         m_Shooter.setState(desiredShooterState);
                 }, m_Shooter));
+
+                desiredHopperState.setManualSpeeds(Constants.HopperConstants.idleHopperSpeed,
+                                Constants.HopperConstants.idleHopperSpeed);
+                m_Hopper.setDefaultCommand(new RunCommand(() -> m_Hopper.setState(desiredHopperState), m_Hopper));
 
                 // CONTROL WHEELS INDIVIDUALLY
                 controller.y().whileTrue(new RunCommand(() -> {
@@ -255,70 +261,46 @@ public class RobotContainer {
                 }, m_Shooter));
 
                 controller.leftBumper().whileTrue(new RunCommand(() -> {
-                        desiredShooterState.setState(ShooterState.State.MANUAL);
-                        ShooterGoal goal = new ShooterGoal();
-                        goal.flywheelSpeed = desiredShooterState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = desiredShooterState.getBackspinSpeedOfLeft();
-                        goal.flywheelSpeed = desiredShooterState.getIntakeSpeed();
-                        goal.backspinSpeedRight = desiredShooterState.getBackspinSpeedOfRight();
-                        desiredShooterState.setCurrentSetPoints(goal);
-                        m_Shooter.setState(desiredShooterState);
-                }, m_Shooter).alongWith(new RunCommand(() -> {
-                        desiredHopperState.setState(HopperState.State.IDLE);
-                        ShooterGoal goal = new ShooterGoal();
-                        goal.flywheelSpeed = desiredShooterState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = desiredShooterState.getBackspinSpeedOfLeft();
-                        goal.flywheelSpeed = desiredShooterState.getIntakeSpeed();
-                        goal.backspinSpeedRight = desiredShooterState.getBackspinSpeedOfRight();
-                        desiredShooterState.setCurrentSetPoints(goal);
-                        m_Shooter.setState(desiredShooterState);
-                }, m_Hopper))).onFalse(
-                        new RunCommand(() -> {
-                        desiredShooterState.setState(ShooterState.State.IDLE);
-                        ShooterGoal goal = new ShooterGoal();
-                        goal.flywheelSpeed = desiredShooterState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = desiredShooterState.getBackspinSpeedOfLeft();
-                        goal.flywheelSpeed = desiredShooterState.getIntakeSpeed();
-                        goal.backspinSpeedRight = desiredShooterState.getBackspinSpeedOfRight();
-                        desiredShooterState.setCurrentSetPoints(goal);
-                        m_Shooter.setState(desiredShooterState);
-                }, m_Shooter).alongWith(new RunCommand(() -> {
                         desiredHopperState.setState(HopperState.State.MANUAL);
-                        ShooterGoal goal = new ShooterGoal();
-                        goal.flywheelSpeed = desiredShooterState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = desiredShooterState.getBackspinSpeedOfLeft();
-                        goal.flywheelSpeed = desiredShooterState.getIntakeSpeed();
-                        goal.backspinSpeedRight = desiredShooterState.getBackspinSpeedOfRight();
-                        desiredShooterState.setCurrentSetPoints(goal);
-                        m_Shooter.setState(desiredShooterState);
-                }, m_Hopper))
-                );
+                        HopperGoal goal = new HopperGoal();
+                        goal.hopperSpeedTop = desiredHopperState.getHopperSpeedOfTop();
+                        goal.hopperSpeedBottom = desiredHopperState.getHopperSpeedOfBottom();
+                        desiredHopperState.setCurrentSetPoints(goal);
+                        m_Hopper.setState(desiredHopperState);
+                }, m_Hopper));
 
-        //tests for shooter
-        //         var sysIdFlywheelTests = m_Shooter.getRegistry().get("SysIdStateFlywheel").generateAllTests();
-        //         flywheelController.a().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QF));
-        //         flywheelController.b().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.QR));
-        //         flywheelController.x().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DF));
-        //         flywheelController.y().onTrue(sysIdFlywheelTests.get(SysIdModule.Test.DR));
-        //         flywheelController.rightBumper().onTrue(
-        //                         shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
+                // tests for shooter & Hopper
+                var sysIdShooterFlywheelTests = m_Shooter.getRegistry().get("SysIdStateShooterFlywheel").generateAllTests();
+                flywheelController.a().onTrue(sysIdShooterFlywheelTests.get(SysIdModule.Test.QF));
+                flywheelController.b().onTrue(sysIdShooterFlywheelTests.get(SysIdModule.Test.QR));
+                flywheelController.x().onTrue(sysIdShooterFlywheelTests.get(SysIdModule.Test.DF));
+                flywheelController.y().onTrue(sysIdShooterFlywheelTests.get(SysIdModule.Test.DR));
+                flywheelController.rightBumper().onTrue(
+                                shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter));
 
-        //         var sysIdBackspinTests = m_Shooter.getRegistry().get("SysIdStateBackspin").generateAllTests();
-        //         backspinController.a().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QF));
-        //         backspinController.b().onTrue(sysIdBackspinTests.get(SysIdModule.Test.QR));
-        //         backspinController.x().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DF));
-        //         backspinController.y().onTrue(sysIdBackspinTests.get(SysIdModule.Test.DR));
-        //         backspinController.rightBumper().onTrue(
-        //                         shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
+                var sysIdShooterBackspinTests = m_Shooter.getRegistry().get("SysIdStateShooterBackspin").generateAllTests();
+                backspinController.a().onTrue(sysIdShooterBackspinTests.get(SysIdModule.Test.QF));
+                backspinController.b().onTrue(sysIdShooterBackspinTests.get(SysIdModule.Test.QR));
+                backspinController.x().onTrue(sysIdShooterBackspinTests.get(SysIdModule.Test.DF));
+                backspinController.y().onTrue(sysIdShooterBackspinTests.get(SysIdModule.Test.DR));
+                backspinController.rightBumper().onTrue(
+                                shooterCharacterizationCommands.feedforwardCharacterization_Backspin(m_Shooter));
 
-        //         var sysIdIntakeTests = m_Shooter.getRegistry().get("SysIdStateIntake").generateAllTests();
-        //         intakeController.a().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QF));
-        //         intakeController.b().onTrue(sysIdIntakeTests.get(SysIdModule.Test.QR));
-        //         intakeController.x().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DF));
-        //         intakeController.y().onTrue(sysIdIntakeTests.get(SysIdModule.Test.DR));
-        //         intakeController.rightBumper()
-        //                         .onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
+                var sysIdShooterIntakeTests = m_Shooter.getRegistry().get("SysIdStateShooterIntake").generateAllTests();
+                intakeController.a().onTrue(sysIdShooterIntakeTests.get(SysIdModule.Test.QF));
+                intakeController.b().onTrue(sysIdShooterIntakeTests.get(SysIdModule.Test.QR));
+                intakeController.x().onTrue(sysIdShooterIntakeTests.get(SysIdModule.Test.DF));
+                intakeController.y().onTrue(sysIdShooterIntakeTests.get(SysIdModule.Test.DR));
+                intakeController.rightBumper()
+                                .onTrue(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter));
 
+                var sysIdHopperFlywheelTests = m_Hopper.getRegistry().get("SysIdStateHopper").generateAllTests();
+                hopperController.a().onTrue(sysIdHopperFlywheelTests.get(SysIdModule.Test.QF));
+                hopperController.b().onTrue(sysIdHopperFlywheelTests.get(SysIdModule.Test.QR));
+                hopperController.x().onTrue(sysIdHopperFlywheelTests.get(SysIdModule.Test.DF));
+                hopperController.y().onTrue(sysIdHopperFlywheelTests.get(SysIdModule.Test.DR));
+                hopperController.rightBumper()
+                                .onTrue(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper));
 
         }
 
