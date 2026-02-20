@@ -161,8 +161,7 @@ public class RobotContainer {
         private void configureButtonBindings() {
                 desiredState.setManualSpeeds(Constants.ShooterConstants.idleFlywheelSpeedRPS,
                                 Constants.ShooterConstants.idleIntakeSpeedRPS,
-                                Constants.ShooterConstants.idleBackspinSpeedRightRPS,
-                                Constants.ShooterConstants.idleBackspinSpeedLeftRPS);
+                                Constants.ShooterConstants.idleHoodSpeedRPS);
                 m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         desiredState.setState(ShooterState.State.IDLE);
                         m_Shooter.setState(desiredState);
@@ -173,9 +172,8 @@ public class RobotContainer {
                         desiredState.setState(ShooterState.State.MANUAL);
                         ShooterGoal goal = new ShooterGoal();
                         goal.flywheelSpeed = desiredState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = 0;
+                        goal.hoodSpeed = 0;
                         goal.intakeSpeed = 0;
-                        goal.backspinSpeedRight = 0;
                         desiredState.setCurrentSetPoints(goal);
                         m_Shooter.setState(desiredState);
                 }, m_Shooter));
@@ -184,9 +182,8 @@ public class RobotContainer {
                         desiredState.setState(ShooterState.State.MANUAL);
                         ShooterGoal goal = new ShooterGoal();
                         goal.flywheelSpeed = 0;
-                        goal.backspinSpeedLeft = 0;
+                        goal.hoodSpeed = 0;
                         goal.intakeSpeed = desiredState.getIntakeSpeed();
-                        goal.backspinSpeedRight = 0;
                         desiredState.setCurrentSetPoints(goal);
                         m_Shooter.setState(desiredState);
                         m_Shooter.setState(desiredState);
@@ -196,9 +193,8 @@ public class RobotContainer {
                         desiredState.setState(ShooterState.State.MANUAL);
                         ShooterGoal goal = new ShooterGoal();
                         goal.flywheelSpeed = 0;
-                        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+                        goal.hoodSpeed = desiredState.getHoodSpeed();
                         goal.intakeSpeed = 0;
-                        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
                         desiredState.setCurrentSetPoints(goal);
                         m_Shooter.setState(desiredState);
                 }, m_Shooter));
@@ -207,9 +203,8 @@ public class RobotContainer {
                         desiredState.setState(ShooterState.State.MANUAL);
                         ShooterGoal goal = new ShooterGoal();
                         goal.flywheelSpeed = desiredState.getFlywheelSpeed();
-                        goal.backspinSpeedLeft = desiredState.getBackspinSpeedOfLeft();
+                        goal.hoodSpeed = desiredState.getHoodSpeed();
                         goal.intakeSpeed = desiredState.getIntakeSpeed();
-                        goal.backspinSpeedRight = desiredState.getBackspinSpeedOfRight();
                         desiredState.setCurrentSetPoints(goal);
                         m_Shooter.setState(desiredState);
                 }, m_Shooter));

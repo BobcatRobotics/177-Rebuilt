@@ -36,13 +36,11 @@ public final class Constants {
     public final static class ShooterConstants {
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleIntakeSpeedRPS = 0;
-        public static final double idleBackspinSpeedLeftRPS = 0;
-        public static final double idleBackspinSpeedRightRPS = 0;
+        public static final double idleHoodSpeedRPS = 0;
 
         public static final double targetFlywheelSpeedRPS = 38.5;
         public static final double targetIntakeSpeedRPS = 78;
-        public static final double targetBackspinSpeedLeftRPS = 48.5;
-        public static final double targetBackspinSpeedRightRPS = 48.5;
+        public static final double targetHoodSpeedRPS = 49.25;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedLeft = false;
@@ -83,7 +81,7 @@ public final class Constants {
 
             public static final int BackspinID = 28;
             // Motor Constants
-            public static final double kBackspinMotorkP = 0.97578;
+            public static final double kBackspinMotorkP = 1.25;
             public static final double kBackspinMotorkI = 0.0;
             public static final double kBackspinMotorkD = 0.0;
             public static final double kBackspinMotorkS = 0.21264;
@@ -99,7 +97,7 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int BackspinID = 2;
-            public static final double kBackspinMotorkP = 0.97578;
+            public static final double kBackspinMotorkP = 1.25;
             public static final double kBackspinMotorkI = 0.0;
             public static final double kBackspinMotorkD = 0.0;
             public static final double kBackspinMotorkS = 0.21264;

@@ -329,8 +329,8 @@ public class ShooterRealTriple implements ShooterIO {
 
   public void setVelocity(ShooterState desiredState) {
     setVelocity(desiredState.getFlywheelSpeed(),
-        desiredState.getBackspinSpeedOfLeft(),
-        desiredState.getBackspinSpeedOfRight(), desiredState.getIntakeSpeed());
+        desiredState.getHoodSpeed(),
+        desiredState.getHoodSpeed(), desiredState.getIntakeSpeed());
   }
 
   public void setVelocity(double shooterFlywheelSpeed, double shooterBackspinSpeedOfLeft,
