@@ -39,10 +39,10 @@ public final class Constants {
         public static final double idleBackspinSpeedLeftRPS = 0;
         public static final double idleBackspinSpeedRightRPS = 0;
 
-        public static final double targetFlywheelSpeedRPS = 43.5;
+        public static final double targetFlywheelSpeedRPS = 38.5;
         public static final double targetIntakeSpeedRPS = 78;
-        public static final double targetBackspinSpeedLeftRPS = 36.25;
-        public static final double targetBackspinSpeedRightRPS = 36.25;
+        public static final double targetBackspinSpeedLeftRPS = 48.5;
+        public static final double targetBackspinSpeedRightRPS = 48.5;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedLeft = false;
