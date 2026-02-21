@@ -1,11 +1,11 @@
 {
     "module": {
         "type": "mk4i",
-        "kCoupleRatio": 3.5714285714285716,
-        "kDriveGearRatio": 6.746031746031747,
-        "kSteerGearRatio": 21.428571428571427,
+        "kCoupleRatio": 4.909090909090909,
+        "kDriveGearRatio": 5.8909090909090915,
+        "kSteerGearRatio": 12.1,
         "driveInverted":false,
-        "steerInverted":true,
+        "steerInverted":false,
         "encoderInverted":false
     },
     "steerGains": {
@@ -13,15 +13,15 @@
         "kI": 0,
         "kD": 0.5,
         "kS": 0.1,
-        "kV": 2.66,
+        "kV": 1.5,
         "kA": 0.00
     },
     "driveGains": {
         "kP": 0.1,
         "kI": 0,
         "kD": 0,
-        "kS": 0.15727,
-        "kV": 0.76397
+        "kS": 0,
+        "kV": 0.124
     },
     "name": "FrontLeft"
 }
