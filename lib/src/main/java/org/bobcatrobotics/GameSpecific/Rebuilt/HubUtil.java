@@ -1,7 +1,10 @@
 package org.bobcatrobotics.GameSpecific.Rebuilt;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -67,4 +70,45 @@ public final class HubUtil {
         double timeRemaining = owner != HubOwner.NONE ? Math.max(0.0, HUB_ACTIVE_END - matchTime) : 0.0;
         return new HubData(owner, timeRemaining);
     }
+/**
+ * Returns the field-relative {@link Pose3d} of the active Hub target based on
+ * the robot's alliance color and the current hub ownership.
+ *
+ * <p>This method assumes a standard WPILib field coordinate system:
+ * +X runs from the Blue alliance wall toward the Red alliance wall.
+ * The Blue-side hub is defined at (4.620, 4.040, 3.057144).
+ * The Red-side hub is computed by mirroring across the field length
+ * and rotating 180 degrees about the Z-axis.</p>
+ *
+ * <p>If the hub is owned by the same alliance as the robot, the method
+ * returns the hub on the robot's alliance side. Otherwise, it returns
+ * the opposing alliance hub.</p>
+ *
+ * @param alliance The current {@code Alliance} of the robot (from DriverStation).
+ * @return The {@code Pose3d} of the hub the robot should target.
+ */
+public static Pose3d getHubCoordinates(Alliance alliance) {
+
+    final Pose3d currentAllianceHub = new Pose3d(
+        4.620,
+        4.040,
+        3.057144,
+        new Rotation3d()
+    );
+
+    final Pose3d opposingAllianceHub = new Pose3d(
+        RebuiltFieldConstants.fieldLength - 4.620,
+        4.040,
+        3.057144,
+        new Rotation3d(0, 0, Math.PI)
+    );
+
+    HubData hub = getHubData();
+
+    boolean sameOwner =
+            (alliance == Alliance.Red && hub.owner == HubOwner.RED) ||
+            (alliance == Alliance.Blue && hub.owner == HubOwner.BLUE);
+
+    return sameOwner ? currentAllianceHub : opposingAllianceHub;
+}
 }

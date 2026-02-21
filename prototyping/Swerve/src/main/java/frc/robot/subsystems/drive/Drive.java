@@ -374,18 +374,18 @@ public class Drive extends SubsystemBase {
 
     /** Returns the 2D field pose of the requested target. */
     public static Pose2d getTargetPose() {
-      HubData hubData = HubUtil.getHubData();
-      Pose3d hubTarget = new Pose3d(4.620, 4.040, 3.057144, new Rotation3d());
-      return hubTarget.toPose2d();
+      Alliance alliance = Alliance.Blue;
+      if( DriverStation.getAlliance().isPresent()){
+          alliance = DriverStation.getAlliance().get();
+      }
+      return HubUtil.getHubCoordinates(alliance).toPose2d();
     }
     /**
      * Horizontal distance in meters from the turret to the target.
      */
     public static double getHorizontalDistance(Pose2d robotPose) {
-         Translation2d chassisTranslation = robotPose.getTranslation();
+        Translation2d chassisTranslation = robotPose.getTranslation();
         Translation2d goal = getTargetPose().getTranslation();
-
-        
         return chassisTranslation.getDistance(goal);
     }
         /**
