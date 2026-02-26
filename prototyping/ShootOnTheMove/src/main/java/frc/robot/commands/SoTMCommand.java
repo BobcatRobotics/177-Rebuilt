@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.TripleSpeedInterpolator;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.drive.Drive;
 
@@ -30,8 +31,15 @@ public class SoTMCommand extends Command{
     Pose2d robotPose = drive.getPose();
     ChassisSpeeds robotSpeed = drive.getChassisSpeeds();
 
-    double requiredVelocity = ShootOnTheMove.calculateRequiredVelocity(robotPose, robotSpeed);
-    shooter.setMainWheelSpeed(requiredVelocity);  
+    // Check if shot is valid
+    if (!ShootOnTheMove.isShotValid(robotPose)) {
+      shooter.stop(); // when outside bounds
+      return;
+    }
+
+    // Get calculated speeds
+    TripleSpeedInterpolator.Speeds speeds = ShootOnTheMove.calculateRequiredSpeeds(robotPose, robotSpeed);
+    shooter.setVelocity(speeds.one, speeds.two, speeds.three); 
   }
 
   // Called once the command ends or is interrupted.

@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
+  public void setVelocity(double ShooterSpeed, double ShooterIntakeSpeed, double ShooterBackspinSpeed) {
     io.setVelocity(ShooterSpeed, ShooterIntakeSpeed, ShooterBackspinSpeed);
   }
 
