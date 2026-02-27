@@ -84,9 +84,33 @@ public class Module {
 
   /** Runs the module with the specified output while controlling to zero degrees. */
   public void runCharacterization(double output) {
+    // DEFAULT CODE!!!
     io.setDriveOpenLoop(output);
     io.setTurnPosition(Rotation2d.kZero);
+
+    // TURNMOTORFF
+    //runCharacterization_TurnMotorFF(output);
+    // ANGULAR MOTION CHARACTERIZATION
+    // runCharacterization_AngularMotion(output);
+  
   }
+/** Characterize turn motor feedforward. */
+public void runCharacterization_DriveMotorFF(double output) {
+    io.setDriveOpenLoop(output);
+    io.setTurnPosition(Rotation2d.kZero);
+}
+/** Characterize turn motor feedforward. */
+public void runCharacterization_TurnMotorFF(double output) {
+    io.setDriveOpenLoop(0.0);
+    io.setTurnOpenLoop(output);
+}
+
+/** Characterize robot angular motion. */
+public void runCharacterization_AngularMotion(double output) {
+    io.setDriveOpenLoop(output);
+    io.setTurnPosition(new Rotation2d(constants.LocationX, constants.LocationY).plus(Rotation2d.kCCW_Pi_2));
+}
+
 
   /** Disables all outputs to motors. */
   public void stop() {
