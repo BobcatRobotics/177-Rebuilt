@@ -6,7 +6,11 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotState;
+import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 import frc.robot.subsystems.Intake.IntakeState.State;
+import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 
 public class Intake extends SubsystemBase {
 
@@ -106,5 +110,14 @@ public class Intake extends SubsystemBase {
 
   public SysIdRegistry getRegistry() {
     return sysIdRegistry;
+  }
+
+    public void shootFuel(){
+      RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+      IntakeGoal goal = new IntakeGoal();
+      goal.speed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
+      goal.position = RobotState.getInstance().getShooterState().getHoodSpeed();
+      RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
+      setState(RobotState.getInstance().getIntakeState());
   }
 }

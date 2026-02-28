@@ -3,9 +3,10 @@ package frc.robot.subsystems.Intake;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 
 public class IntakeState {
-  public class IntakeGoal {
+  public static class IntakeGoal {
     public double position;
     public double speed;
   }

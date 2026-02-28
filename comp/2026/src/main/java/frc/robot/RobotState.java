@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.Hopper.HopperState;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
@@ -42,4 +43,15 @@ public class RobotState {
     return desiredHopperState;
   }
 
+  // Save Intake State
+  private IntakeState.State desiredIntakeStateType = IntakeState.State.MANUAL;
+  private IntakeState desiredIntakeState;
+
+  public IntakeState.State getDesiredIntakeStateType() {
+    return desiredIntakeStateType;
+  }
+
+  public IntakeState getIntakeState() {
+    return desiredIntakeState;
+  }
 }

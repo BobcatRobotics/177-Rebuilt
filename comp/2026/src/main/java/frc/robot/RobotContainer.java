@@ -26,25 +26,22 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-// import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
-import frc.robot.subsystems.Hopper.HopperRealDual;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
-import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -118,7 +115,9 @@ public class RobotContainer {
                                 m_Shooter.applyState();
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
+                                m_Hopper.applyState();
                                 intake = new Intake(new IntakeReal());
+                                intake.applyState();
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
@@ -134,7 +133,11 @@ public class RobotContainer {
                                 m_Shooter.applyState();
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
+                                m_Hopper.applyState();
+
                                 intake = new Intake(new IntakeReal());
+                                intake.applyState();
+
                                 break;
 
                         default:
@@ -213,6 +216,11 @@ public class RobotContainer {
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
+                intake.setDefaultCommand(new RunCommand(() -> {
+                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
+                        intakeState.setState(IntakeState.State.IDLE);
+                        intake.setState(intakeState);
+                }, intake));
 
                 // Lock to 0° when A button is held
                 controller.getButton("A")
