@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -243,6 +244,7 @@ public class RobotContainer {
                                                 drive).ignoringDisable(true));
 
                 // Antitipping
+                // Antitipping
                 controller.getLeftBumper()
                                 .whileTrue(new ActionFactory().continuousAction("DriveWithAntiTipping",
                                                 () -> DriveCommands.joystickDriveWithAntiTipping(drive,
@@ -252,15 +254,35 @@ public class RobotContainer {
                                                 () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0,
                                                                 () -> 0, () -> 0,
                                                                 antiTipping)));
-                // Controls Shooting right bumper will start flywheels then after 1/4 of a
-                // second start the hopper enableing shots to fly.
-                // this should eventually be changed to look at if the shooter wheels are up to
-                // speed isntead of an time based approach.
+                /*
+                 * Controls Shooting right bumper will start flywheels then after 1/4 of a
+                 * second start the hopper enableing shots to fly.
+                 * this should eventually be changed to look at if the shooter wheels are up to
+                 * speed isntead of an time based approach.
+                 */
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 }, m_Shooter).alongWith(new WaitCommand(0.25).andThen(new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }, m_Hopper))));
+                /*
+                 * Controls the Intake Position
+                 */
+                /*
+                 * Functional Test
+                 */
+                Command runShooterFlywheel = new RunCommand(() -> {
+                        m_Shooter.shootFuel();
+                }, m_Shooter).withTimeout(5).andThen(new InstantCommand(()-> m_Shooter.stop()));
+                Command runHopper = new RunCommand(() -> {
+                        m_Hopper.runHopper();
+                }, m_Hopper).withTimeout(5).andThen(new InstantCommand(()-> m_Hopper.stop()));
+                Command runIntake = new RunCommand(() -> {
+                        intake.grabBalls();
+                }, m_Hopper).withTimeout(5).andThen(new RunCommand(() -> {
+                        intake.retractIntake();
+                }, intake).withTimeout(5)).andThen(new InstantCommand(()-> intake.stop()));
+                controller.getPovUp().whileTrue(runShooterFlywheel.andThen(runHopper).andThen(runIntake));
         }
 
         /**

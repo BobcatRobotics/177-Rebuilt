@@ -112,11 +112,19 @@ public class Intake extends SubsystemBase {
     return sysIdRegistry;
   }
 
-    public void shootFuel(){
+    public void grabBalls(){
       RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
       IntakeGoal goal = new IntakeGoal();
       goal.speed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
       goal.position = RobotState.getInstance().getShooterState().getHoodSpeed();
+      RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
+      setState(RobotState.getInstance().getIntakeState());
+  }
+      public void retractIntake(){
+      RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+      IntakeGoal goal = new IntakeGoal();
+      goal.speed = 0;
+      goal.position = 0;
       RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
       setState(RobotState.getInstance().getIntakeState());
   }
