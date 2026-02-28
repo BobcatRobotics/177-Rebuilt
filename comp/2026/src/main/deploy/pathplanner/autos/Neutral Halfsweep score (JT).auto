@@ -7,25 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Depot"
+            "pathName": "Left Trench Spawn - Left Neutral Lineup"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Shoot Position Depot"
+            "pathName": "HalfCut (Left to Half) "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shooting Position Depot to Left Trench"
+            "pathName": "HalfCut (Half to Left) "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "the real left trench to neutral line up "
+            "pathName": "Left Neutral Trench to Left trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Real left trench to depot shoot pos"
           }
         }
       ]
