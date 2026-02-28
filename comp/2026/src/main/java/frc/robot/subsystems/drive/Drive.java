@@ -386,7 +386,7 @@ public class Drive extends SubsystemBase {
         Translation2d goal = getTargetPose().getTranslation();
         return chassisTranslation.getDistance(goal);
     }
-        /**
+     /**
      * Field-relative angle Rotation2d from the turret to the target.
      */
     public Rotation2d getFieldAngleToTarget() {

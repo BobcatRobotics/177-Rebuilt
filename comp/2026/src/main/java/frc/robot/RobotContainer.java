@@ -36,6 +36,9 @@ import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealDual;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
@@ -74,6 +77,7 @@ public class RobotContainer {
         private Vision vision;
         private final Shooter m_Shooter;
         private final Hopper m_Hopper;
+        private final Intake intake;
 
         // Controller
         private final ControllerBase controller;
@@ -114,6 +118,7 @@ public class RobotContainer {
                                 m_Shooter.applyState();
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
+                                intake = new Intake(new IntakeReal());
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
@@ -128,8 +133,8 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterSim());
                                 m_Shooter.applyState();
 
-
                                 m_Hopper = new Hopper(new HopperRealSingle());
+                                intake = new Intake(new IntakeReal());
                                 break;
 
                         default:
@@ -144,9 +149,11 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterIO() {
                                 });
                                 m_Shooter.applyState();
-      m_Hopper = new Hopper(new HopperIO(){
-          
-        });
+                                m_Hopper = new Hopper(new HopperIO() {
+
+                                });
+                                intake = new Intake(new IntakeIO() {
+                                });
                                 break;
                 }
 
@@ -196,12 +203,12 @@ public class RobotContainer {
                                                 () -> -controller.getLeftX(),
                                                 () -> -controller.getRightX()));
 
-               m_Shooter.setDefaultCommand(new RunCommand(() -> {
+                m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
                         shooterState.setState(ShooterState.State.IDLE);
                         m_Shooter.setState(shooterState);
                 }, m_Shooter));
-               m_Hopper.setDefaultCommand(new RunCommand(() -> {
+                m_Hopper.setDefaultCommand(new RunCommand(() -> {
                         HopperState hopperState = RobotState.getInstance().getHopperState();
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
@@ -237,8 +244,10 @@ public class RobotContainer {
                                                 () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0,
                                                                 () -> 0, () -> 0,
                                                                 antiTipping)));
-                // Controls Shooting right bumper will start flywheels then after 1/4 of a second start the hopper enableing shots to fly.
-                // this should eventually be changed to look at if the shooter wheels are up to speed isntead of an time based approach.
+                // Controls Shooting right bumper will start flywheels then after 1/4 of a
+                // second start the hopper enableing shots to fly.
+                // this should eventually be changed to look at if the shooter wheels are up to
+                // speed isntead of an time based approach.
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 }, m_Shooter).alongWith(new WaitCommand(0.25).andThen(new RunCommand(() -> {

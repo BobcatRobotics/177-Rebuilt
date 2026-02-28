@@ -116,7 +116,7 @@ public final class Constants {
         }
     }
 
-        public static final class HopperConstants{
+    public static final class HopperConstants {
         public static final class Top {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
@@ -129,6 +129,7 @@ public final class Constants {
             public static final double hopperCurrentLimit = 40;
             public static final int hopperMotorId = 11;
         }
+
         public static final class Bottom {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
@@ -146,6 +147,40 @@ public final class Constants {
         public static final double topMotorTargetVelocity = 0;
         public static final double bottomMotorTargetVelocity = 0;
 
-        
+    }
+
+    public static final class IntakeConstants {
+        public static double idleIntakePosition = 0.0;
+        public static double targetIntakePosition = 0;
+        public static double idleRollerSpeed = 0;
+        public static double targetIntakeSpeed = 0;
+
+        public static final class PivotConstants {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = false;
+            public static double kP = 0.00;
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.00;
+            public static double kS = 0.00;
+            public static double kA = 0.00;
+            public static double currentLimit = 10;
+            public static int pivotMotorId = 10;
+        }
+
+        public static final class RollerConstants {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static double kP = 0.00;
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.00;
+            public static double kS = 0.00;
+            public static double kA = 0.00;
+            public static double currentLimit = 10;
+
+            public static int rollerMotorId = 10;
+        }
+
     }
 }
