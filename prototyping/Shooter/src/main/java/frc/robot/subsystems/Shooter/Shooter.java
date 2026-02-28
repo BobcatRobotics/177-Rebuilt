@@ -2,16 +2,27 @@ package frc.robot.subsystems.Shooter;
 
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.ShooterState.State;
 
 public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private final TripleOutputInterpolator shooterMap;
 
   private ShooterState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
@@ -49,6 +60,11 @@ public class Shooter extends SubsystemBase {
         this::runCharacterization_Intake, intakeSysIdconfig));
 
     this.io = io;
+
+    shooterMap = new TripleOutputInterpolator(Constants.ShooterConstants.distances,
+        Constants.ShooterConstants.feederSpeeds,
+        Constants.ShooterConstants.mainFlywheelSpeeds,
+        Constants.ShooterConstants.hoodSpeeds, true);
   }
 
   public void applyState() {
@@ -63,6 +79,7 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
+    Logger.recordOutput("Shooter/CurrentShotExitVelocity", calculateExitVelocity());
   }
 
   public void setState(ShooterState state) {
@@ -94,6 +111,43 @@ public class Shooter extends SubsystemBase {
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {
     io.setIntakeSpeed(shooterIntakeSpeed);
+  }
+
+  public double calculateExitVelocity() {
+    double ballVelocity = 0.0; // starts at rest
+    double ballMass = 0.5;
+    double distance = 7.0;
+    double[] wheelRPS = shooterMap.getAsList(distance).stream()
+        .mapToDouble(Double::doubleValue)
+        .toArray();
+    double[] wheelRPMs = {}; // Units in RPM
+    for (int i = 0; i < wheelRPS.length; i++) {
+      wheelRPMs[i] = wheelRPS[i] * 60;
+    }
+    double[] wheelMasses = { 0.1, 0.25, 0.1 };
+    double[] wheelRadii = { 1.0, 2.0, 1.0 };
+    for (int i = 0; i < wheelMasses.length; i++) {
+
+      double r = wheelRadii[i];
+      double mWheel = wheelMasses[i];
+
+      // Convert RPM to rad/s
+      double omegaInitial = 2.0 * Math.PI * wheelRPMs[i] / 60.0;
+
+      // Moment of inertia for solid disk
+      double I = 0.5 * mWheel * r * r;
+
+      // Angular momentum conservation solution
+      double numerator = I * omegaInitial + ballMass * r * ballVelocity;
+      double denominator = I + ballMass * r * r;
+
+      double omegaFinal = numerator / denominator;
+
+      // Ball leaves at surface speed of slowed wheel
+      ballVelocity = r * omegaFinal;
+    }
+
+    return ballVelocity;
   }
 
   public void holdPosition() {

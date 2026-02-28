@@ -49,8 +49,8 @@ public final class SingleOutputInterpolator implements InterpolatorIO{
             throw new IllegalArgumentException("All arrays must match and contain at least 2 points.");
         }
 
-        this.distances = distances.clone();
-        this.oneSpeeds = oneSpeeds.clone();
+        this.distances = distances;
+        this.oneSpeeds = oneSpeeds;
         this.allowExtrapolation = allowExtrapolation;
 
         int segments = distances.length - 1;

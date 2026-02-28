@@ -11,7 +11,7 @@ import java.util.List;
  *
  * Designed for real-time shooter loops.
  */
-public final class TripleSpeedInterpolator implements InterpolatorIO{
+public final class TripleOutputInterpolator implements InterpolatorIO{
 
     public static final class Speeds {
         public final double one;
@@ -49,7 +49,7 @@ public final class TripleSpeedInterpolator implements InterpolatorIO{
     // Reused output object (zero allocation)
     private final Speeds reusableSpeeds = new Speeds(0, 0, 0);
 
-    public TripleSpeedInterpolator(
+    public TripleOutputInterpolator(
             double[] distances,
             double[] oneSpeeds,
             double[] twoSpeeds,
