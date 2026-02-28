@@ -3,10 +3,7 @@ package org.bobcatrobotics.Util.Interpolators;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator.Speeds;
-
 public interface InterpolatorIO {
-    
     /**
      * Gets interpolated (or extrapolated) speeds.
      *

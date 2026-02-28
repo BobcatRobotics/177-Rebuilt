@@ -1,0 +1,225 @@
+package frc.robot.subsystems.Shooter;
+
+import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
+import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.RobotState;
+import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
+import frc.robot.subsystems.Shooter.ShooterState.State;
+
+public class Shooter extends SubsystemBase {
+
+  private final ShooterIO io;
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private final TripleOutputInterpolator shooterMap;
+
+  private ShooterState desiredState;
+  private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
+
+  public Shooter(ShooterIO io) {
+    // Configure SysId
+
+    SysIdRoutine.Config flyWheelSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Flywheel/SysIdState", state.toString()));
+    SysIdRoutine.Config backspinSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Backspin/SysIdState", state.toString()));
+    SysIdRoutine.Config intakeSysIdconfig = new SysIdRoutine.Config(
+        null, // ramp rate
+        null, // step voltage
+        null, // timeout
+        state -> Logger.recordOutput("Shooter/Intake/SysIdState", state.toString()));
+
+    sysIdRegistry.register("SysIdStateFlywheel", new SysIdModule(
+        "Shooter/SysIdStateFlywheel",
+        this,
+        this::runCharacterization_Flywheel, flyWheelSysIdconfig));
+    sysIdRegistry.register("SysIdStateBackspin", new SysIdModule(
+        "Shooter/SysIdStateBackspin",
+        this,
+        this::runCharacterization_Backspin, backspinSysIdconfig));
+    sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
+        "Shooter/SysIdStateIntake",
+        this,
+        this::runCharacterization_Intake, intakeSysIdconfig));
+
+    this.io = io;
+
+    shooterMap = new TripleOutputInterpolator(Constants.ShooterConstants.distances,
+        Constants.ShooterConstants.feederSpeeds,
+        Constants.ShooterConstants.mainFlywheelSpeeds,
+        Constants.ShooterConstants.hoodSpeeds, true);
+  }
+
+  public void applyState() {
+    desiredState = new ShooterState();
+    desiredState.setState(State.IDLE);
+  }
+
+  @Override
+  public void periodic() {
+    desiredState.update();
+    io.periodic();
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter/inputs", inputs);
+    Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
+    Logger.recordOutput("Shooter/CurrentShotExitVelocity", calculateExitVelocity());
+  }
+
+  public void setState(ShooterState state) {
+    desiredState = state;
+    setVelocity(desiredState.getCurrentState());
+  }
+
+  private void setVelocity(ShooterState.State state) {
+    desiredState.setState(state);
+    io.setVelocity(desiredState);
+  }
+
+  private void setVelocity(double shooterSpeed, double shooterBackspinSpeedLeft, double shooterBackspinSpeedRight,
+      double shooterIntakeSpeed) {
+    io.setVelocity(shooterSpeed, shooterBackspinSpeedLeft, shooterBackspinSpeedRight, shooterIntakeSpeed);
+  }
+
+  public void setMainWheelSpeed(double shooterFlywheelSpeed) {
+    io.setMainWheelSpeed(shooterFlywheelSpeed);
+  }
+
+  public void setBackspinSpeedLeft(double shooterBackspinSpeed) {
+    io.setBackspinSpeedLeft(shooterBackspinSpeed);
+  }
+
+  public void setBackspinSpeedRight(double shooterBackspinSpeed) {
+    io.setBackspinSpeedRight(shooterBackspinSpeed);
+  }
+
+  public void setIntakeSpeed(double shooterIntakeSpeed) {
+    io.setIntakeSpeed(shooterIntakeSpeed);
+  }
+
+  public double calculateExitVelocity() {
+    double ballVelocity = 0.0; // starts at rest
+    double ballMass = 0.5;
+    double distance = 7.0;
+    double[] wheelRPS = shooterMap.getAsList(distance).stream()
+        .mapToDouble(Double::doubleValue)
+        .toArray();
+    double[] wheelRPMs = {}; // Units in RPM
+    for (int i = 0; i < wheelRPS.length; i++) {
+      wheelRPMs[i] = wheelRPS[i] * 60;
+    }
+    double[] wheelMasses = { 0.1, 0.25, 0.1 };
+    double[] wheelRadii = { 1.0, 2.0, 1.0 };
+    for (int i = 0; i < wheelMasses.length; i++) {
+
+      double r = wheelRadii[i];
+      double mWheel = wheelMasses[i];
+
+      // Convert RPM to rad/s
+      double omegaInitial = 2.0 * Math.PI * wheelRPMs[i] / 60.0;
+
+      // Moment of inertia for solid disk
+      double I = 0.5 * mWheel * r * r;
+
+      // Angular momentum conservation solution
+      double numerator = I * omegaInitial + ballMass * r * ballVelocity;
+      double denominator = I + ballMass * r * r;
+
+      double omegaFinal = numerator / denominator;
+
+      // Ball leaves at surface speed of slowed wheel
+      ballVelocity = r * omegaFinal;
+    }
+
+    return ballVelocity;
+  }
+
+  public void holdPosition() {
+    io.holdPosition();
+  }
+
+  public void stop() {
+    io.stop();
+  }
+
+  public void stopMainWheel() {
+    io.stopMainWheel();
+  }
+
+  public void stopBackspinWheel() {
+    io.stopBackspinWheel();
+
+  }
+
+  public void stopIntakeWheel() {
+    io.stopBackspinWheel();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    io.simulationPeriodic();
+  }
+
+  public void runCharacterization_Flywheel(double output) {
+    io.runCharacterization_Flywheel(output);
+  }
+
+  /**
+   * Returns the average velocity of the modules in rotations/sec (Phoenix native
+   * units).
+   */
+  public double getFFCharacterizationVelocity_Flywheel() {
+    double output = io.getFFCharacterizationVelocity_Flywheel();
+    return output;
+  }
+
+  public void runCharacterization_Backspin(double output) {
+    io.runCharacterization_Backspin(output);
+  }
+
+  /**
+   * Returns the average velocity of the modules in rotations/sec (Phoenix native
+   * units).
+   */
+  public double getFFCharacterizationVelocity_Backspin() {
+    double output = io.getFFCharacterizationVelocity_Backspin();
+    return output;
+  }
+
+  public void runCharacterization_Intake(double output) {
+    io.runCharacterization_Intake(output);
+  }
+
+  /**
+   * Returns the average velocity of the modules in rotations/sec (Phoenix native
+   * units).
+   */
+  public double getFFCharacterizationVelocity_Intake() {
+    double output = io.getFFCharacterizationVelocity_Intake();
+    return output;
+  }
+
+  public SysIdRegistry getRegistry() {
+    return sysIdRegistry;
+  }
+
+  public void shootFuel(){
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
+    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
+    goal.intakeSpeed = RobotState.getInstance().getShooterState().getIntakeSpeed();
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+}

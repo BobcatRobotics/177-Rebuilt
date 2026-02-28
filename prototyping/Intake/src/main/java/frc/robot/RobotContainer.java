@@ -37,7 +37,7 @@ import frc.robot.subsystems.Intake.IntakeReal;
  */
 public class RobotContainer {
   // Subsystems
-  private final Intake Intake;
+  private final Intake intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);

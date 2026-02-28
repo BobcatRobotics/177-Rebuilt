@@ -46,8 +46,7 @@ public class RobotContainer {
         // Subsystems
         private final Shooter m_Shooter;
 
-        private ShooterState.State desired = ShooterState.State.MANUAL;
-        private ShooterState desiredState;
+
 
         // Controller
         private final ControllerBase controller;
@@ -94,7 +93,7 @@ public class RobotContainer {
                 // A chooser for autonomous commands
                 SendableChooser<Command> m_chooser = new SendableChooser<>();
                 // Set up SysId routines
-                m_chooser.addOption("Simple FF Characterization",
+                m_chooser.addOption("Shooter Simple FF Characterization",
                                 shooterCharacterizationCommands.characterizeForAll(m_Shooter).withTimeout(15));
                 m_chooser.addOption("Flywheel Simple FF Characterization",
                                 shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)

@@ -89,6 +89,7 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
         Speeds speeds = get(distance);
         return speeds.getAsList();
     }
+    
     /**
      * Gets interpolated (or extrapolated) speeds.
      *

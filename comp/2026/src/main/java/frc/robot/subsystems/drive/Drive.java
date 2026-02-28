@@ -23,7 +23,9 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -46,6 +48,9 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -364,4 +369,32 @@ public class Drive extends SubsystemBase {
   public double getRoll(){
     return gyroIO.getRoll();
   }
+
+    /** Returns the 2D field pose of the requested target. */
+    public static Pose2d getTargetPose() {
+      Alliance alliance = Alliance.Blue;
+      if( DriverStation.getAlliance().isPresent()){
+          alliance = DriverStation.getAlliance().get();
+      }
+      return HubUtil.getHubCoordinates(alliance).toPose2d();
+    }
+    /**
+     * Horizontal distance in meters from the turret to the target.
+     */
+    public static double getHorizontalDistance(Pose2d robotPose) {
+        Translation2d chassisTranslation = robotPose.getTranslation();
+        Translation2d goal = getTargetPose().getTranslation();
+        return chassisTranslation.getDistance(goal);
+    }
+        /**
+     * Field-relative angle Rotation2d from the turret to the target.
+     */
+    public Rotation2d getFieldAngleToTarget() {
+        Translation2d turret = poseEstimator.getEstimatedPosition().getTranslation();
+        Translation2d goal = getTargetPose().getTranslation();
+        double dx = goal.getX() - turret.getX();
+        double dy = goal.getY() - turret.getY();
+        double fieldAngleToTarget = Math.atan2(dy, dx);
+        return Rotation2d.fromRadians(fieldAngleToTarget);
+    }
 }
