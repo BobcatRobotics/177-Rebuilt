@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.782777777777778,
-        "y": 6.792677777777778
+        "x": 7.74305975552263,
+        "y": 7.438617069639008
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.802266666666666,
-        "y": -0.1843444444444451
+        "x": 7.762548644411519,
+        "y": 0.46159484741678547
       },
       "isLocked": false,
       "linkedName": "Neutral Zone - Left"
@@ -57,7 +57,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.8550973962668
+    "rotation": 90.15998202269769
   },
   "useDefaultConstraints": true
 }
