@@ -13,19 +13,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost to Depot"
+            "pathName": "Outpost to Right Shooting Position"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Intake"
+            "pathName": "Right Shooting Position to Neutral - Right"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Shoot Position Depot"
+            "pathName": "Right Neutral to Left Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Neutral Right Shoot Over"
           }
         }
       ]

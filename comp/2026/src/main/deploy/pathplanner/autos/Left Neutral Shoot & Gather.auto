@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Spawn to Outpost"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Outpost to Depot"
+            "pathName": "Left Spawn to Depot"
           }
         },
         {
@@ -26,6 +20,24 @@
           "type": "path",
           "data": {
             "pathName": "Depot to Shoot Position Depot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Position Depot to Left Trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Trench to Mid Neutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Neutral to Shoot Over"
           }
         }
       ]

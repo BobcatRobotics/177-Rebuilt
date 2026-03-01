@@ -13,19 +13,25 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Depot Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Depot to Shoot Position Depot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Depot Shooting Position to Left Neutral "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Neutral to Mid Neutral"
+            "pathName": "HalfCut (Left to Half) "
           }
         }
       ]

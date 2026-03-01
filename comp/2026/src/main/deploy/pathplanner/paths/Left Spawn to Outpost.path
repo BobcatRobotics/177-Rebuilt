@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.564952771417027,
-        "y": 7.160028244544719
+        "x": 3.61916535889738,
+        "y": 7.126032057405387
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.813843225893122,
-        "y": 7.1835557108486565
+        "x": 3.868055813373475,
+        "y": 7.149559523709324
       },
       "isLocked": false,
       "linkedName": "Left Spawn"
@@ -20,7 +20,7 @@
         "y": 0.6536777777777774
       },
       "prevControl": {
-        "x": 0.28575437128085796,
+        "x": 0.285754371280858,
         "y": 0.46113285283113803
       },
       "nextControl": null,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0.2945638361210309
   },
   "reversed": false,
   "folder": null,

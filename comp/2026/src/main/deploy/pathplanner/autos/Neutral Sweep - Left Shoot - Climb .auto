@@ -7,25 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Spawn to Outpost"
+            "pathName": "Left Spawn to Neutral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost to Depot"
+            "pathName": "HalfCut (Half to Left) "
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot Intake"
+            "pathName": "Left Neutral Trench to Left trench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Shoot Position Depot"
+            "pathName": "Real left trench to depot shoot pos"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Shooting Position to Climb"
           }
         }
       ]

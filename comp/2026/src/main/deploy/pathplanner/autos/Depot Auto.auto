@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Shoot Position Depot"
+            "pathName": "Depot Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Depot to Shoot Position Depot"
           }
         }
       ]

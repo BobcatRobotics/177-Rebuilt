@@ -25,7 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Shoot Position Depot"
+            "pathName": "Depot to Center Shooting Position"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Shoot to Climb"
           }
         }
       ]
