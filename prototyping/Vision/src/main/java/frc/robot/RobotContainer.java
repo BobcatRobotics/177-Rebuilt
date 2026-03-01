@@ -84,7 +84,7 @@ public class RobotContainer {
                         new ModuleIOTalonFX(newBackLeft.addModuleConstants(TunerConstants.BackLeft)),
                         new ModuleIOTalonFX(newBackRight.addModuleConstants(TunerConstants.BackRight)));
                 // Vision
-                vision = new Vision(drive::addVisionMeasurement, new VisionIOLimelight("", drive::getRotation));
+                vision = new Vision(drive::addVisionMeasurement, new VisionIOLimelight("limelight-front", drive::getRotation));
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -180,6 +180,12 @@ public class RobotContainer {
                                 () -> -controller.getLeftX(), () -> -controller.getRightX(), antiTipping),
                         () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0, () -> 0, () -> 0,
                                 antiTipping)));
+
+        controller.y().whileTrue(
+                        DriveCommands.joystickDriveFacingHub(
+                                drive, () -> -controller.getLeftX(), () -> -controller.getLeftY()
+                        )
+        );
     }
 
     /**

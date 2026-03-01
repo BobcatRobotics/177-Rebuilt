@@ -198,22 +198,9 @@ public class RobotContainer {
                                 () -> -controller.getLeftY(),
                                 () -> -controller.getLeftX(),
                                 () -> new Rotation2d(
-                                        Math.atan2(
-                                                Constants.FieldConstants.HUBX - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getY(),
-                                                Constants.FieldConstants.HUBY - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getX()
-                                                )) //vision.getTargetX(0)
-                                ));
-
-        // AUTO ALIGN to pass balls when rightbumper button is held
-        controller.rightBumper().whileTrue(
-                        DriveCommands.joystickDriveAtAngle(
-                                drive,
-                                () -> -controller.getLeftY(),
-                                () -> -controller.getLeftX(),
-                                () -> new Rotation2d(
-                                        Math.atan2(
-                                                Constants.FieldConstants.HUBX - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getY(),
-                                                Constants.FieldConstants.HUBY - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getX()
+                                        Math.atan2(Math.PI+
+                                                Constants.FieldConstants.HUBY - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getY(),
+                                                Constants.FieldConstants.HUBX - LimelightHelpers.getBotPose2d_wpiBlue("limelight-front").getX()
                                                 )) //vision.getTargetX(0)
                                 ));
 
