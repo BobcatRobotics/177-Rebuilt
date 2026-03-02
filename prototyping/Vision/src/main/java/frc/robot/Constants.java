@@ -29,4 +29,31 @@ public final class Constants {
         /** Replaying from a log file. */
         REPLAY
     }
+
+    public static final class FieldConstants {
+
+        // lines
+        public static double BLUE_LINE = 3.977894;
+        public static double RED_LINE = 12.664694;
+
+        // center of hub locations
+        public static double BLUE_HUB_X = 4.625594;
+        public static double BLUE_HUB_Y = 4.034663;
+        public static double RED_HUB_X = 11.915394;
+        public static double RED_HUB_Y = 4.034663;
+        
+        // center line y
+        public static double CENTER_Y = 4.034663;
+
+        // passing points
+        // TODO add passing points
+        public static double BLUE_PASSING_1_X = 1.988947;
+        public static double BLUE_PASSING_1_Y = 6.0519945;
+        public static double BLUE_PASSING_2_X = 1.988947;
+        public static double BLUE_PASSING_2_Y = 2.0173315;
+        public static double RED_PASSING_1_X = 14.552041;
+        public static double RED_PASSING_1_Y = 6.0519945;
+        public static double RED_PASSING_2_X = 14.552041;
+        public static double RED_PASSING_2_Y = 2.0173315;
+    }
 }

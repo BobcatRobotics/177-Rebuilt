@@ -181,9 +181,25 @@ public class RobotContainer {
                         () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0, () -> 0, () -> 0,
                                 antiTipping)));
 
+        // controller.y().whileTrue(
+        //                 DriveCommands.joystickDriveFacingHub(
+        //                         drive, () -> -controller.getLeftX(), () -> -controller.getLeftY()
+        //                 )
+        // );
+
+        // auto targeting hub using aiming utils (also blocks impossible shots)
         controller.y().whileTrue(
-                        DriveCommands.joystickDriveFacingHub(
-                                drive, () -> -controller.getLeftX(), () -> -controller.getLeftY()
+                        DriveCommands.joystickDriveAtAngle(
+                                drive, () -> -controller.getLeftX(), () -> -controller.getLeftY(),
+                                () -> new Rotation2d(AimingUtil.RotationToHub(drive.getPose()))
+                        )
+        );
+
+        // auto targeting passing using aiming utils (automatically chooses correct location) (also blocks impossible shots)
+        controller.rightBumper().whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                                drive, () -> -controller.getLeftX(), () -> -controller.getLeftY(),
+                                () -> new Rotation2d(AimingUtil.RotationToPass(drive.getPose()))
                         )
         );
     }

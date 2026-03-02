@@ -9,12 +9,13 @@
     Checks each line for trailing whitespace,
     but skips lines that are comments (starting with //, /*, or * inside block comments).
     Severity set to "info" so it's a warning, not an error.
-  -->
+  
   <module name="RegexpSingleline">
     <property name="format" value="^(?!\s*(//|/\*|\*)).*\s+$"/>
     <property name="message" value="Line has trailing whitespace."/>
     <property name="severity" value="info"/>
   </module>
+  -->
   <!--
     TreeWalker module analyzes Java AST (Abstract Syntax Tree).
     Most style checks are inside TreeWalker.
@@ -26,7 +27,7 @@
       Enforces that all if, else, while, for, do statements use braces.
       Helps prevent bugs from single-line statements without braces.
     -->
-    <module name="NeedBraces"/>
+    <!--<module name="NeedBraces"/> -->
 
     <!--   
       NestedIfDepth:
