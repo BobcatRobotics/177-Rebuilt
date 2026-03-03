@@ -166,7 +166,7 @@ public final class Constants {
             public static double kV = 0.00;
             public static double kS = 0.00;
             public static double kA = 0.00;
-            public static double currentLimit = 30;
+            public static double currentLimit = 50;
             public static int pivotMotorId = 10;
         }
 

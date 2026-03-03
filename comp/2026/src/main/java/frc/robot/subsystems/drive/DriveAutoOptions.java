@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.CharacterizationType;
 import frc.robot.RobotState;
 import frc.robot.commands.driveCharacterizationCommands;
 
@@ -20,9 +21,9 @@ public class DriveAutoOptions {
     public LoggedDashboardChooser<Command> getOptions(){
             // Set up SysId routines
         autoChooser.addOption("Swerve Drive Simple FF Characterization",
-                        new InstantCommand(()->{RobotState.getInstance().isSimpleFFSteerMode = false;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
+                        new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.DRIVE;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
         autoChooser.addOption("Swerve Steer Simple FF Characterization",
-                        new InstantCommand(()->{RobotState.getInstance().isSimpleFFSteerMode = true;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
+                        new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.STEER;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
         autoChooser.addOption("Swerve Wheel Radius Characterization",
                         driveCharacterizationCommands.wheelRadiusCharacterization(drive));
         autoChooser.addOption("Swerve SysId (Quasistatic Forward)",

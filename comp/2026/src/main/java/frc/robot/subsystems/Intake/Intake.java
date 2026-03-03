@@ -45,7 +45,7 @@ public class Intake extends SubsystemBase {
     desiredState.update();
     io.periodic();
     io.updateInputs(inputs);
-    Logger.processInputs("Intake", inputs);
+    Logger.processInputs("Intake/inputs", inputs);
     Logger.recordOutput("Intake/State", desiredState.getCurrentState());
   }
 
@@ -107,8 +107,8 @@ public class Intake extends SubsystemBase {
     return output;
   }
 
-  public double getFFCharacterizationPosition_Intake(){
-    double output = io.getFFCharacterizationVelocity_Intake();
+  public double getFFCharacterizationPosition_Intake() {
+    double output = io.getFFCharacterizationPosition_Intake();
     return output;
   }
 
@@ -116,20 +116,21 @@ public class Intake extends SubsystemBase {
     return sysIdRegistry;
   }
 
-    public void grabBalls(){
-      RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
-      IntakeGoal goal = new IntakeGoal();
-      goal.speed = RobotState.getInstance().getIntakeState().getPosition();
-      goal.position = RobotState.getInstance().getIntakeState().getSpeed();
-      RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
-      setState(RobotState.getInstance().getIntakeState());
+  public void grabBalls() {
+    RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+    IntakeGoal goal = new IntakeGoal();
+    goal.speed = RobotState.getInstance().getIntakeState().getPosition();
+    goal.position = 11;
+    RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getIntakeState());
   }
-      public void retractIntake(){
-      RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
-      IntakeGoal goal = new IntakeGoal();
-      goal.speed = 0;
-      goal.position = 0;
-      RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
-      setState(RobotState.getInstance().getIntakeState());
+
+  public void retractIntake() {
+    RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+    IntakeGoal goal = new IntakeGoal();
+    goal.speed = 0;
+    goal.position = 0;
+    RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getIntakeState());
   }
 }

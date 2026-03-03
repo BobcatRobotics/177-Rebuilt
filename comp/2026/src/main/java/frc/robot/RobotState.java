@@ -5,6 +5,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
+  public CharacterizationType characterizationType = CharacterizationType.NONE;
   private static RobotState instance;
 
   public static RobotState getInstance() {
@@ -17,7 +18,6 @@ public class RobotState {
 
   // Save Odometry,
   // Save Swerve Module Details
-  public static boolean isSimpleFFSteerMode = false;
   // Save Vision Tags
 
   // Save Shooter State

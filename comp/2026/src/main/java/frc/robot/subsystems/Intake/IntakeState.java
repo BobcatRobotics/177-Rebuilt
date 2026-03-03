@@ -20,17 +20,13 @@ public class IntakeState {
   private State currentState = State.IDLE;
   private IntakeGoal currentSetpoints = new IntakeGoal();
 
-  // MANUAL CONTROL VALUES
-  private double manualSpeed = 0.0; //Placeholder, might need to make a constant
-  private double manualPosition = 0.0;
-
     // Manual control values
   private TunableDouble manualIntakePosition;
-  private TunableDouble manualHopperSpeed;
+  private TunableDouble manualIntakeSpeed;
 
   public IntakeState(){
     manualIntakePosition = new TunableDouble("/Intake/manualPosition",0.0);
-    manualHopperSpeed = new TunableDouble("/Intake/manualSpeed",0.0);
+    manualIntakeSpeed = new TunableDouble("/Intake/manualSpeed",0.0);
   }
 
   /** Set the intake to a predefined state */
@@ -46,7 +42,7 @@ public class IntakeState {
         double intakePosition) {
       manualIntakePosition = new TunableDouble("/Intake/manualPosition",
           intakePosition);
-      manualHopperSpeed = new TunableDouble("/Intake/manualSpeed",
+      manualIntakeSpeed = new TunableDouble("/Intake/manualSpeed",
           intakeSpeed);
       currentState = State.MANUAL;
     }
@@ -59,8 +55,8 @@ public class IntakeState {
         currentSetpoints.speed = Constants.IntakeConstants.idleRollerSpeed;
       }
       case MANUAL -> {
-        currentSetpoints.position = manualPosition;
-        currentSetpoints.speed = manualSpeed;
+        currentSetpoints.position = manualIntakePosition.get();;
+        currentSetpoints.speed = manualIntakeSpeed.get();;
       }
       case TARGETING -> {
         currentSetpoints.position = Constants.IntakeConstants.targetIntakePosition;
@@ -78,10 +74,10 @@ public class IntakeState {
   }
 
   public double getSpeed() {
-    return manualSpeed;
+    return currentSetpoints.speed;
   }
 
   public double getPosition() {
-    return manualPosition;
+    return currentSetpoints.position;
   }
 }
