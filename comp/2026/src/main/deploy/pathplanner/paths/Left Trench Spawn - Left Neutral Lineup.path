@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.389293297077048,
-        "y": 7.438617069639008
+        "x": 3.5634333333333332,
+        "y": 3.996022222222222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.09646795864763,
-        "y": 7.448314419450432
+        "x": 0.5236924913194447,
+        "y": 8.525581669560186
       },
       "isLocked": false,
-      "linkedName": "Real Left Trench"
+      "linkedName": "Center"
     },
     {
       "anchor": {
@@ -53,7 +53,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -0.008038128386262331
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

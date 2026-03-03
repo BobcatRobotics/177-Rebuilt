@@ -7,37 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Trench Spawn - Left Neutral Lineup"
+            "pathName": "Right Spawn to Right Trench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HalfCut (Left to Half) "
+            "pathName": "Right Trench to Right Neutral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HalfCut (Half to Left) "
+            "pathName": "Right Neutral to Left Neutral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Neutral Trench to Left trench"
+            "pathName": "Left Neutral To Halfcut"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Real left trench to depot shoot pos"
+            "pathName": "Right Neutral to Right trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Trench to Right Shooting position"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "WNEU",
   "choreoAuto": false
 }
