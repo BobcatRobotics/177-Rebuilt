@@ -29,11 +29,11 @@ public class Shooter extends SubsystemBase {
         null, // step voltage
         null, // timeout
         state -> Logger.recordOutput("Shooter/Flywheel/SysIdState", state.toString()));
-    SysIdRoutine.Config backspinSysIdconfig = new SysIdRoutine.Config(
+    SysIdRoutine.Config HoodSysIdconfig = new SysIdRoutine.Config(
         null, // ramp rate
         null, // step voltage
         null, // timeout
-        state -> Logger.recordOutput("Shooter/Backspin/SysIdState", state.toString()));
+        state -> Logger.recordOutput("Shooter/Hood/SysIdState", state.toString()));
     SysIdRoutine.Config intakeSysIdconfig = new SysIdRoutine.Config(
         null, // ramp rate
         null, // step voltage
@@ -44,10 +44,10 @@ public class Shooter extends SubsystemBase {
         "Shooter/SysIdStateFlywheel",
         this,
         this::runCharacterization_Flywheel, flyWheelSysIdconfig));
-    sysIdRegistry.register("SysIdStateBackspin", new SysIdModule(
-        "Shooter/SysIdStateBackspin",
+    sysIdRegistry.register("SysIdStateHood", new SysIdModule(
+        "Shooter/SysIdStateHood",
         this,
-        this::runCharacterization_Backspin, backspinSysIdconfig));
+        this::runCharacterization_Hood, HoodSysIdconfig));
     sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
         "Shooter/SysIdStateIntake",
         this,
@@ -86,21 +86,21 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double shooterSpeed, double shooterBackspinSpeedLeft, double shooterBackspinSpeedRight,
+  private void setVelocity(double shooterSpeed, double shooterHoodSpeedLeft, double shooterHoodSpeedRight,
       double shooterIntakeSpeed) {
-    io.setVelocity(shooterSpeed, shooterBackspinSpeedLeft, shooterBackspinSpeedRight, shooterIntakeSpeed);
+    io.setVelocity(shooterSpeed, shooterHoodSpeedLeft, shooterHoodSpeedRight, shooterIntakeSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
     io.setMainWheelSpeed(shooterFlywheelSpeed);
   }
 
-  public void setBackspinSpeedLeft(double shooterBackspinSpeed) {
-    io.setBackspinSpeedLeft(shooterBackspinSpeed);
+  public void setHoodSpeedLeft(double shooterHoodSpeed) {
+    io.setHoodSpeedLeft(shooterHoodSpeed);
   }
 
-  public void setBackspinSpeedRight(double shooterBackspinSpeed) {
-    io.setBackspinSpeedRight(shooterBackspinSpeed);
+  public void setHoodSpeedRight(double shooterHoodSpeed) {
+    io.setHoodSpeedRight(shooterHoodSpeed);
   }
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {
@@ -109,38 +109,37 @@ public class Shooter extends SubsystemBase {
 
   public double calculateExitVelocity() {
     double ballVelocity = 0.0; // starts at rest
-    double ballMass = 0.5;
-    double distance = 7.0;
-    double[] wheelRPS = shooterMap.getAsList(distance).stream()
-        .mapToDouble(Double::doubleValue)
-        .toArray();
-    double[] wheelRPMs = {}; // Units in RPM
-    for (int i = 0; i < wheelRPS.length; i++) {
-      wheelRPMs[i] = wheelRPS[i] * 60;
-    }
-    double[] wheelMasses = { 0.1, 0.25, 0.1 };
-    double[] wheelRadii = { 1.0, 2.0, 1.0 };
-    for (int i = 0; i < wheelMasses.length; i++) {
+    // double ballMass = 0.5;
+    // double distance = 7.0;
+    // double[] wheelRPS = shooterMap.getAsList(distance).stream()
+    // .mapToDouble(Double::doubleValue)
+    // .toArray();
+    // double[] wheelRPMs = {}; // Units in RPM
+    // for (int i = 0; i < wheelRPS.length; i++) {
+    // wheelRPMs[i] = wheelRPS[i] * 60;
+    // }
+    // double[] wheelMasses = { 0.1, 0.25, 0.1 };
+    // double[] wheelRadii = { 1.0, 2.0, 1.0 };
+    // for (int i = 0; i < wheelMasses.length; i++) {
 
-      double r = wheelRadii[i];
-      double mWheel = wheelMasses[i];
+    // double r = wheelRadii[i];
+    // double mWheel = wheelMasses[i];
 
-      // Convert RPM to rad/s
-      double omegaInitial = 2.0 * Math.PI * wheelRPMs[i] / 60.0;
+    // // Convert RPM to rad/s
+    // double omegaInitial = 2.0 * Math.PI * wheelRPMs[i] / 60.0;
 
-      // Moment of inertia for solid disk
-      double I = 0.5 * mWheel * r * r;
+    // // Moment of inertia for solid disk
+    // double I = 0.5 * mWheel * r * r;
 
-      // Angular momentum conservation solution
-      double numerator = I * omegaInitial + ballMass * r * ballVelocity;
-      double denominator = I + ballMass * r * r;
+    // // Angular momentum conservation solution
+    // double numerator = I * omegaInitial + ballMass * r * ballVelocity;
+    // double denominator = I + ballMass * r * r;
 
-      double omegaFinal = numerator / denominator;
+    // double omegaFinal = numerator / denominator;
 
-      // Ball leaves at surface speed of slowed wheel
-      ballVelocity = r * omegaFinal;
-    }
-
+    // // Ball leaves at surface speed of slowed wheel
+    // ballVelocity = r * omegaFinal;
+    // }
     return ballVelocity;
   }
 
@@ -156,13 +155,13 @@ public class Shooter extends SubsystemBase {
     io.stopMainWheel();
   }
 
-  public void stopBackspinWheel() {
-    io.stopBackspinWheel();
+  public void stopHoodWheel() {
+    io.stopHoodWheel();
 
   }
 
   public void stopIntakeWheel() {
-    io.stopBackspinWheel();
+    io.stopHoodWheel();
   }
 
   @Override
@@ -183,16 +182,16 @@ public class Shooter extends SubsystemBase {
     return output;
   }
 
-  public void runCharacterization_Backspin(double output) {
-    io.runCharacterization_Backspin(output);
+  public void runCharacterization_Hood(double output) {
+    io.runCharacterization_Hood(output);
   }
 
   /**
    * Returns the average velocity of the modules in rotations/sec (Phoenix native
    * units).
    */
-  public double getFFCharacterizationVelocity_Backspin() {
-    double output = io.getFFCharacterizationVelocity_Backspin();
+  public double getFFCharacterizationVelocity_Hood() {
+    double output = io.getFFCharacterizationVelocity_Hood();
     return output;
   }
 
@@ -213,7 +212,7 @@ public class Shooter extends SubsystemBase {
     return sysIdRegistry;
   }
 
-  public void shootFuel(){
+  public void shootFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();

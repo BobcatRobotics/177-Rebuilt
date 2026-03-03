@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 import frc.robot.subsystems.Intake.IntakeState.State;
-import frc.robot.subsystems.Shooter.ShooterState;
-import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 
 public class Intake extends SubsystemBase {
 
@@ -32,7 +30,7 @@ public class Intake extends SubsystemBase {
     sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
         "Intake/SysIdStateIntake",
         this,
-        this::runCharacterization_Intake, IntakeSysIdconfig));
+        this::runCharacterization_IntakeVelocity, IntakeSysIdconfig));
 
     this.io = io;
   }
@@ -44,6 +42,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    desiredState.update();
     io.periodic();
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
@@ -95,8 +94,8 @@ public class Intake extends SubsystemBase {
     io.simulationPeriodic();
   }
 
-  public void runCharacterization_Intake(double output) {
-    io.runCharacterization_Intake(output);
+  public void runCharacterization_IntakeVelocity(double output) {
+    io.runCharacterization_IntakeVelocity(output);
   }
 
   /**
@@ -108,6 +107,11 @@ public class Intake extends SubsystemBase {
     return output;
   }
 
+  public double getFFCharacterizationPosition_Intake(){
+    double output = io.getFFCharacterizationVelocity_Intake();
+    return output;
+  }
+
   public SysIdRegistry getRegistry() {
     return sysIdRegistry;
   }
@@ -115,8 +119,8 @@ public class Intake extends SubsystemBase {
     public void grabBalls(){
       RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
       IntakeGoal goal = new IntakeGoal();
-      goal.speed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
-      goal.position = RobotState.getInstance().getShooterState().getHoodSpeed();
+      goal.speed = RobotState.getInstance().getIntakeState().getPosition();
+      goal.position = RobotState.getInstance().getIntakeState().getSpeed();
       RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
       setState(RobotState.getInstance().getIntakeState());
   }
