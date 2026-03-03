@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.9616666666666669,
-        "y": 5.983888888888889
+        "x": 6.837566666666667,
+        "y": 4.015511111111111
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.085955555556219,
-        "y": 5.9741444444395
+        "x": 8.96185555555622,
+        "y": 4.005766666661722
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Neutral Zone - Center"
     },
     {
       "anchor": {
@@ -28,7 +28,12 @@
       "linkedName": "Outpost"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

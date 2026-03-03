@@ -13,19 +13,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot to Trench"
+            "pathName": "Depot to Shoot Position Depot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Trench to Left Neutral"
+            "pathName": null
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Left Neutral to Right Neutral"
+            "pathName": "Left Neutral to Mid Neutral"
           }
         }
       ]
