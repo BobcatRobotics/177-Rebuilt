@@ -77,14 +77,14 @@ public class IntakeReal implements IntakeIO {
         .kV(Constants.IntakeConstants.RollerConstants.kV)
         .kA(Constants.IntakeConstants.RollerConstants.kA).build();
     setupRollerMotor(rollerMotorGains);
-    setupPivotMotor(rollerMotorGains);
+    setupPivotMotor(pivotMotorGains);
 
     seekLowerRange = new FindLimit(false, positionMotor);
   }
 
   public void setupRollerMotor(Gains g) {
     intakeVelocityPID = new TunablePID(
-        "/Hopper/Top/PID", g);
+        "/Intake/Top/PID", g);
     intakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.RollerConstants.rollerMotorId,
         Constants.IntakeConstants.RollerConstants.isInverted,
@@ -102,7 +102,7 @@ public class IntakeReal implements IntakeIO {
 
   public void setupPivotMotor(Gains g) {
     intakePivotPID = new TunablePID(
-        "/Hopper/Top/PID", g);
+        "/Intake/Top/PID", g);
     intakePivotConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
         Constants.IntakeConstants.PivotConstants.isInverted,
@@ -196,7 +196,7 @@ public class IntakeReal implements IntakeIO {
   }
 
   /* Characterization */
-  public void runCharacterization_Intake(double output) {
+  public void runCharacterization_IntakeVelocity(double output) {
     velocityMotor.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);

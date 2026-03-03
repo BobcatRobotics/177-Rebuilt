@@ -43,6 +43,7 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
+    desiredState.update();
     io.periodic();
     io.updateInputs(inputs);
     Logger.processInputs("Hopper/inputs", inputs);

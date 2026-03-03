@@ -58,7 +58,7 @@ public interface IntakeIO {
     public default void simulationPeriodic() {
   }
 
-  public default void runCharacterization_Intake(double output) {
+  public default void runCharacterization_IntakeVelocity(double output) {
   }
 
   public default double getFFCharacterizationVelocity_Intake() {

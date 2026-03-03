@@ -88,9 +88,8 @@ public class HopperRealSingle implements HopperIO {
   @Override
   public void updateInputs(HopperIOInputs inputs) {
     BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,
-        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, outputOfHopperTopVolts,
-        velocityOfHopperBottomRPS,
-        statorCurrentOfHopperBottomAmps, outputOfHopperBottomVolts, accelerationOfHopperBottom);
+        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, outputOfHopperTopVolts
+        );
 
     inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
     inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);

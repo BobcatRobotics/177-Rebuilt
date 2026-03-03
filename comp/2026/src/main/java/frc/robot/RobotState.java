@@ -17,11 +17,12 @@ public class RobotState {
 
   // Save Odometry,
   // Save Swerve Module Details
+  public static boolean isSimpleFFSteerMode = false;
   // Save Vision Tags
 
   // Save Shooter State
   private ShooterState.State desiredShooterStateType = ShooterState.State.MANUAL;
-  private ShooterState desiredShooterState;
+  private ShooterState desiredShooterState = new ShooterState();
 
   public ShooterState.State getDesiredShooterStateType() {
     return desiredShooterStateType;
@@ -33,7 +34,7 @@ public class RobotState {
 
   // Save Hopper State
   private HopperState.State desiredHopperStateType = HopperState.State.MANUAL;
-  private HopperState desiredHopperState;
+  private HopperState desiredHopperState  = new HopperState();
 
   public HopperState.State getDesiredHopperStateType() {
     return desiredHopperStateType;
@@ -45,7 +46,7 @@ public class RobotState {
 
   // Save Intake State
   private IntakeState.State desiredIntakeStateType = IntakeState.State.MANUAL;
-  private IntakeState desiredIntakeState;
+  private IntakeState desiredIntakeState = new IntakeState();
 
   public IntakeState.State getDesiredIntakeStateType() {
     return desiredIntakeStateType;
