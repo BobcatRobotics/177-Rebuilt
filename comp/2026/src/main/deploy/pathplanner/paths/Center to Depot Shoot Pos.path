@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.959277777777778,
-        "y": 4.3858
+        "x": 2.900811111111111,
+        "y": 4.307844444444444
       },
       "isLocked": false,
       "linkedName": "Center"
     },
     {
       "anchor": {
-        "x": 3.389293297077048,
-        "y": 7.438617069639008
+        "x": 2.086,
+        "y": 6.721
       },
       "prevControl": {
-        "x": 2.7781279381796677,
-        "y": 7.037051678900289
+        "x": 1.4136333333333329,
+        "y": 6.457900000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Real Left Trench"
+      "linkedName": "Left Trench"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -0.008038128386262331
+    "rotation": -48.69542049744011
   },
   "reversed": false,
   "folder": null,

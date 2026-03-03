@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center to Left Trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Trench Spawn - Left Neutral Lineup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HalfCut (Left to Half) "
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HalfCut (Half to Left) "
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Neutral Trench to Left trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Real left trench to depot shoot pos"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
