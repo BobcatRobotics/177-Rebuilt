@@ -229,40 +229,21 @@ public class RobotContainer {
                                                                 Rotation2d.kZero)),
                                                 drive).ignoringDisable(true));
 
-                // Antitipping
-                /* 
-                controller.getLeftTrigger()
-                                .whileTrue(new ActionFactory().continuousAction("DriveWithAntiTipping",
-                                                () -> DriveCommands.joystickDriveWithAntiTipping(drive,
-                                                                () -> -controller.getLeftY(),
-                                                                () -> -controller.getLeftX(),
-                                                                () -> -controller.getRightX(), antiTipping),
-                                                () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0,
-                                                                () -> 0, () -> 0,
-                                                                antiTipping)));
-                */
-
                 /*
                  * Controls Shooting right bumper will start flywheels then after 1/4 of a
                  * second start the hopper enableing shots to fly.
                  * this should eventually be changed to look at if the shooter wheels are up to
                  * speed isntead of an time based approach.
-
+                 */
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 }, m_Shooter));
                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }, m_Hopper));
-                 */
                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                       intake.retractIntake();
+                        intake.retractIntake();
                 }, intake));
-                controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                        intake.grabBalls();
-
-                }, intake));
-
 
                 /*
                  * Controls the Intake Position
@@ -270,18 +251,28 @@ public class RobotContainer {
                 /*
                  * Functional Test
                  */
+                Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
+                                .withTimeout(15);
+                Command strafeRight = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 1.0, () -> 0.0)
+                                .withTimeout(15);
+                Command strafeBackward = DriveCommands.joystickDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0)
+                                .withTimeout(15);
+                Command strafeLeft = DriveCommands.joystickDrive(drive, () -> -1.0, () -> 0.0, () -> 0.0)
+                                .withTimeout(15);
+                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft);
                 Command runShooterFlywheel = new RunCommand(() -> {
                         m_Shooter.shootFuel();
-                }, m_Shooter).withTimeout(5).andThen(new InstantCommand(()-> m_Shooter.stop()));
+                }, m_Shooter).withTimeout(5).andThen(new InstantCommand(() -> m_Shooter.stop()));
                 Command runHopper = new RunCommand(() -> {
                         m_Hopper.runHopper();
-                }, m_Hopper).withTimeout(5).andThen(new InstantCommand(()-> m_Hopper.stop()));
+                }, m_Hopper).withTimeout(5).andThen(new InstantCommand(() -> m_Hopper.stop()));
                 Command runIntake = new RunCommand(() -> {
                         intake.grabBalls();
                 }, m_Hopper).withTimeout(5).andThen(new RunCommand(() -> {
                         intake.retractIntake();
-                }, intake).withTimeout(5)).andThen(new InstantCommand(()-> intake.stop()));
-                controller.getPovUp().whileTrue(runShooterFlywheel.andThen(runHopper).andThen(runIntake));
+                }, intake).withTimeout(5)).andThen(new InstantCommand(() -> intake.stop()));
+                controller.getPovUp().whileTrue(
+                                swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
         }
 
         /**

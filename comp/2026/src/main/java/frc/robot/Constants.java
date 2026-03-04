@@ -152,7 +152,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static double idleIntakePosition = 0.0;
+        public static double idleIntakePosition = 11.5;
         public static double targetIntakePosition = 0;
         public static double idleRollerSpeed = 0;
         public static double targetIntakeSpeed = 20;

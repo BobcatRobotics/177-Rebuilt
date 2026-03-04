@@ -4,6 +4,12 @@ public enum CharacterizationType {
     NONE,
     DRIVE,
     STEER,
-    ANGULAR
+    ANGULAR,
+    SHOOTER_MAIN,
+    SHOOTER_FEEDER,
+    SHOOTER_HOOD,
+    HOPPER,
+    INTAKE_PIVOT,
+    INTAKE_ROLLER
 }
 
