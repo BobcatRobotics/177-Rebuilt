@@ -5,6 +5,7 @@ public enum CharacterizationType {
     DRIVE,
     STEER,
     ANGULAR,
+    WHEEL,
     SHOOTER_MAIN,
     SHOOTER_FEEDER,
     SHOOTER_HOOD,

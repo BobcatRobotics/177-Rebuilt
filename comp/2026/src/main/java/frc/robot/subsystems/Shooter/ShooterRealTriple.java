@@ -86,8 +86,8 @@ public class ShooterRealTriple implements ShooterIO {
   public double HoodSetpointRight = 0;
   public double HoodSetpointLeft = 0;
 
-  private TunablePID flywheelLeftPID;
-  private TunablePID flywheelRighPID;
+  private TunablePID flywheelInnerLeftPID;
+  private TunablePID flywheelOuterLeft;
   private TunablePID flywheelOuterRightPID;
   private TunablePID intakePID;
   private TunablePID HoodLeftPID;
@@ -133,8 +133,8 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupInnerLeftFlywheel(Gains g) {
-    flywheelLeftPID = new TunablePID(
-        "/Shooter/Flywheel/Left/PID", g);
+    flywheelInnerLeftPID = new TunablePID(
+        "/Shooter/Flywheel/InnerLeft/PID", g);
     flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
         Constants.ShooterConstants.SharedFlywheel.isInvertedInnerLeft,
@@ -142,7 +142,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, flywheelLeftPID);
+    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, flywheelInnerLeftPID);
     velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
     statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
     outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
@@ -152,8 +152,8 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupOuterLeftFlywheel(Gains g) {
-    flywheelRighPID = new TunablePID(
-        "/Shooter/Flywheel/Right/PID", g);
+    flywheelOuterLeft = new TunablePID(
+        "/Shooter/Flywheel/OuterLeft/PID", g);
     // Flywheel Configuration
     flywheelConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDLeft,
@@ -162,7 +162,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterLeft = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigRight.configureMotor(shooterFlywheelOuterLeft, flywheelRighPID);
+    flywheelConfigRight.configureMotor(shooterFlywheelOuterLeft, flywheelOuterLeft);
     velocityOfMainFlywheelRightRPS = shooterFlywheelOuterLeft.getVelocity();
     statorCurrentOfMainFlywheelRightAmps = shooterFlywheelOuterLeft.getStatorCurrent();
     outputOfMainFlywheelRightVolts = shooterFlywheelOuterLeft.getMotorVoltage();
@@ -173,7 +173,7 @@ public class ShooterRealTriple implements ShooterIO {
 
   public void setupOuterRightFlywheel(Gains g) {
     flywheelOuterRightPID = new TunablePID(
-        "/Shooter/Flywheel/Outer/PID", g);
+        "/Shooter/Flywheel/OuterRight/PID", g);
     // Flywheel Configuration
     flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
@@ -391,11 +391,11 @@ public class ShooterRealTriple implements ShooterIO {
 
   @Override
   public void periodic() {
-    if (flywheelLeftPID.hasChanged()) {
-      flywheelConfigLeft.updateMotorPID(shooterFlywheelInnerLeft, flywheelLeftPID);
+    if (flywheelInnerLeftPID.hasChanged()) {
+      flywheelConfigLeft.updateMotorPID(shooterFlywheelInnerLeft, flywheelInnerLeftPID);
     }
-    if (flywheelRighPID.hasChanged()) {
-      flywheelConfigRight.updateMotorPID(shooterFlywheelOuterLeft, flywheelRighPID);
+    if (flywheelOuterLeft.hasChanged()) {
+      flywheelConfigRight.updateMotorPID(shooterFlywheelOuterLeft, flywheelOuterLeft);
     }
     if (flywheelOuterRightPID.hasChanged()) {
       flywheelConfigOuterRight.updateMotorPID(shooterFlywheelOuterRight, flywheelOuterRightPID);

@@ -4,7 +4,6 @@ package frc.robot.subsystems.Hopper;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 
 public class HopperState {
 
@@ -30,8 +29,8 @@ public class HopperState {
 
 
   public HopperState() {
-       manualHopperSpeedTop = new TunableDouble("/Hopper/Top/manualBackspinSetPointTop", 0.0);
-      manualHopperSpeedBottom = new TunableDouble("/Hopper/Bottom/manualBackspinSetPointBottom", 0.0);
+       manualHopperSpeedTop = new TunableDouble("/Hopper/manualHopperSetPointTop", 0.0);
+      manualHopperSpeedBottom = new TunableDouble("/Hopper/manualHopperSetPointBottom", 0.0);
 
   }
 
@@ -46,9 +45,9 @@ public class HopperState {
   public void setManualSpeeds(
       double hopperSpeedTop,
       double hopperSpeedBottom) {
-       manualHopperSpeedTop = new TunableDouble("/Hopper/Top/manualBackspinSetPointTop",
+       manualHopperSpeedTop = new TunableDouble("/Hopper/manualHopperSetPointTop",
           hopperSpeedTop);
-      manualHopperSpeedBottom = new TunableDouble("/Hopper/Bottom/manualBackspinSetPointBottom",
+      manualHopperSpeedBottom = new TunableDouble("/Hopper/manualHopperSetPointBottom",
           hopperSpeedBottom);
     currentState = State.MANUAL;
   }

@@ -14,10 +14,19 @@
 
 package frc.robot;
 
+import org.bobcatrobotics.Commands.ActionFactory;
+import org.bobcatrobotics.Controllers.ControllerAutoDetect;
+import org.bobcatrobotics.Controllers.Gamepads.ControllerBase;
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
+import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
+import org.bobcatrobotics.Subsystems.Swerve.ModuleWrapper;
 import org.littletonrobotics.junction.Logger;
 // import frc.robot.subsystems.roller.RollerSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,8 +36,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.driveCharacterizationCommands;
+import frc.robot.commands.hopperCharacterizationCommands;
+import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
@@ -38,7 +49,6 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Intake.IntakeState;
-import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
@@ -52,13 +62,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import org.bobcatrobotics.Commands.ActionFactory;
-import org.bobcatrobotics.Controllers.ControllerAutoDetect;
-import org.bobcatrobotics.Controllers.Gamepads.ControllerBase;
-import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
-import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
-import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
-import org.bobcatrobotics.Subsystems.Swerve.ModuleWrapper;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -80,6 +83,8 @@ public class RobotContainer {
 
         // Controller
         private final ControllerBase controller;
+        private final ControllerBase operator;
+        private final ControllerBase devController;
 
         // Dashboard inputs
         private final LoggedDashboardChooser<Command> autoChooser;
@@ -91,6 +96,8 @@ public class RobotContainer {
          */
         public RobotContainer() {
                 controller = ControllerAutoDetect.createGamepad(0, "driver");
+                operator = ControllerAutoDetect.createGamepad(1, "operator");
+                devController = ControllerAutoDetect.createGamepad(2, "driver");
 
                 ModuleWrapper newFrontRight = new ModuleWrapper("FrontRight.json", "FrontRight");
                 ModuleWrapper newFrontLeft = new ModuleWrapper("FrontLeft.json", "FrontLeft");
@@ -241,9 +248,7 @@ public class RobotContainer {
                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }, m_Hopper));
-                controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                        intake.retractIntake();
-                }, intake));
+
 
                 /*
                  * Controls the Intake Position
@@ -251,28 +256,44 @@ public class RobotContainer {
                 /*
                  * Functional Test
                  */
+                double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(15);
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
                 Command strafeRight = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 1.0, () -> 0.0)
-                                .withTimeout(15);
-                Command strafeBackward = DriveCommands.joystickDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0)
-                                .withTimeout(15);
-                Command strafeLeft = DriveCommands.joystickDrive(drive, () -> -1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(15);
-                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft);
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                Command strafeBackward = DriveCommands.joystickDrive(drive, () -> -1.0, () -> 0.0, () -> 0.0)
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                Command strafeLeft = DriveCommands.joystickDrive(drive, () ->0.0, () -> -1.0, () -> 0.0)
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                Command rotateClockwise = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 1.0)
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                Command rotateCounterClockwise = DriveCommands.joystickDrive(drive, () ->0.0, () -> 0.0, () -> -1.0)
+                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft).andThen(rotateClockwise).andThen(rotateCounterClockwise);
                 Command runShooterFlywheel = new RunCommand(() -> {
                         m_Shooter.shootFuel();
-                }, m_Shooter).withTimeout(5).andThen(new InstantCommand(() -> m_Shooter.stop()));
+                }, m_Shooter).withTimeout(runTestTime).andThen(new InstantCommand(() -> m_Shooter.stop()));
                 Command runHopper = new RunCommand(() -> {
                         m_Hopper.runHopper();
-                }, m_Hopper).withTimeout(5).andThen(new InstantCommand(() -> m_Hopper.stop()));
+                }, m_Hopper).withTimeout(runTestTime).andThen(new InstantCommand(() -> m_Hopper.stop()));
                 Command runIntake = new RunCommand(() -> {
-                        intake.grabBalls();
-                }, m_Hopper).withTimeout(5).andThen(new RunCommand(() -> {
                         intake.retractIntake();
-                }, intake).withTimeout(5)).andThen(new InstantCommand(() -> intake.stop()));
-                controller.getPovUp().whileTrue(
+                }, m_Hopper).withTimeout(runTestTime).andThen(new RunCommand(() -> {
+                        intake.grabBalls();
+                }, intake).withTimeout(runTestTime)).andThen(new InstantCommand(() -> intake.stop()));
+                devController.getLeftBumper().whileTrue(
                                 swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
+                devController.getRightBumper().whileTrue(characterizeAll());
+        }
+
+        public Command characterizeAll(){
+                Command shooterFeeder = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
+                Command shooterMainFlywheel = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
+                Command shooterHooder = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
+                
+                Command hopperMain = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;}).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15).andThen(new InstantCommand(()->m_Hopper.stop()));
+                
+                return shooterFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
         }
 
         /**

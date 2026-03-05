@@ -56,11 +56,11 @@ public final class Constants {
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
             // Motor Constants
-            public static final double kshooterMainkP = 1.49014;
+            public static final double kshooterMainkP = 1.66;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0.000;
-            public static final double kshooterMainkS = 0.21405;
-            public static final double kshooterMainkV = 0.13422;
+            public static final double kshooterMainkS = 0.291;
+            public static final double kshooterMainkV = 0.121;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -73,11 +73,11 @@ public final class Constants {
 
         public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 2.55996;
+            public static final double kIntakeMotorkP = 1.684;
             public static final double kIntakeMotorkI = 0;
             public static final double kIntakeMotorkD = 0.00;
-            public static final double kIntakeMotorkS = 0.19856;
-            public static final double kIntakeMotorkV = 0.12821;
+            public static final double kIntakeMotorkS = 0.371;
+            public static final double kIntakeMotorkV = 0.119;
             public static final double kIntakeMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -89,11 +89,11 @@ public final class Constants {
 
             public static final int HoodID = 12;
             // Motor Constants
-            public static final double kHoodMotorkP = 1.25;
+            public static final double kHoodMotorkP = 1.602;
             public static final double kHoodMotorkI = 0.0;
             public static final double kHoodMotorkD = 0.0;
-            public static final double kHoodMotorkS = 0.21264;
-            public static final double kHoodMotorkV = 0.20496;
+            public static final double kHoodMotorkS = 0.322;
+            public static final double kHoodMotorkV = 0.125;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
@@ -105,11 +105,11 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int HoodID = 17;
-            public static final double kHoodMotorkP = 1.25;
+            public static final double kHoodMotorkP = 1.602;
             public static final double kHoodMotorkI = 0.0;
             public static final double kHoodMotorkD = 0.0;
-            public static final double kHoodMotorkS = 0.21264;
-            public static final double kHoodMotorkV = 0.20496;
+            public static final double kHoodMotorkS = 0.322;
+            public static final double kHoodMotorkV = 0.125;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
@@ -122,11 +122,11 @@ public final class Constants {
         public static final class Top {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
-            public static final double kHopperP = 0;
+            public static final double kHopperP = 2.755;
             public static final double kHopperI = 0;
             public static final double kHopperD = 0;
-            public static final double kHopperV = 0;
-            public static final double kHopperS = 0;
+            public static final double kHopperV = 0.073;
+            public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
             public static final double hopperCurrentLimit = 40;
             public static final int hopperMotorId = 16;
@@ -135,11 +135,11 @@ public final class Constants {
         public static final class Bottom {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
-            public static final double kHopperP = 0;
+            public static final double kHopperP = 2.755;
             public static final double kHopperI = 0;
             public static final double kHopperD = 0;
-            public static final double kHopperV = 0;
-            public static final double kHopperS = 0;
+            public static final double kHopperV = 0.073;
+            public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
             public static final double hopperCurrentLimit = 40;
             public static final int hopperMotorId = 16;
