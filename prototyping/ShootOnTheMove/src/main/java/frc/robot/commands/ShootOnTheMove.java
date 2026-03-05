@@ -20,11 +20,11 @@ public class ShootOnTheMove{
     private static final InterpolatingDoubleTreeMap timeOfFlightMap = 
         new InterpolatingDoubleTreeMap();
     
-    static {
-        // Add your measured time-of-flight data here
-        // Format: distance (meters) -> time (seconds)
-        timeOfFlightMap.put(0.0,0.0); // add values
-    }
+    // static {
+    //     // Add your measured time-of-flight data here
+    //     // Format: distance (meters) -> time (seconds)
+    //     timeOfFlightMap.put(0.0,0.0); // add values
+    // }
 
     private static final TripleSpeedInterpolator shooterInterpolator = new TripleSpeedInterpolator(
         new double[]{},  // add values
@@ -38,32 +38,35 @@ public class ShootOnTheMove{
         // 1. GET INITIAL TARGET VECTOR
         Translation2d goalLocation = FieldConstants.GOAL_LOCATION;
         Translation2d robotPos = robotPose.getTranslation();
-        double initialDistance = goalLocation.getDistance(robotPos);
+        Translation2d targetVec = goalLocation.minus(robotPos);
+        double distance = targetVec.getNorm();
         
-        // 2. ITERATIVE LOOKAHEAD (accounts for robot motion during flight)
-        Translation2d futurePos = robotPos;
-        double futureDistance = initialDistance;
-        double timeOfFlight = timeOfFlightMap.get(initialDistance);
-        
-        // Iterate to converge on actual shot distance
-        for (int i = 0; i < 20; i++) {
-            // Get time of flight for current distance estimate
-            timeOfFlight = timeOfFlightMap.get(futureDistance);
-            
-            // Calculate where robot will be when note arrives
-            double offsetX = robotSpeed.vxMetersPerSecond * timeOfFlight;
-            double offsetY = robotSpeed.vyMetersPerSecond * timeOfFlight;
-            futurePos = robotPos.plus(new Translation2d(offsetX, offsetY));
-            
-            // Recalculate distance from future position
-            futureDistance = goalLocation.getDistance(futurePos);
-        }
-        
-        // 3. CALCULATE TARGET VECTOR FROM future POSITION
-        Translation2d targetVec = goalLocation.minus(futurePos);
+        // 2. CALCULATE SHOOTING DIRECTION
         Rotation2d targetAngle = targetVec.getAngle();
+
+        // Translation2d futurePos = robotPos;
+        // double futureDistance = initialDistance;
+        // double timeOfFlight = timeOfFlightMap.get(initialDistance);
         
-        // 4. PROJECT ROBOT VELOCITY ONTO SHOOTING DIRECTION
+        // // Iterate to converge on actual shot distance
+        // for (int i = 0; i < 20; i++) {
+        //     // Get time of flight for current distance estimate
+        //     timeOfFlight = timeOfFlightMap.get(futureDistance);
+            
+        //     // Calculate where robot will be when ball arrives
+        //     double offsetX = robotSpeed.vxMetersPerSecond * timeOfFlight;
+        //     double offsetY = robotSpeed.vyMetersPerSecond * timeOfFlight;
+        //     futurePos = robotPos.plus(new Translation2d(offsetX, offsetY));
+            
+        //     // Recalculate distance from future position
+        //     futureDistance = goalLocation.getDistance(futurePos);
+        // }
+        
+        // // 3. CALCULATE TARGET VECTOR FROM future POSITION
+        // Translation2d targetVec = goalLocation.minus(futurePos);
+        // Rotation2d targetAngle = targetVec.getAngle();
+        
+        // 3. PROJECT ROBOT VELOCITY ONTO SHOOTING DIRECTION
         Translation2d robotVelVec = new Translation2d(
             robotSpeed.vxMetersPerSecond, 
             robotSpeed.vyMetersPerSecond
@@ -73,11 +76,11 @@ public class ShootOnTheMove{
         double velocityAlongShot = robotVelVec.getX() * Math.cos(targetAngle.getRadians()) 
                                   + robotVelVec.getY() * Math.sin(targetAngle.getRadians());
         
-        // 5. GET BASE SPEEDS FROM INTERPOLATOR (stationary shot at future distance)
-        TripleSpeedInterpolator.Speeds baseSpeeds = shooterInterpolator.get(futureDistance);
+        // 4. GET BASE SPEEDS FROM INTERPOLATOR (stationary shot at future distance)
+        TripleSpeedInterpolator.Speeds baseSpeeds = shooterInterpolator.get(distance);
         
         // 6. COMPENSATE FOR MOTION
-        // The main motor speed represents the note's exit velocity
+        // The main motor speed represents the ball's exit velocity
         // We need to find what horizontal component it produces
         double baseHorizontalSpeed = baseSpeeds.one * Math.cos(HOOD_ANGLE_RAD);
         

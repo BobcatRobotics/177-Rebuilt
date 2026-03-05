@@ -215,7 +215,7 @@ public class RobotContainer {
                         () -> DriveCommands.joystickDriveWithAntiTipping(drive, () -> 0, () -> 0, () -> 0,
                                 antiTipping)));
 
-        operator.a().toggleOnTrue(new RunCommand(() -> new SoTMCommand(shooter, drive)));
+        operator.a().whileTrue(new RunCommand(() -> new SoTMCommand(shooter, drive)));
     }
 
     /**
