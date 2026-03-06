@@ -210,11 +210,11 @@ public class RobotContainer {
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
-                intake.setDefaultCommand(new RunCommand(() -> {
-                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                        intakeState.setState(IntakeState.State.IDLE);
-                        intake.setState(intakeState);
-                }, intake));
+                // intake.setDefaultCommand(new RunCommand(() -> {
+                //         IntakeState intakeState = RobotState.getInstance().getIntakeState();
+                //         intakeState.setState(IntakeState.State.IDLE);
+                //         intake.setState(intakeState);
+                // }, intake));
 
                 // Lock to 0° when A button is held
                 controller.getButton("A")
