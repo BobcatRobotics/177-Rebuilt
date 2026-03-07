@@ -64,5 +64,4 @@ public interface HopperIO {
     return 0.0;
   }
 
-
 }

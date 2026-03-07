@@ -14,10 +14,12 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -44,11 +46,11 @@ public class ShooterRealTriple implements ShooterIO {
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
   private VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterLeftRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterRightRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterOuterRightRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityVoltage velShooterLeftRequest = new VelocityVoltage(0);
+  private VelocityVoltage velShooterRightRequest = new VelocityVoltage(0);
+  private VelocityVoltage velShooterOuterRightRequest = new VelocityVoltage(0);
+  private VelocityVoltage velHoodLeftRequest = new VelocityVoltage(0);
+  private VelocityVoltage velHoodRightRequest = new VelocityVoltage(0);
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
@@ -93,6 +95,9 @@ public class ShooterRealTriple implements ShooterIO {
   private TunablePID HoodLeftPID;
   private TunablePID HoodRightPID;
 
+  private double mainFlywheelkS , mainFlywheelkV;
+  private double hoodkS , hoodkV;
+
   public ShooterRealTriple() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
@@ -124,10 +129,14 @@ public class ShooterRealTriple implements ShooterIO {
         .kV(Constants.ShooterConstants.Right.kHoodMotorkV)
         .kA(Constants.ShooterConstants.Right.kHoodMotorkA).build();
 
+    mainFlywheelkS = flywheelGains.getKS();
+    mainFlywheelkV = flywheelGains.getKV();
     setupInnerLeftFlywheel(flywheelGains);
     setupOuterLeftFlywheel(flywheelGains);
     setupOuterRightFlywheel(flywheelGains);
     setupIntake(intakeGains);
+    hoodkS = HoodRightGains.getKS();
+    hoodkV = HoodRightGains.getKV();
     setupLeftHood(HoodLeftGains);
     setupRightHood(HoodRightGains);
   }
@@ -343,19 +352,23 @@ public class ShooterRealTriple implements ShooterIO {
 
   public void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
     mainFlywheelSetpoint = shooterFlywheelSpeedInRPS;
-    shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterLeft.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint));
+    double ff = Math.signum(shooterFlywheelSpeedInRPS*Math.PI *2 )*mainFlywheelkS + shooterFlywheelSpeedInRPS*mainFlywheelkV;
+
+    shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint).withFeedForward(ff));
+    shooterFlywheelOuterLeft.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint).withFeedForward(ff));
+    shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint).withFeedForward(ff));
   }
 
   public void setHoodSpeedOfLeft(double shooterHoodSpeedInRPS) {
     HoodSetpointLeft = shooterHoodSpeedInRPS;
-    HoodWheelMotorLeft.setControl(velHoodLeftRequest.withVelocity(HoodSetpointLeft));
+    double ff = Math.signum(shooterHoodSpeedInRPS*Math.PI *2 )*hoodkS + shooterHoodSpeedInRPS*hoodkV;
+    HoodWheelMotorLeft.setControl(velHoodLeftRequest.withVelocity(HoodSetpointLeft).withFeedForward(ff));
   }
 
   public void setHoodSpeedOfRight(double shooterHoodSpeedInRPS) {
     HoodSetpointRight = shooterHoodSpeedInRPS;
-    HoodWheelMotorRight.setControl(velHoodRightRequest.withVelocity(HoodSetpointRight));
+    double ff = Math.signum(shooterHoodSpeedInRPS*Math.PI *2 )*hoodkS + shooterHoodSpeedInRPS*hoodkV;
+    HoodWheelMotorRight.setControl(velHoodRightRequest.withVelocity(HoodSetpointRight).withFeedForward(ff));
   }
 
   public void setIntakeSpeed(double shooterIntakeSpeedInRPS) {
@@ -469,6 +482,17 @@ public class ShooterRealTriple implements ShooterIO {
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Intake() {
     double avg = shooterIntakeMotor.getVelocity().getValue().in(RotationsPerSecond);
+    return avg;
+  }
+
+  public double getVelocityMainFlywheel() {
+    double avg = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
+    return avg;
+  }
+
+  public double getVelocityHoodFlywheel() {
+    double avg = velocityOfHoodWheelMotorLeftRPS.getValue()
+        .in(Rotations.per(Seconds));
     return avg;
   }
 }

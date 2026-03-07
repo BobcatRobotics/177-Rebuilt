@@ -212,6 +212,17 @@ public class Shooter extends SubsystemBase {
     return sysIdRegistry;
   }
 
+
+  public void spinUp() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
+    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
+    goal.intakeSpeed = 0;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+
   public void shootFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
     ShooterGoal goal = new ShooterGoal();
@@ -220,5 +231,29 @@ public class Shooter extends SubsystemBase {
     goal.intakeSpeed = RobotState.getInstance().getShooterState().getIntakeSpeed();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
+  }
+  public void reverseFuel() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed() * -1;
+    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed() * -1;
+    goal.intakeSpeed = RobotState.getInstance().getShooterState().getIntakeSpeed() * -1;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+  
+  public boolean atSpeed() {
+    boolean isAtTolerance = false;
+    double MAIN_SPEED_TOLERANCE = 7;
+    double HOOD_SPEED_TOLERANCE = 7;
+    double flywheelSpeedVelocity = RobotState.getInstance().getShooterState().getFlywheelSpeed() - MAIN_SPEED_TOLERANCE;
+    double hoodSpeedVelocity = RobotState.getInstance().getShooterState().getHoodSpeed() - HOOD_SPEED_TOLERANCE;
+    if (io.getVelocityHood() > 30) {
+      if (io.getVelocityMainFlywheel() > 40) {
+        isAtTolerance = true;
+      }
+    }
+    Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
+    return isAtTolerance;
   }
 }

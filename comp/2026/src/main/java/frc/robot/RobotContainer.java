@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -211,9 +212,9 @@ public class RobotContainer {
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
                 // intake.setDefaultCommand(new RunCommand(() -> {
-                //         IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                //         intakeState.setState(IntakeState.State.IDLE);
-                //         intake.setState(intakeState);
+                // IntakeState intakeState = RobotState.getInstance().getIntakeState();
+                // intakeState.setState(IntakeState.State.IDLE);
+                // intake.setState(intakeState);
                 // }, intake));
 
                 // Lock to 0° when A button is held
@@ -243,13 +244,36 @@ public class RobotContainer {
                  * speed isntead of an time based approach.
                  */
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
+                        m_Shooter.spinUp();
                 }, m_Shooter));
                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
                         m_Hopper.runHopper();
-                }, m_Hopper));
+                }, m_Hopper).alongWith(new RunCommand(() -> {
+                        m_Shooter.shootFuel();
+                }, m_Shooter)));
 
-
+                // controller.getRightBumper().whileTrue(
+                // Commands.run(() -> {
+                // if (m_Shooter.atSpeed()) {
+                // m_Shooter.shootFuel();
+                // } else {
+                // m_Shooter.spinUp();
+                // }
+                // }, m_Shooter).alongWith(
+                // Commands.run(() -> {
+                // if (m_Shooter.atSpeed()) {
+                // m_Hopper.runHopper();
+                // } else {
+                // m_Hopper.stop();
+                // }
+                // }, m_Hopper)));
+                // controller.getLeftBumper().whileTrue(
+                // Commands.run(() -> {
+                // m_Shooter.reverseFuel();
+                // }, m_Shooter).alongWith(
+                // Commands.run(() -> {
+                // m_Hopper.reverseHopper();
+                // }, m_Hopper)));
                 /*
                  * Controls the Intake Position
                  */
@@ -258,18 +282,25 @@ public class RobotContainer {
                  */
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
                 Command strafeRight = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 1.0, () -> 0.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
                 Command strafeBackward = DriveCommands.joystickDrive(drive, () -> -1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
-                Command strafeLeft = DriveCommands.joystickDrive(drive, () ->0.0, () -> -1.0, () -> 0.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
+                Command strafeLeft = DriveCommands.joystickDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0)
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
                 Command rotateClockwise = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 1.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
-                Command rotateCounterClockwise = DriveCommands.joystickDrive(drive, () ->0.0, () -> 0.0, () -> -1.0)
-                                .withTimeout(runTestTime).andThen(new InstantCommand(()->drive.stop()).withTimeout(runTestTime));
-                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft).andThen(rotateClockwise).andThen(rotateCounterClockwise);
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
+                Command rotateCounterClockwise = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> -1.0)
+                                .withTimeout(runTestTime)
+                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
+                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft)
+                                .andThen(rotateClockwise).andThen(rotateCounterClockwise);
                 Command runShooterFlywheel = new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 }, m_Shooter).withTimeout(runTestTime).andThen(new InstantCommand(() -> m_Shooter.stop()));
@@ -286,13 +317,25 @@ public class RobotContainer {
                 devController.getRightBumper().whileTrue(characterizeAll());
         }
 
-        public Command characterizeAll(){
-                Command shooterFeeder = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
-                Command shooterMainFlywheel = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
-                Command shooterHooder = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;}).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15).andThen(new InstantCommand(()->m_Shooter.stopIntakeWheel()));
-                
-                Command hopperMain = new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;}).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15).andThen(new InstantCommand(()->m_Hopper.stop()));
-                
+        public Command characterizeAll() {
+                Command shooterFeeder = new InstantCommand(() -> {
+                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;
+                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter))
+                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
+                Command shooterMainFlywheel = new InstantCommand(() -> {
+                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;
+                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter))
+                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
+                Command shooterHooder = new InstantCommand(() -> {
+                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;
+                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15)
+                                .andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
+
+                Command hopperMain = new InstantCommand(() -> {
+                        RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;
+                }).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15)
+                                .andThen(new InstantCommand(() -> m_Hopper.stop()));
+
                 return shooterFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
         }
 

@@ -150,4 +150,5 @@ public class HopperRealSingle implements HopperIO {
     double avg = (hopperMotor.getVelocity().getValue().in(RotationsPerSecond)) / 1;
     return avg;
   }
+
 }

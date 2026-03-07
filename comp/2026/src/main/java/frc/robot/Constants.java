@@ -44,9 +44,9 @@ public final class Constants {
         public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
 
-        public static final double targetFlywheelSpeedRPS = 38.5;
-        public static final double targetIntakeSpeedRPS = 78;
-        public static final double targetHoodSpeedRPS = 49.25;
+        public static final double targetFlywheelSpeedRPS = 45;
+        public static final double targetIntakeSpeedRPS = 75;
+        public static final double targetHoodSpeedRPS = 10;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -58,7 +58,7 @@ public final class Constants {
             // Motor Constants
             public static final double kshooterMainkP = 1.66;
             public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.000;
+            public static final double kshooterMainkD = 0.1;
             public static final double kshooterMainkS = 0.291;
             public static final double kshooterMainkV = 0.121;
             public static final double kshooterMainkA = 0;
@@ -75,7 +75,7 @@ public final class Constants {
             public static final int intakeIDLeft = 15;
             public static final double kIntakeMotorkP = 1.684;
             public static final double kIntakeMotorkI = 0;
-            public static final double kIntakeMotorkD = 0.00;
+            public static final double kIntakeMotorkD = 0.1;
             public static final double kIntakeMotorkS = 0.371;
             public static final double kIntakeMotorkV = 0.119;
             public static final double kIntakeMotorkA = 0;
@@ -91,7 +91,7 @@ public final class Constants {
             // Motor Constants
             public static final double kHoodMotorkP = 1.602;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.0;
+            public static final double kHoodMotorkD = 0.1;
             public static final double kHoodMotorkS = 0.322;
             public static final double kHoodMotorkV = 0.125;
             public static final double kHoodMotorkA = 0;
@@ -107,7 +107,7 @@ public final class Constants {
             public static final int HoodID = 17;
             public static final double kHoodMotorkP = 1.602;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.0;
+            public static final double kHoodMotorkD = 0.1;
             public static final double kHoodMotorkS = 0.322;
             public static final double kHoodMotorkV = 0.125;
             public static final double kHoodMotorkA = 0;
@@ -124,7 +124,7 @@ public final class Constants {
             public static final boolean isCoast = true;
             public static final double kHopperP = 2.755;
             public static final double kHopperI = 0;
-            public static final double kHopperD = 0;
+            public static final double kHopperD = 0.1;
             public static final double kHopperV = 0.073;
             public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
@@ -137,7 +137,7 @@ public final class Constants {
             public static final boolean isCoast = true;
             public static final double kHopperP = 2.755;
             public static final double kHopperI = 0;
-            public static final double kHopperD = 0;
+            public static final double kHopperD = 0.1;
             public static final double kHopperV = 0.073;
             public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
@@ -146,8 +146,8 @@ public final class Constants {
         }
 
         public static final double idleHopperSpeed = 0.0;
-        public static final double topMotorTargetVelocity = 0;
-        public static final double bottomMotorTargetVelocity = 0;
+        public static final double topMotorTargetVelocity = 35;
+        public static final double bottomMotorTargetVelocity = 35;
 
     }
 

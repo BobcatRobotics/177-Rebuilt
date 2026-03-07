@@ -110,4 +110,11 @@ public interface ShooterIO {
   public default double getFFCharacterizationVelocity_Intake() {
     return 0.0;
   }
+
+    public default double getVelocityHood(){
+    return 0.0;
+  }
+    public default double getVelocityMainFlywheel(){
+    return 0.0;
+  }
 }
