@@ -4,7 +4,7 @@
         "kCoupleRatio": 3.5714285714285716,
         "kDriveGearRatio": 6.746031746031747,
         "kSteerGearRatio": 21.428571428571427,
-        "driveInverted":false,
+        "driveInverted":true,
         "steerInverted":true,
         "encoderInverted":false
     },

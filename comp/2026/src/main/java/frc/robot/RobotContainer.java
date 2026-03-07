@@ -26,6 +26,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,6 +44,7 @@ import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperAutoOptions;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
@@ -56,6 +58,7 @@ import frc.robot.subsystems.Shooter.ShooterRealQuad;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveAutoOptions;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -88,7 +91,7 @@ public class RobotContainer {
         private final ControllerBase devController;
 
         // Dashboard inputs
-        private final LoggedDashboardChooser<Command> autoChooser;
+        private LoggedDashboardChooser<Command> autoChooser;
 
         private final HubUtil hub;
 
@@ -177,6 +180,10 @@ public class RobotContainer {
 
                 // Set up auto routines
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+                autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
+
+                autoChooser.addOption("Auto Test", new PathPlannerAuto("Auto Testing #1"));
+
                 // Configure the button bindings
                 configureButtonBindings();
 
@@ -199,7 +206,7 @@ public class RobotContainer {
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX(),
-                                                () -> -controller.getRightX()));
+                                                () -> controller.getRightX()));
 
                 m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
@@ -359,5 +366,6 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
                 Logger.recordOutput("Hub/HubLocation/Pose3d",
                                 HubUtil.getHubCoordinates(DriverStation.getAlliance().get()));
+                //Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
         }
 }
