@@ -159,7 +159,7 @@ public final class Constants {
 
         public static final class PivotConstants {
             public static final boolean isInverted = true;
-            public static final boolean isCoast = false;
+            public static final boolean isCoast = true;
             public static double kP = 0.5;
             public static double kI = 0.00;
             public static double kD = 0.00;
