@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.driveCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
@@ -231,9 +232,15 @@ public class RobotContainer {
 
 
                  
-
-controller.getButton("A")
-                                .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
+controller.getButton("A").whileTrue(
+new AutoAimDrive(
+drive,
+() -> 0,
+() -> 0
+)
+);
+// controller.getButton("A")
+//                                 .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
                 // // Lock to 0° when A button is held
                 // controller.getButton("A")
                 //                 .whileTrue(

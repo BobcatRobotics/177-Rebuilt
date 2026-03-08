@@ -37,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.bobcatrobotics.Controllers.Axis;
 import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,8 +84,12 @@ public class DriveCommands {
       // Get linear velocity
       Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-      // Apply rotation deadband
+      // Apply rotation deadband and slew rate limiter
       double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+      // Axis output = new Axis(omega, DEADBAND);
+
+      // omega = output.inputLimited;
 
       // Square rotation value for more precise control
       omega = Math.copySign(omega * omega, omega);
@@ -91,7 +97,7 @@ public class DriveCommands {
       // Convert to field relative speeds & send command
       ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
           linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-          omega * drive.getMaxAngularSpeedRadPerSec());
+          omega * drive.getMaxAngularSpeedRadPerSec()*0.6);
       boolean isFlipped = DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == Alliance.Red;
       drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
