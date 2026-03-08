@@ -5,7 +5,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
-  public CharacterizationType characterizationType = CharacterizationType.WHEEL;
+  public CharacterizationType characterizationType = CharacterizationType.DRIVE;
   private static RobotState instance;
 
   public static RobotState getInstance() {
