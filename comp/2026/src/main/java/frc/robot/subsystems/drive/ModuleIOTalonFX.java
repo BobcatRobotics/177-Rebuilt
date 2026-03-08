@@ -54,9 +54,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final CANcoder cancoder;
 
   // Voltage control requests
-  private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(true);
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0).withEnableFOC(true);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0).withEnableFOC(true);
+  private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(false);
+  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0).withEnableFOC(false);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0).withEnableFOC(false);
 
   // Torque-current control requests
   private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
@@ -109,7 +109,7 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.CurrentLimits.SupplyCurrentLowerTime = 1.0;    
     driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
     driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    driveConfig.CurrentLimits.StatorCurrentLimit = 60;
+    driveConfig.CurrentLimits.StatorCurrentLimit = 40;
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted =
         constants.DriveMotorInverted

@@ -68,6 +68,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.util.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -256,7 +257,7 @@ public class RobotContainer {
                 controller.getButton("B")
                                 .onTrue(new ActionFactory().singleAction("ZeroGyroCommand",
                                                 () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
-                                                                Rotation2d.kZero)),
+                                                                AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
                 /*
