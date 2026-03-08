@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.driveCharacterizationCommands;
@@ -294,6 +295,40 @@ public class RobotContainer {
                         intakeState.setCurrentSetPoints(goal);
                         intake.setState(intakeState);
                 }, intake));
+
+                controller.getPovDown().whileTrue(new RunCommand(() -> {
+                        intake.setPosition(11.75);
+                }, intake))
+                .onFalse(new InstantCommand(() -> {
+                        intake.stop();
+                },intake));
+
+                controller.getPovUp().whileTrue(intake.retractAndStop());
+
+                controller.getButton("Y").onTrue(new InstantCommand(
+                        () -> intake.resetEncoder()
+                ).ignoringDisable(true));
+
+                // Command jiggleCommand = new RunCommand(
+                //                 () -> intake.setPosition(5) , intake).until(()-> intake.getPosition() <= 5)
+                //         .andThen( new WaitCommand(0.5) ).andThen(
+                //                 () -> intake.setPosition(11.75)
+                //         );
+
+                // controller.getButton("X").whileTrue(
+                //         jiggleCommand
+                //         .repeatedly().withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+                // ).onFalse(new InstantCommand(()->intake.stop()));
+                
+                
+
+                controller.getPovRight().whileTrue(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake))
+                .onFalse(new InstantCommand(() -> {
+                        intake.stop();
+                }, intake));
+                
 
                 // controller.getRightBumper().whileTrue(
                 // Commands.run(() -> {

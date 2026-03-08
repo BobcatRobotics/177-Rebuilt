@@ -4,6 +4,11 @@ import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotState;
@@ -69,6 +74,10 @@ public class Intake extends SubsystemBase {
     io.setPosition(desiredState);
   }
 
+   public void retractIntakeManually(){
+    io.retractIntake();
+   }
+
   public void setPosition(double intakePosition) {
     io.setPosition(intakePosition);
   }
@@ -125,6 +134,10 @@ public class Intake extends SubsystemBase {
     setState(RobotState.getInstance().getIntakeState());
   }
 
+  public void resetEncoder(){
+    io.resetEncoder();
+  }
+
   public void retractIntake() {
     RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
     IntakeGoal goal = new IntakeGoal();
@@ -132,5 +145,16 @@ public class Intake extends SubsystemBase {
     goal.position = 0;
     RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getIntakeState());
+  }
+
+  public double getPosition(){
+    return inputs.intakePosition;
+  }
+
+
+  public Command retractAndStop(){
+    return new RunCommand(() -> {
+                        retractIntakeManually();
+                }).onlyWhile(()->!DriverStation.isDisabled()).andThen(new InstantCommand(()->stop()));
   }
 }

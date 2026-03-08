@@ -76,7 +76,8 @@ public class IntakeReal implements IntakeIO {
         .kD(Constants.IntakeConstants.PivotConstants.kD)
         .kS(Constants.IntakeConstants.PivotConstants.kS)
         .kV(Constants.IntakeConstants.PivotConstants.kV)
-        .kA(Constants.IntakeConstants.PivotConstants.kA).build();
+        .kA(Constants.IntakeConstants.PivotConstants.kA)
+        .build();
     Gains rollerMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.RollerConstants.kP)
         .kI(Constants.IntakeConstants.RollerConstants.kI)
@@ -145,6 +146,7 @@ public class IntakeReal implements IntakeIO {
         .in(Volts);
     inputs.accelerationOfIntakeSpeed = accelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
     inputs.positionConnected = velocityMotor.isConnected();
+    inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
 
   }
 
@@ -163,12 +165,22 @@ public class IntakeReal implements IntakeIO {
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withVelocity(0)); //intake position was 80
+  
+      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.6));
 
+  }
+
+  public void retractIntake(){
+    intakePivotSetpoint = 0;
+    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.6));
   }
 
   public double getVelocity() {
     return velocityMotor.getVelocity().getValueAsDouble();
+  }
+
+  public void resetEncoder() {
+    positionMotor.setPosition(0);
   }
 
   @Override

@@ -11,6 +11,7 @@ public interface IntakeIO {
     public double outputOfIntakePositionVolts = 0.0;
     public double accelerationOfIntakePosition = 0.0;
     public boolean velocityConnected = false;
+    public double intakePosition = -1;
 
     public double velocityOfIntakeSpeedRPS = 0.0;
     public double statorCurrentOfIntakeSpeedAmps = 0.0;
@@ -34,6 +35,10 @@ public interface IntakeIO {
 
   public default void setPosition(double pos) {
   }
+
+   public default void retractIntake(){}
+
+   public default void resetEncoder() {}
 
   public default double getVelocity() {
     return 0.0;

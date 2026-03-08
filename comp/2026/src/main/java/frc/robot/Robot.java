@@ -96,7 +96,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    
+    CommandScheduler.getInstance().cancelAll();
   }
 
   @Override
