@@ -24,6 +24,8 @@ public class DriveAutoOptions {
                         new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.DRIVE;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
         autoChooser.addOption("Swerve Steer Simple FF Characterization",
                         new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.STEER;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
+        autoChooser.addOption("Swerve Drive Simple FF Characterization",
+                        new InstantCommand(()->{RobotState.getInstance().characterizationType = CharacterizationType.ANGULAR;}).andThen(driveCharacterizationCommands.feedforwardCharacterization(drive)));
         autoChooser.addOption("Swerve Wheel Radius Characterization",
                         driveCharacterizationCommands.wheelRadiusCharacterization(drive));
         autoChooser.addOption("Swerve SysId (Quasistatic Forward)",

@@ -232,13 +232,11 @@ public class RobotContainer {
 
 
                  
-controller.getButton("A").whileTrue(
-new AutoAimDrive(
-drive,
-() -> 0,
-() -> 0
-)
-);
+                controller.getButton("A").whileTrue(
+                                new AutoAimDrive(
+                                                drive,
+                                                () -> -controller.getLeftY(),
+                                                () -> -controller.getLeftX()));
 // controller.getButton("A")
 //                                 .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
                 // // Lock to 0° when A button is held
