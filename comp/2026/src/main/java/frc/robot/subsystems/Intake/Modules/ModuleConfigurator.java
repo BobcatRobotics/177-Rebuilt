@@ -112,6 +112,7 @@ public final class ModuleConfigurator {
                 ? NeutralModeValue.Coast
                 : NeutralModeValue.Brake;
 
+
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
 
