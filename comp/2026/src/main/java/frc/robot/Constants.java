@@ -9,7 +9,6 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.subsystems.vision.limelightConstants;
 import frc.robot.util.VisionObservation;
 import frc.robot.util.VisionObservation.LLTYPE;
 
@@ -195,66 +194,4 @@ public final class Constants {
 
     
 
-  public static final class Limelight3GConstants {
-    public static final double verticalFOV = 49.7; // degrees obviously
-    public static final double horizontalFOV = 63.3;
-    public static final int horPixles = 1280;
-  }
-
-  public static final class Limelight4Constants {
-    public static final double verticalFOV = 56.2; // degrees obviously
-    public static final double horizontalFOV = 82;
-    public static final int horPixles = 1280;
-  }
-
-  public static final class limelightIntake {
-    public static final String name = "intake";
-    public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL4;
-    public static final double limelightMountHeight = Units.inchesToMeters(20.5);
-    public static final int detectorPiplineIndex = 2;
-    public static final int apriltagPipelineIndex = 1;
-    public static final double filterTimeConstant =
-        0.1; // in seconds, inputs occuring over a time period
-    // significantly shorter than this will be thrown out
-    public static final Vector<N3> visionMeasurementStdDevs =
-        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));
-    public static final limelightConstants constants =
-        new limelightConstants(
-            name,
-            limelightType,
-            Limelight4Constants.verticalFOV,
-            Limelight4Constants.horizontalFOV,
-            limelightMountHeight,
-            detectorPiplineIndex,
-            apriltagPipelineIndex,
-            Limelight4Constants.horPixles,
-            visionMeasurementStdDevs);
-
-    public static final String ip = "10.1.77.11";
-  }
-
-  public static final class limelightShooter {
-    public static final String name = "shooter";
-    public static final VisionObservation.LLTYPE limelightType = LLTYPE.LL4;
-    public static final double limelightMountHeight = Units.inchesToMeters(20.5);
-    public static final int detectorPiplineIndex = 2;
-    public static final int apriltagPipelineIndex = 1;
-    public static final double filterTimeConstant =
-        0.1; // in seconds, inputs occuring over a time period
-    // significantly shorter than this will be thrown out
-    public static final Vector<N3> visionMeasurementStdDevs =
-        VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));
-    public static final limelightConstants constants =
-        new limelightConstants(
-            name,
-            limelightType,
-            Limelight4Constants.verticalFOV,
-            Limelight4Constants.horizontalFOV,
-            limelightMountHeight,
-            detectorPiplineIndex,
-            apriltagPipelineIndex,
-            Limelight4Constants.horPixles,
-            visionMeasurementStdDevs);
-
-  }
 }

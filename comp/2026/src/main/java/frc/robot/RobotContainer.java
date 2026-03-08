@@ -81,8 +81,7 @@ public class RobotContainer {
         // Subsystems
         private final Drive drive;
         private final AntiTipping antiTipping;
-        public        Vision limelightIntake;
-        public        Vision limelightShooter;
+        private Vision vision;
         public final Shooter m_Shooter;
         private final Hopper m_Hopper;
         private final Intake intake;
@@ -123,10 +122,9 @@ public class RobotContainer {
                                                 new ModuleIOTalonFX(newBackRight
                                                                 .addModuleConstants(TunerConstants.BackRight)));
                                 // Vision
-                                limelightIntake =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
-                                limelightShooter =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
+                                vision = new Vision(drive::addVisionMeasurement,
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -155,12 +153,9 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeReal());
                                 intake.applyState();
 
-                                
-                                limelightIntake =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
-                                limelightShooter =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
-
+                                vision = new Vision(drive::addVisionMeasurement,
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
                                 break;
 
                         default:
@@ -182,11 +177,9 @@ public class RobotContainer {
                                 });
 
                                 
-                                
-                                limelightIntake =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
-                                limelightShooter =
-                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
+                                vision = new Vision(drive::addVisionMeasurement,
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
                                 break;
                 }
 
@@ -240,7 +233,7 @@ public class RobotContainer {
                  
 
 controller.getButton("A")
-                                .whileTrue(DriveCommands.alignToTag( drive, ()-> limelightShooter.getTX()));
+                                .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
                 // // Lock to 0° when A button is held
                 // controller.getButton("A")
                 //                 .whileTrue(

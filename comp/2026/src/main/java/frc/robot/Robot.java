@@ -12,8 +12,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.limelightIntake;
-import frc.robot.Constants.limelightShooter;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -99,11 +97,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     
-    m_robotContainer.limelightIntake.throttleSet(100);
-    
-    m_robotContainer.limelightShooter.throttleSet(100);
-    m_robotContainer.limelightShooter.setPipeline(limelightShooter.apriltagPipelineIndex);
-    m_robotContainer.limelightIntake.setPipeline(limelightIntake.apriltagPipelineIndex);
   }
 
   @Override
@@ -113,11 +106,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
 
-
-    m_robotContainer.limelightShooter.throttleSet(0);
-    m_robotContainer.limelightShooter.setPipeline(limelightShooter.apriltagPipelineIndex);
-    m_robotContainer.limelightIntake.throttleSet(0);
-    m_robotContainer.limelightIntake.setPipeline(limelightIntake.apriltagPipelineIndex);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -134,10 +122,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     
-    m_robotContainer.limelightShooter.throttleSet(0);
-    m_robotContainer.limelightShooter.setPipeline(limelightShooter.apriltagPipelineIndex);
-    m_robotContainer.limelightIntake.throttleSet(0);
-    m_robotContainer.limelightIntake.setPipeline(limelightIntake.apriltagPipelineIndex);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

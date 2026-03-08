@@ -1,55 +1,44 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+
+// Copyright (c) 2021-2026 Littleton Robotics
+// http://github.com/Mechanical-Advantage
+//
+// Use of this source code is governed by a BSD
+// license that can be found in the LICENSE file
+// at the root directory of this project.
 
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import frc.robot.util.VisionObservation.LLTYPE;
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-/** Vision subsystem hardware interface. */
 public interface VisionIO {
-  /** The set of loggable inputs for the vision subsystem. */
   @AutoLog
   public static class VisionIOInputs {
-    public LEDMode ledMode = LEDMode.FORCEOFF;
-    public double pipelineID = 0;
-    public double pipelineLatency = 0;
-    public double ta = -1;
-    public boolean tv = false;
-    public double tx = -1;
-    public double ty = -1;
-    public double fiducialID = -1;
-    public double tClass = -1;
-    public String name = "sim";
-    // public CamMode camMode = CamMode.VISION;
-    public Pose2d botPoseMG2 = new Pose2d();
-    public int tagCount = -1;
-    public double avgTagDist = -1;
-    public Pose3d botPose3d = new Pose3d();
-    public double timestamp = -1;
-    public LLTYPE limelightType;
+    public boolean connected = false;
+    public TargetObservation latestTargetObservation =
+        new TargetObservation(Rotation2d.kZero, Rotation2d.kZero);
+    public PoseObservation[] poseObservations = new PoseObservation[0];
+    public int[] tagIds = new int[0];
   }
-  /** Updates the set of loggable inputs. */
+
+  /** Represents the angle to a simple target, not used for pose estimation. */
+  public static record TargetObservation(Rotation2d tx, Rotation2d ty) {}
+
+  /** Represents a robot pose sample used for pose estimation. */
+  public static record PoseObservation(
+      double timestamp,
+      Pose3d pose,
+      double ambiguity,
+      int tagCount,
+      double averageTagDistance,
+      PoseObservationType type) {}
+
+  public static enum PoseObservationType {
+    MEGATAG_1,
+    MEGATAG_2,
+    PHOTONVISION
+  }
+
   public default void updateInputs(VisionIOInputs inputs) {}
-
-  /** Sets the pipeline number. */
-  public default void setLEDS(LEDMode mode) {}
-
-  public default void setPipeline(String limelight, int index) {}
-
-  public default double getTClass() {
-    return 0.0;
-  }
-
-  public default void setCamMode(CamMode mode) {}
-
-  public default void setRobotOrientationMG2(Rotation3d gyro, Rotation3d rate) {}
-
-  public default void setPermittedTags(int[] tags) {}
-
-  public default void setPriorityID(int tagID) {}
 }

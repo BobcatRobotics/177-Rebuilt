@@ -273,7 +273,7 @@ public class DriveCommands {
             omega = omegaController.calculate(
                 drive.getRotation().getRadians(), tx.get().getRadians());
           }
-
+          Logger.recordOutput("Swerve/alignToTag/omega",omega);
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
