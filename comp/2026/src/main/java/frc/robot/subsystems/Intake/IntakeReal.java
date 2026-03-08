@@ -18,10 +18,12 @@ import org.bobcatrobotics.Util.Tunables.TunablePID;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -29,6 +31,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake.Modules.ModuleConfigurator;
@@ -43,7 +46,7 @@ public class IntakeReal implements IntakeIO {
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
-  private final VelocityTorqueCurrentFOC requestVelocity = new VelocityTorqueCurrentFOC(0);
+  private final DutyCycleOut requestVelocity = new DutyCycleOut(0).withEnableFOC(false);
   private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
   private final PositionVoltage requestPositionVoltage = new PositionVoltage(0);
 
@@ -147,7 +150,7 @@ public class IntakeReal implements IntakeIO {
 
   public void setVelocity(double velocity) {
     intakeVelocitySetpoint = velocity;
-    velocityMotor.setControl(requestVelocity.withVelocity(velocity));
+    velocityMotor.setControl(requestVelocity.withOutput(1));
   }
 
   public void setVelocity(IntakeState desiredState) {
@@ -160,7 +163,7 @@ public class IntakeReal implements IntakeIO {
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withVelocity(80));
+    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withVelocity(0)); //intake position was 80
 
   }
 

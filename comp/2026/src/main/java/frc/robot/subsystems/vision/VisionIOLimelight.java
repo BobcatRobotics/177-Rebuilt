@@ -1,152 +1,127 @@
-// Copyright (c) 2021-2026 Littleton Robotics
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by a BSD
-// license that can be found in the LICENSE file
-// at the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
+import frc.robot.util.DSUtil;
+import frc.robot.util.RotationUtil;
+import frc.robot.util.VisionObservation.LLTYPE;
 
-/** IO implementation for real Limelight hardware. */
 public class VisionIOLimelight implements VisionIO {
-  private final Supplier<Rotation2d> rotationSupplier;
-  private final DoubleArrayPublisher orientationPublisher;
+  /** Creates a new VisionIOLimelight. */
+  LEDMode currentLedMode = LEDMode.FORCEOFF;
 
-  private final DoubleSubscriber latencySubscriber;
-  private final DoubleSubscriber txSubscriber;
-  private final DoubleSubscriber tySubscriber;
-  private final DoubleArraySubscriber megatag1Subscriber;
-  private final DoubleArraySubscriber megatag2Subscriber;
+  CamMode currentCamMode = CamMode.VISION;
+  public final limelightConstants constants;
+  private final String name;
+  private final LLTYPE limelightType;
 
-  /**
-   * Creates a new VisionIOLimelight.
-   *
-   * @param name The configured name of the Limelight.
-   * @param rotationSupplier Supplier for the current estimated rotation, used for MegaTag 2.
-   */
-  public VisionIOLimelight(String name, Supplier<Rotation2d> rotationSupplier) {
-    var table = NetworkTableInstance.getDefault().getTable(name);
-    this.rotationSupplier = rotationSupplier;
-    orientationPublisher = table.getDoubleArrayTopic("robot_orientation_set").publish();
-    latencySubscriber = table.getDoubleTopic("tl").subscribe(0.0);
-    txSubscriber = table.getDoubleTopic("tx").subscribe(0.0);
-    tySubscriber = table.getDoubleTopic("ty").subscribe(0.0);
-    megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
-    megatag2Subscriber =
-        table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
+  public VisionIOLimelight(limelightConstants limelightConstants) {
+    constants = limelightConstants;
+    name = constants.name;
+    limelightType = constants.limelightType;
   }
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    // Update connection status based on whether an update has been seen in the last
-    // 250ms
-    inputs.connected =
-        ((RobotController.getFPGATime() - latencySubscriber.getLastChange()) / 1000) < 250;
-
-    // Update target observation
-    inputs.latestTargetObservation =
-        new TargetObservation(
-            Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
-
-    // Update orientation for MegaTag 2
-    orientationPublisher.accept(
-        new double[] {rotationSupplier.get().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0});
-    NetworkTableInstance.getDefault()
-        .flush(); // Increases network traffic but recommended by Limelight
-
-    // Read new pose observations from NetworkTables
-    Set<Integer> tagIds = new HashSet<>();
-    List<PoseObservation> poseObservations = new LinkedList<>();
-    for (var rawSample : megatag1Subscriber.readQueue()) {
-      if (rawSample.value.length == 0) {continue;}
-      for (int i = 11; i < rawSample.value.length; i += 7) {
-        tagIds.add((int) rawSample.value[i]);
-      }
-      poseObservations.add(
-          new PoseObservation(
-              // Timestamp, based on server timestamp of publish and latency
-              rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
-
-              // 3D pose estimate
-              parsePose(rawSample.value),
-
-              // Ambiguity, using only the first tag because ambiguity isn't applicable for
-              // multitag
-              rawSample.value.length >= 18 ? rawSample.value[17] : 0.0,
-
-              // Tag count
-              (int) rawSample.value[7],
-
-              // Average tag distance
-              rawSample.value[9],
-
-              // Observation type
-              PoseObservationType.MEGATAG_1));
+    inputs.ledMode = currentLedMode;
+    // inputs.camMode = currentCamMode;
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name) != null) {
+      inputs.pipelineID = LimelightHelpers.getCurrentPipelineIndex(name);
+      inputs.pipelineLatency = LimelightHelpers.getLatency_Pipeline(name);
+      inputs.ta = LimelightHelpers.getTA(name);
+      inputs.tv = LimelightHelpers.getTV(name);
+      inputs.tx = LimelightHelpers.getTX(name); // TODO add limelight disconnect alert
+      inputs.ty = LimelightHelpers.getTY(name);
+      inputs.fiducialID = LimelightHelpers.getFiducialID(name);
+      String llClass = LimelightHelpers.getNeuralClassID(name);
+      inputs.tClass = llClass.isEmpty() ? 0 : Double.parseDouble(llClass);
+      inputs.botPoseMG2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).pose;
+      inputs.tagCount = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).tagCount;
+      inputs.avgTagDist = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).avgTagDist;
+      inputs.botPose3d = LimelightHelpers.getBotPose3d_wpiBlue(name);
+      inputs.timestamp =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(name).timestampSeconds;
     }
-    for (var rawSample : megatag2Subscriber.readQueue()) {
-      if (rawSample.value.length == 0) {continue;}
-      for (int i = 11; i < rawSample.value.length; i += 7) {
-        tagIds.add((int) rawSample.value[i]);
-      }
-      poseObservations.add(
-          new PoseObservation(
-              // Timestamp, based on server timestamp of publish and latency
-              rawSample.timestamp * 1.0e-6 - rawSample.value[6] * 1.0e-3,
+    inputs.name = name;
+    inputs.limelightType = limelightType;
+  }
 
-              // 3D pose estimate
-              parsePose(rawSample.value),
-
-              // Ambiguity, zeroed because the pose is already disambiguated
-              0.0,
-
-              // Tag count
-              (int) rawSample.value[7],
-
-              // Average tag distance
-              rawSample.value[9],
-
-              // Observation type
-              PoseObservationType.MEGATAG_2));
-    }
-
-    // Save pose observations to inputs object
-    inputs.poseObservations = new PoseObservation[poseObservations.size()];
-    for (int i = 0; i < poseObservations.size(); i++) {
-      inputs.poseObservations[i] = poseObservations.get(i);
-    }
-
-    // Save tag IDs to inputs objects
-    inputs.tagIds = new int[tagIds.size()];
-    int i = 0;
-    for (int id : tagIds) {
-      inputs.tagIds[i++] = id;
+  @Override
+  public void setLEDS(LEDMode mode) {
+    switch (mode) {
+      case FORCEBLINK:
+        LimelightHelpers.setLEDMode_ForceBlink(name);
+        currentLedMode = LEDMode.FORCEBLINK;
+        break;
+      case FORCEOFF:
+        LimelightHelpers.setLEDMode_ForceOff(name);
+        currentLedMode = LEDMode.FORCEOFF;
+      case FORCEON:
+        LimelightHelpers.setLEDMode_ForceOn(name);
+        currentLedMode = LEDMode.FORCEON;
+      case PIPELINECONTROL:
+        LimelightHelpers.setLEDMode_PipelineControl(name);
+        currentLedMode = LEDMode.PIPELINECONTROL;
+      default:
+        LimelightHelpers.setLEDMode_ForceOff(name);
+        currentLedMode = LEDMode.FORCEOFF;
+        break;
     }
   }
 
-  /** Parses the 3D pose from a Limelight botpose array. */
-  private static Pose3d parsePose(double[] rawLLArray) {
-    return new Pose3d(
-        rawLLArray[0],
-        rawLLArray[1],
-        rawLLArray[2],
-        new Rotation3d(
-            Units.degreesToRadians(rawLLArray[3]),
-            Units.degreesToRadians(rawLLArray[4]),
-            Units.degreesToRadians(rawLLArray[5])));
+  // @Override
+  // public void setCamMode(CamMode mode){
+  //   switch (mode){
+  //     case DRIVERCAM:
+  //     LimelightHelpers.setCameraMode_Driver(name);
+  //     currentCamMode = CamMode.DRIVERCAM;
+  //     case VISION:
+  //     LimelightHelpers.setCameraMode_Processor(name);
+  //     currentCamMode = CamMode.VISION;
+  //   }
+  // }
+
+  @Override
+  public void setPipeline(String limelight, int index) {
+    LimelightHelpers.setPipelineIndex(limelight, index);
+  }
+
+  @Override
+  // public void setRobotOrientationMG2(Rotation2d gyro) {
+  //   gyro = DSUtil.isBlue() ? gyro : gyro.rotateBy(Rotation2d.fromDegrees(180));
+  //   double gyroval = RotationUtil.wrapRot2d(gyro).getDegrees();
+
+  //   LimelightHelpers.SetRobotOrientation(name, gyroval, 0, 0, 0, 0, 0);
+  // }
+
+  public void setRobotOrientationMG2(Rotation3d gyro, Rotation3d rate) {
+    gyro = DSUtil.isBlue() ? gyro : gyro.rotateBy(new Rotation3d(new Rotation2d(Math.PI)));
+    Rotation3d gyroval = RotationUtil.wrapRot3d(gyro);
+    Rotation3d rateval = RotationUtil.wrapRot3d(rate);
+
+    LimelightHelpers.SetRobotOrientation(
+        name,
+        Units.radiansToDegrees(gyroval.getZ()),
+        Units.radiansToDegrees(rateval.getZ()),
+        Units.radiansToDegrees(gyroval.getY()),
+        Units.radiansToDegrees(rateval.getY()),
+        Units.radiansToDegrees(gyroval.getX()),
+        Units.radiansToDegrees(rateval.getX()));
+  }
+
+  @Override
+  public void setPermittedTags(int[] tags) {
+    LimelightHelpers.SetFiducialIDFiltersOverride(name, tags);
+  }
+
+  @Override
+  public void setPriorityID(int tagID) {
+    NetworkTableInstance.getDefault().getTable(name).getEntry("priorityid").setDouble(tagID);
   }
 }

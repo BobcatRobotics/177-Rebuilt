@@ -52,6 +52,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
@@ -80,8 +81,9 @@ public class RobotContainer {
         // Subsystems
         private final Drive drive;
         private final AntiTipping antiTipping;
-        private Vision vision;
-        private final Shooter m_Shooter;
+        public        Vision limelightIntake;
+        public        Vision limelightShooter;
+        public final Shooter m_Shooter;
         private final Hopper m_Hopper;
         private final Intake intake;
 
@@ -121,8 +123,10 @@ public class RobotContainer {
                                                 new ModuleIOTalonFX(newBackRight
                                                                 .addModuleConstants(TunerConstants.BackRight)));
                                 // Vision
-                                vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("", drive::getRotation));
+                                limelightIntake =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
+                                limelightShooter =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -151,6 +155,12 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeReal());
                                 intake.applyState();
 
+                                
+                                limelightIntake =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
+                                limelightShooter =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
+
                                 break;
 
                         default:
@@ -170,6 +180,13 @@ public class RobotContainer {
                                 });
                                 intake = new Intake(new IntakeIO() {
                                 });
+
+                                
+                                
+                                limelightIntake =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightIntake.constants));
+                                limelightShooter =
+                                new Vision(drive, new VisionIOLimelight(Constants.limelightShooter.constants));
                                 break;
                 }
 
@@ -218,20 +235,20 @@ public class RobotContainer {
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
-                // intake.setDefaultCommand(new RunCommand(() -> {
-                // IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                // intakeState.setState(IntakeState.State.IDLE);
-                // intake.setState(intakeState);
-                // }, intake));
 
-                // Lock to 0° when A button is held
-                controller.getButton("A")
-                                .whileTrue(
-                                                DriveCommands.joystickDriveAtAngle(
-                                                                drive,
-                                                                () -> -controller.getLeftY(),
-                                                                () -> -controller.getLeftX(),
-                                                                () -> Rotation2d.kZero));
+
+                 
+
+controller.getButton("A")
+                                .whileTrue(DriveCommands.alignToTag( drive, ()-> limelightShooter.getTX()));
+                // // Lock to 0° when A button is held
+                // controller.getButton("A")
+                //                 .whileTrue(
+                //                                 DriveCommands.joystickDriveAtAngle(
+                //                                                 drive,
+                //                                                 () -> -controller.getLeftY(),
+                //                                                 () -> -controller.getLeftX(),
+                //                                                 () -> Rotation2d.kZero));
 
                 // Switch to X pattern when X button is pressed
                 controller.getButton("X")
@@ -257,7 +274,8 @@ public class RobotContainer {
                         m_Hopper.runHopper();
                 }, m_Hopper).alongWith(new RunCommand(() -> {
                         m_Shooter.shootFuel();
-                }, m_Shooter)));
+                }, m_Shooter)));     
+
 
                 // controller.getRightBumper().whileTrue(
                 // Commands.run(() -> {

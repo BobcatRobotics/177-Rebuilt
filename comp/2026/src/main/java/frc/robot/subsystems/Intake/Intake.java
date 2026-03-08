@@ -119,8 +119,8 @@ public class Intake extends SubsystemBase {
   public void grabBalls() {
     RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
     IntakeGoal goal = new IntakeGoal();
-    goal.speed = RobotState.getInstance().getIntakeState().getSpeed();
-    goal.position = 11;
+    goal.speed = 40;
+    goal.position = 6;
     RobotState.getInstance().getIntakeState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getIntakeState());
   }
