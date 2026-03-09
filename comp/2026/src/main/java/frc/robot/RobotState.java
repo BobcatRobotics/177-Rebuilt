@@ -5,7 +5,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
-  public CharacterizationType characterizationType = CharacterizationType.NONE;
+  public CharacterizationType characterizationType = CharacterizationType.DRIVE;
   private static RobotState instance;
 
   public static RobotState getInstance() {
@@ -21,7 +21,7 @@ public class RobotState {
   // Save Vision Tags
 
   // Save Shooter State
-  private ShooterState.State desiredShooterStateType = ShooterState.State.MANUAL;
+  private ShooterState.State desiredShooterStateType = ShooterState.State.IDLE;
   private ShooterState desiredShooterState = new ShooterState();
 
   public ShooterState.State getDesiredShooterStateType() {
@@ -33,7 +33,7 @@ public class RobotState {
   }
 
   // Save Hopper State
-  private HopperState.State desiredHopperStateType = HopperState.State.MANUAL;
+  private HopperState.State desiredHopperStateType = HopperState.State.IDLE;
   private HopperState desiredHopperState  = new HopperState();
 
   public HopperState.State getDesiredHopperStateType() {
@@ -45,7 +45,7 @@ public class RobotState {
   }
 
   // Save Intake State
-  private IntakeState.State desiredIntakeStateType = IntakeState.State.MANUAL;
+  private IntakeState.State desiredIntakeStateType = IntakeState.State.IDLE;
   private IntakeState desiredIntakeState = new IntakeState();
 
   public IntakeState.State getDesiredIntakeStateType() {

@@ -55,8 +55,8 @@ public class IntakeState {
         currentSetpoints.speed = Constants.IntakeConstants.idleRollerSpeed;
       }
       case MANUAL -> {
-        currentSetpoints.position = manualIntakePosition.get();;
-        currentSetpoints.speed = manualIntakeSpeed.get();;
+        currentSetpoints.position = manualIntakePosition.get();
+        currentSetpoints.speed = manualIntakeSpeed.get();
       }
       case TARGETING -> {
         currentSetpoints.position = Constants.IntakeConstants.targetIntakePosition;

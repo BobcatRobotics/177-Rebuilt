@@ -175,4 +175,8 @@ public class Vision extends SubsystemBase {
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
   }
+
+  public Rotation2d getShooterTx(){
+    return inputs[0].latestTargetObservation.tx();
+  }
 }

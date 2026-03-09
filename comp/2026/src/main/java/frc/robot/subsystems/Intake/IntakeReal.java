@@ -18,10 +18,12 @@ import org.bobcatrobotics.Util.Tunables.TunablePID;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -29,6 +31,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake.Modules.ModuleConfigurator;
@@ -73,7 +76,8 @@ public class IntakeReal implements IntakeIO {
         .kD(Constants.IntakeConstants.PivotConstants.kD)
         .kS(Constants.IntakeConstants.PivotConstants.kS)
         .kV(Constants.IntakeConstants.PivotConstants.kV)
-        .kA(Constants.IntakeConstants.PivotConstants.kA).build();
+        .kA(Constants.IntakeConstants.PivotConstants.kA)
+        .build();
     Gains rollerMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.RollerConstants.kP)
         .kI(Constants.IntakeConstants.RollerConstants.kI)
@@ -94,7 +98,9 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.RollerConstants.rollerMotorId,
         Constants.IntakeConstants.RollerConstants.isInverted,
         Constants.IntakeConstants.RollerConstants.isCoast,
-        Constants.IntakeConstants.RollerConstants.currentLimit);
+        Constants.IntakeConstants.RollerConstants.currentLimit,
+        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
+        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
     velocityMotor = new TalonFX(intakeVelocityConfig.getMotorId(), new CANBus("rio"));
     intakeVelocityConfig.configureMotor(velocityMotor, intakeVelocityPID);
     velocityOfIntakeSpeedRPS = velocityMotor.getVelocity();
@@ -112,7 +118,9 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
         Constants.IntakeConstants.PivotConstants.isInverted,
         Constants.IntakeConstants.PivotConstants.isCoast,
-        Constants.IntakeConstants.PivotConstants.currentLimit);
+        Constants.IntakeConstants.PivotConstants.currentLimit,
+        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
+        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
     positionMotor = new TalonFX(intakePivotConfig.getMotorId(), new CANBus("rio"));
     intakePivotConfig.configureMotor(positionMotor, intakePivotPID);
     velocityOfIntakePositionRPS = positionMotor.getVelocity();
@@ -142,12 +150,13 @@ public class IntakeReal implements IntakeIO {
         .in(Volts);
     inputs.accelerationOfIntakeSpeed = accelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
     inputs.positionConnected = velocityMotor.isConnected();
+    inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
 
   }
 
   public void setVelocity(double velocity) {
     intakeVelocitySetpoint = velocity;
-    velocityMotor.setControl(requestVelocity.withVelocity(velocity));
+    velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.2));
   }
 
   public void setVelocity(IntakeState desiredState) {
@@ -160,12 +169,22 @@ public class IntakeReal implements IntakeIO {
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withVelocity(80));
+  
+      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.2));
 
+  }
+
+  public void retractIntake(){
+    intakePivotSetpoint = 0;
+    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.6));
   }
 
   public double getVelocity() {
     return velocityMotor.getVelocity().getValueAsDouble();
+  }
+
+  public void resetEncoder() {
+    positionMotor.setPosition(0);
   }
 
   @Override

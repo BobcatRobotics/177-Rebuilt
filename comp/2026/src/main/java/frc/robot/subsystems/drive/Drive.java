@@ -32,7 +32,9 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -329,6 +331,20 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
+  public Rotation3d getRotation3d() {
+    return new Rotation3d(
+        Rotation2d.fromDegrees(gyroIO.getPitch()).getRadians(),
+        Rotation2d.fromDegrees(gyroIO.getRoll()).getRadians(),
+        poseEstimator.getEstimatedPosition().getRotation().getRadians());
+  }
+
+  public Rotation3d getRotationRate() {
+    return new Rotation3d(
+        gyroInputs.rollVelocityRadPerSec,
+        gyroInputs.pitchVelocityRadPerSec,
+        gyroInputs.yawVelocityRadPerSec);
+  }
+
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
@@ -376,7 +392,13 @@ public class Drive extends SubsystemBase {
       if( DriverStation.getAlliance().isPresent()){
           alliance = DriverStation.getAlliance().get();
       }
-      return HubUtil.getHubCoordinates(alliance).toPose2d();
+      //return HubUtil.getHubCoordinates(alliance).toPose2d();
+      return new Pose3d(
+        4.620,
+        4.040,
+        3.057144,
+        new Rotation3d()
+    ).toPose2d();
     }
     /**
      * Horizontal distance in meters from the turret to the target.
@@ -394,7 +416,12 @@ public class Drive extends SubsystemBase {
         Translation2d goal = getTargetPose().getTranslation();
         double dx = goal.getX() - turret.getX();
         double dy = goal.getY() - turret.getY();
+
+        //this in returning in units radians between -pi and pi
         double fieldAngleToTarget = Math.atan2(dy, dx);
-        return Rotation2d.fromRadians(fieldAngleToTarget);
+        
+        Logger.recordOutput("VisionTest/FATT", fieldAngleToTarget);
+        return Rotation2d.fromDegrees(45);
+        // return Rotation2d.fromRadians(fieldAngleToTarget);
     }
 }

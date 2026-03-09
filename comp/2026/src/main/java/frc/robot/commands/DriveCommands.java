@@ -14,7 +14,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,7 +37,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.bobcatrobotics.Controllers.Axis;
 import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -43,12 +48,18 @@ public class DriveCommands {
   private static final double ANGLE_KD = 0.4;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private static final double ANGLE_MAX_VELOCITY_TEMP = 2.0;
+  private static final double ANGLE_MAX_ACCELERATION_TEMP = 5.0;
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
-  private DriveCommands() {}
+  static final double DRIVE_KPY = 1;
+  static final double DRIVE_KDY = 0;
+  static final double DRIVE_KPX = 1;
+  static final double DRIVE_KDX = 0;
+  private DriveCommands() {
+  }
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
@@ -64,26 +75,29 @@ public class DriveCommands {
   }
 
   /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
+   * Field relative drive command using two joysticks (controlling linear and
+   * angular velocities).
    */
   public static Command joystickDrive(Drive drive, DoubleSupplier xSupplier,
       DoubleSupplier ySupplier, DoubleSupplier omegaSupplier) {
     return Commands.run(() -> {
       // Get linear velocity
-      Translation2d linearVelocity =
-          getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+      Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
-      // Apply rotation deadband
+      // Apply rotation deadband and slew rate limiter
       double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+      // Axis output = new Axis(omega, DEADBAND);
+
+      // omega = output.inputLimited;
 
       // Square rotation value for more precise control
       omega = Math.copySign(omega * omega, omega);
 
       // Convert to field relative speeds & send command
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-              linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-              omega * drive.getMaxAngularSpeedRadPerSec());
+      ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+          linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+          omega * drive.getMaxAngularSpeedRadPerSec()*0.6);
       boolean isFlipped = DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == Alliance.Red;
       drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
@@ -92,83 +106,8 @@ public class DriveCommands {
   }
 
   /**
-   * Field relative drive command using joystick for linear control and PID for angular control.
-   * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-   * absolute rotation with a joystick.
-   */
-  public static Command joystickDriveAtAngle(Drive drive, DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier, Supplier<Rotation2d> rotationSupplier) {
-
-    // Create PID controller
-    ProfiledPIDController angleController = new ProfiledPIDController(ANGLE_KP, 0.0, ANGLE_KD,
-        new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    // Construct command
-    return Commands.run(() -> {
-      // Get linear velocity
-      Translation2d linearVelocity =
-          getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-
-      // Calculate angular speed
-      double omega = angleController.calculate(drive.getRotation().getRadians(),
-          rotationSupplier.get().getRadians());
-
-      // Convert to field relative speeds & send command
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-              linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), omega);
-      boolean isFlipped = DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().get() == Alliance.Red;
-      drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-          isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
-    }, drive)
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
-  }
-
-
-  /**
-   * Field relative drive command using joystick for linear control and angular control of the hub.
-   */
-  public static Command joystickDriveFacingHub(Drive drive, DoubleSupplier xSupplier,
-      DoubleSupplier ySupplier) {
-
-    // Create PID controller
-    ProfiledPIDController angleController = new ProfiledPIDController(ANGLE_KP, 0.0, ANGLE_KD,
-        new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-    angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    drive.getFieldAngleToTarget();
-
-    // Construct command
-    return Commands.run(() -> {
-      // Get linear velocity
-      Translation2d linearVelocity =
-          getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-
-      // Calculate angular speed
-      double omega = angleController.calculate(drive.getRotation().getRadians(),
-          drive.getFieldAngleToTarget().getRadians());
-
-      // Convert to field relative speeds & send command
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-              linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), omega);
-      boolean isFlipped = DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().get() == Alliance.Red;
-      drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-          isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
-    }, drive)
-
-        // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
-  }
-
-
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
+   * Field relative drive command using two joysticks (controlling linear and
+   * angular velocities).
    * Uses the AntiTipping Lib!
    */
   public static Command joystickDriveWithAntiTipping(Drive drive, DoubleSupplier xSupplier,
@@ -179,8 +118,7 @@ public class DriveCommands {
         speeds = antiTpping.getVelocityAntiTipping();
       } else {
         // Get linear velocity
-        Translation2d linearVelocity =
-            getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+        Translation2d linearVelocity = getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
         // Apply rotation deadband
         double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
@@ -321,4 +259,45 @@ public class DriveCommands {
     Rotation2d lastAngle = new Rotation2d();
     double gyroDelta = 0.0;
   }
+
+  
+  public static Command alignToTag(
+      Drive drive, Supplier<Rotation2d> tx) {
+
+    // Create PID controller
+    ProfiledPIDController omegaController =
+        new ProfiledPIDController(
+            0.1, 0.0, 0, new TrapezoidProfile.Constraints(0.1, 0.1));
+
+
+    // Construct command
+    return Commands.run(
+        () -> {
+          // Calculate angular speed
+          double omega = 0.0;
+          if (tx.get().getRadians() != 0) {
+            omega = omegaController.calculate(
+                drive.getRotation().getRadians(), tx.get().getRadians());
+          }
+          Logger.recordOutput("Swerve/alignToTag/omega",omega);
+          // Convert to field relative speeds & send command
+          ChassisSpeeds speeds =
+              new ChassisSpeeds(
+                  0,
+                  0,
+                  omega);
+          boolean isFlipped =
+              DriverStation.getAlliance().isPresent()
+                  && DriverStation.getAlliance().get() == Alliance.Red;
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+        },
+        drive);
+
+  }
+
 }

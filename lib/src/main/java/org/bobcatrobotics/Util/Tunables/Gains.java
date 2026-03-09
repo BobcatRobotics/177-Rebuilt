@@ -69,6 +69,7 @@ public final class Gains {
         private double kV;
         private double kA;
 
+
         public Builder kP(double kP) {
             this.kP = kP;
             return this;

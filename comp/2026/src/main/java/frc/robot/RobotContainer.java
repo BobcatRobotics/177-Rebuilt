@@ -26,6 +26,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,23 +36,31 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperAutoOptions;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeAutoOptions;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
 import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveAutoOptions;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
@@ -59,6 +68,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.util.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -74,9 +84,9 @@ public class RobotContainer {
         private final Drive drive;
         private final AntiTipping antiTipping;
         private Vision vision;
-        private final Shooter m_Shooter;
+        public final Shooter m_Shooter;
         private final Hopper m_Hopper;
-        private final Intake intake;
+        public final Intake intake;
 
         // Controller
         private final ControllerBase controller;
@@ -84,7 +94,7 @@ public class RobotContainer {
         private final ControllerBase devController;
 
         // Dashboard inputs
-        private final LoggedDashboardChooser<Command> autoChooser;
+        private LoggedDashboardChooser<Command> autoChooser;
 
         private final HubUtil hub;
 
@@ -115,7 +125,8 @@ public class RobotContainer {
                                                                 .addModuleConstants(TunerConstants.BackRight)));
                                 // Vision
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("", drive::getRotation));
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -144,6 +155,9 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeReal());
                                 intake.applyState();
 
+                                vision = new Vision(drive::addVisionMeasurement,
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
                                 break;
 
                         default:
@@ -163,6 +177,11 @@ public class RobotContainer {
                                 });
                                 intake = new Intake(new IntakeIO() {
                                 });
+
+                                
+                                vision = new Vision(drive::addVisionMeasurement,
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
                                 break;
                 }
 
@@ -173,6 +192,12 @@ public class RobotContainer {
 
                 // Set up auto routines
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+                autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
+                autoChooser = new IntakeAutoOptions(autoChooser,intake).getOptions();
+
+                autoChooser.addOption("Auto Test", new PathPlannerAuto("Auto Testing #1"));
+
+
                 // Configure the button bindings
                 configureButtonBindings();
 
@@ -195,7 +220,7 @@ public class RobotContainer {
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX(),
-                                                () -> -controller.getRightX()));
+                                                () -> controller.getRightX()));
 
                 m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
@@ -207,20 +232,25 @@ public class RobotContainer {
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
-                // intake.setDefaultCommand(new RunCommand(() -> {
-                // IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                // intakeState.setState(IntakeState.State.IDLE);
-                // intake.setState(intakeState);
-                // }, intake));
+                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
-                // Lock to 0° when A button is held
-                controller.getButton("A")
-                                .whileTrue(
-                                                DriveCommands.joystickDriveAtAngle(
-                                                                drive,
-                                                                () -> -controller.getLeftY(),
-                                                                () -> -controller.getLeftX(),
-                                                                () -> Rotation2d.kZero));
+
+                 
+                controller.getButton("A").whileTrue(
+                                new AutoAimDrive(
+                                                drive,
+                                                () -> -controller.getLeftY(),
+                                                () -> -controller.getLeftX()));
+// controller.getButton("A")
+//                                 .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
+                // // Lock to 0° when A button is held
+                // controller.getButton("A")
+                //                 .whileTrue(
+                //                                 DriveCommands.joystickDriveAtAngle(
+                //                                                 drive,
+                //                                                 () -> -controller.getLeftY(),
+                //                                                 () -> -controller.getLeftX(),
+                //                                                 () -> Rotation2d.kZero));
 
                 // Switch to X pattern when X button is pressed
                 controller.getButton("X")
@@ -230,7 +260,7 @@ public class RobotContainer {
                 controller.getButton("B")
                                 .onTrue(new ActionFactory().singleAction("ZeroGyroCommand",
                                                 () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
-                                                                Rotation2d.kZero)),
+                                                                AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
                 /*
@@ -239,14 +269,70 @@ public class RobotContainer {
                  * this should eventually be changed to look at if the shooter wheels are up to
                  * speed isntead of an time based approach.
                  */
+                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
+                         m_Shooter.spinUp();
+                 }, m_Shooter));
+                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
+                         m_Hopper.runHopper();
+                 }, m_Hopper).alongWith(new RunCommand(() -> {
+                         m_Shooter.shootFuel();
+                 }, m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                 }, intake)));  
+                 /*
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                        m_Shooter.spinUp();
-                }, m_Shooter));
+                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
+                        intakeState.setState(IntakeState.State.MANUAL);
+                        IntakeGoal goal = new IntakeGoal();
+                        goal.position = 5;
+                        goal.speed = 125;
+                        intakeState.setCurrentSetPoints(goal);
+                        intake.setState(intakeState);
+                }, intake));
+
                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                        m_Hopper.runHopper();
-                }, m_Hopper).alongWith(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
-                }, m_Shooter)));
+                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
+                        intakeState.setState(IntakeState.State.MANUAL);
+                        IntakeGoal goal = new IntakeGoal();
+                        goal.position = 0;
+                        goal.speed = 0;
+                        intakeState.setCurrentSetPoints(goal);
+                        intake.setState(intakeState);
+                }, intake));
+                */
+                controller.getPovDown().whileTrue(new RunCommand(() -> {
+                        intake.setPosition(11.5);
+                }, intake))
+                .onFalse(new InstantCommand(() -> {
+                        intake.stop();
+                },intake));
+
+                controller.getPovUp().whileTrue(intake.retractAndStop());
+
+                controller.getButton("Y").onTrue(new InstantCommand(
+                        () -> intake.resetEncoder()
+                ).ignoringDisable(true));
+
+                // Command jiggleCommand = new RunCommand(
+                //                 () -> intake.setPosition(5) , intake).until(()-> intake.getPosition() <= 5)
+                //         .andThen( new WaitCommand(0.5) ).andThen(
+                //                 () -> intake.setPosition(11.75)
+                //         );
+
+                // controller.getButton("X").whileTrue(
+                //         jiggleCommand
+                //         .repeatedly().withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+                // ).onFalse(new InstantCommand(()->intake.stop()));
+                
+                
+
+                controller.getPovRight().whileTrue(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake))
+                .onFalse(new InstantCommand(() -> {
+                        intake.stop();
+                }, intake));
+                
 
                 // controller.getRightBumper().whileTrue(
                 // Commands.run(() -> {
@@ -355,5 +441,6 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
                 Logger.recordOutput("Hub/HubLocation/Pose3d",
                                 HubUtil.getHubCoordinates(DriverStation.getAlliance().get()));
+                //Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
         }
 }

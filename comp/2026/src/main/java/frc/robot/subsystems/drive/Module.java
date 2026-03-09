@@ -85,26 +85,26 @@ public class Module {
    * Runs the module with the specified output while controlling to zero degrees.
    */
   public void runCharacterization(double output) {
-    switch (RobotState.getInstance().characterizationType) {
-      case DRIVE:
-        /** Characterize turn motor feedforward. */
-        io.setDriveOpenLoop(output);
-        io.setTurnPosition(Rotation2d.kZero);
-        break;
-      case STEER:
-        /** Characterize turn motor feedforward. */
-        io.setDriveOpenLoop(0.0);
-        io.setTurnOpenLoop(output);
-        break;
-      case ANGULAR:
-        /** Characterize robot angular motion. */
-        io.setDriveOpenLoop(output);
-        io.setTurnPosition(new Rotation2d(constants.LocationX, constants.LocationY).plus(Rotation2d.kCCW_Pi_2));
+    // switch (RobotState.getInstance().characterizationType) {
+    //   case DRIVE:
+    //     /** Characterize turn motor feedforward. */
+    //     io.setDriveOpenLoop(output);
+    //     io.setTurnPosition(Rotation2d.kZero);
+    //     break;
+    //   case STEER:
+    //     /** Characterize turn motor feedforward. */
+    //     io.setDriveOpenLoop(0.0);
+    //     io.setTurnOpenLoop(output);
+    //     break;
+    //   case ANGULAR:
+         /** Characterize robot angular motion. */
+         io.setDriveOpenLoop(output);
+         io.setTurnPosition(new Rotation2d(constants.LocationX, constants.LocationY).plus(Rotation2d.kCCW_Pi_2));
 
-        break;
-      default:
-        break;
-    }
+    //     break;
+    //   default:
+    //     break;
+    //}
   }
 
   /** Disables all outputs to motors. */

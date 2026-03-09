@@ -5,6 +5,8 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -81,6 +83,9 @@ public class driveCharacterizationCommands {
               System.out.println("********** Drive FF Characterization Results **********");
               System.out.println("\tkS: " + formatter.format(kS));
               System.out.println("\tkV: " + formatter.format(kV));
+              String logPath = "Swerve/Characterization";
+              Logger.recordOutput(logPath + "/kS", kS);
+              Logger.recordOutput(logPath + "/kV", kV);
             }));
   }
 
@@ -139,6 +144,11 @@ public class driveCharacterizationCommands {
                   System.out
                       .println("\tWheel Radius: " + formatter.format(wheelRadius) + " meters, "
                           + formatter.format(Units.metersToInches(wheelRadius)) + " inches");
+                  
+              String logPath = "Swerve/Characterization";
+              Logger.recordOutput(logPath + "/wheelDelta", wheelDelta);
+              Logger.recordOutput(logPath + "/gyroDelta", state.gyroDelta);
+              Logger.recordOutput(logPath + "/wheelRadius", wheelRadius);
                 })));
   }
 
