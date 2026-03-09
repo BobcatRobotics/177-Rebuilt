@@ -18,13 +18,17 @@ public final class ModuleConfigurator {
     private final boolean isOuterInverted;
     private final boolean isCoast;
     private final double currentLimit;
+    private final double peakForward;
+    private final double peakReverse;
 
     public ModuleConfigurator(
             Slot0Configs slotConfig,
             int motorInnerId,
             boolean isInverted,
             boolean isCoast,
-            double currentLimit) {
+            double currentLimit,
+            double peakForward,
+            double peakReverse) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -33,6 +37,8 @@ public final class ModuleConfigurator {
         this.isOuterInverted = isInverted;
         this.isCoast = isCoast;
         this.currentLimit = currentLimit;
+        this.peakForward = peakForward;
+        this.peakReverse = peakReverse;
     }
 
     public ModuleConfigurator(
@@ -42,7 +48,9 @@ public final class ModuleConfigurator {
             boolean isInnerInverted,
             boolean isOuterInverted,
             boolean isCoast,
-            double currentLimit) {
+            double currentLimit,
+            double peakForward,
+            double peakReverse) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -51,6 +59,8 @@ public final class ModuleConfigurator {
         this.isOuterInverted = isOuterInverted;
         this.isCoast = isCoast;
         this.currentLimit = currentLimit;
+        this.peakForward = peakForward;
+        this.peakReverse = peakReverse;
     }
 
     /* ---------------- Getters (defensive) ---------------- */
@@ -89,7 +99,7 @@ public final class ModuleConfigurator {
 
     public ModuleConfigurator apply(Slot0Configs slot) {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
-                currentLimit);
+                currentLimit, peakForward, peakReverse);
     }
 
     public void configureMotor(
@@ -115,6 +125,8 @@ public final class ModuleConfigurator {
 
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
+        fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = peakForward;
+        fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = peakReverse;
 
         motor.getConfigurator().apply(fxConfig);
     }

@@ -179,13 +179,15 @@ public final class Constants {
         public static final class RollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 1.3;
+            public static double kP = 1.995; //kP based on test was 1.995
             public static double kI = 0.00;
             public static double kD = 0.00;
-            public static double kV = 0.00;
-            public static double kS = 0.00;
+            public static double kV = 0.1;
+            public static double kS = 0.353;
             public static double kA = 0.00;
             public static double currentLimit = 80;
+            public static double peakForwardLimit = 80;
+            public static double peakReverseLimit = -80;
 
             public static int rollerMotorId = 18;
         }

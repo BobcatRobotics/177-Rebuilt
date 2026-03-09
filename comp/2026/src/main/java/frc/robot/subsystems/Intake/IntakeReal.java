@@ -46,7 +46,7 @@ public class IntakeReal implements IntakeIO {
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
-  private final VelocityVoltage requestVelocity = new VelocityVoltage(0);
+  private final VelocityTorqueCurrentFOC requestVelocity = new VelocityTorqueCurrentFOC(0);
   private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
   private final PositionVoltage requestPositionVoltage = new PositionVoltage(0);
 
@@ -98,7 +98,9 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.RollerConstants.rollerMotorId,
         Constants.IntakeConstants.RollerConstants.isInverted,
         Constants.IntakeConstants.RollerConstants.isCoast,
-        Constants.IntakeConstants.RollerConstants.currentLimit);
+        Constants.IntakeConstants.RollerConstants.currentLimit,
+        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
+        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
     velocityMotor = new TalonFX(intakeVelocityConfig.getMotorId(), new CANBus("rio"));
     intakeVelocityConfig.configureMotor(velocityMotor, intakeVelocityPID);
     velocityOfIntakeSpeedRPS = velocityMotor.getVelocity();
@@ -116,7 +118,9 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
         Constants.IntakeConstants.PivotConstants.isInverted,
         Constants.IntakeConstants.PivotConstants.isCoast,
-        Constants.IntakeConstants.PivotConstants.currentLimit);
+        Constants.IntakeConstants.PivotConstants.currentLimit,
+        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
+        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
     positionMotor = new TalonFX(intakePivotConfig.getMotorId(), new CANBus("rio"));
     intakePivotConfig.configureMotor(positionMotor, intakePivotPID);
     velocityOfIntakePositionRPS = positionMotor.getVelocity();

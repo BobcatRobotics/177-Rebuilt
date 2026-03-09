@@ -51,6 +51,7 @@ import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeAutoOptions;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Intake.IntakeState;
@@ -194,8 +195,10 @@ public class RobotContainer {
                 // Set up auto routines
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
+                autoChooser = new IntakeAutoOptions(autoChooser,intake).getOptions();
 
                 autoChooser.addOption("Auto Test", new PathPlannerAuto("Auto Testing #1"));
+
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -324,7 +327,7 @@ public class RobotContainer {
                 
 
                 controller.getPovRight().whileTrue(new RunCommand(() -> {
-                        intake.setVelocity(108.3);
+                        intake.setVelocity(125);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();
