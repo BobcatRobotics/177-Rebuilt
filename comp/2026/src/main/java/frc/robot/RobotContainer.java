@@ -106,23 +106,15 @@ public class RobotContainer {
                 operator = ControllerAutoDetect.createGamepad(1, "operator");
                 devController = ControllerAutoDetect.createGamepad(2, "driver");
 
-                ModuleWrapper newFrontRight = new ModuleWrapper("FrontRight.json", "FrontRight");
-                ModuleWrapper newFrontLeft = new ModuleWrapper("FrontLeft.json", "FrontLeft");
-                ModuleWrapper newBackLeft = new ModuleWrapper("BackLeft.json", "BackLeft");
-                ModuleWrapper newBackRight = new ModuleWrapper("BackRight.json", "BackRight");
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
 
                                 drive = new Drive(new GyroIOPigeon2(),
-                                                new ModuleIOTalonFX(newFrontLeft
-                                                                .addModuleConstants(TunerConstants.FrontLeft)),
-                                                new ModuleIOTalonFX(newFrontRight
-                                                                .addModuleConstants(TunerConstants.FrontRight)),
-                                                new ModuleIOTalonFX(newBackLeft
-                                                                .addModuleConstants(TunerConstants.BackLeft)),
-                                                new ModuleIOTalonFX(newBackRight
-                                                                .addModuleConstants(TunerConstants.BackRight)));
+                                                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                                                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                                                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                                                new ModuleIOTalonFX(TunerConstants.BackRight));
                                 // Vision
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight("limelight-shooter", drive::getRotation),
@@ -139,13 +131,10 @@ public class RobotContainer {
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
                                 drive = new Drive(new GyroIO() {
-                                }, new ModuleIOSim(newFrontLeft.addModuleConstants(TunerConstants.FrontLeft)),
-                                                new ModuleIOSim(newFrontRight
-                                                                .addModuleConstants(TunerConstants.FrontRight)),
-                                                new ModuleIOSim(newBackLeft
-                                                                .addModuleConstants(TunerConstants.BackLeft)),
-                                                new ModuleIOSim(newBackRight
-                                                                .addModuleConstants(TunerConstants.BackRight)));
+                                }, new ModuleIOSim(TunerConstants.FrontLeft),
+                                                new ModuleIOSim(TunerConstants.FrontRight),
+                                                new ModuleIOSim(TunerConstants.BackLeft),
+                                                new ModuleIOSim(TunerConstants.BackRight));
                                 m_Shooter = new Shooter(new ShooterSim());
                                 m_Shooter.applyState();
 

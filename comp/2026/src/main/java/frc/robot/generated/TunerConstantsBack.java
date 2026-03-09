@@ -101,7 +101,7 @@ public class TunerConstantsBack {
             .withPigeon2Id(kPigeonId)
             .withPigeon2Configs(pigeonConfigs);
 
-    private static final SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> ConstantCreator =
+    public static final SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> ConstantCreator =
         new SwerveModuleConstantsFactory<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>()
             .withDriveMotorGearRatio(kDriveGearRatio)
             .withSteerMotorGearRatio(kSteerGearRatio)
