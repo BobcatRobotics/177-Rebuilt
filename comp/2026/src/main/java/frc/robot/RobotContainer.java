@@ -271,7 +271,9 @@ public class RobotContainer {
                  */
                  controller.getRightBumper().whileTrue(new RunCommand(() -> {
                          m_Shooter.spinUp();
-                 }, m_Shooter));
+                 }, m_Shooter).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                 }, intake)));
                  controller.getLeftBumper().whileTrue(new RunCommand(() -> {
                          m_Hopper.runHopper();
                  }, m_Hopper).alongWith(new RunCommand(() -> {
@@ -300,16 +302,16 @@ public class RobotContainer {
                         intake.setState(intakeState);
                 }, intake));
                 */
-                controller.getPovDown().whileTrue(new RunCommand(() -> {
+                operator.getPovDown().whileTrue(new RunCommand(() -> {
                         intake.setPosition(11.5);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();
                 },intake));
 
-                controller.getPovUp().whileTrue(intake.retractAndStop());
+                operator.getPovUp().whileTrue(intake.retractAndStop());
 
-                controller.getButton("Y").onTrue(new InstantCommand(
+                operator.getButton("Y").onTrue(new InstantCommand(
                         () -> intake.resetEncoder()
                 ).ignoringDisable(true));
 
@@ -326,7 +328,7 @@ public class RobotContainer {
                 
                 
 
-                controller.getPovRight().whileTrue(new RunCommand(() -> {
+                operator.getPovRight().whileTrue(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {

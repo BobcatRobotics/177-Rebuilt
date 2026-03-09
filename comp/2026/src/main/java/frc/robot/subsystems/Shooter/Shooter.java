@@ -214,7 +214,7 @@ public class Shooter extends SubsystemBase {
 
 
   public void spinUp() {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
     goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
@@ -224,7 +224,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootFuel() {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
     goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
@@ -233,7 +233,7 @@ public class Shooter extends SubsystemBase {
     setState(RobotState.getInstance().getShooterState());
   }
   public void reverseFuel() {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.MANUAL);
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed() * -1;
     goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed() * -1;
