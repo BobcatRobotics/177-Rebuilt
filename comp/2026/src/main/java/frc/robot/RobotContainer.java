@@ -298,7 +298,7 @@ public class RobotContainer {
                 }, intake));
 
                 controller.getPovDown().whileTrue(new RunCommand(() -> {
-                        intake.setPosition(11.75);
+                        intake.setPosition(11.5);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();
@@ -324,7 +324,7 @@ public class RobotContainer {
                 
 
                 controller.getPovRight().whileTrue(new RunCommand(() -> {
-                        intake.setVelocity(125);
+                        intake.setVelocity(108.3);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();

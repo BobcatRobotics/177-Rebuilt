@@ -179,7 +179,7 @@ public final class Constants {
         public static final class RollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 1.1;
+            public static double kP = 1.3;
             public static double kI = 0.00;
             public static double kD = 0.00;
             public static double kV = 0.00;

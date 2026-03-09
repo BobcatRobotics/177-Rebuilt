@@ -166,7 +166,7 @@ public class IntakeReal implements IntakeIO {
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
   
-      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.6));
+      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.2));
 
   }
 
