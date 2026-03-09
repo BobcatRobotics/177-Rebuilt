@@ -87,7 +87,7 @@ public class RobotContainer {
         private Vision vision;
         public final Shooter m_Shooter;
         private final Hopper m_Hopper;
-        private final Intake intake;
+        public final Intake intake;
 
         // Controller
         private final ControllerBase controller;
@@ -231,6 +231,7 @@ public class RobotContainer {
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
+                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
 
                  
