@@ -104,8 +104,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
-    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     driveConfig.CurrentLimits.SupplyCurrentLowerTime = 1.0;    
     driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
     driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;

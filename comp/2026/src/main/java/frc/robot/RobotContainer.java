@@ -271,15 +271,17 @@ public class RobotContainer {
                  * this should eventually be changed to look at if the shooter wheels are up to
                  * speed isntead of an time based approach.
                  */
-                // controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                //         m_Shooter.spinUp();
-                // }, m_Shooter));
-                // controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                //         m_Hopper.runHopper();
-                // }, m_Hopper).alongWith(new RunCommand(() -> {
-                //         m_Shooter.shootFuel();
-                // }, m_Shooter)));  
-
+                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
+                         m_Shooter.spinUp();
+                 }, m_Shooter));
+                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
+                         m_Hopper.runHopper();
+                 }, m_Hopper).alongWith(new RunCommand(() -> {
+                         m_Shooter.shootFuel();
+                 }, m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                 }, intake)));  
+                 /*
                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
                         IntakeState intakeState = RobotState.getInstance().getIntakeState();
                         intakeState.setState(IntakeState.State.MANUAL);
@@ -299,7 +301,7 @@ public class RobotContainer {
                         intakeState.setCurrentSetPoints(goal);
                         intake.setState(intakeState);
                 }, intake));
-
+                */
                 controller.getPovDown().whileTrue(new RunCommand(() -> {
                         intake.setPosition(11.5);
                 }, intake))
