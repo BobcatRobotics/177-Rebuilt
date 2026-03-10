@@ -328,8 +328,8 @@ public class RobotContainer {
                 
                 
 
-                operator.getPovRight().whileTrue(new RunCommand(() -> {
-                        intake.setVelocity(125);
+                operator.getButton("X").whileTrue(new RunCommand(() -> {
+                        intake.setVelocity(400);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();

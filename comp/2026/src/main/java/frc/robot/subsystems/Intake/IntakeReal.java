@@ -46,7 +46,7 @@ public class IntakeReal implements IntakeIO {
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
-  private final VelocityTorqueCurrentFOC requestVelocity = new VelocityTorqueCurrentFOC(0);
+  private final VelocityVoltage requestVelocity = new VelocityVoltage(0);
   private final PositionTorqueCurrentFOC requestPosition = new PositionTorqueCurrentFOC(0);
   private final PositionVoltage requestPositionVoltage = new PositionVoltage(0);
 
@@ -156,7 +156,8 @@ public class IntakeReal implements IntakeIO {
 
   public void setVelocity(double velocity) {
     intakeVelocitySetpoint = velocity;
-    velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
+   // velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
+   velocityMotor.set(1);
   }
 
   public void setVelocity(IntakeState desiredState) {
@@ -170,7 +171,7 @@ public class IntakeReal implements IntakeIO {
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
   
-      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
+      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.8));
 
   }
 

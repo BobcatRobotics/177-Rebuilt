@@ -166,28 +166,28 @@ public final class Constants {
         public static final class PivotConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 0.6;
+            public static double kP = 0.8;
             public static double kI = 0.00;
             public static double kD = 0.00;
             public static double kV = 0.00;
             public static double kS = 0.00;
             public static double kA = 0.00;
-            public static double currentLimit = 60;
+            public static double currentLimit = 70;
             public static int pivotMotorId = 10;
         }
 
         public static final class RollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 2.1; //kP based on test was 1.995
+            public static double kP = 1.628; //kP based on test was 1.995
             public static double kI = 0.00;
             public static double kD = 0.00;
-            public static double kV = 0.1;
-            public static double kS = 0.353;
+            public static double kV = 0.123;
+            public static double kS = 0.312;
             public static double kA = 0.00;
-            public static double currentLimit = 80;
-            public static double peakForwardLimit = 80;
-            public static double peakReverseLimit = -80;
+            public static double currentLimit = 60;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
 
             public static int rollerMotorId = 18;
         }
