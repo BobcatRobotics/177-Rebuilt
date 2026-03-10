@@ -1,0 +1,16 @@
+03/10/2026
+DRIVE FF TEST
+kV: 0.74646
+kS: 0.28888
+
+ANGLE FF TEST
+kV: 0.81715
+kS: 0.26056
+
+WHEEL CHARACTERIZATION TEST
+wheel radius: 0.050 meters or 1.962 in
+
+Theoretical Max Free Speed of Swerve Modules: 17.78 ft/s or 5.419344 meters/s
+
+Real Max Speed of Swerve: 4.80
+
