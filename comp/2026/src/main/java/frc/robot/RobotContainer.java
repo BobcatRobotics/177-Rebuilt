@@ -220,7 +220,7 @@ public class RobotContainer {
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX(),
-                                                () -> controller.getRightX()));
+                                                () -> -controller.getRightX()));
 
                 m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
@@ -241,16 +241,7 @@ public class RobotContainer {
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
-// controller.getButton("A")
-//                                 .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
-                // // Lock to 0° when A button is held
-                // controller.getButton("A")
-                //                 .whileTrue(
-                //                                 DriveCommands.joystickDriveAtAngle(
-                //                                                 drive,
-                //                                                 () -> -controller.getLeftY(),
-                //                                                 () -> -controller.getLeftX(),
-                //                                                 () -> Rotation2d.kZero));
+
 
                 // Switch to X pattern when X button is pressed
                 controller.getButton("X")
@@ -281,27 +272,6 @@ public class RobotContainer {
                  }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                  }, intake)));  
-                 /*
-                controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                        intakeState.setState(IntakeState.State.MANUAL);
-                        IntakeGoal goal = new IntakeGoal();
-                        goal.position = 5;
-                        goal.speed = 125;
-                        intakeState.setCurrentSetPoints(goal);
-                        intake.setState(intakeState);
-                }, intake));
-
-                controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                        intakeState.setState(IntakeState.State.MANUAL);
-                        IntakeGoal goal = new IntakeGoal();
-                        goal.position = 0;
-                        goal.speed = 0;
-                        intakeState.setCurrentSetPoints(goal);
-                        intake.setState(intakeState);
-                }, intake));
-                */
                 operator.getPovDown().whileTrue(new RunCommand(() -> {
                         intake.setPosition(11.7);
                 }, intake))
@@ -314,17 +284,6 @@ public class RobotContainer {
                 operator.getButton("Y").onTrue(new InstantCommand(
                         () -> intake.resetEncoder()
                 ).ignoringDisable(true));
-
-                // Command jiggleCommand = new RunCommand(
-                //                 () -> intake.setPosition(5) , intake).until(()-> intake.getPosition() <= 5)
-                //         .andThen( new WaitCommand(0.5) ).andThen(
-                //                 () -> intake.setPosition(11.75)
-                //         );
-
-                // controller.getButton("X").whileTrue(
-                //         jiggleCommand
-                //         .repeatedly().withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-                // ).onFalse(new InstantCommand(()->intake.stop()));
                 
                 
 
@@ -335,35 +294,6 @@ public class RobotContainer {
                         intake.stop();
                 }, intake));
                 
-
-                // controller.getRightBumper().whileTrue(
-                // Commands.run(() -> {
-                // if (m_Shooter.atSpeed()) {
-                // m_Shooter.shootFuel();
-                // } else {
-                // m_Shooter.spinUp();
-                // }
-                // }, m_Shooter).alongWith(
-                // Commands.run(() -> {
-                // if (m_Shooter.atSpeed()) {
-                // m_Hopper.runHopper();
-                // } else {
-                // m_Hopper.stop();
-                // }
-                // }, m_Hopper)));
-                // controller.getLeftBumper().whileTrue(
-                // Commands.run(() -> {
-                // m_Shooter.reverseFuel();
-                // }, m_Shooter).alongWith(
-                // Commands.run(() -> {
-                // m_Hopper.reverseHopper();
-                // }, m_Hopper)));
-                /*
-                 * Controls the Intake Position
-                 */
-                /*
-                 * Functional Test
-                 */
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
                                 .withTimeout(runTestTime)

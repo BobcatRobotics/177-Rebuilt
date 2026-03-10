@@ -7,6 +7,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public final class ModuleConfigurator {
@@ -98,6 +100,34 @@ public final class ModuleConfigurator {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
                 statorCurrentLimit,
                 supplyCurrentLimit);
+    }
+
+    public void configureMotor(
+            TalonFX motor,
+            Gains pid) {
+
+        Slot0Configs slot0 = new Slot0Configs();
+        slot0 = pid.toSlot0Configs();
+
+        TalonFXConfiguration fxConfig = new TalonFXConfiguration();
+        motor.getConfigurator().apply(fxConfig); // reset
+
+        fxConfig.Slot0 = slot0;
+
+        fxConfig.MotorOutput.Inverted = isInnerInverted()
+                ? InvertedValue.Clockwise_Positive
+                : InvertedValue.CounterClockwise_Positive;
+
+        fxConfig.MotorOutput.NeutralMode = isCoast()
+                ? NeutralModeValue.Coast
+                : NeutralModeValue.Brake;
+
+        fxConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        fxConfig.CurrentLimits.SupplyCurrentLimit = getSupplyCurrentLimit();
+
+        fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        fxConfig.CurrentLimits.StatorCurrentLimit = getStatorCurrentLimit();
+        motor.getConfigurator().apply(fxConfig);
     }
 
     public void configureMotor(

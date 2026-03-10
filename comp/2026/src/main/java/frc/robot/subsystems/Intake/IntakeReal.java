@@ -92,8 +92,6 @@ public class IntakeReal implements IntakeIO {
   }
 
   public void setupRollerMotor(Gains g) {
-    intakeVelocityPID = new TunablePID(
-        "/Intake/Roller/PID", g);
     intakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.RollerConstants.rollerMotorId,
         Constants.IntakeConstants.RollerConstants.isInverted,
@@ -112,8 +110,6 @@ public class IntakeReal implements IntakeIO {
   }
 
   public void setupPivotMotor(Gains g) {
-    intakePivotPID = new TunablePID(
-        "/Intake/Position/PID", g);
     intakePivotConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
         Constants.IntakeConstants.PivotConstants.isInverted,
@@ -209,12 +205,7 @@ public class IntakeReal implements IntakeIO {
 
   @Override
   public void periodic() {
-    if (intakePivotPID.hasChanged()) {
-      intakePivotConfig.updateMotorPID(positionMotor, intakePivotPID);
-    }
-    if (intakeVelocityPID.hasChanged()) {
-      intakeVelocityConfig.updateMotorPID(velocityMotor, intakeVelocityPID);
-    }
+
 
   }
   
@@ -247,17 +238,4 @@ public class IntakeReal implements IntakeIO {
     double avg = (positionMotor.getPosition().getValue().in(Rotations)) / 1;
     return avg;
   }
-
-
-  /**
-   * Seeks the hard stop. This slowly drives the motor up/down based on
-   * initialization parameters.
-   * until we see a drop in velocity and a spike in stator current,
-   * indicating that we've hit a hard stop.
-   *
-   * @return Command to run
-   */
-  // public Command findLowerLimit() {
-  //   return seekLowerRange.findLimit();
-  // }
 }

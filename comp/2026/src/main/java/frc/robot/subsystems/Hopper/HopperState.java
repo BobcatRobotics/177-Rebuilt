@@ -15,7 +15,6 @@ public class HopperState {
 
   public enum State {
     IDLE,
-    MANUAL,
     TARGETING
   }
 
@@ -24,13 +23,10 @@ public class HopperState {
 
 
   // Manual control values
-  private TunableDouble manualHopperSpeedTop;
-  private TunableDouble manualHopperSpeedBottom;
+
 
 
   public HopperState() {
-       manualHopperSpeedTop = new TunableDouble("/Hopper/manualHopperSetPointTop", 0.0);
-      manualHopperSpeedBottom = new TunableDouble("/Hopper/manualHopperSetPointBottom", 0.0);
 
   }
 
@@ -42,15 +38,7 @@ public class HopperState {
   /**
    * Set all shooter speeds at once and switch to MANUAL mode
    */
-  public void setManualSpeeds(
-      double hopperSpeedTop,
-      double hopperSpeedBottom) {
-       manualHopperSpeedTop = new TunableDouble("/Hopper/manualHopperSetPointTop",
-          hopperSpeedTop);
-      manualHopperSpeedBottom = new TunableDouble("/Hopper/manualHopperSetPointBottom",
-          hopperSpeedBottom);
-    currentState = State.MANUAL;
-  }
+
 
    /** Returns the shooter outputs based on the current state */
   public void update() {
@@ -60,11 +48,6 @@ public class HopperState {
          currentSetpoints.hopperSpeedTop = Constants.HopperConstants.idleHopperSpeed;
         currentSetpoints.hopperSpeedBottom = Constants.HopperConstants.idleHopperSpeed;
       }
-      case MANUAL -> {
-          currentSetpoints.hopperSpeedTop = manualHopperSpeedTop.get();
-        currentSetpoints.hopperSpeedBottom = manualHopperSpeedBottom.get();
-      }
-
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.hopperSpeedTop = Constants.HopperConstants.topMotorTargetVelocity;

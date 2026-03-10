@@ -41,11 +41,6 @@ public final class Constants {
 
     public final static class ShooterConstants {
 
-        public static final double[] distances = {0,1};
-        public static final double[] feederSpeeds = {10,20};
-        public static final double[] mainFlywheelSpeeds = {10,20};
-        public static final double[] hoodSpeeds = {10,20};
-
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;

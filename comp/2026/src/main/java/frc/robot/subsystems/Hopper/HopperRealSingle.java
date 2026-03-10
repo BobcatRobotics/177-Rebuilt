@@ -47,8 +47,6 @@ public class HopperRealSingle implements HopperIO {
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-  private TunablePID hopperTopPID;
-  private TunablePID hopperBottomPID;
 
   public double hopperSetpointTop = 0;
   public double hopperSetpointBottom = 0;
@@ -68,15 +66,13 @@ public class HopperRealSingle implements HopperIO {
   }
 
   public void setupTopMotor(Gains g) {
-    hopperTopPID = new TunablePID(
-        "/Hopper/Top/PID", g);
     hopperConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.HopperConstants.Top.hopperMotorId,
         Constants.HopperConstants.Top.isInverted,
         Constants.HopperConstants.Top.isCoast,
         Constants.HopperConstants.Top.hopperCurrentLimit);
     hopperMotor = new TalonFX(hopperConfig.getMotorInnerId(), new CANBus("rio"));
-    hopperConfig.configureMotor(hopperMotor, hopperTopPID);
+    hopperConfig.configureMotor(hopperMotor, g);
     velocityOfHopperTopRPS = hopperMotor.getVelocity();
     statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
     outputOfHopperTopVolts = hopperMotor.getMotorVoltage();
@@ -132,9 +128,6 @@ public class HopperRealSingle implements HopperIO {
 
   @Override
   public void periodic() {
-    if (hopperTopPID.hasChanged()) {
-      hopperConfig.updateMotorPID(hopperMotor, hopperTopPID);
-    }
   }
 
   /* Characterization */
