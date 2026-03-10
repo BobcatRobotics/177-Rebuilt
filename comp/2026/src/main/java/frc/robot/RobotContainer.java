@@ -303,7 +303,7 @@ public class RobotContainer {
                 }, intake));
                 */
                 operator.getPovDown().whileTrue(new RunCommand(() -> {
-                        intake.setPosition(11.5);
+                        intake.setPosition(11.7);
                 }, intake))
                 .onFalse(new InstantCommand(() -> {
                         intake.stop();

@@ -116,14 +116,14 @@ public class Hopper extends SubsystemBase {
   }
 
   public void runHopper(){
-    RobotState.getInstance().getHopperState().setState(HopperState.State.MANUAL);
+    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
     HopperGoal goal = new HopperGoal();
     goal.hopperSpeedTop = RobotState.getInstance().getHopperState().getHopperSpeedOfTop();
     RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getHopperState());
   }
     public void reverseHopper(){
-    RobotState.getInstance().getHopperState().setState(HopperState.State.MANUAL);
+    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
     HopperGoal goal = new HopperGoal();
     goal.hopperSpeedTop = RobotState.getInstance().getHopperState().getHopperSpeedOfTop() * -1;
     RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);

@@ -156,7 +156,7 @@ public class IntakeReal implements IntakeIO {
 
   public void setVelocity(double velocity) {
     intakeVelocitySetpoint = velocity;
-    velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.2));
+    velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
   }
 
   public void setVelocity(IntakeState desiredState) {
@@ -170,7 +170,7 @@ public class IntakeReal implements IntakeIO {
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
   
-      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.2));
+      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
 
   }
 

@@ -152,8 +152,8 @@ public final class Constants {
         }
 
         public static final double idleHopperSpeed = 0.0;
-        public static final double topMotorTargetVelocity = 35;
-        public static final double bottomMotorTargetVelocity = 35;
+        public static final double topMotorTargetVelocity = 90;
+        public static final double bottomMotorTargetVelocity = 90;
 
     }
 
@@ -166,7 +166,7 @@ public final class Constants {
         public static final class PivotConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 0.5;
+            public static double kP = 0.6;
             public static double kI = 0.00;
             public static double kD = 0.00;
             public static double kV = 0.00;
@@ -179,7 +179,7 @@ public final class Constants {
         public static final class RollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-            public static double kP = 1.995; //kP based on test was 1.995
+            public static double kP = 2.1; //kP based on test was 1.995
             public static double kI = 0.00;
             public static double kD = 0.00;
             public static double kV = 0.1;
