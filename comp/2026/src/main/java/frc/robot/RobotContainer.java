@@ -180,7 +180,7 @@ public class RobotContainer {
                 autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
                 autoChooser = new IntakeAutoOptions(autoChooser,intake).getOptions();
 
-                autoChooser.addOption("Auto Test", new PathPlannerAuto("Auto Testing #1"));
+                autoChooser.addOption("Auto Test", new PathPlannerAuto("Example Auto"));
 
 
                 // Configure the button bindings
