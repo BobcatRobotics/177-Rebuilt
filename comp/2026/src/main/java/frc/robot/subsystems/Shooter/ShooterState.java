@@ -1,0 +1,85 @@
+package frc.robot.subsystems.Shooter;
+
+import org.bobcatrobotics.Util.Tunables.TunableDouble;
+
+import frc.robot.Constants;
+
+public class ShooterState {
+
+  /** Output goal for the shooter subsystem */
+  public static class ShooterGoal {
+    public double flywheelSpeed;
+    public double intakeSpeed;
+    public double hoodSpeed;
+    public double backspinSpeedRight;
+  }
+
+  public enum State {
+    IDLE,
+    MANUAL,
+    TARGETING
+  }
+
+  private State currentState = State.IDLE;
+  private ShooterGoal currentSetpoints = new ShooterGoal();
+
+  // Manual control values
+
+
+  public ShooterState() {
+
+  }
+
+  /** Set the shooter to a predefined state */
+  public void setState(State state) {
+    this.currentState = state;
+  }
+
+  /**
+   * Set all shooter speeds at once and switch to MANUAL mode
+   */
+  public void setManualSpeeds(
+      double flywheelSpeed,
+      double intakeSpeed,
+      double hoodSpeed) {
+    currentState = State.MANUAL;
+  }
+
+  /** Returns the shooter outputs based on the current state */
+  public void update() {
+
+    switch (currentState) {
+      case IDLE -> {
+        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
+        currentSetpoints.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+      }
+      case TARGETING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
+        currentSetpoints.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+      }
+    }
+  }
+
+  public void setCurrentSetPoints(ShooterGoal goal){
+    currentSetpoints = goal;
+  }
+
+  public State getCurrentState() {
+    return currentState;
+  }
+
+  public double getFlywheelSpeed() {
+    return currentSetpoints.flywheelSpeed;
+  }
+
+  public double getIntakeSpeed() {
+    return currentSetpoints.intakeSpeed;
+  }
+
+  public double getHoodSpeed() {
+    return currentSetpoints.hoodSpeed;
+  }
+}

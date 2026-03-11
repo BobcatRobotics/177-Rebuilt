@@ -1,9 +1,8 @@
 package frc.robot;
 
+import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.IntakeState;
-
-// import frc.robot.subsystems.Hopper.HopperState;
-// import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
   public CharacterizationType characterizationType = CharacterizationType.DRIVE;
@@ -22,28 +21,28 @@ public class RobotState {
   // Save Vision Tags
 
   // Save Shooter State
-  // private ShooterState.State desiredShooterStateType = ShooterState.State.IDLE;
-  // private ShooterState desiredShooterState = new ShooterState();
+  private ShooterState.State desiredShooterStateType = ShooterState.State.IDLE;
+  private ShooterState desiredShooterState = new ShooterState();
 
-  // public ShooterState.State getDesiredShooterStateType() {
-  //   return desiredShooterStateType;
-  // }
+  public ShooterState.State getDesiredShooterStateType() {
+    return desiredShooterStateType;
+  }
 
-  // public ShooterState getShooterState() {
-  //   return desiredShooterState;
-  // }
+  public ShooterState getShooterState() {
+    return desiredShooterState;
+  }
 
   // Save Hopper State
-  // private HopperState.State desiredHopperStateType = HopperState.State.IDLE;
-  // private HopperState desiredHopperState  = new HopperState();
+  private HopperState.State desiredHopperStateType = HopperState.State.IDLE;
+  private HopperState desiredHopperState  = new HopperState();
 
-  // public HopperState.State getDesiredHopperStateType() {
-  //   return desiredHopperStateType;
-  // }
+  public HopperState.State getDesiredHopperStateType() {
+    return desiredHopperStateType;
+  }
 
-  // public HopperState getHopperState() {
-  //   return desiredHopperState;
-  // }
+  public HopperState getHopperState() {
+    return desiredHopperState;
+  }
 
   // Save Intake State
   private IntakeState.State desiredIntakeStateType = IntakeState.State.IDLE;
