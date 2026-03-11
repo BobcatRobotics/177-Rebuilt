@@ -7,17 +7,25 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -26,8 +34,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,9 +48,12 @@ public class RobotContainer {
         // Subsystems
         private final Drive drive;
         private Vision vision;
+        private Intake intake;
 
         // Controller
-        private final CommandXboxController controller = new CommandXboxController(0);
+        private final CommandXboxController controller;
+        private final CommandXboxController operator;
+        private final CommandXboxController devController;
 
         // Dashboard inputs
         private final LoggedDashboardChooser<Command> autoChooser;
@@ -53,6 +62,10 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                controller = new CommandXboxController(0);
+                operator = new CommandXboxController(1);
+                devController = new CommandXboxController(2);
+
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
@@ -69,6 +82,8 @@ public class RobotContainer {
                                                 new VisionIOLimelight("limelight-shooter", drive::getRotation),
                                                 new VisionIOLimelight("limelight-intake", drive::getRotation));
 
+                                intake = new Intake(new IntakeReal());
+                                intake.applyState();
                                 // The ModuleIOTalonFXS implementation provides an example implementation for
                                 // TalonFXS controller connected to a CANdi with a PWM encoder. The
                                 // implementations
@@ -100,6 +115,9 @@ public class RobotContainer {
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight("limelight-shooter", drive::getRotation),
                                                 new VisionIOLimelight("limelight-intake", drive::getRotation));
+
+                                intake = new Intake(new IntakeReal());
+                                intake.applyState();
                                 break;
 
                         default:
@@ -116,8 +134,11 @@ public class RobotContainer {
                                                 new ModuleIO() {
                                                 });
                                 vision = new Vision(drive::addVisionMeasurement,
-                                        new VisionIOLimelight("limelight-shooter", drive::getRotation),
-                                        new VisionIOLimelight("limelight-intake", drive::getRotation));
+                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
+                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
+
+                                intake = new Intake(new IntakeIO() {
+                                });
                                 break;
                 }
 
@@ -163,8 +184,7 @@ public class RobotContainer {
                                                 () -> -controller.getRightX()));
 
                 // Lock to 0° when A button is held
-                controller
-                                .a()
+                controller.a()
                                 .whileTrue(
                                                 DriveCommands.joystickDriveAtAngle(
                                                                 drive,
@@ -176,8 +196,7 @@ public class RobotContainer {
                 controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
                 // Reset gyro to 0° when B button is pressed
-                controller
-                                .b()
+                controller.b()
                                 .onTrue(
                                                 Commands.runOnce(
                                                                 () -> drive.setPose(
@@ -186,6 +205,25 @@ public class RobotContainer {
                                                                                                 Rotation2d.kZero)),
                                                                 drive)
                                                                 .ignoringDisable(true));
+                operator.povDown().whileTrue(new RunCommand(() -> {
+                        intake.setPosition(11.7);
+                }, intake))
+                                .onFalse(new InstantCommand(() -> {
+                                        intake.stop();
+                                }, intake));
+
+                operator.povUp().whileTrue(intake.retractAndStop());
+
+                operator.y().onTrue(new InstantCommand(
+                                () -> intake.resetEncoder()).ignoringDisable(true));
+
+                operator.x().whileTrue(new RunCommand(() -> {
+                        intake.setVelocity(400);
+                }, intake))
+                                .onFalse(new InstantCommand(() -> {
+                                        intake.stop();
+                                }, intake));
+
         }
 
         /**
