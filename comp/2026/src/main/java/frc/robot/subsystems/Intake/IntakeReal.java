@@ -8,21 +8,16 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import javax.lang.model.element.ModuleElement.RequiresDirective;
-
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
-import org.bobcatrobotics.Hardware.Motors.FindLimit;
 import org.bobcatrobotics.Util.Tunables.Gains;
 // import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -31,8 +26,6 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DutyCycle;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake.Modules.ModuleConfigurator;
 
@@ -66,11 +59,11 @@ public class IntakeReal implements IntakeIO {
   private StatusSignal<Voltage> outputOfIntakePositionVolts;
   private StatusSignal<AngularAcceleration> accelerationOfIntakePosition;
 
-
-  //private FindLimit seekLowerRange;
-
+  // private FindLimit seekLowerRange;
+Gains pivotMotorGains;
+Gains rollerMotorGains;
   public IntakeReal() {
-    Gains pivotMotorGains = new Gains.Builder()
+    pivotMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.PivotConstants.kP)
         .kI(Constants.IntakeConstants.PivotConstants.kI)
         .kD(Constants.IntakeConstants.PivotConstants.kD)
@@ -78,7 +71,7 @@ public class IntakeReal implements IntakeIO {
         .kV(Constants.IntakeConstants.PivotConstants.kV)
         .kA(Constants.IntakeConstants.PivotConstants.kA)
         .build();
-    Gains rollerMotorGains = new Gains.Builder()
+    rollerMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.RollerConstants.kP)
         .kI(Constants.IntakeConstants.RollerConstants.kI)
         .kD(Constants.IntakeConstants.RollerConstants.kD)
@@ -88,7 +81,7 @@ public class IntakeReal implements IntakeIO {
     setupRollerMotor(rollerMotorGains);
     setupPivotMotor(pivotMotorGains);
 
-    //seekLowerRange = new FindLimit(false, positionMotor);
+    // seekLowerRange = new FindLimit(false, positionMotor);
   }
 
   public void setupRollerMotor(Gains g) {
@@ -101,12 +94,21 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.RollerConstants.peakReverseLimit);
     velocityMotor = new TalonFX(intakeVelocityConfig.getMotorId(), new CANBus("rio"));
     intakeVelocityConfig.configureMotor(velocityMotor, g);
-    velocityOfIntakeSpeedRPS = velocityMotor.getVelocity();
-    statorCurrentOfIntakeSpeedAmps = velocityMotor.getStatorCurrent();
-    outputOfIntakeSpeedVolts = velocityMotor.getMotorVoltage();
-    accelerationOfIntakeSpeed = velocityMotor.getAcceleration();
-    intakeVelocityConfig.configureSignals(velocityMotor, 50.0, velocityOfIntakeSpeedRPS,
-        statorCurrentOfIntakeSpeedAmps, outputOfIntakeSpeedVolts, accelerationOfIntakeSpeed);
+    if (Constants.lowTelemetryMode) {
+      velocityOfIntakeSpeedRPS = velocityMotor.getVelocity();
+      statorCurrentOfIntakeSpeedAmps = velocityMotor.getStatorCurrent();
+      outputOfIntakeSpeedVolts = velocityMotor.getMotorVoltage();
+      intakeVelocityConfig.configureSignals(velocityMotor, 50.0, velocityOfIntakeSpeedRPS,
+          statorCurrentOfIntakeSpeedAmps, outputOfIntakeSpeedVolts);
+    } else {
+      velocityOfIntakeSpeedRPS = velocityMotor.getVelocity();
+      statorCurrentOfIntakeSpeedAmps = velocityMotor.getStatorCurrent();
+      outputOfIntakeSpeedVolts = velocityMotor.getMotorVoltage();
+      accelerationOfIntakeSpeed = velocityMotor.getAcceleration();
+      intakeVelocityConfig.configureSignals(velocityMotor, 50.0, velocityOfIntakeSpeedRPS,
+          statorCurrentOfIntakeSpeedAmps, outputOfIntakeSpeedVolts, accelerationOfIntakeSpeed);
+    }
+
   }
 
   public void setupPivotMotor(Gains g) {
@@ -115,45 +117,67 @@ public class IntakeReal implements IntakeIO {
         Constants.IntakeConstants.PivotConstants.isInverted,
         Constants.IntakeConstants.PivotConstants.isCoast,
         Constants.IntakeConstants.PivotConstants.currentLimit,
-        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
-        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
+        Constants.IntakeConstants.PivotConstants.peakForwardLimit,
+        Constants.IntakeConstants.PivotConstants.peakReverseLimit);
     positionMotor = new TalonFX(intakePivotConfig.getMotorId(), new CANBus("rio"));
     intakePivotConfig.configureMotor(positionMotor, g);
-    velocityOfIntakePositionRPS = positionMotor.getVelocity();
-    statorCurrentOfIntakePositionAmps = positionMotor.getStatorCurrent();
-    outputOfIntakePositionVolts = positionMotor.getMotorVoltage();
-    accelerationOfIntakePosition = positionMotor.getAcceleration();
-    intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
-        statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts, accelerationOfIntakePosition);
+    if (Constants.lowTelemetryMode) {
+      velocityOfIntakePositionRPS = positionMotor.getVelocity();
+      statorCurrentOfIntakePositionAmps = positionMotor.getStatorCurrent();
+      outputOfIntakePositionVolts = positionMotor.getMotorVoltage();
+      intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
+          statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts);
+    } else {
+      velocityOfIntakePositionRPS = positionMotor.getVelocity();
+      statorCurrentOfIntakePositionAmps = positionMotor.getStatorCurrent();
+      outputOfIntakePositionVolts = positionMotor.getMotorVoltage();
+      accelerationOfIntakePosition = positionMotor.getAcceleration();
+      intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
+          statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts, accelerationOfIntakePosition);
+    }
+
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    if (Constants.lowTelemetryMode) {
+      lowTelemetry(inputs);
+    } else {
+      highTelemetry(inputs);
+    }
+
+  }
+
+  public void highTelemetry(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        velocityOfIntakePositionRPS, statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts,
         accelerationOfIntakePosition,
-        velocityOfIntakeSpeedRPS, statorCurrentOfIntakeSpeedAmps, outputOfIntakeSpeedVolts, accelerationOfIntakeSpeed);
-
-    inputs.velocityOfIntakePositionRPS = velocityOfIntakePositionRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
-    inputs.outputOfIntakePositionVolts = outputOfIntakePositionVolts.getValue().in(Volts);
+        accelerationOfIntakeSpeed, outputOfIntakePositionVolts, outputOfIntakeSpeedVolts);
     inputs.accelerationOfIntakePosition = accelerationOfIntakePosition.getValue().in(RotationsPerSecondPerSecond);
-    inputs.velocityConnected = velocityMotor.isConnected();
-
-    inputs.velocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
+    inputs.accelerationOfIntakeSpeed = accelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
+    inputs.outputOfIntakePositionVolts = outputOfIntakePositionVolts.getValue().in(Volts);
     inputs.outputOfIntakeSpeedVolts = outputOfIntakeSpeedVolts.getValue()
         .in(Volts);
-    inputs.accelerationOfIntakeSpeed = accelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
+    lowTelemetry(inputs);
+
+  }
+
+  public void lowTelemetry(IntakeIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        velocityOfIntakePositionRPS, statorCurrentOfIntakePositionAmps,
+        velocityOfIntakeSpeedRPS, statorCurrentOfIntakeSpeedAmps);
+    inputs.velocityOfIntakePositionRPS = velocityOfIntakePositionRPS.getValue().in(Rotation.per(Minute));
+    inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
+    inputs.velocityConnected = velocityMotor.isConnected();
+    inputs.velocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
+    inputs.statorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
     inputs.positionConnected = velocityMotor.isConnected();
     inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
-
   }
 
   public void setVelocity(double velocity) {
     intakeVelocitySetpoint = velocity;
-   // velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
-   velocityMotor.set(1);
+    // velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
+    velocityMotor.set(1);
   }
 
   public void setVelocity(IntakeState desiredState) {
@@ -166,12 +190,12 @@ public class IntakeReal implements IntakeIO {
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-  
-      positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
+
+    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
 
   }
 
-  public void retractIntake(){
+  public void retractIntake() {
     intakePivotSetpoint = 0;
     positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.6));
   }
@@ -206,10 +230,9 @@ public class IntakeReal implements IntakeIO {
   @Override
   public void periodic() {
 
-
   }
-  
-    public void simulationPeriodic() {
+
+  public void simulationPeriodic() {
   }
 
   /* Characterization */
@@ -219,7 +242,8 @@ public class IntakeReal implements IntakeIO {
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
   }
-    /* Characterization */
+
+  /* Characterization */
   public void runCharacterization_IntakePosition(double output) {
     velocityMotor.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
@@ -237,5 +261,26 @@ public class IntakeReal implements IntakeIO {
   public double getFFCharacterizationPosition_Intake() {
     double avg = (positionMotor.getPosition().getValue().in(Rotations)) / 1;
     return avg;
+  }
+
+  public void setNeturalCoast() {
+    intakePivotConfig = new ModuleConfigurator(pivotMotorGains.toSlot0Configs(),
+        Constants.IntakeConstants.PivotConstants.pivotMotorId,
+        Constants.IntakeConstants.PivotConstants.isInverted,
+        true,
+        Constants.IntakeConstants.PivotConstants.currentLimit,
+        Constants.IntakeConstants.PivotConstants.peakForwardLimit,
+        Constants.IntakeConstants.PivotConstants.peakReverseLimit);
+    intakePivotConfig.configureMotor(positionMotor, pivotMotorGains);
+  }
+    public void setNeturalBrake() {
+    intakePivotConfig = new ModuleConfigurator(pivotMotorGains.toSlot0Configs(),
+        Constants.IntakeConstants.PivotConstants.pivotMotorId,
+        Constants.IntakeConstants.PivotConstants.isInverted,
+        false,
+        Constants.IntakeConstants.PivotConstants.currentLimit,
+        Constants.IntakeConstants.PivotConstants.peakForwardLimit,
+        Constants.IntakeConstants.PivotConstants.peakReverseLimit);
+    intakePivotConfig.configureMotor(positionMotor, pivotMotorGains);
   }
 }

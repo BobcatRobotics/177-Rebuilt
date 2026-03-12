@@ -157,4 +157,11 @@ public class Intake extends SubsystemBase {
                         retractIntakeManually();
                 }).onlyWhile(()->!DriverStation.isDisabled()).andThen(new InstantCommand(()->stop()));
   }
+
+  public void setNeturalBrake(){
+    io.setNeturalBrake();
+  }
+    public void setNeturalCoast(){
+    io.setNeturalCoast();
+  }
 }

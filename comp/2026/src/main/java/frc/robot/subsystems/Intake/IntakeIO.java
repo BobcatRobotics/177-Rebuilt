@@ -83,4 +83,11 @@ public interface IntakeIO {
   public default void holdPosition() {
 
   }
+
+  public default void setNeturalCoast(){
+
+  }
+  public default void setNeturalBrake(){
+    
+  }
 }

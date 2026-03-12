@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
     public static final Mode simMode = Mode.SIM;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
+    public static final boolean lowTelemetryMode = true;
     public static enum Mode {
         /** Running on a real robot. */
         REAL,
@@ -169,6 +169,8 @@ public final class Constants {
             public static double kA = 0.00;
             public static double currentLimit = 70;
             public static int pivotMotorId = 10;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
         }
 
         public static final class RollerConstants {

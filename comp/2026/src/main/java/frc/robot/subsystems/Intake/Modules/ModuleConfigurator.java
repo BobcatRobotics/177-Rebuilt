@@ -103,35 +103,6 @@ public final class ModuleConfigurator {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
                 currentLimit, peakForward, peakReverse);
     }
-
-    // public void configureMotor(
-    //         TalonFX motor,
-    //         TunablePID pid) {
-
-    //     Slot0Configs slot0 = new Slot0Configs();
-    //     pid.applyTo(slot0);
-
-    //     TalonFXConfiguration fxConfig = new TalonFXConfiguration();
-    //     motor.getConfigurator().apply(fxConfig); // reset
-
-    //     fxConfig.Slot0 = slot0;
-
-    //     fxConfig.MotorOutput.Inverted = isInnerInverted()
-    //             ? InvertedValue.Clockwise_Positive
-    //             : InvertedValue.CounterClockwise_Positive;
-
-    //     fxConfig.MotorOutput.NeutralMode = isCoast()
-    //             ? NeutralModeValue.Coast
-    //             : NeutralModeValue.Brake;
-
-
-    //     fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    //     fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
-    //     fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = peakForward;
-    //     fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = peakReverse;
-
-    //     motor.getConfigurator().apply(fxConfig);
-    // }
   
     public void configureMotor(
             TalonFX motor,
@@ -161,14 +132,6 @@ public final class ModuleConfigurator {
 
         motor.getConfigurator().apply(fxConfig);
     }  
-    //     public void updateMotorPID(
-    //         TalonFX motor,
-    //         TunablePID pid) {
-
-    //     Slot0Configs slot0 = new Slot0Configs();
-    //     pid.applyTo(slot0);
-    //     motor.getConfigurator().apply(slot0);
-    // }
 
 
     public void configureSignals(TalonFX motor,double freq, StatusSignal<?>... signals) {

@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.security.spec.ECPublicKeySpec;
+
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.littletonrobotics.junction.Logger;
 
@@ -146,12 +148,20 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, g);
-    velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
-    statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
-    outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
-    accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
-    flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
-        statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
+    if (Constants.lowTelemetryMode) {
+      velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
+      statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
+      flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
+          statorCurrentOfMainFlywheelLeftAmps);
+    } else {
+      velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
+      statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
+      outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
+      accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
+      flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
+          statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
+    }
+
   }
 
   public void setupRightFlywheel(Gains g) {
@@ -164,12 +174,20 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerRight = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigRight.configureMotor(shooterFlywheelInnerRight, g);
-    velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-    outputOfMainFlywheelRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
-    accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
-    flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
-        statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
+    if (Constants.lowTelemetryMode) {
+      velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
+      statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
+      flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
+          statorCurrentOfMainFlywheelRightAmps);
+    } else {
+      velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
+      statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
+      outputOfMainFlywheelRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
+      accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
+      flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
+          statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
+    }
+
   }
 
   public void setupOuterRightFlywheel(Gains g) {
@@ -182,6 +200,12 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, g);
+    if(Constants.lowTelemetryMode){
+    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
+    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
+    flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
+        statorCurrentOfMainFlywheelOuterRightAmps);
+    }else{
     velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
     statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
     outputOfMainFlywheelOuterRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
@@ -189,6 +213,8 @@ public class ShooterRealQuad implements ShooterIO {
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
+    }
+
   }
 
     public void setupOuterLeftFlywheel(Gains g) {
@@ -201,6 +227,12 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterLeft = new TalonFX(flywheelConfigOuterLeft.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigOuterLeft.configureMotor(shooterFlywheelOuterLeft, g);
+    if(Constants.lowTelemetryMode){
+    velocityOfMainFlywheelOuterLeftRPS = shooterFlywheelOuterLeft.getVelocity();
+    statorCurrentOfMainFlywheelOuterLeftAmps = shooterFlywheelOuterLeft.getStatorCurrent();
+    flywheelConfigOuterLeft.configureSignals(shooterFlywheelOuterLeft, 50.0, velocityOfMainFlywheelOuterLeftRPS,
+        statorCurrentOfMainFlywheelOuterLeftAmps);
+    }else{
     velocityOfMainFlywheelOuterLeftRPS = shooterFlywheelOuterLeft.getVelocity();
     statorCurrentOfMainFlywheelOuterLeftAmps = shooterFlywheelOuterLeft.getStatorCurrent();
     outputOfMainFlywheelOuterLeftVolts = shooterFlywheelOuterLeft.getMotorVoltage();
@@ -208,6 +240,8 @@ public class ShooterRealQuad implements ShooterIO {
     flywheelConfigOuterLeft.configureSignals(shooterFlywheelOuterLeft, 50.0, velocityOfMainFlywheelOuterLeftRPS,
         statorCurrentOfMainFlywheelOuterLeftAmps, outputOfMainFlywheelOuterLeftVolts,
         accelerationOfMainFlywheelOuterLeft);
+    }
+
   }
 
   public void setupIntake(Gains g) {
@@ -219,12 +253,20 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.SharedIntake.supplyCurrentLimit);
     shooterIntakeMotor = new TalonFX(intakeWheelConfig.getMotorInnerId(), new CANBus("rio"));
     intakeWheelConfig.configureMotor(shooterIntakeMotor, g);
+    if(Constants.lowTelemetryMode){
+    velocityOfIntakeRPS = shooterIntakeMotor.getVelocity();
+    statorCurrentOfIntakeAmps = shooterIntakeMotor.getStatorCurrent();
+    intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
+        statorCurrentOfIntakeAmps);
+    }else{
     velocityOfIntakeRPS = shooterIntakeMotor.getVelocity();
     statorCurrentOfIntakeAmps = shooterIntakeMotor.getStatorCurrent();
     outputOfIntakeVolts = shooterIntakeMotor.getMotorVoltage();
     accelerationOfIntake = shooterIntakeMotor.getAcceleration();
     intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
         statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
+    }
+
   }
 
   public void setupLeftHood(Gains g) {
@@ -237,12 +279,20 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.Left.supplyCurrentLimit);
     HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
     HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
+    if(Constants.lowTelemetryMode){
+    velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
+    statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
+    HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
+        statorCurrentOfHoodLeftAmps);
+    }else{
     velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
     statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
     outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
     accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
+    }
+
   }
 
   public void setupRightHood(Gains g) {
@@ -255,15 +305,69 @@ public class ShooterRealQuad implements ShooterIO {
         Constants.ShooterConstants.Right.supplyCurrentLimit);
     HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
     HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
+    if(Constants.lowTelemetryMode){
+    velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
+    statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
+    flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
+        statorCurrentOfHoodRightAmps);
+    }
+    else{
     velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
     statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
     outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
     accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
+    }
+
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
+    if(Constants.lowTelemetryMode){
+      lowTelemetry(inputs);
+    }
+    else{
+      highTelemetry(inputs);
+    }
+  }
+
+  public void highTelemetry(ShooterIOInputs inputs) {
+    BaseStatusSignal.refreshAll(
+        accelerationOfMainFlywheelLeft,
+        accelerationOfMainFlywheelRight,
+        accelerationOfMainFlywheelOuterRight,
+        accelerationOfMainFlywheelOuterLeft,
+        accelerationOfHoodLeft,
+        accelerationOfHoodRight,
+        accelerationOfIntake,
+        outputOfHoodLeftVolts,
+        outputOfHoodRightVolts,
+        outputOfMainFlywheelLeftVolts,
+        outputOfMainFlywheelRightVolts,
+        outputOfMainFlywheelOuterRightVolts,
+        outputOfMainFlywheelOuterLeftVolts,
+        outputOfIntakeVolts);
+
+    inputs.accelerationOfMainFlywheelLeft = accelerationOfMainFlywheelLeft.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfMainFlywheelRight = accelerationOfMainFlywheelRight.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfHoodLeft = accelerationOfHoodLeft.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfIntake = accelerationOfIntake.getValue()
+        .in(RotationsPerSecondPerSecond);
+
+    inputs.outputOfHoodLeftVolts = outputOfHoodLeftVolts.getValue().in(Volts);
+    inputs.outputOfHoodRightVolts = outputOfHoodRightVolts.getValue().in(Volts);
+    inputs.outputOfMainFlywheelLeftVolts = outputOfMainFlywheelLeftVolts.getValue().in(Volts);
+    inputs.outputOfMainFlywheelRightVolts = outputOfMainFlywheelRightVolts.getValue().in(Volts);
+    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterRightVolts.getValue().in(Volts);
+    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterLeftVolts.getValue().in(Volts);
+    inputs.outputOfIntakeVolts = outputOfIntakeVolts.getValue().in(Volts);
+    lowTelemetry(inputs);
+  }
+
+  public void lowTelemetry(ShooterIOInputs inputs) {
 
     BaseStatusSignal.refreshAll(
         velocityOfMainFlywhelLeftRPS,
@@ -273,26 +377,12 @@ public class ShooterRealQuad implements ShooterIO {
         velocityOfMainFlywheelOuterRightRPS,
         velocityOfMainFlywheelOuterLeftRPS,
         velocityOfIntakeRPS,
-        accelerationOfMainFlywheelLeft,
-        accelerationOfMainFlywheelRight,
-        accelerationOfMainFlywheelOuterRight,
-        accelerationOfMainFlywheelOuterLeft,
-        accelerationOfHoodLeft,
-        accelerationOfHoodRight,
-        accelerationOfIntake,
         statorCurrentOfHoodLeftAmps,
         statorCurrentOfHoodRightAmps,
         statorCurrentOfMainFlywheelLeftAmps,
         statorCurrentOfMainFlywheelRightAmps,
         statorCurrentOfMainFlywheelOuterRightAmps,
-        statorCurrentOfMainFlywheelOuterLeftAmps,
-        outputOfHoodLeftVolts,
-        outputOfHoodRightVolts,
-        outputOfMainFlywheelLeftVolts,
-        outputOfMainFlywheelRightVolts,
-        outputOfMainFlywheelOuterRightVolts,
-        outputOfMainFlywheelOuterLeftVolts,
-        outputOfIntakeVolts);
+        statorCurrentOfMainFlywheelOuterLeftAmps);
 
     inputs.velocityOfMainFlywheelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
     inputs.velocityOfMainFlywheelRightRPS = velocityOfMainFlywheelRightRPS.getValue().in(Rotations.per(Seconds));
@@ -305,14 +395,7 @@ public class ShooterRealQuad implements ShooterIO {
     inputs.velocityOfHoodWheelMotorRightRPS = velocityOfHoodWheelMotorRightRPS.getValue()
         .in(Rotations.per(Seconds));
     inputs.velocityOfIntakeRPS = velocityOfIntakeRPS.getValue().in(Rotations.per(Seconds));
-    inputs.accelerationOfMainFlywheelLeft = accelerationOfMainFlywheelLeft.getValue()
-        .in(RotationsPerSecondPerSecond);
-    inputs.accelerationOfMainFlywheelRight = accelerationOfMainFlywheelRight.getValue()
-        .in(RotationsPerSecondPerSecond);
-    inputs.accelerationOfHoodLeft = accelerationOfHoodLeft.getValue()
-        .in(RotationsPerSecondPerSecond);
-    inputs.accelerationOfIntake = accelerationOfIntake.getValue()
-        .in(RotationsPerSecondPerSecond);
+
     inputs.statorCurrentOfHoodLeftAmps = statorCurrentOfHoodLeftAmps.getValue().in(Amps);
     inputs.statorCurrentOfHoodRightAmps = statorCurrentOfHoodRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfMainFlywheelLeftAmps = statorCurrentOfMainFlywheelLeftAmps.getValue().in(Amps);
@@ -328,14 +411,6 @@ public class ShooterRealQuad implements ShooterIO {
     inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterRight.isConnected();
     inputs.shooterFlywheelOuterLeftConnected = shooterFlywheelOuterLeft.isConnected();
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
-
-    inputs.outputOfHoodLeftVolts = outputOfHoodLeftVolts.getValue().in(Volts);
-    inputs.outputOfHoodRightVolts = outputOfHoodRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelLeftVolts = outputOfMainFlywheelLeftVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelRightVolts = outputOfMainFlywheelRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterLeftVolts.getValue().in(Volts);
-    inputs.outputOfIntakeVolts = outputOfIntakeVolts.getValue().in(Volts);
 
   }
 
