@@ -30,7 +30,7 @@ public class AutoAimDrive extends Command {
     private final Translation2d target = new Translation2d(4.620, 4.040);
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
-            0.1, // kP
+            5, // kP
             0.0,
             0.2,
             new TrapezoidProfile.Constraints(2.0, 3.0));

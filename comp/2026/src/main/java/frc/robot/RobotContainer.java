@@ -34,6 +34,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -355,6 +356,12 @@ public class RobotContainer {
         public Command SpinUp() {
                 return new RunCommand(() -> {
                         m_Shooter.spinUp();
+                        if(RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed){
+                                controller.setRumble(RumbleType.kBothRumble, 1);
+                        }
+                        else{
+                                 controller.setRumble(RumbleType.kBothRumble, 0);
+                        }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));

@@ -89,9 +89,13 @@ public class Shooter extends SubsystemBase {
     };
 
     Logger.recordOutput("Shooter/BallPath", shotLine);
-    boolean isTargetAligned =new Translation2d(4.620, 4.040)
-                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(40);
-    Logger.recordOutput("Shooter/IsInTarget", isTargetAligned);
+    boolean hubInrange =new Translation2d(4.620, 4.040)
+                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(20);
+    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
+
+    RobotState.getInstance().hubInrange = hubInrange;
+    RobotState.getInstance().shooterUpToSpeed = atSpeed();
+
   }
 
   public void setState(ShooterState state) {
@@ -226,14 +230,17 @@ public class Shooter extends SubsystemBase {
   
   public boolean atSpeed() {
     boolean isAtTolerance = false;
-    double MAIN_SPEED_TOLERANCE = 7;
-    double HOOD_SPEED_TOLERANCE = 7;
-    double flywheelSpeedVelocity = RobotState.getInstance().getShooterState().getFlywheelSpeed() - MAIN_SPEED_TOLERANCE;
-    double hoodSpeedVelocity = RobotState.getInstance().getShooterState().getHoodSpeed() - HOOD_SPEED_TOLERANCE;
-    if (io.getVelocityHood() > 30) {
-      if (io.getVelocityMainFlywheel() > 40) {
-        isAtTolerance = true;
-      }
+    boolean isMainFlywheelWithinTolerance = false;
+    boolean isHoodWheelWithinTolerance = false;
+
+    double MAIN_SPEED_TOLERANCE = 5;
+    double HOOD_SPEED_TOLERANCE = 2;
+    isMainFlywheelWithinTolerance = Math.abs(io.getVelocityMainFlywheel()
+        - RobotState.getInstance().getShooterState().getFlywheelSpeed()) <= MAIN_SPEED_TOLERANCE;
+    isHoodWheelWithinTolerance = Math
+        .abs(io.getVelocityHood() - RobotState.getInstance().getShooterState().getHoodSpeed()) <= HOOD_SPEED_TOLERANCE;
+    if (isMainFlywheelWithinTolerance && isHoodWheelWithinTolerance) {
+      isAtTolerance = true;
     }
     Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
     return isAtTolerance;
