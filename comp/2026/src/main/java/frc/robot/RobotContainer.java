@@ -180,7 +180,7 @@ public class RobotContainer {
                 autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
-                autoChooser.addOption("Auto Test", new PathPlannerAuto("Example Auto"));
+                autoChooser.addOption("OP Side Trench to OP Shooting", new PathPlannerAuto("OP Side Trench to OP Shooting"));
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -201,6 +201,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
+                NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
         }
 
         /**

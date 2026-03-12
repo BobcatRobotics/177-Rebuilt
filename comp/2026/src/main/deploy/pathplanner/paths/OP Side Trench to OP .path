@@ -1,0 +1,127 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.418002853067047,
+        "y": 0.6903566333808839
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.058079317125818,
+        "y": 0.6896120600916719
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.2054921540656205,
+        "y": 0.6903566333808839
+      },
+      "prevControl": {
+        "x": 0.9555336801756227,
+        "y": 0.6949130936938107
+      },
+      "nextControl": {
+        "x": 1.4554506279556183,
+        "y": 0.6858001730679572
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.7156666666666665,
+        "y": 2.358955555555555
+      },
+      "prevControl": {
+        "x": 2.8730693137703884,
+        "y": 2.5776849761491976
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8737007874015723,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeDeploy",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeDown"
+        }
+      }
+    },
+    {
+      "name": "WaitHumanLoad",
+      "waypointRelativePos": 0.7820143884892116,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "WaitHumanLoad"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "SpinUpShooter",
+      "waypointRelativePos": 1.3258992805755367,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUp"
+        }
+      }
+    },
+    {
+      "name": "Shooting",
+      "waypointRelativePos": 1.8870503597121868,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ShootBalls"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 0.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 39.21134380499928
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
