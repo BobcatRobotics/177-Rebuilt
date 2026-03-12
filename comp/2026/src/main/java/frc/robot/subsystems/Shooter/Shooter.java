@@ -1,10 +1,17 @@
 package frc.robot.subsystems.Shooter;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -68,6 +75,23 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
+
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose2d newPose = robotPose.transformBy(new Transform2d(
+    new Translation2d(Units.inchesToMeters(90), 0),
+    new Rotation2d()
+));
+    Translation2d robotTranslation = robotPose.getTranslation();
+    Translation2d targetTranslation =newPose.getTranslation();
+    Translation2d[] shotLine = new Translation2d[] {
+          robotTranslation,
+          targetTranslation
+    };
+
+    Logger.recordOutput("Shooter/BallPath", shotLine);
+    boolean isTargetAligned =new Translation2d(4.620, 4.040)
+                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(40);
+    Logger.recordOutput("Shooter/IsInTarget", isTargetAligned);
   }
 
   public void setState(ShooterState state) {

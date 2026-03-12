@@ -84,7 +84,7 @@ import frc.robot.util.AllianceFlipUtil;
 public class RobotContainer {
         // Subsystems
         private final Drive drive;
-        private Vision vision;
+        public Vision vision;
         public final Shooter m_Shooter;
         private final Hopper m_Hopper;
         public final Intake intake;

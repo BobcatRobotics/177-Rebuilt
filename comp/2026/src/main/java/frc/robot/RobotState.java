@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -55,4 +57,7 @@ public class RobotState {
   public IntakeState getIntakeState() {
     return desiredIntakeState;
   }
+
+
+  public Pose2d robotPose = new Pose2d();
 }
