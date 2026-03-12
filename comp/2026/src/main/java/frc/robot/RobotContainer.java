@@ -26,6 +26,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -167,26 +168,39 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeIO() {
                                 });
 
-                                
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight("limelight-shooter", drive::getRotation),
                                                 new VisionIOLimelight("limelight-intake", drive::getRotation));
                                 break;
                 }
 
-
                 // Set up auto routines
+                registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-                autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
-                autoChooser = new IntakeAutoOptions(autoChooser,intake).getOptions();
+                autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
+                autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
                 autoChooser.addOption("Auto Test", new PathPlannerAuto("Example Auto"));
-
 
                 // Configure the button bindings
                 configureButtonBindings();
 
                 hub = new HubUtil();
+        }
+
+        private void registerCommands() {
+                NamedCommands.registerCommand(
+                                "SpinUp", SpinUp());
+                NamedCommands.registerCommand(
+                                "ShootBalls", ShootBalls());
+                NamedCommands.registerCommand(
+                                "IntakeDown", IntakeDown());
+                NamedCommands.registerCommand("IntakeUp",intake.retractAndStop());
+                NamedCommands.registerCommand("IntakePosReset",new InstantCommand(()->intake.resetEncoder()));
+                NamedCommands.registerCommand("RunIntakeRollers",RunIntakeRollers());
+                NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
+                                        intake.stop();
+                                }, intake));
         }
 
         /**
@@ -219,14 +233,11 @@ public class RobotContainer {
                 }, m_Hopper));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
-
-                 
                 controller.a().whileTrue(
                                 new AutoAimDrive(
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
-
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
@@ -245,40 +256,20 @@ public class RobotContainer {
                  * this should eventually be changed to look at if the shooter wheels are up to
                  * speed isntead of an time based approach.
                  */
-                 controller.rightBumper().whileTrue(new RunCommand(() -> {
-                         m_Shooter.spinUp();
-                 }, m_Shooter).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                 }, intake)));
-                 controller.leftBumper().whileTrue(new RunCommand(() -> {
-                         m_Hopper.runHopper();
-                 }, m_Hopper).alongWith(new RunCommand(() -> {
-                         m_Shooter.shootFuel();
-                 }, m_Shooter)).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                 }, intake)));  
-                operator.povDown().whileTrue(new RunCommand(() -> {
-                        intake.setPosition(11.7);
-                }, intake))
-                .onFalse(new InstantCommand(() -> {
-                        intake.stop();
-                },intake));
-
-                operator.povUp().whileTrue(intake.retractAndStop());
-
-                operator.y().onTrue(new InstantCommand(
-                        () -> intake.resetEncoder()
-                ).ignoringDisable(true));
-                
-                
-
-                operator.x().whileTrue(new RunCommand(() -> {
-                        intake.setVelocity(400);
-                }, intake))
-                .onFalse(new InstantCommand(() -> {
+                controller.rightBumper().whileTrue(SpinUp());
+                controller.leftBumper().whileTrue(ShootBalls());
+                operator.povDown().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
-                
+                operator.povUp().whileTrue(intake.retractAndStop());
+                operator.y().onTrue(new InstantCommand(
+                                () -> intake.resetEncoder()).ignoringDisable(true));
+
+                operator.x().whileTrue(RunIntakeRollers())
+                                .onFalse(new InstantCommand(() -> {
+                                        intake.stop();
+                                }, intake));
+
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
                                 .withTimeout(runTestTime)
@@ -357,6 +348,36 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
                 Logger.recordOutput("Hub/HubLocation/Pose3d",
                                 HubUtil.getHubCoordinates(DriverStation.getAlliance().get()));
-                //Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
+                // Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
+        }
+
+        public Command SpinUp() {
+                return new RunCommand(() -> {
+                        m_Shooter.spinUp();
+                }, m_Shooter).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command ShootBalls() {
+                return new RunCommand(() -> {
+                        m_Hopper.runHopper();
+                }, m_Hopper).alongWith(new RunCommand(() -> {
+                        m_Shooter.shootFuel();
+                }, m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command IntakeDown(){
+           return   new RunCommand(() -> {
+                        intake.setPosition(11.7);
+                }, intake);
+        }
+
+        public Command RunIntakeRollers(){
+                return new RunCommand(() -> {
+                        intake.setVelocity(400);
+                }, intake);
         }
 }
