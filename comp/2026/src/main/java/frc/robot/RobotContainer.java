@@ -235,7 +235,7 @@ public class RobotContainer {
                 }, m_Hopper));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
-                controller.a().whileTrue(
+                controller.rightTrigger().whileTrue(
                                 new AutoAimDrive(
                                                 drive,
                                                 () -> -controller.getLeftY(),
