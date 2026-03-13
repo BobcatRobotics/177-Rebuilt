@@ -173,6 +173,7 @@ public class RobotContainer {
                 autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
                 autoChooser.addOption("OP Side Trench to OP Shooting", new PathPlannerAuto("OP Side Trench to OP Shooting"));
+                autoChooser.addOption("Anand", new PathPlannerAuto("Anand OP to Hub"));
 
                 // Configure the button bindings
                 configureButtonBindings();
