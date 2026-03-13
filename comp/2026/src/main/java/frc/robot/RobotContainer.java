@@ -61,6 +61,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
 
@@ -161,8 +162,8 @@ public class RobotContainer {
                                 });
 
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
-                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
                                 break;
                 }
 
@@ -172,8 +173,9 @@ public class RobotContainer {
                 autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
-                autoChooser.addOption("OP Side Trench to OP Shooting", new PathPlannerAuto("OP Side Trench to OP Shooting"));
-                autoChooser.addOption("Anand", new PathPlannerAuto("Anand OP to Hub"));
+                autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
+                autoChooser.addOption("Anand Depot Clean Sweep", new PathPlannerAuto("Anand Clean Sweep"));
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -230,7 +232,6 @@ public class RobotContainer {
                 controller.rightTrigger().whileTrue(
                                 new AutoAimDrive(
                                                 drive,
-                                                DriverStation.getAlliance().get(),
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
 

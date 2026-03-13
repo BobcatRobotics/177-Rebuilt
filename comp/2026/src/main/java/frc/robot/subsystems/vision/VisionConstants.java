@@ -18,8 +18,8 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
+  public static String camera0Name = "limelight-shooter";
+  public static String camera1Name = "limelight-intake";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -34,8 +34,8 @@ public class VisionConstants {
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
-  public static double linearStdDevBaseline = 0.02; // Meters
-  public static double angularStdDevBaseline = 0.06; // Radians
+  public static double linearStdDevBaseline = 0.01; // Meters originally  0.02
+  public static double angularStdDevBaseline = 0.03; // Radians originally 0.06
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)

@@ -2,12 +2,14 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 public class RobotState {
   public CharacterizationType characterizationType = CharacterizationType.DRIVE;
+  public Alliance alliance;
   private static RobotState instance;
 
   public static RobotState getInstance() {

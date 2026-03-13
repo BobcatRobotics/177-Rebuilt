@@ -1,0 +1,87 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.057489300998572,
+        "y": 5.632924393723252
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2126662987642893,
+        "y": 5.61801337171544
+      },
+      "isLocked": false,
+      "linkedName": "AngledDepotBump"
+    },
+    {
+      "anchor": {
+        "x": 3.7143686947530643,
+        "y": 5.632924393723252
+      },
+      "prevControl": {
+        "x": 4.174070333170265,
+        "y": 5.625358782200627
+      },
+      "nextControl": {
+        "x": 3.3440939914261354,
+        "y": 5.6390182474925625
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.344094151212553,
+        "y": 6.1375320970042795
+      },
+      "prevControl": {
+        "x": 3.3448427109660956,
+        "y": 5.840357303574855
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 45.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "SpinUp",
+      "waypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUp"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -40.914383220025115
+  },
+  "reversed": false,
+  "folder": "New Folder",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 44.996008726320596
+  },
+  "useDefaultConstraints": false
+}

@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 
 import java.util.function.DoubleSupplier;
@@ -28,7 +29,7 @@ public class AutoAimDrive extends Command {
     private static final double DEADBAND = 0.1;
 
     // Field position of hub/goal
-    private final Translation2d target;
+    private Translation2d target;
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
             5, // kP
@@ -38,11 +39,9 @@ public class AutoAimDrive extends Command {
 
     public AutoAimDrive(
             Drive drive,
-            Alliance alliance,
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier) {
 
-        target = HubUtil.getMyHubCoordinates(alliance).toPose2d().getTranslation();
         this.drive = drive;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
@@ -54,6 +53,8 @@ public class AutoAimDrive extends Command {
 
     @Override
     public void execute() {
+        
+        target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
 
         Pose2d robotPose = drive.getPose();
 
