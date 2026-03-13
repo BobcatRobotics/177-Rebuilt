@@ -230,6 +230,7 @@ public class RobotContainer {
                 controller.rightTrigger().whileTrue(
                                 new AutoAimDrive(
                                                 drive,
+                                                DriverStation.getAlliance().get(),
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
 
@@ -340,8 +341,10 @@ public class RobotContainer {
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/HubLocation/Pose3d",
-                                HubUtil.getHubCoordinates(DriverStation.getAlliance().get()));
+                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
                 // Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
         }
 

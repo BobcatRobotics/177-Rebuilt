@@ -15,6 +15,7 @@ import frc.robot.subsystems.drive.Drive;
 
 import java.util.function.DoubleSupplier;
 
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
 
 public class AutoAimDrive extends Command {
@@ -27,7 +28,7 @@ public class AutoAimDrive extends Command {
     private static final double DEADBAND = 0.1;
 
     // Field position of hub/goal
-    private final Translation2d target = new Translation2d(4.620, 4.040);
+    private final Translation2d target;
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
             5, // kP
@@ -37,8 +38,11 @@ public class AutoAimDrive extends Command {
 
     public AutoAimDrive(
             Drive drive,
+            Alliance alliance,
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier) {
+
+        target = HubUtil.getMyHubCoordinates(alliance).toPose2d().getTranslation();
         this.drive = drive;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
