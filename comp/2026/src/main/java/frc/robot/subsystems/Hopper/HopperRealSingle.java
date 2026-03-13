@@ -75,9 +75,8 @@ public class HopperRealSingle implements HopperIO {
     if (Constants.lowTelemetryMode) {
       velocityOfHopperTopRPS = hopperMotor.getVelocity();
       statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
-      outputOfHopperTopVolts = hopperMotor.getMotorVoltage();
       hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
-          statorCurrentOfHopperTopAmps, accelerationOfHopperTop);
+          statorCurrentOfHopperTopAmps);
     } else {
       velocityOfHopperTopRPS = hopperMotor.getVelocity();
       statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
