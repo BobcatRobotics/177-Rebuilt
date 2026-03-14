@@ -127,6 +127,9 @@ public final class ModuleConfigurator {
 
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getStatorCurrentLimit();
+
+        fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = getStatorCurrentLimit();
+        fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = -getStatorCurrentLimit();
         motor.getConfigurator().apply(fxConfig);
     }
 
