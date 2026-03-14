@@ -3,54 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5104535039866525,
-        "y": 7.392013439423718
+        "x": 3.580858676207513,
+        "y": 0.6682289803220032
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.033492020391791,
-        "y": 7.430829416599182
+        "x": 4.78164808763185,
+        "y": 0.6682289803220032
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.743238231098432,
-        "y": 7.1855634807417985
+        "x": 6.404078711985688,
+        "y": 0.6682289803220032
       },
       "prevControl": {
-        "x": 6.219544284480158,
-        "y": 7.330414997891535
+        "x": 5.365526198478326,
+        "y": 0.6682289803220032
       },
       "nextControl": {
-        "x": 7.3513552068473595,
-        "y": 7.017360912981456
+        "x": 6.670728980321995,
+        "y": 0.6682289803220032
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.752453637660485,
-        "y": 5.943452211126962
+        "x": 7.718336314847942,
+        "y": 1.6093023255813943
       },
       "prevControl": {
-        "x": 7.752453637660485,
-        "y": 6.862097004279601
+        "x": 7.848139534883721,
+        "y": 0.7006797853309479
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Clean Sweep Center Line"
+      "linkedName": "OP Clean Sweep Center Line"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.023454157782541,
+      "waypointRelativePos": 1,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 1.245202558635403,
+      "waypointRelativePos": 2,
       "rotationDegrees": 90.0
     }
   ],
@@ -59,7 +59,7 @@
   "eventMarkers": [
     {
       "name": "IntakeDown",
-      "waypointRelativePos": 0.5509790681971419,
+      "waypointRelativePos": 1.0857142857142839,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -70,7 +70,7 @@
     },
     {
       "name": "IntakeFuel",
-      "waypointRelativePos": 0.896691424713037,
+      "waypointRelativePos": 1.5999999999999979,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -81,7 +81,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 1.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -90,10 +90,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -91.70740245295092
   },
   "reversed": false,
-  "folder": "Depot Clean Sweep",
+  "folder": "Outpost Clean Sweep",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

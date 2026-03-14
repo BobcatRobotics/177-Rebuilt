@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "x": 6.1928947368421055,
+        "y": 2.4098574561403505
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2126662987642893,
-        "y": 5.61801337171544
+        "x": 5.702467105263159,
+        "y": 2.477171052631578
       },
       "isLocked": false,
-      "linkedName": "AngledDepotBump"
+      "linkedName": "AngledOPBump"
     },
     {
       "anchor": {
-        "x": 3.7143686947530643,
-        "y": 5.632924393723252
+        "x": 3.952313596491228,
+        "y": 2.4098574561403505
       },
       "prevControl": {
-        "x": 4.174070333170265,
-        "y": 5.625358782200627
+        "x": 4.331143030194076,
+        "y": 2.477204911020857
       },
       "nextControl": {
-        "x": 3.3440939914261354,
-        "y": 5.6390182474925625
+        "x": 3.5195833333333333,
+        "y": 2.3329276315789467
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.344094151212553,
-        "y": 6.1375320970042795
+        "x": 2.211776315789474,
+        "y": 1.679024122807017
       },
       "prevControl": {
-        "x": 3.3448427109660956,
-        "y": 5.840357303574855
+        "x": 2.9137609649122806,
+        "y": 2.092521929824561
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 45.0
+      "rotationDegrees": -45.0
     }
   ],
   "constraintZones": [],
@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "SpinUp",
-      "waypointRelativePos": 2.0,
+      "waypointRelativePos": 1.5763016157989187,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -69,19 +69,19 @@
     "maxVelocity": 1.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.914383220025115
+    "rotation": 43.60281897270369
   },
   "reversed": false,
-  "folder": "Depot Clean Sweep",
+  "folder": "Outpost Clean Sweep",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 44.996008726320596
+    "rotation": -45.0
   },
   "useDefaultConstraints": false
 }
