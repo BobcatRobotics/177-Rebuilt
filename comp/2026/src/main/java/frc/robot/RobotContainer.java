@@ -177,6 +177,8 @@ public class RobotContainer {
                 autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
                 autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
                 autoChooser.addOption("Anand Depot Clean Sweep", new PathPlannerAuto("Anand Clean Sweep"));
+                autoChooser.addOption("Anand OP Side Clean Sweep        ", new PathPlannerAuto("Anand OP Side Clean Sweep"));
+
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -255,10 +257,10 @@ public class RobotContainer {
                  */
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
-                operator.povDown().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
+                operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
-                operator.povUp().whileTrue(intake.retractAndStop());
+                operator.a().whileTrue(intake.retractAndStop());
                 operator.y().onTrue(new InstantCommand(
                                 () -> intake.resetEncoder()).ignoringDisable(true));
 
@@ -266,6 +268,17 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
+
+                //manual retract
+                // operator.leftTrigger().whileTrue(
+                //         new RunCommand(
+                //                 () -> intake.manualRetract()
+                //                 , intake)
+                // ).onFalse(
+                //         new InstantCommand(
+                //                 () -> intake.stop()
+                //         )
+                // );
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)

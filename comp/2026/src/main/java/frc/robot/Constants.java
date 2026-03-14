@@ -162,13 +162,13 @@ public final class Constants {
         public static final class PivotConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = false;
-            public static double kP = 0.8;
+            public static double kP = 1.1;
             public static double kI = 0.00;
             public static double kD = 0.00;
             public static double kV = 0.00;
             public static double kS = 0.00;
             public static double kA = 0.00;
-            public static double currentLimit = 70;
+            public static double currentLimit = 80;
             public static int pivotMotorId = 10;
             public static double peakForwardLimit = 90;
             public static double peakReverseLimit = -90;

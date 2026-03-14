@@ -191,13 +191,13 @@ Gains rollerMotorGains;
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
 
-    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
+    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.8));
 
   }
 
   public void retractIntake() {
     intakePivotSetpoint = 0;
-    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.6));
+    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.7));
   }
 
   public double getVelocity() {

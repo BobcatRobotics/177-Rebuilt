@@ -252,13 +252,13 @@ public class IntakeReal2 implements IntakeIO {
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
+    positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.8));
 
   }
 
   public void retractIntake() {
     intakePivotSetpoint = 0;
-    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.6));
+    positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.7));
   }
 
   public double getRightVelocity() {
@@ -298,12 +298,13 @@ public class IntakeReal2 implements IntakeIO {
 
   public void stopPivotMotor() {
     intakePivotSetpoint = 0.0;
-    leftVelocityMotor.stopMotor();
-    rightVelocityMotor.stopMotor();
+    positionMotor.stopMotor();
   }
 
   public void stopBottom() {
   }
+
+  
 
   @Override
   public void periodic() {
