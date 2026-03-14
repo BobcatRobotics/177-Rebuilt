@@ -158,6 +158,7 @@ public final class Constants {
         public static double idleRollerSpeed = 0;
         public static double targetIntakeSpeed = 20;
 
+
         public static final class PivotConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = false;
@@ -173,7 +174,23 @@ public final class Constants {
             public static double peakReverseLimit = -90;
         }
 
-        public static final class RollerConstants {
+        public static final class RightRollerConstants {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static double kP = 1.628; //kP based on test was 1.995
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.123;
+            public static double kS = 0.312;
+            public static double kA = 0.00;
+            public static double currentLimit = 60;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
+//UPDATE ID
+            public static int rollerMotorId = 19;
+        }
+//Original motor
+         public static final class LeftRollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
             public static double kP = 1.628; //kP based on test was 1.995
@@ -188,6 +205,7 @@ public final class Constants {
 
             public static int rollerMotorId = 18;
         }
+
 
     }
 
