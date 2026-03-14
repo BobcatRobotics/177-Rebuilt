@@ -57,11 +57,15 @@ public interface IntakeIO {
   public default void stop() {
   }
 
-  public default void stopleftRollerWheel() {
+  public default void stopLeftRollerWheel() {
   }
 
-  public default void stoprightRollerWheel() {
+  public default void stopRightRollerWheel() {
   }
+
+    public default void stopRollerWheel() {
+  }
+
 
   public default void stopPivotMotor() {
   }

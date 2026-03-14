@@ -136,7 +136,7 @@ public class RobotContainer {
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
 
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeReal2());
                                 intake.applyState();
 
                                 vision = new Vision(drive::addVisionMeasurement,

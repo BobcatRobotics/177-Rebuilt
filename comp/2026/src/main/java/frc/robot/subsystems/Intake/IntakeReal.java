@@ -72,12 +72,12 @@ Gains rollerMotorGains;
         .kA(Constants.IntakeConstants.PivotConstants.kA)
         .build();
     rollerMotorGains = new Gains.Builder()
-        .kP(Constants.IntakeConstants.RollerConstants.kP)
-        .kI(Constants.IntakeConstants.RollerConstants.kI)
-        .kD(Constants.IntakeConstants.RollerConstants.kD)
-        .kS(Constants.IntakeConstants.RollerConstants.kS)
-        .kV(Constants.IntakeConstants.RollerConstants.kV)
-        .kA(Constants.IntakeConstants.RollerConstants.kA).build();
+        .kP(Constants.IntakeConstants.RightRollerConstants.kP)
+        .kI(Constants.IntakeConstants.RightRollerConstants.kI)
+        .kD(Constants.IntakeConstants.RightRollerConstants.kD)
+        .kS(Constants.IntakeConstants.RightRollerConstants.kS)
+        .kV(Constants.IntakeConstants.RightRollerConstants.kV)
+        .kA(Constants.IntakeConstants.RightRollerConstants.kA).build();
     setupRollerMotor(rollerMotorGains);
     setupPivotMotor(pivotMotorGains);
 
@@ -86,12 +86,12 @@ Gains rollerMotorGains;
 
   public void setupRollerMotor(Gains g) {
     intakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.IntakeConstants.RollerConstants.rollerMotorId,
-        Constants.IntakeConstants.RollerConstants.isInverted,
-        Constants.IntakeConstants.RollerConstants.isCoast,
-        Constants.IntakeConstants.RollerConstants.currentLimit,
-        Constants.IntakeConstants.RollerConstants.peakForwardLimit,
-        Constants.IntakeConstants.RollerConstants.peakReverseLimit);
+        Constants.IntakeConstants.RightRollerConstants.rollerMotorId,
+        Constants.IntakeConstants.RightRollerConstants.isInverted,
+        Constants.IntakeConstants.RightRollerConstants.isCoast,
+        Constants.IntakeConstants.RightRollerConstants.currentLimit,
+        Constants.IntakeConstants.RightRollerConstants.peakForwardLimit,
+        Constants.IntakeConstants.RightRollerConstants.peakReverseLimit);
     velocityMotor = new TalonFX(intakeVelocityConfig.getMotorId(), new CANBus("rio"));
     intakeVelocityConfig.configureMotor(velocityMotor, g);
     if (Constants.lowTelemetryMode) {
@@ -153,9 +153,9 @@ Gains rollerMotorGains;
         accelerationOfIntakePosition,
         accelerationOfIntakeSpeed, outputOfIntakePositionVolts, outputOfIntakeSpeedVolts);
     inputs.accelerationOfIntakePosition = accelerationOfIntakePosition.getValue().in(RotationsPerSecondPerSecond);
-    inputs.rightAccelerationOfIntakeSpeed = rightAccelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
+    inputs.rightAccelerationOfIntakeSpeed = accelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
     inputs.outputOfIntakePositionVolts = outputOfIntakePositionVolts.getValue().in(Volts);
-    inputs.outputOfIntakeSpeedVolts = outputOfIntakeSpeedVolts.getValue()
+    inputs.rightOutputOfIntakeSpeedVolts = outputOfIntakeSpeedVolts.getValue()
         .in(Volts);
     lowTelemetry(inputs);
 
@@ -167,9 +167,9 @@ Gains rollerMotorGains;
         velocityOfIntakeSpeedRPS, statorCurrentOfIntakeSpeedAmps);
     inputs.velocityOfIntakePositionRPS = velocityOfIntakePositionRPS.getValue().in(Rotation.per(Minute));
     inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
-    inputs.velocityConnected = velocityMotor.isConnected();
-    inputs.velocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
+    inputs.rightVelocityMotorConnected = velocityMotor.isConnected();
+    inputs.rightVelocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
+    inputs.rightStatorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
     inputs.positionConnected = velocityMotor.isConnected();
     inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
   }
@@ -215,6 +215,12 @@ Gains rollerMotorGains;
   }
 
   public void stopRollerWheel() {
+    stopRightRollerWheel();
+    stopLeftRollerWheel();
+  }
+    public void stopLeftRollerWheel() {
+  }
+    public void stopRightRollerWheel() {
     intakeVelocitySetpoint = 0.0;
     velocityMotor.stopMotor();
   }

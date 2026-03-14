@@ -69,8 +69,10 @@ public class IntakeReal2 implements IntakeIO {
   private StatusSignal<AngularAcceleration> accelerationOfIntakePosition;
 
   // private FindLimit seekLowerRange;
-Gains pivotMotorGains;
-Gains rollerMotorGains;
+  Gains pivotMotorGains;
+  Gains rightRollerMotorGains;
+  Gains leftRollerMotorGains;
+
   public IntakeReal2() {
     pivotMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.PivotConstants.kP)
@@ -80,22 +82,30 @@ Gains rollerMotorGains;
         .kV(Constants.IntakeConstants.PivotConstants.kV)
         .kA(Constants.IntakeConstants.PivotConstants.kA)
         .build();
-    rollerMotorGains = new Gains.Builder()
+    rightRollerMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.RightRollerConstants.kP)
         .kI(Constants.IntakeConstants.RightRollerConstants.kI)
         .kD(Constants.IntakeConstants.RightRollerConstants.kD)
         .kS(Constants.IntakeConstants.RightRollerConstants.kS)
         .kV(Constants.IntakeConstants.RightRollerConstants.kV)
         .kA(Constants.IntakeConstants.RightRollerConstants.kA).build();
-    setUpLeftRollerMotor(rollerMotorGains);
-    setUpRightRollerMotor(rollerMotorGains);
+
+    leftRollerMotorGains = new Gains.Builder()
+        .kP(Constants.IntakeConstants.LeftRollerConstants.kP)
+        .kI(Constants.IntakeConstants.LeftRollerConstants.kI)
+        .kD(Constants.IntakeConstants.LeftRollerConstants.kD)
+        .kS(Constants.IntakeConstants.LeftRollerConstants.kS)
+        .kV(Constants.IntakeConstants.LeftRollerConstants.kV)
+        .kA(Constants.IntakeConstants.LeftRollerConstants.kA).build();
+    setUpLeftRollerMotor(leftRollerMotorGains);
+    setUpRightRollerMotor(rightRollerMotorGains);
     setupPivotMotor(pivotMotorGains);
 
     // seekLowerRange = new FindLimit(false, positionMotor);
   }
 
   public void setUpRightRollerMotor(Gains g) {
-        rightIntakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
+    rightIntakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.RightRollerConstants.rollerMotorId,
         Constants.IntakeConstants.RightRollerConstants.isInverted,
         Constants.IntakeConstants.RightRollerConstants.isCoast,
@@ -148,7 +158,6 @@ Gains rollerMotorGains;
 
   }
 
-
   public void setupPivotMotor(Gains g) {
     intakePivotConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
@@ -189,55 +198,41 @@ Gains rollerMotorGains;
   public void lowTelemetry(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         velocityOfIntakePositionRPS, statorCurrentOfIntakePositionAmps,
-        rightVelocityOfIntakeSpeedRPS, rightStatorCurrentOfIntakeSpeedAmps, leftVelocityOfIntakeSpeedRPS, leftStatorCurrentOfIntakeSpeedAmps);
-    
+        rightVelocityOfIntakeSpeedRPS, rightStatorCurrentOfIntakeSpeedAmps,
+        leftVelocityOfIntakeSpeedRPS, leftStatorCurrentOfIntakeSpeedAmps);
 
-    //Position
+    // Position
     inputs.velocityOfIntakePositionRPS = velocityOfIntakePositionRPS.getValue().in(Rotation.per(Minute));
     inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
     inputs.positionConnected = positionMotor.isConnected();
     inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
 
-    //Right Velocity
+    // Right Velocity
     inputs.rightVelocityMotorConnected = rightVelocityMotor.isConnected();
     inputs.rightVelocityOfIntakeSpeedRPS = rightVelocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
     inputs.rightStatorCurrentOfIntakeSpeedAmps = rightStatorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
-    inputs.rightOutputOfIntakeSpeedVolts = rightOutputOfIntakeSpeedVolts.getValue().in(Volts);
 
-
-    //Left Velocity
+    // Left Velocity
     inputs.leftVelocityMotorConnected = leftVelocityMotor.isConnected();
     inputs.leftVelocityOfIntakeSpeedRPS = leftVelocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
     inputs.leftStatorCurrentOfIntakeSpeedAmps = leftStatorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
-    inputs.leftOutputOfIntakeSpeedVolts = leftOutputOfIntakeSpeedVolts.getValue().in(Volts);
-
-    lowTelemetry(inputs);
 
   }
 
   public void highTelemetry(IntakeIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        leftelocityOfIntakePositionRPS, statorCurrentOfIntakePositionAmps,
-        velocityOfIntakeSpeedRPS, statorCurrentOfIntakeSpeedAmps);
-    inputs.velocityOfIntakePositionRPS = velocityOfIntakePositionRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
-    inputs.intakePosition = positionMotor.getPosition().getValueAsDouble();
-    inputs.statorCurrentOfIntakePositionAmps = statorCurrentOfIntakePositionAmps.getValue().in(Amps);
-    inputs.positionConnected = positionMotor.isConnected();
-    
-    inputs.leftVelocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
-    inputs.leftStatorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
-    inputs.leftVelocityMotorConnected = leftVelocityMotor.isConnected();
-    inputs.leftOutputOfIntakeSpeedVolts = 
+        accelerationOfIntakePosition, outputOfIntakePositionVolts,
+        leftAccelerationOfIntakeSpeed, rightAccelerationOfIntakeSpeed,
+        leftOutputOfIntakeSpeedVolts, rightOutputOfIntakeSpeedVolts);
+
+    inputs.accelerationOfIntakePosition = accelerationOfIntakePosition.getValue().in(RotationsPerSecondPerSecond);
+    inputs.outputOfIntakePositionVolts = outputOfIntakePositionVolts.getValue().in(Volts);
     inputs.leftAccelerationOfIntakeSpeed = leftAccelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
-    
-    
-    inputs.velocityOfIntakeSpeedRPS = velocityOfIntakeSpeedRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfIntakeSpeedAmps = statorCurrentOfIntakeSpeedAmps.getValue().in(Amps);
+    inputs.rightAccelerationOfIntakeSpeed = rightAccelerationOfIntakeSpeed.getValue().in(RotationsPerSecondPerSecond);
+    inputs.leftOutputOfIntakeSpeedVolts = leftOutputOfIntakeSpeedVolts.getValue().in(Volts);
+    inputs.rightOutputOfIntakeSpeedVolts = rightOutputOfIntakeSpeedVolts.getValue().in(Volts);
 
     lowTelemetry(inputs);
-
-
   }
 
   public void setVelocity(double velocity) {
@@ -257,7 +252,6 @@ Gains rollerMotorGains;
 
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
-
     positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.7));
 
   }
@@ -286,6 +280,17 @@ Gains rollerMotorGains;
   }
 
   public void stopRollerWheel() {
+    stopLeftRollerWheel();
+    stopRightRollerWheel();
+  }
+
+  public void stopLeftRollerWheel() {
+    intakeVelocitySetpoint = 0.0;
+    leftVelocityMotor.stopMotor();
+    rightVelocityMotor.stopMotor();
+  }
+
+  public void stopRightRollerWheel() {
     intakeVelocitySetpoint = 0.0;
     leftVelocityMotor.stopMotor();
     rightVelocityMotor.stopMotor();
@@ -330,7 +335,8 @@ Gains rollerMotorGains;
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Intake() {
-    double avg = (leftVelocityMotor.getVelocity().getValue().in(RotationsPerSecond)) / 1;
+    double avg = (leftVelocityMotor.getVelocity().getValue().in(RotationsPerSecond)
+        + rightVelocityMotor.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     return avg;
   }
 
@@ -350,7 +356,8 @@ Gains rollerMotorGains;
         Constants.IntakeConstants.PivotConstants.peakReverseLimit);
     intakePivotConfig.configureMotor(positionMotor, pivotMotorGains);
   }
-    public void setNeturalBrake() {
+
+  public void setNeturalBrake() {
     intakePivotConfig = new ModuleConfigurator(pivotMotorGains.toSlot0Configs(),
         Constants.IntakeConstants.PivotConstants.pivotMotorId,
         Constants.IntakeConstants.PivotConstants.isInverted,
