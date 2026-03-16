@@ -128,7 +128,6 @@ public class IntakeReal2 implements IntakeIO {
       rightIntakeVelocityConfig.configureSignals(rightVelocityMotor, 50.0, rightVelocityOfIntakeSpeedRPS,
           rightStatorCurrentOfIntakeSpeedAmps, rightOutputOfIntakeSpeedVolts, rightAccelerationOfIntakeSpeed);
     }
-
   }
 
   public void setUpLeftRollerMotor(Gains g) {
@@ -155,7 +154,6 @@ public class IntakeReal2 implements IntakeIO {
       leftintakeVelocityConfig.configureSignals(leftVelocityMotor, 50.0, leftVelocityOfIntakeSpeedRPS,
           leftStatorCurrentOfIntakeSpeedAmps, leftOutputOfIntakeSpeedVolts, leftAccelerationOfIntakeSpeed);
     }
-
   }
 
   public void setupPivotMotor(Gains g) {

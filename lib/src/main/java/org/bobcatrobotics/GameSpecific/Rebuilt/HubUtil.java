@@ -1,13 +1,17 @@
 package org.bobcatrobotics.GameSpecific.Rebuilt;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -15,7 +19,6 @@ import java.util.Optional;
  * Automatically pulses alerts when ownership changes.
  */
 public final class HubUtil {
-
     private static final double HUB_ACTIVE_START = 15.0;
     private static final double HUB_ACTIVE_END   = 135.0;
     private static final double ALERT_PULSE_DURATION = 2.0;
@@ -131,19 +134,29 @@ public static Pose3d getActiveHubCoordinates(Alliance alliance) {
  */
 public static Pose3d getMyHubCoordinates(Alliance alliance) {
 
-    final Pose3d blueHub = new Pose3d(
-        4.620,
-        4.040,
-        3.057144,
-        new Rotation3d()
-    );
+    Pose3d blueHub = new Pose3d();
+    Pose3d redHub = new Pose3d();
 
-    final Pose3d redHub = new Pose3d(
-        RebuiltFieldConstants.fieldLength - 4.620,
-        4.040,
-        3.057144,
-        new Rotation3d(0, 0, Math.PI)
-    );
+        double hubradius = Units.inchesToMeters(47 /2 );
+        if( alliance == Alliance.Red){
+
+            redHub = new Pose3d(
+                    12.5051566+ hubradius,
+                    4.0213534,
+                    1.12395,
+                    new Rotation3d(0, 0, Math.PI));
+
+        }
+        else{
+            blueHub = new Pose3d(
+                    4.007866+ hubradius,
+                    4.0213534,
+                    1.12395,
+                new Rotation3d());
+            
+        }
+        
+
 
     if(Alliance.Red== alliance){
         return redHub;

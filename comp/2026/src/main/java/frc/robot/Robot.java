@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -125,6 +126,11 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
+    
+    if(DriverStation.getAlliance().isPresent()){
+                       RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                }
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -183,6 +189,8 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
+    robotContainer.simTelePeriodic();
+
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();

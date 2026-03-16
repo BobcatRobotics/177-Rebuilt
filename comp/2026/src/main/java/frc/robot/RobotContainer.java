@@ -177,8 +177,8 @@ public class RobotContainer {
                 autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
                 autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
                 autoChooser.addOption("Anand Depot Clean Sweep", new PathPlannerAuto("Anand Clean Sweep"));
-                autoChooser.addOption("Anand OP Side Clean Sweep        ", new PathPlannerAuto("Anand OP Side Clean Sweep"));
-
+                autoChooser.addOption("Anand OP Side Clean Sweep        ",
+                                new PathPlannerAuto("Anand OP Side Clean Sweep"));
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -193,12 +193,12 @@ public class RobotContainer {
                                 "ShootBalls", ShootBalls());
                 NamedCommands.registerCommand(
                                 "IntakeDown", IntakeDown());
-                NamedCommands.registerCommand("IntakeUp",intake.retractAndStop());
-                NamedCommands.registerCommand("IntakePosReset",new InstantCommand(()->intake.resetEncoder()));
-                NamedCommands.registerCommand("RunIntakeRollers",RunIntakeRollers());
+                NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
+                NamedCommands.registerCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder()));
+                NamedCommands.registerCommand("RunIntakeRollers", RunIntakeRollers());
                 NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
-                                        intake.stop();
-                                }, intake));
+                        intake.stop();
+                }, intake));
                 NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
         }
 
@@ -249,12 +249,6 @@ public class RobotContainer {
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
-                /*
-                 * Controls Shooting right bumper will start flywheels then after 1/4 of a
-                 * second start the hopper enableing shots to fly.
-                 * this should eventually be changed to look at if the shooter wheels are up to
-                 * speed isntead of an time based approach.
-                 */
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
@@ -268,17 +262,6 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
-
-                //manual retract
-                // operator.leftTrigger().whileTrue(
-                //         new RunCommand(
-                //                 () -> intake.manualRetract()
-                //                 , intake)
-                // ).onFalse(
-                //         new InstantCommand(
-                //                 () -> intake.stop()
-                //         )
-                // );
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
@@ -353,24 +336,41 @@ public class RobotContainer {
         }
 
         public void teleopPeriodic() {
+
+                if (DriverStation.getAlliance().isPresent()) {
+                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                }
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
+                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
                 Logger.recordOutput("Hub/MyHubLocation/Pose3d",
                                 HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
-                // Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
+        }
+
+        public void simTelePeriodic() {
+                if (DriverStation.getAlliance().isPresent()) {
+                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                }
+                HubData hubData = hub.getHubData();
+                Logger.recordOutput("Hub/Status", hubData.owner);
+                Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
+                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
+                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
         }
 
         public Command SpinUp() {
                 return new RunCommand(() -> {
                         m_Shooter.spinUp();
-                        if(RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed){
+                        if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
                                 controller.setRumble(RumbleType.kBothRumble, 1);
-                        }
-                        else{
-                                 controller.setRumble(RumbleType.kBothRumble, 0);
+                        } else {
+                                controller.setRumble(RumbleType.kBothRumble, 0);
                         }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
@@ -387,13 +387,13 @@ public class RobotContainer {
                 }, intake));
         }
 
-        public Command IntakeDown(){
-           return   new RunCommand(() -> {
+        public Command IntakeDown() {
+                return new RunCommand(() -> {
                         intake.setPosition(11.7);
                 }, intake);
         }
 
-        public Command RunIntakeRollers(){
+        public Command RunIntakeRollers() {
                 return new RunCommand(() -> {
                         intake.setVelocity(400);
                 }, intake);
