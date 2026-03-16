@@ -10,18 +10,26 @@ public interface IntakeIO {
     public double statorCurrentOfIntakePositionAmps = 0.0;
     public double outputOfIntakePositionVolts = 0.0;
     public double accelerationOfIntakePosition = 0.0;
-    public boolean velocityConnected = false;
+    public boolean positionConnected = false;
     public double intakePosition = -1;
 
-    public double velocityOfIntakeSpeedRPS = 0.0;
-    public double statorCurrentOfIntakeSpeedAmps = 0.0;
-    public double outputOfIntakeSpeedVolts = 0.0;
-    public double accelerationOfIntakeSpeed = 0.0;
-    public boolean positionConnected = false;
+    public double leftVelocityOfIntakeSpeedRPS = 0.0;
+    public double leftStatorCurrentOfIntakeSpeedAmps = 0.0;
+    public double leftOutputOfIntakeSpeedVolts = 0.0;
+    public double leftAccelerationOfIntakeSpeed = 0.0;
+    public boolean leftVelocityMotorConnected = false;
+
+    public double rightVelocityOfIntakeSpeedRPS = 0.0;
+    public double rightStatorCurrentOfIntakeSpeedAmps = 0.0;
+    public double rightOutputOfIntakeSpeedVolts = 0.0;
+    public double rightAccelerationOfIntakeSpeed = 0.0;
+    public boolean rightVelocityMotorConnected = false;
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {
   }
+
+ 
 
   public default void setVelocity(double velocity) {
   }
@@ -40,15 +48,26 @@ public interface IntakeIO {
 
    public default void resetEncoder() {}
 
-  public default double getVelocity() {
+  public default double getleftVelocity() {
+    return 0.0;
+  }
+
+  public default double getRightVelocity() {
     return 0.0;
   }
 
   public default void stop() {
   }
 
-  public default void stopRollerWheel() {
+  public default void stopLeftRollerWheel() {
   }
+
+  public default void stopRightRollerWheel() {
+  }
+
+    public default void stopRollerWheel() {
+  }
+
 
   public default void stopPivotMotor() {
   }
@@ -82,5 +101,12 @@ public interface IntakeIO {
 
   public default void holdPosition() {
 
+  }
+
+  public default void setNeturalCoast(){
+
+  }
+  public default void setNeturalBrake(){
+    
   }
 }

@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.Tunables.Gains;
-import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -47,8 +46,6 @@ public class HopperRealSingle implements HopperIO {
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-  private TunablePID hopperTopPID;
-  private TunablePID hopperBottomPID;
 
   public double hopperSetpointTop = 0;
   public double hopperSetpointBottom = 0;
@@ -68,34 +65,51 @@ public class HopperRealSingle implements HopperIO {
   }
 
   public void setupTopMotor(Gains g) {
-    hopperTopPID = new TunablePID(
-        "/Hopper/Top/PID", g);
     hopperConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.HopperConstants.Top.hopperMotorId,
         Constants.HopperConstants.Top.isInverted,
         Constants.HopperConstants.Top.isCoast,
         Constants.HopperConstants.Top.hopperCurrentLimit);
     hopperMotor = new TalonFX(hopperConfig.getMotorInnerId(), new CANBus("rio"));
-    hopperConfig.configureMotor(hopperMotor, hopperTopPID);
-    velocityOfHopperTopRPS = hopperMotor.getVelocity();
-    statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
-    outputOfHopperTopVolts = hopperMotor.getMotorVoltage();
-    accelerationOfHopperTop = hopperMotor.getAcceleration();
-    hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
-        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
+    hopperConfig.configureMotor(hopperMotor, g);
+    if (Constants.lowTelemetryMode) {
+      velocityOfHopperTopRPS = hopperMotor.getVelocity();
+      statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
+      hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
+          statorCurrentOfHopperTopAmps);
+    } else {
+      velocityOfHopperTopRPS = hopperMotor.getVelocity();
+      statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
+      outputOfHopperTopVolts = hopperMotor.getMotorVoltage();
+      accelerationOfHopperTop = hopperMotor.getAcceleration();
+      hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
+          statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
+    }
+
   }
 
   @Override
   public void updateInputs(HopperIOInputs inputs) {
-    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,
-        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, outputOfHopperTopVolts
-        );
+    if (Constants.lowTelemetryMode) {
+      lowTelemetry(inputs);
+    } else {
+      highTelemetry(inputs);
+    }
 
-    inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
-    inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);
+  }
+
+  public void highTelemetry(HopperIOInputs inputs) {
+    BaseStatusSignal.refreshAll( accelerationOfHopperTop, outputOfHopperTopVolts);
     inputs.accelerationOfHopperTop = accelerationOfHopperTop.getValue()
         .in(RotationsPerSecondPerSecond);
     inputs.outputOfHopperTopVolts = outputOfHopperTopVolts.getValue().in(Volts);
+    lowTelemetry(inputs);
+  }
+
+  public void lowTelemetry(HopperIOInputs inputs) {
+    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,statorCurrentOfHopperTopAmps);
+    inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
+    inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);
     inputs.hopperTopConnected = hopperMotor.isConnected();
   }
 
@@ -132,9 +146,6 @@ public class HopperRealSingle implements HopperIO {
 
   @Override
   public void periodic() {
-    if (hopperTopPID.hasChanged()) {
-      hopperConfig.updateMotorPID(hopperMotor, hopperTopPID);
-    }
   }
 
   /* Characterization */

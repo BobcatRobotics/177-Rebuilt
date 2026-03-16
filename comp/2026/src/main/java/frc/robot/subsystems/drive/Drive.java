@@ -1,4 +1,3 @@
-
 // Copyright (c) 2021-2026 Littleton Robotics
 // http://github.com/Mechanical-Advantage
 //
@@ -8,15 +7,7 @@
 
 package frc.robot.subsystems.drive;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
+import static edu.wpi.first.units.Units.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -25,16 +16,13 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -52,9 +40,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
@@ -69,7 +62,7 @@ public class Drive extends SubsystemBase {
               Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
-  private static final double ROBOT_MASS_KG = 74.088;
+  private static final double ROBOT_MASS_KG = 68.0389;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
   private static final RobotConfig PP_CONFIG =
@@ -131,7 +124,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(2, 0.0, 0.0), new PIDConstants(10, 0.0, 0)),
         PP_CONFIG,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -214,6 +207,8 @@ public class Drive extends SubsystemBase {
 
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
+
+    RobotState.getInstance().robotPose = getPose();
   }
 
   /**
@@ -331,20 +326,6 @@ public class Drive extends SubsystemBase {
     return getPose().getRotation();
   }
 
-  public Rotation3d getRotation3d() {
-    return new Rotation3d(
-        Rotation2d.fromDegrees(gyroIO.getPitch()).getRadians(),
-        Rotation2d.fromDegrees(gyroIO.getRoll()).getRadians(),
-        poseEstimator.getEstimatedPosition().getRotation().getRadians());
-  }
-
-  public Rotation3d getRotationRate() {
-    return new Rotation3d(
-        gyroInputs.rollVelocityRadPerSec,
-        gyroInputs.pitchVelocityRadPerSec,
-        gyroInputs.yawVelocityRadPerSec);
-  }
-
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
@@ -378,50 +359,4 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
-
-    public double getPitch(){
-    return gyroIO.getPitch();
-  }
-  public double getRoll(){
-    return gyroIO.getRoll();
-  }
-
-    /** Returns the 2D field pose of the requested target. */
-    public static Pose2d getTargetPose() {
-      Alliance alliance = Alliance.Blue;
-      if( DriverStation.getAlliance().isPresent()){
-          alliance = DriverStation.getAlliance().get();
-      }
-      //return HubUtil.getHubCoordinates(alliance).toPose2d();
-      return new Pose3d(
-        4.620,
-        4.040,
-        3.057144,
-        new Rotation3d()
-    ).toPose2d();
-    }
-    /**
-     * Horizontal distance in meters from the turret to the target.
-     */
-    public static double getHorizontalDistance(Pose2d robotPose) {
-        Translation2d chassisTranslation = robotPose.getTranslation();
-        Translation2d goal = getTargetPose().getTranslation();
-        return chassisTranslation.getDistance(goal);
-    }
-     /**
-     * Field-relative angle Rotation2d from the turret to the target.
-     */
-    public Rotation2d getFieldAngleToTarget() {
-        Translation2d turret = poseEstimator.getEstimatedPosition().getTranslation();
-        Translation2d goal = getTargetPose().getTranslation();
-        double dx = goal.getX() - turret.getX();
-        double dy = goal.getY() - turret.getY();
-
-        //this in returning in units radians between -pi and pi
-        double fieldAngleToTarget = Math.atan2(dy, dx);
-        
-        Logger.recordOutput("VisionTest/FATT", fieldAngleToTarget);
-        return Rotation2d.fromDegrees(45);
-        // return Rotation2d.fromRadians(fieldAngleToTarget);
-    }
 }

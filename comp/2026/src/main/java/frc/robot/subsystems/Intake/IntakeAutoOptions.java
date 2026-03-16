@@ -18,7 +18,7 @@ public class IntakeAutoOptions {
     public LoggedDashboardChooser<Command> getOptions() {
         // Set up SysId routines
         autoChooser.addOption("Intake Simple FF Characterization",
-                intakeCharacterizationCommands.feedforwardCharacterization_IntakeVelocity(intake).withTimeout(15));
+                intakeCharacterizationCommands.feedforwardCharacterization_IntakeVelocity(intake).withTimeout(40));
         autoChooser.addOption("Intake All Simple FF Characterization",
                  intakeCharacterizationCommands.characterizeForAll(intake).withTimeout(15));
 

@@ -15,36 +15,32 @@
 package frc.robot;
 
 import org.bobcatrobotics.Commands.ActionFactory;
-import org.bobcatrobotics.Controllers.ControllerAutoDetect;
-import org.bobcatrobotics.Controllers.Gamepads.ControllerBase;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
-import org.bobcatrobotics.Subsystems.AntiTippingLib.AntiTipping;
-import org.bobcatrobotics.Subsystems.Swerve.ModuleWrapper;
 import org.littletonrobotics.junction.Logger;
-// import frc.robot.subsystems.roller.RollerSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
-import frc.robot.subsystems.Hopper.HopperAutoOptions;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
@@ -52,8 +48,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeAutoOptions;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
-import frc.robot.subsystems.Intake.IntakeState;
-import frc.robot.subsystems.Intake.IntakeState.IntakeGoal;
+import frc.robot.subsystems.Intake.IntakeReal2;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
@@ -67,6 +62,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
 
@@ -82,16 +78,15 @@ import frc.robot.util.AllianceFlipUtil;
 public class RobotContainer {
         // Subsystems
         private final Drive drive;
-        private final AntiTipping antiTipping;
-        private Vision vision;
+        public Vision vision;
         public final Shooter m_Shooter;
         private final Hopper m_Hopper;
         public final Intake intake;
 
         // Controller
-        private final ControllerBase controller;
-        private final ControllerBase operator;
-        private final ControllerBase devController;
+        private final CommandXboxController controller;
+        private final CommandXboxController operator;
+        private final CommandXboxController devController;
 
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
@@ -102,27 +97,19 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
-                controller = ControllerAutoDetect.createGamepad(0, "driver");
-                operator = ControllerAutoDetect.createGamepad(1, "operator");
-                devController = ControllerAutoDetect.createGamepad(2, "driver");
+                controller = new CommandXboxController(0);
+                operator = new CommandXboxController(1);
+                devController = new CommandXboxController(2);
 
-                ModuleWrapper newFrontRight = new ModuleWrapper("FrontRight.json", "FrontRight");
-                ModuleWrapper newFrontLeft = new ModuleWrapper("FrontLeft.json", "FrontLeft");
-                ModuleWrapper newBackLeft = new ModuleWrapper("BackLeft.json", "BackLeft");
-                ModuleWrapper newBackRight = new ModuleWrapper("BackRight.json", "BackRight");
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
 
                                 drive = new Drive(new GyroIOPigeon2(),
-                                                new ModuleIOTalonFX(newFrontLeft
-                                                                .addModuleConstants(TunerConstants.FrontLeft)),
-                                                new ModuleIOTalonFX(newFrontRight
-                                                                .addModuleConstants(TunerConstants.FrontRight)),
-                                                new ModuleIOTalonFX(newBackLeft
-                                                                .addModuleConstants(TunerConstants.BackLeft)),
-                                                new ModuleIOTalonFX(newBackRight
-                                                                .addModuleConstants(TunerConstants.BackRight)));
+                                                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                                                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                                                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                                                new ModuleIOTalonFX(TunerConstants.BackRight));
                                 // Vision
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight("limelight-shooter", drive::getRotation),
@@ -133,26 +120,23 @@ public class RobotContainer {
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeReal2());
                                 intake.applyState();
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
                                 drive = new Drive(new GyroIO() {
-                                }, new ModuleIOSim(newFrontLeft.addModuleConstants(TunerConstants.FrontLeft)),
-                                                new ModuleIOSim(newFrontRight
-                                                                .addModuleConstants(TunerConstants.FrontRight)),
-                                                new ModuleIOSim(newBackLeft
-                                                                .addModuleConstants(TunerConstants.BackLeft)),
-                                                new ModuleIOSim(newBackRight
-                                                                .addModuleConstants(TunerConstants.BackRight)));
+                                }, new ModuleIOSim(TunerConstants.FrontLeft),
+                                                new ModuleIOSim(TunerConstants.FrontRight),
+                                                new ModuleIOSim(TunerConstants.BackLeft),
+                                                new ModuleIOSim(TunerConstants.BackRight));
                                 m_Shooter = new Shooter(new ShooterSim());
                                 m_Shooter.applyState();
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
 
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeReal2());
                                 intake.applyState();
 
                                 vision = new Vision(drive::addVisionMeasurement,
@@ -178,30 +162,44 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeIO() {
                                 });
 
-                                
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
-                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
                                 break;
                 }
 
-                antiTipping = new AntiTipping(() -> drive.getPitch(), () -> drive.getRoll(), 0.04, // kP
-                                3.0, // tipping threshold (degrees)
-                                2.5 // max correction speed (m/s)
-                );
-
                 // Set up auto routines
+                registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-                autoChooser = new DriveAutoOptions(autoChooser,drive).getOptions();
-                autoChooser = new IntakeAutoOptions(autoChooser,intake).getOptions();
+                autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
+                autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
-                autoChooser.addOption("Auto Test", new PathPlannerAuto("Auto Testing #1"));
-
+                autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
+                autoChooser.addOption("Anand Depot Clean Sweep", new PathPlannerAuto("Anand Clean Sweep"));
+                autoChooser.addOption("Anand OP Side Clean Sweep        ",
+                                new PathPlannerAuto("Anand OP Side Clean Sweep"));
 
                 // Configure the button bindings
                 configureButtonBindings();
 
                 hub = new HubUtil();
+        }
+
+        private void registerCommands() {
+                NamedCommands.registerCommand(
+                                "SpinUp", SpinUp());
+                NamedCommands.registerCommand(
+                                "ShootBalls", ShootBalls());
+                NamedCommands.registerCommand(
+                                "IntakeDown", IntakeDown());
+                NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
+                NamedCommands.registerCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder()));
+                NamedCommands.registerCommand("RunIntakeRollers", RunIntakeRollers());
+                NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
+                        intake.stop();
+                }, intake));
+                NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
         }
 
         /**
@@ -220,7 +218,7 @@ public class RobotContainer {
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX(),
-                                                () -> controller.getRightX()));
+                                                () -> -controller.getRightX()));
 
                 m_Shooter.setDefaultCommand(new RunCommand(() -> {
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
@@ -234,136 +232,37 @@ public class RobotContainer {
                 }, m_Hopper));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
 
-
-                 
-                controller.getButton("A").whileTrue(
+                controller.rightTrigger().whileTrue(
                                 new AutoAimDrive(
                                                 drive,
                                                 () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
-// controller.getButton("A")
-//                                 .whileTrue(DriveCommands.alignToTag( drive, ()-> vision.getShooterTx()));
-                // // Lock to 0° when A button is held
-                // controller.getButton("A")
-                //                 .whileTrue(
-                //                                 DriveCommands.joystickDriveAtAngle(
-                //                                                 drive,
-                //                                                 () -> -controller.getLeftY(),
-                //                                                 () -> -controller.getLeftX(),
-                //                                                 () -> Rotation2d.kZero));
 
                 // Switch to X pattern when X button is pressed
-                controller.getButton("X")
+                controller.x()
                                 .onTrue(new ActionFactory().singleAction("X-Command", () -> drive.stopWithX(), drive));
 
                 // Reset gyro to 0° when B button is pressed
-                controller.getButton("B")
+                controller.b()
                                 .onTrue(new ActionFactory().singleAction("ZeroGyroCommand",
                                                 () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
-                /*
-                 * Controls Shooting right bumper will start flywheels then after 1/4 of a
-                 * second start the hopper enableing shots to fly.
-                 * this should eventually be changed to look at if the shooter wheels are up to
-                 * speed isntead of an time based approach.
-                 */
-                 controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                         m_Shooter.spinUp();
-                 }, m_Shooter).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                 }, intake)));
-                 controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                         m_Hopper.runHopper();
-                 }, m_Hopper).alongWith(new RunCommand(() -> {
-                         m_Shooter.shootFuel();
-                 }, m_Shooter)).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                 }, intake)));  
-                 /*
-                controller.getRightBumper().whileTrue(new RunCommand(() -> {
-                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                        intakeState.setState(IntakeState.State.MANUAL);
-                        IntakeGoal goal = new IntakeGoal();
-                        goal.position = 5;
-                        goal.speed = 125;
-                        intakeState.setCurrentSetPoints(goal);
-                        intake.setState(intakeState);
-                }, intake));
-
-                controller.getLeftBumper().whileTrue(new RunCommand(() -> {
-                        IntakeState intakeState = RobotState.getInstance().getIntakeState();
-                        intakeState.setState(IntakeState.State.MANUAL);
-                        IntakeGoal goal = new IntakeGoal();
-                        goal.position = 0;
-                        goal.speed = 0;
-                        intakeState.setCurrentSetPoints(goal);
-                        intake.setState(intakeState);
-                }, intake));
-                */
-                operator.getPovDown().whileTrue(new RunCommand(() -> {
-                        intake.setPosition(11.7);
-                }, intake))
-                .onFalse(new InstantCommand(() -> {
-                        intake.stop();
-                },intake));
-
-                operator.getPovUp().whileTrue(intake.retractAndStop());
-
-                operator.getButton("Y").onTrue(new InstantCommand(
-                        () -> intake.resetEncoder()
-                ).ignoringDisable(true));
-
-                // Command jiggleCommand = new RunCommand(
-                //                 () -> intake.setPosition(5) , intake).until(()-> intake.getPosition() <= 5)
-                //         .andThen( new WaitCommand(0.5) ).andThen(
-                //                 () -> intake.setPosition(11.75)
-                //         );
-
-                // controller.getButton("X").whileTrue(
-                //         jiggleCommand
-                //         .repeatedly().withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-                // ).onFalse(new InstantCommand(()->intake.stop()));
-                
-                
-
-                operator.getPovRight().whileTrue(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                }, intake))
-                .onFalse(new InstantCommand(() -> {
+                controller.rightBumper().whileTrue(SpinUp());
+                controller.leftBumper().whileTrue(ShootBalls());
+                operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
-                
+                operator.a().whileTrue(intake.retractAndStop());
+                operator.y().onTrue(new InstantCommand(
+                                () -> intake.resetEncoder()).ignoringDisable(true));
 
-                // controller.getRightBumper().whileTrue(
-                // Commands.run(() -> {
-                // if (m_Shooter.atSpeed()) {
-                // m_Shooter.shootFuel();
-                // } else {
-                // m_Shooter.spinUp();
-                // }
-                // }, m_Shooter).alongWith(
-                // Commands.run(() -> {
-                // if (m_Shooter.atSpeed()) {
-                // m_Hopper.runHopper();
-                // } else {
-                // m_Hopper.stop();
-                // }
-                // }, m_Hopper)));
-                // controller.getLeftBumper().whileTrue(
-                // Commands.run(() -> {
-                // m_Shooter.reverseFuel();
-                // }, m_Shooter).alongWith(
-                // Commands.run(() -> {
-                // m_Hopper.reverseHopper();
-                // }, m_Hopper)));
-                /*
-                 * Controls the Intake Position
-                 */
-                /*
-                 * Functional Test
-                 */
+                operator.x().whileTrue(RunIntakeRollers())
+                                .onFalse(new InstantCommand(() -> {
+                                        intake.stop();
+                                }, intake));
+
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
                                 .withTimeout(runTestTime)
@@ -396,9 +295,9 @@ public class RobotContainer {
                 }, m_Hopper).withTimeout(runTestTime).andThen(new RunCommand(() -> {
                         intake.grabBalls();
                 }, intake).withTimeout(runTestTime)).andThen(new InstantCommand(() -> intake.stop()));
-                devController.getLeftBumper().whileTrue(
+                devController.leftBumper().whileTrue(
                                 swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
-                devController.getRightBumper().whileTrue(characterizeAll());
+                devController.rightBumper().whileTrue(characterizeAll());
         }
 
         public Command characterizeAll() {
@@ -437,12 +336,66 @@ public class RobotContainer {
         }
 
         public void teleopPeriodic() {
-                antiTipping.calculate();
+
+                if (DriverStation.getAlliance().isPresent()) {
+                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                }
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/HubLocation/Pose3d",
-                                HubUtil.getHubCoordinates(DriverStation.getAlliance().get()));
-                //Logger.recordOutput("Swerve/FrontRightEncoderOffset", )
+                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
+                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
+        }
+
+        public void simTelePeriodic() {
+                if (DriverStation.getAlliance().isPresent()) {
+                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                }
+                HubData hubData = hub.getHubData();
+                Logger.recordOutput("Hub/Status", hubData.owner);
+                Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
+                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
+                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
+        }
+
+        public Command SpinUp() {
+                return new RunCommand(() -> {
+                        m_Shooter.spinUp();
+                        if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
+                                controller.setRumble(RumbleType.kBothRumble, 1);
+                        } else {
+                                controller.setRumble(RumbleType.kBothRumble, 0);
+                        }
+                }, m_Shooter).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command ShootBalls() {
+                return new RunCommand(() -> {
+                        m_Hopper.runHopper();
+                }, m_Hopper).alongWith(new RunCommand(() -> {
+                        m_Shooter.shootFuel();
+                }, m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command IntakeDown() {
+                return new RunCommand(() -> {
+                        intake.setPosition(11.7);
+                }, intake);
+        }
+
+        public Command RunIntakeRollers() {
+                return new RunCommand(() -> {
+                        intake.setVelocity(400);
+                }, intake);
         }
 }

@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootBalls"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

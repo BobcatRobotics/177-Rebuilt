@@ -57,10 +57,6 @@ public class HopperRealDual implements HopperIO {
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-
-  private TunablePID hopperTopPID;
-  private TunablePID hopperBottomPID;
-
   public double hopperSetpointTop = 0;
   public double hopperSetpointBottom = 0;
 
@@ -84,15 +80,13 @@ public class HopperRealDual implements HopperIO {
   }
 
   public void setupTopMotor(Gains g) {
-    hopperTopPID = new TunablePID(
-        "/Hopper/Top/PID", g);
     hopperConfigTop = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.HopperConstants.Top.hopperMotorId,
         Constants.HopperConstants.Top.isInverted,
         Constants.HopperConstants.Top.isCoast,
         Constants.HopperConstants.Top.hopperCurrentLimit);
     hopperTopMotor = new TalonFX(hopperConfigTop.getMotorInnerId(), new CANBus("rio"));
-    hopperConfigTop.configureMotor(hopperTopMotor, hopperTopPID);
+    hopperConfigTop.configureMotor(hopperTopMotor, g);
     velocityOfHopperTopRPS = hopperTopMotor.getVelocity();
     statorCurrentOfHopperTopAmps = hopperTopMotor.getStatorCurrent();
     outputOfHopperTopVolts = hopperTopMotor.getMotorVoltage();
@@ -102,15 +96,13 @@ public class HopperRealDual implements HopperIO {
   }
 
   public void setupBottomMotor(Gains g) {
-    hopperBottomPID = new TunablePID(
-        "/Hopper/Bottom/PID", g);
     hopperConfigBottom = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.HopperConstants.Bottom.hopperMotorId,
         Constants.HopperConstants.Bottom.isInverted,
         Constants.HopperConstants.Bottom.isCoast,
         Constants.HopperConstants.Bottom.hopperCurrentLimit);
     hopperBottomMotor = new TalonFX(hopperConfigTop.getMotorInnerId(), new CANBus("rio"));
-    hopperConfigBottom.configureMotor(hopperBottomMotor, hopperBottomPID);
+    hopperConfigBottom.configureMotor(hopperBottomMotor, g);
     velocityOfHopperBottomRPS = hopperBottomMotor.getVelocity();
     statorCurrentOfHopperBottomAmps = hopperBottomMotor.getStatorCurrent();
     outputOfHopperBottomVolts = hopperBottomMotor.getMotorVoltage();
@@ -180,12 +172,6 @@ public class HopperRealDual implements HopperIO {
 
   @Override
   public void periodic() {
-    if (hopperBottomPID.hasChanged()) {
-      hopperConfigBottom.updateMotorPID(hopperBottomMotor, hopperBottomPID);
-    }
-    if (hopperTopPID.hasChanged()) {
-      hopperConfigTop.updateMotorPID(hopperTopMotor, hopperTopPID);
-    }
   }
 
     /* Characterization */

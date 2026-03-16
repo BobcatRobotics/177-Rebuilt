@@ -90,6 +90,8 @@ public class Intake extends SubsystemBase {
     io.stop();
   }
 
+  
+
   public void stopRollerWheel() {
     io.stopRollerWheel();
   }
@@ -126,7 +128,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void grabBalls() {
-    RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+    RobotState.getInstance().getIntakeState().setState(IntakeState.State.TARGETING);
     IntakeGoal goal = new IntakeGoal();
     goal.speed = 40;
     goal.position = 6;
@@ -139,7 +141,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void retractIntake() {
-    RobotState.getInstance().getIntakeState().setState(IntakeState.State.MANUAL);
+    RobotState.getInstance().getIntakeState().setState(IntakeState.State.IDLE);
     IntakeGoal goal = new IntakeGoal();
     goal.speed = 0;
     goal.position = 0;
@@ -156,5 +158,12 @@ public class Intake extends SubsystemBase {
     return new RunCommand(() -> {
                         retractIntakeManually();
                 }).onlyWhile(()->!DriverStation.isDisabled()).andThen(new InstantCommand(()->stop()));
+  }
+
+  public void setNeturalBrake(){
+    io.setNeturalBrake();
+  }
+    public void setNeturalCoast(){
+    io.setNeturalCoast();
   }
 }

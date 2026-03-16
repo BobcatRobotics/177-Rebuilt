@@ -1,10 +1,17 @@
 package frc.robot.subsystems.Shooter;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -16,7 +23,6 @@ public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
   private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private final TripleOutputInterpolator shooterMap;
 
   private ShooterState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
@@ -55,10 +61,6 @@ public class Shooter extends SubsystemBase {
 
     this.io = io;
 
-    shooterMap = new TripleOutputInterpolator(Constants.ShooterConstants.distances,
-        Constants.ShooterConstants.feederSpeeds,
-        Constants.ShooterConstants.mainFlywheelSpeeds,
-        Constants.ShooterConstants.hoodSpeeds, true);
   }
 
   public void applyState() {
@@ -73,7 +75,27 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
-    Logger.recordOutput("Shooter/CurrentShotExitVelocity", calculateExitVelocity());
+
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose2d newPose = robotPose.transformBy(new Transform2d(
+    new Translation2d(Units.inchesToMeters(95), 0),
+    new Rotation2d()
+));
+    Translation2d robotTranslation = robotPose.getTranslation();
+    Translation2d targetTranslation =newPose.getTranslation();
+    Translation2d[] shotLine = new Translation2d[] {
+          robotTranslation,
+          targetTranslation
+    };
+
+    Logger.recordOutput("Shooter/BallPath", shotLine);
+    boolean hubInrange =new Translation2d(4.620, 4.040)
+                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(20);
+    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
+
+    RobotState.getInstance().hubInrange = hubInrange;
+    RobotState.getInstance().shooterUpToSpeed = atSpeed();
+
   }
 
   public void setState(ShooterState state) {
@@ -105,42 +127,6 @@ public class Shooter extends SubsystemBase {
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {
     io.setIntakeSpeed(shooterIntakeSpeed);
-  }
-
-  public double calculateExitVelocity() {
-    double ballVelocity = 0.0; // starts at rest
-    // double ballMass = 0.5;
-    // double distance = 7.0;
-    // double[] wheelRPS = shooterMap.getAsList(distance).stream()
-    // .mapToDouble(Double::doubleValue)
-    // .toArray();
-    // double[] wheelRPMs = {}; // Units in RPM
-    // for (int i = 0; i < wheelRPS.length; i++) {
-    // wheelRPMs[i] = wheelRPS[i] * 60;
-    // }
-    // double[] wheelMasses = { 0.1, 0.25, 0.1 };
-    // double[] wheelRadii = { 1.0, 2.0, 1.0 };
-    // for (int i = 0; i < wheelMasses.length; i++) {
-
-    // double r = wheelRadii[i];
-    // double mWheel = wheelMasses[i];
-
-    // // Convert RPM to rad/s
-    // double omegaInitial = 2.0 * Math.PI * wheelRPMs[i] / 60.0;
-
-    // // Moment of inertia for solid disk
-    // double I = 0.5 * mWheel * r * r;
-
-    // // Angular momentum conservation solution
-    // double numerator = I * omegaInitial + ballMass * r * ballVelocity;
-    // double denominator = I + ballMass * r * r;
-
-    // double omegaFinal = numerator / denominator;
-
-    // // Ball leaves at surface speed of slowed wheel
-    // ballVelocity = r * omegaFinal;
-    // }
-    return ballVelocity;
   }
 
   public void holdPosition() {
@@ -244,14 +230,17 @@ public class Shooter extends SubsystemBase {
   
   public boolean atSpeed() {
     boolean isAtTolerance = false;
-    double MAIN_SPEED_TOLERANCE = 7;
-    double HOOD_SPEED_TOLERANCE = 7;
-    double flywheelSpeedVelocity = RobotState.getInstance().getShooterState().getFlywheelSpeed() - MAIN_SPEED_TOLERANCE;
-    double hoodSpeedVelocity = RobotState.getInstance().getShooterState().getHoodSpeed() - HOOD_SPEED_TOLERANCE;
-    if (io.getVelocityHood() > 30) {
-      if (io.getVelocityMainFlywheel() > 40) {
-        isAtTolerance = true;
-      }
+    boolean isMainFlywheelWithinTolerance = false;
+    boolean isHoodWheelWithinTolerance = false;
+
+    double MAIN_SPEED_TOLERANCE = 5;
+    double HOOD_SPEED_TOLERANCE = 2;
+    isMainFlywheelWithinTolerance = Math.abs(io.getVelocityMainFlywheel()
+        - RobotState.getInstance().getShooterState().getFlywheelSpeed()) <= MAIN_SPEED_TOLERANCE;
+    isHoodWheelWithinTolerance = Math
+        .abs(io.getVelocityHood() - RobotState.getInstance().getShooterState().getHoodSpeed()) <= HOOD_SPEED_TOLERANCE;
+    if (isMainFlywheelWithinTolerance && isHoodWheelWithinTolerance) {
+      isAtTolerance = true;
     }
     Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
     return isAtTolerance;

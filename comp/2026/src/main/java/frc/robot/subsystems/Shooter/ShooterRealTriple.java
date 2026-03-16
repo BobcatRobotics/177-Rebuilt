@@ -88,12 +88,6 @@ public class ShooterRealTriple implements ShooterIO {
   public double HoodSetpointRight = 0;
   public double HoodSetpointLeft = 0;
 
-  private TunablePID flywheelInnerLeftPID;
-  private TunablePID flywheelOuterLeft;
-  private TunablePID flywheelOuterRightPID;
-  private TunablePID intakePID;
-  private TunablePID HoodLeftPID;
-  private TunablePID HoodRightPID;
 
   private double mainFlywheelkS , mainFlywheelkV;
   private double hoodkS , hoodkV;
@@ -142,8 +136,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupInnerLeftFlywheel(Gains g) {
-    flywheelInnerLeftPID = new TunablePID(
-        "/Shooter/Flywheel/InnerLeft/PID", g);
     flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
         Constants.ShooterConstants.SharedFlywheel.isInvertedInnerLeft,
@@ -151,7 +143,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, flywheelInnerLeftPID);
+    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, g);
     velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
     statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
     outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
@@ -161,8 +153,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupOuterLeftFlywheel(Gains g) {
-    flywheelOuterLeft = new TunablePID(
-        "/Shooter/Flywheel/OuterLeft/PID", g);
     // Flywheel Configuration
     flywheelConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDLeft,
@@ -171,7 +161,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterLeft = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigRight.configureMotor(shooterFlywheelOuterLeft, flywheelOuterLeft);
+    flywheelConfigRight.configureMotor(shooterFlywheelOuterLeft, g);
     velocityOfMainFlywheelRightRPS = shooterFlywheelOuterLeft.getVelocity();
     statorCurrentOfMainFlywheelRightAmps = shooterFlywheelOuterLeft.getStatorCurrent();
     outputOfMainFlywheelRightVolts = shooterFlywheelOuterLeft.getMotorVoltage();
@@ -181,8 +171,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupOuterRightFlywheel(Gains g) {
-    flywheelOuterRightPID = new TunablePID(
-        "/Shooter/Flywheel/OuterRight/PID", g);
     // Flywheel Configuration
     flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
@@ -191,7 +179,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, flywheelOuterRightPID);
+    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, g);
     velocityOfMainFlywheelOuterRightRPS = shooterFlywheelOuterLeft.getVelocity();
     statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelOuterLeft.getStatorCurrent();
     outputOfMainFlywheelOuterRightVolts = shooterFlywheelOuterLeft.getMotorVoltage();
@@ -202,9 +190,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupIntake(Gains g) {
-    // Intake Configuration
-    intakePID = new TunablePID(
-        "/Shooter/Intake/PID", g);
     intakeWheelConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedIntake.intakeIDLeft,
         Constants.ShooterConstants.SharedIntake.isInverted,
@@ -212,7 +197,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.SharedIntake.statorCurrentLimit,
         Constants.ShooterConstants.SharedIntake.supplyCurrentLimit);
     shooterIntakeMotor = new TalonFX(intakeWheelConfig.getMotorInnerId(), new CANBus("rio"));
-    intakeWheelConfig.configureMotor(shooterIntakeMotor, intakePID);
+    intakeWheelConfig.configureMotor(shooterIntakeMotor, g);
     velocityOfIntakeRPS = shooterIntakeMotor.getVelocity();
     statorCurrentOfIntakeAmps = shooterIntakeMotor.getStatorCurrent();
     outputOfIntakeVolts = shooterIntakeMotor.getMotorVoltage();
@@ -222,8 +207,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupLeftHood(Gains g) {
-    HoodLeftPID = new TunablePID(
-        "/Shooter/Hood/Left/PID", g);
     // Flywheel Configuration
     HoodMConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.Left.HoodID,
@@ -232,7 +215,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit);
     HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, HoodLeftPID);
+    HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
     velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
     statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
     outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
@@ -242,8 +225,6 @@ public class ShooterRealTriple implements ShooterIO {
   }
 
   public void setupRightHood(Gains g) {
-    HoodRightPID = new TunablePID(
-        "/Shooter/Hood/Right/PID", g);
     // Flywheel Configuration
     HoodMConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.Right.HoodID,
@@ -252,7 +233,7 @@ public class ShooterRealTriple implements ShooterIO {
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit);
     HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigRight.configureMotor(HoodWheelMotorRight, HoodRightPID);
+    HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
     velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
     statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
     outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
@@ -404,25 +385,6 @@ public class ShooterRealTriple implements ShooterIO {
 
   @Override
   public void periodic() {
-    if (flywheelInnerLeftPID.hasChanged()) {
-      flywheelConfigLeft.updateMotorPID(shooterFlywheelInnerLeft, flywheelInnerLeftPID);
-    }
-    if (flywheelOuterLeft.hasChanged()) {
-      flywheelConfigRight.updateMotorPID(shooterFlywheelOuterLeft, flywheelOuterLeft);
-    }
-    if (flywheelOuterRightPID.hasChanged()) {
-      flywheelConfigOuterRight.updateMotorPID(shooterFlywheelOuterRight, flywheelOuterRightPID);
-    }
-
-    if (HoodLeftPID.hasChanged()) {
-      HoodMConfigLeft.updateMotorPID(HoodWheelMotorRight, HoodLeftPID);
-    }
-    if (HoodRightPID.hasChanged()) {
-      HoodMConfigRight.updateMotorPID(HoodWheelMotorRight, HoodRightPID);
-    }
-    if (intakePID.hasChanged()) {
-      intakeWheelConfig.updateMotorPID(shooterIntakeMotor, intakePID);
-    }
   }
 
   public void simulationPeriodic() {

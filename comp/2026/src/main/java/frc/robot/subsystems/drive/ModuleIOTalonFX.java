@@ -54,9 +54,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final CANcoder cancoder;
 
   // Voltage control requests
-  private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(false);
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0).withEnableFOC(false);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0).withEnableFOC(false);
+  private final VoltageOut voltageRequest = new VoltageOut(0);
+  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
 
   // Torque-current control requests
   private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
@@ -104,22 +104,18 @@ public class ModuleIOTalonFX implements ModuleIO {
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Slot0 = constants.DriveMotorGains;
     driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
-    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
-    driveConfig.CurrentLimits.SupplyCurrentLowerTime = 1.0;    
-    driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
-    driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    driveConfig.CurrentLimits.StatorCurrentLimit = 40;
+    driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
+    driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    driveConfig.CurrentLimits.StatorCurrentLimit = 60; //was the slip current
     driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     driveConfig.MotorOutput.Inverted =
         constants.DriveMotorInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
-    driveTalon.getConfigurator().apply(driveConfig);
-     driveTalon.setPosition(0.0);
-    //tryUntilOk(15, () -> driveTalon.getConfigurator().apply(driveConfig, 5));
-    //tryUntilOk(15, () -> driveTalon.setPosition(0.0, 5));
-    
+    driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    driveConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
+    tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
     // Configure turn motor
     var turnConfig = new TalonFXConfiguration();
@@ -142,15 +138,16 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * constants.SteerMotorGearRatio;
     turnConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
-    turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
-    turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     turnConfig.MotorOutput.Inverted =
         constants.SteerMotorInverted
             ? InvertedValue.Clockwise_Positive
             : InvertedValue.CounterClockwise_Positive;
-    //tryUntilOk(15, () -> turnTalon.getConfigurator().apply(turnConfig, 5));
+    turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    turnConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    turnConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    turnConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    tryUntilOk(5, () -> turnTalon.getConfigurator().apply(turnConfig, 0.25));
 
-    turnTalon.getConfigurator().apply(turnConfig);
     // Configure CANCoder
     CANcoderConfiguration cancoderConfig = constants.EncoderInitialConfigs;
     cancoderConfig.MagnetSensor.MagnetOffset = constants.EncoderOffset;
