@@ -32,7 +32,7 @@ public class AutoAimDrive extends Command {
     private Translation2d target;
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
-            10, // kP
+            12, // kP
             0.0,
             0.2,
             new TrapezoidProfile.Constraints(5.0, 3.0));
@@ -41,7 +41,6 @@ public class AutoAimDrive extends Command {
             Drive drive,
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier) {
-
         this.drive = drive;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
@@ -70,7 +69,12 @@ public class AutoAimDrive extends Command {
 
         Logger.recordOutput("AutoAim/rotation", rotation);
 
-        drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
+        if(RobotState.getInstance().alliance==Alliance.Red){
+                drive(xSupplier.getAsDouble()*-1, ySupplier.getAsDouble()*-1, rotation);
+        }
+        else{
+                drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
+        }
 
         Pose2d targetPose = new Pose2d(target, new Rotation2d());
 

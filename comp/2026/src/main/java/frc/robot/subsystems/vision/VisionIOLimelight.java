@@ -54,9 +54,10 @@ public class VisionIOLimelight implements VisionIO {
     LimelightHelpers.SetIMUMode(name, 0);
 
     allianceRotation = new Rotation2d();
-    allianceRotation = RobotState.getInstance().alliance == Alliance.Red
-        ? Rotation2d.fromDegrees(rotationSupplier.get().getDegrees() + 180)
-        : rotationSupplier.get();
+    allianceRotation = rotationSupplier.get();
+        // RobotState.getInstance().alliance == Alliance.Red
+        // ? Rotation2d.fromDegrees(rotationSupplier.get().getDegrees() + 180)
+        // : rotationSupplier.get();
 
     LimelightHelpers.SetRobotOrientation(name, allianceRotation.getDegrees(), 0, 0, 0, 0, 0);
     this.rotationSupplier = rotationSupplier;
@@ -79,9 +80,10 @@ public class VisionIOLimelight implements VisionIO {
     inputs.latestTargetObservation = new TargetObservation(
         Rotation2d.fromDegrees(txSubscriber.get()), Rotation2d.fromDegrees(tySubscriber.get()));
 
-    allianceRotation = RobotState.getInstance().alliance == Alliance.Red
-        ? Rotation2d.fromDegrees(rotationSupplier.get().getDegrees() + 180)
-        : rotationSupplier.get();
+    allianceRotation = rotationSupplier.get();
+        // RobotState.getInstance().alliance == Alliance.Red
+        // ? Rotation2d.fromDegrees(rotationSupplier.get().getDegrees() + 180)
+        // : rotationSupplier.get();
 
     inputs.externalAngle = allianceRotation.getDegrees();
 
