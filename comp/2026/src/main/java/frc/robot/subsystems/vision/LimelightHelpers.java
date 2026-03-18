@@ -639,8 +639,8 @@ public class LimelightHelpers {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (this == obj) {return true;}
+            if (obj == null || getClass() != obj.getClass()) {return false;}
             RawFiducial other = (RawFiducial) obj;
             return id == other.id &&
                 Double.compare(txnc, other.txnc) == 0 &&
@@ -669,8 +669,8 @@ public class LimelightHelpers {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (this == obj) { return true; }
+            if (obj == null || getClass() != obj.getClass()) { return false; }
             RawTarget other = (RawTarget) obj;
             return Double.compare(txnc, other.txnc) == 0 &&
                 Double.compare(tync, other.tync) == 0 &&
@@ -763,8 +763,10 @@ public class LimelightHelpers {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) { return false; }
             PoseEstimate that = (PoseEstimate) obj;
             // We don't compare the timestampSeconds as it isn't relevant for equality and makes
             // unit testing harder

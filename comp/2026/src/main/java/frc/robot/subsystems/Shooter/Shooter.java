@@ -2,16 +2,19 @@ package frc.robot.subsystems.Shooter;
 
 import static edu.wpi.first.units.Units.Rotation;
 
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -26,6 +29,13 @@ public class Shooter extends SubsystemBase {
 
   private ShooterState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
+
+  private TripleOutputInterpolator interpolator = new TripleOutputInterpolator
+  (Constants.ShooterConstants.ValuesOfKnownShots.distance,
+   Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed, 
+   Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed, 
+   Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed, 
+   true);
 
   public Shooter(ShooterIO io) {
     // Configure SysId
@@ -62,6 +72,7 @@ public class Shooter extends SubsystemBase {
     this.io = io;
 
   }
+  
 
   public void applyState() {
     desiredState = new ShooterState();
@@ -89,15 +100,27 @@ public class Shooter extends SubsystemBase {
     };
 
     Logger.recordOutput("Shooter/BallPath", shotLine);
-    boolean hubInrange =new Translation2d(4.620, 4.040)
+    Pose3d hubCoords = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
+    boolean hubInrange = hubCoords.toPose2d().getTranslation()
                  .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(20);
     Logger.recordOutput("Shooter/IsInTarget", hubInrange);
+
+    double distanceToHub = distanceToHub();
+    Logger.recordOutput("Shooter/distanceToHub",distanceToHub);
 
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
 
   }
 
+  public double distanceToHub(){
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose3d hubCoordinate =  HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
+    Translation2d target = hubCoordinate.toPose2d().getTranslation();
+    Translation2d robotTranslation = robotPose.getTranslation();
+    double distance = robotTranslation.getDistance(target);
+    return distance;
+  }
   public void setState(ShooterState state) {
     desiredState = state;
     setVelocity(desiredState.getCurrentState());
@@ -198,23 +221,51 @@ public class Shooter extends SubsystemBase {
     return sysIdRegistry;
   }
 
-
   public void spinUp() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
-    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
+    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
+    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    goal.intakeSpeed = 0;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+    public void shootFuel() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
+    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    goal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+
+  // public void shootFuel(DoubleSupplier flywheelrps, DoubleSupplier hoodrps, DoubleSupplier carwashrps){
+  //   RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+  //   ShooterGoal goal = new ShooterGoal();
+  //   goal.flywheelSpeed = flywheelrps.get();
+  //   goal.hoodSpeed = hoodrps.get();
+  //   goal.intakeSpeed = carwashrps.get();
+  //   RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+  //   setState(RobotState.getInstance().getShooterState()); 
+  // }
+
+  public void spinUp(double distanceToHub) {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);;
+    goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
     goal.intakeSpeed = 0;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
 
-  public void shootFuel() {
+  public void shootFuel(double distanceToHub) {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
-    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
-    goal.intakeSpeed = RobotState.getInstance().getShooterState().getIntakeSpeed();
+    goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);;
+    goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
+    goal.intakeSpeed = interpolator.getAsList(distanceToHub).get(2);
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }

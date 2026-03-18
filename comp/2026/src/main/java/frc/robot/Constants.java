@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -45,9 +48,9 @@ public final class Constants {
         public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
 
-        public static final double targetFlywheelSpeedRPS = 45;
+        public static final double targetFlywheelSpeedRPS = 55;
         public static final double targetIntakeSpeedRPS = 75;
-        public static final double targetHoodSpeedRPS = 18;
+        public static final double targetHoodSpeedRPS = 25;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -59,9 +62,9 @@ public final class Constants {
             // Motor Constants
             public static final double kshooterMainkP = 1.66;
             public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.1;
-            public static final double kshooterMainkS = 0.291;
-            public static final double kshooterMainkV = 0.121;
+            public static final double kshooterMainkD = 0;
+            public static final double kshooterMainkS = 0.303;
+            public static final double kshooterMainkV = 0.12;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -72,13 +75,14 @@ public final class Constants {
             public static final int FlywheelInnerIDRight = 14; // NOT USED ANYMORE
         }
 
+
         public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 1.684;
+            public static final double kIntakeMotorkP = 1.708;
             public static final double kIntakeMotorkI = 0;
-            public static final double kIntakeMotorkD = 0.1;
-            public static final double kIntakeMotorkS = 0.371;
-            public static final double kIntakeMotorkV = 0.119;
+            public static final double kIntakeMotorkD = 0;
+            public static final double kIntakeMotorkS = 0.375;
+            public static final double kIntakeMotorkV = 0.117;
             public static final double kIntakeMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -90,11 +94,11 @@ public final class Constants {
 
             public static final int HoodID = 12;
             // Motor Constants
-            public static final double kHoodMotorkP = 1.602;
+            public static final double kHoodMotorkP = 1.629;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.1;
-            public static final double kHoodMotorkS = 0.322;
-            public static final double kHoodMotorkV = 0.125;
+            public static final double kHoodMotorkD = 0;
+            public static final double kHoodMotorkS = 0.301;
+            public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
@@ -106,17 +110,28 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int HoodID = 17;
-            public static final double kHoodMotorkP = 1.602;
+            public static final double kHoodMotorkP = 1.629;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.1;
-            public static final double kHoodMotorkS = 0.322;
-            public static final double kHoodMotorkV = 0.125;
+            public static final double kHoodMotorkD = 0;
+            public static final double kHoodMotorkS = 0.301;
+            public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
         }
+
+        public final static class ValuesOfKnownShots{
+            public static final double[] distance = new double[5]; //distance from front LL to center of hub
+            public static final double[] carwashSpeed = new double[5]; 
+            public static final double[] mainFlyWheelSpeed = new double[5]; 
+            public static final double[] hoodSpeed = new double[5]; 
+        }
+
+    
+
+
     }
 
     public static final class HopperConstants {

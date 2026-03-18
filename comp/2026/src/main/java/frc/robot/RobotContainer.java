@@ -14,6 +14,9 @@
 
 package frc.robot;
 
+import java.time.temporal.WeekFields;
+import java.util.function.Supplier;
+
 import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
@@ -31,6 +34,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -51,6 +55,7 @@ import frc.robot.subsystems.Intake.IntakeAutoOptions;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterRealQuad;
 import frc.robot.subsystems.Shooter.ShooterSim;
@@ -84,6 +89,7 @@ public class RobotContainer {
         private final Hopper m_Hopper;
         public final Intake intake;
 
+
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -92,7 +98,14 @@ public class RobotContainer {
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
 
+        private LoggedDashboardChooser<Double> flywheelChooser;
+        private LoggedDashboardChooser<Double> hoodChooser;
+        private LoggedDashboardChooser<Double> carwashChooser;
+
+
         private final HubUtil hub;
+
+
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -173,13 +186,23 @@ public class RobotContainer {
                 registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
-                autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
+              //  autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
+                autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
                 autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
                 autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
                 autoChooser.addOption("Anand Depot Clean Sweep", new PathPlannerAuto("Anand Clean Sweep"));
                 autoChooser.addOption("Anand OP Side Clean Sweep        ",
                                 new PathPlannerAuto("Anand OP Side Clean Sweep"));
+                
+
+                flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
+                hoodChooser = new LoggedDashboardChooser<>("Hood");
+                carwashChooser = new LoggedDashboardChooser<>("Carwash");
+
+                flywheelChooser.addDefaultOption("rps", 0.0);
+                hoodChooser.addDefaultOption("rps", 0.0);
+                carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -252,7 +275,7 @@ public class RobotContainer {
 
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
-                controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                //controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -360,6 +383,7 @@ public class RobotContainer {
                                 HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
+               
         }
 
         public void simTelePeriodic() {
@@ -399,6 +423,17 @@ public class RobotContainer {
                 }, intake));
         }
 
+        // public Command ShootBalls() {
+        //         return new RunCommand(() -> {
+        //                 m_Hopper.runHopper();
+        //         }, m_Hopper).alongWith(new RunCommand(() -> {
+        //                 m_Shooter.shootFuel(flywh);
+        //         }, m_Shooter)).alongWith(new RunCommand(() -> {
+        //                 intake.setVelocity(125);
+        //         }, intake));
+        // }
+      
+
         public Command IntakeDown() {
                 return new RunCommand(() -> {
                         intake.setPosition(11.7);
@@ -410,4 +445,19 @@ public class RobotContainer {
                         intake.setVelocity(400);
                 }, intake);
         }
+
+        // public double getDistanceToHub(){
+        //         Pose2d robotPose = drive.getPose();
+        //         Alliance currAlliance;
+        //         if(DriverStation.getAlliance().get()!=null){
+        //            currAlliance = DriverStation.getAlliance().get();
+        //         }
+        //         Pose2d hubPose = HubUtil.getMyHubCoordinates(currAlliance).toPose2d();
+
+        //         double x = robotPose.getTranslation().getDistance(hubPose.getTranslation());
+        //         double y = 10 - 1.12395;
+        //         Logger.recordOutput("distance to hub", x);
+        //         return Math.hypot(x, y);
+
+        // }
 }
