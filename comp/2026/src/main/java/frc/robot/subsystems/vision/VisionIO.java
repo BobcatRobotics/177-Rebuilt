@@ -20,6 +20,7 @@ public interface VisionIO {
         new TargetObservation(Rotation2d.kZero, Rotation2d.kZero);
     public PoseObservation[] poseObservations = new PoseObservation[0];
     public int[] tagIds = new int[0];
+    public double externalAngle = 0;
   }
 
   /** Represents the angle to a simple target, not used for pose estimation. */
@@ -32,7 +33,8 @@ public interface VisionIO {
       double ambiguity,
       int tagCount,
       double averageTagDistance,
-      PoseObservationType type) {}
+      PoseObservationType type
+      ) {}
 
   public static enum PoseObservationType {
     MEGATAG_1,

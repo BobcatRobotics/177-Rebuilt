@@ -32,16 +32,15 @@ public class AutoAimDrive extends Command {
     private Translation2d target;
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
-            5, // kP
+            12, // kP
             0.0,
             0.2,
-            new TrapezoidProfile.Constraints(2.0, 3.0));
+            new TrapezoidProfile.Constraints(5.0, 3.0));
 
     public AutoAimDrive(
             Drive drive,
             DoubleSupplier xSupplier,
             DoubleSupplier ySupplier) {
-
         this.drive = drive;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
@@ -60,15 +59,22 @@ public class AutoAimDrive extends Command {
 
         Translation2d robotTranslation = robotPose.getTranslation();
 
-        double angleToTarget = Math.atan2(
+        Rotation2d angleToTarget = Rotation2d.fromRadians(Math.atan2(
                 target.getY() - robotTranslation.getY(),
-                target.getX() - robotTranslation.getX());
+                target.getX() - robotTranslation.getX()));
 
         double rotation = thetaController.calculate(
                 robotPose.getRotation().getRadians(),
-                angleToTarget);
+                angleToTarget.getRadians());
 
-        drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
+        Logger.recordOutput("AutoAim/rotation", rotation);
+
+        if(RobotState.getInstance().alliance==Alliance.Red){
+                drive(xSupplier.getAsDouble()*-1, ySupplier.getAsDouble()*-1, rotation);
+        }
+        else{
+                drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
+        }
 
         Pose2d targetPose = new Pose2d(target, new Rotation2d());
 
@@ -84,7 +90,7 @@ public class AutoAimDrive extends Command {
 
         Pose2d aimPose = new Pose2d(
                 robotPose.getTranslation(),
-                new Rotation2d(angleToTarget));
+                (angleToTarget));
 
         Logger.recordOutput("AutoAim/AimPose", aimPose);
 
@@ -124,10 +130,13 @@ public class AutoAimDrive extends Command {
         ChassisSpeeds speeds = new ChassisSpeeds(linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                 linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                 omega );
-        boolean isFlipped = DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == Alliance.Red;
-        drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-                isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
+              boolean isFlipped =
+                  DriverStation.getAlliance().isPresent()
+                      && DriverStation.getAlliance().get() == Alliance.Red;
+              drive.runVelocity(
+                  ChassisSpeeds.fromFieldRelativeSpeeds(
+                      speeds,drive.getRotation()
+                      ));
     }
 
     private Translation2d getLinearVelocityFromJoysticks(double x, double y) {

@@ -120,18 +120,21 @@ public class Vision extends SubsystemBase {
         }
 
         // Calculate standard deviations
-        double stdDevFactor =
-            Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
-        double linearStdDev = linearStdDevBaseline * stdDevFactor;
-        double angularStdDev = angularStdDevBaseline * stdDevFactor;
-        if (observation.type() == PoseObservationType.MEGATAG_2) {
-          linearStdDev *= linearStdDevMegatag2Factor;
-          angularStdDev *= angularStdDevMegatag2Factor;
-        }
-        if (cameraIndex < cameraStdDevFactors.length) {
-          linearStdDev *= cameraStdDevFactors[cameraIndex];
-          angularStdDev *= cameraStdDevFactors[cameraIndex];
-        }
+        // double stdDevFactor =
+        //     Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+        // double linearStdDev = linearStdDevBaseline * stdDevFactor;
+        // double angularStdDev = angularStdDevBaseline * stdDevFactor;
+        // if (observation.type() == PoseObservationType.MEGATAG_2) {
+        //   linearStdDev *= linearStdDevMegatag2Factor;
+        //   angularStdDev *= angularStdDevMegatag2Factor;
+        // }
+        // if (cameraIndex < cameraStdDevFactors.length) {
+        //   linearStdDev *= cameraStdDevFactors[cameraIndex];
+        //   angularStdDev *= cameraStdDevFactors[cameraIndex];
+        // }
+
+        double linearStdDev = linearStdDevMegatag2Base;
+        double angularStdDev = angularStdDevMegatag2Base;
 
         // Send vision observation
         consumer.accept(
@@ -153,6 +156,11 @@ public class Vision extends SubsystemBase {
       Logger.recordOutput(
           "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[0]));
+      Logger.recordOutput(
+          "Vision/Camera" + Integer.toString(cameraIndex) + "/ExternalAngle",
+          inputs[cameraIndex].externalAngle);
+
+
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);

@@ -29,12 +29,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
@@ -250,6 +252,7 @@ public class RobotContainer {
 
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
+                controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -297,6 +300,16 @@ public class RobotContainer {
                 devController.leftBumper().whileTrue(
                                 swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
                 devController.rightBumper().whileTrue(characterizeAll());
+
+
+                if (Robot.isSimulation()) {
+
+                        simulationButtonBindings();
+                }
+        }
+
+        public void simulationButtonBindings() {
+     
         }
 
         public Command characterizeAll() {
@@ -344,9 +357,9 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
                 Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
                 Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
+                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
         }
 
         public void simTelePeriodic() {
@@ -358,9 +371,9 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
                 Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
                 Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(DriverStation.getAlliance().get()));
+                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(DriverStation.getAlliance().get()));
+                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
         }
 
         public Command SpinUp() {
