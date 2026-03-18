@@ -141,7 +141,7 @@ public static Pose3d getMyHubCoordinates(Alliance alliance) {
         if( alliance == Alliance.Red){
 
             redHub = new Pose3d(
-                    12.5051566+ hubradius,
+                    12.5051566- hubradius,
                     4.0213534,
                     1.12395,
                     new Rotation3d(0, 0, Math.PI));

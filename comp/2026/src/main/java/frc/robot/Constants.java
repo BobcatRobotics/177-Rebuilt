@@ -83,7 +83,7 @@ public final class Constants {
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
             public static final boolean isInverted = false;
-            public static final boolean isCoast = true;
+            public static final boolean isCoast = false;
         }
 
         public final static class Left {
