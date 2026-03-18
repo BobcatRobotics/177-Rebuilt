@@ -20,16 +20,17 @@ import java.util.Optional;
  */
 public final class HubUtil {
     private static final double HUB_ACTIVE_START = 15.0;
-    private static final double HUB_ACTIVE_END   = 135.0;
+    private static final double HUB_ACTIVE_END = 135.0;
     private static final double ALERT_PULSE_DURATION = 2.0;
 
-    private static final Alert RED_ALERT  = new Alert("Red has taken ownership!", AlertType.kWarning);
+    private static final Alert RED_ALERT = new Alert("Red has taken ownership!", AlertType.kWarning);
     private static final Alert BLUE_ALERT = new Alert("Blue has taken ownership!", AlertType.kWarning);
 
     private static double redEndTime = 0;
     private static double blueEndTime = 0;
 
-    public HubUtil() {}
+    public HubUtil() {
+    }
 
     public static HubData getHubData() {
         double matchTime = DriverStation.getMatchTime();
@@ -47,7 +48,7 @@ public final class HubUtil {
         HubOwner owner = switch (gameData.charAt(0)) {
             case 'R' -> HubOwner.RED;
             case 'B' -> HubOwner.BLUE;
-            default  -> HubOwner.NONE;
+            default -> HubOwner.NONE;
         };
 
         double now = Timer.getFPGATimestamp();
@@ -73,96 +74,119 @@ public final class HubUtil {
         double timeRemaining = owner != HubOwner.NONE ? Math.max(0.0, HUB_ACTIVE_END - matchTime) : 0.0;
         return new HubData(owner, timeRemaining);
     }
-/**
- * Returns the field-relative {@link Pose3d} of the active Hub target based on
- * the robot's alliance color and the current hub ownership.
- *
- * <p>This method assumes a standard WPILib field coordinate system:
- * +X runs from the Blue alliance wall toward the Red alliance wall.
- * The Blue-side hub is defined at (4.620, 4.040, 3.057144).
- * The Red-side hub is computed by mirroring across the field length
- * and rotating 180 degrees about the Z-axis.</p>
- *
- * <p>If the hub is owned by the same alliance as the robot, the method
- * returns the hub on the robot's alliance side. Otherwise, it returns
- * the opposing alliance hub.</p>
- *
- * @param alliance The current {@code Alliance} of the robot (from DriverStation).
- * @return The {@code Pose3d} of the hub the robot should target.
- */
-public static Pose3d getActiveHubCoordinates(Alliance alliance) {
 
-    final Pose3d currentAllianceHub = new Pose3d(
-        4.620,
-        4.040,
-        3.057144,
-        new Rotation3d()
-    );
+    /**
+     * Returns the field-relative {@link Pose3d} of the active Hub target based on
+     * the robot's alliance color and the current hub ownership.
+     *
+     * <p>
+     * This method assumes a standard WPILib field coordinate system:
+     * +X runs from the Blue alliance wall toward the Red alliance wall.
+     * The Blue-side hub is defined at (4.620, 4.040, 3.057144).
+     * The Red-side hub is computed by mirroring across the field length
+     * and rotating 180 degrees about the Z-axis.
+     * </p>
+     *
+     * <p>
+     * If the hub is owned by the same alliance as the robot, the method
+     * returns the hub on the robot's alliance side. Otherwise, it returns
+     * the opposing alliance hub.
+     * </p>
+     *
+     * @param alliance The current {@code Alliance} of the robot (from
+     *                 DriverStation).
+     * @return The {@code Pose3d} of the hub the robot should target.
+     */
+    public static Pose3d getActiveHubCoordinates(Alliance alliance) {
+        double hubradius = Units.inchesToMeters(47 / 2);
+        Pose3d blueHub = new Pose3d(
+                    4.007866 + hubradius,
+                    4.0213534,
+                    1.12395,
+                    new Rotation3d());
+        Pose3d redHub = new Pose3d(
+                    12.5051566 + hubradius,
+                    4.0213534,
+                    1.12395,
+                    new Rotation3d(0, 0, Math.PI));
 
-    final Pose3d opposingAllianceHub = new Pose3d(
-        RebuiltFieldConstants.fieldLength - 4.620,
-        4.040,
-        3.057144,
-        new Rotation3d(0, 0, Math.PI)
-    );
+        
 
-    HubData hub = getHubData();
+        HubData hub = getHubData();
 
-    boolean sameOwner =
-            (alliance == Alliance.Red && hub.owner == HubOwner.RED) ||
-            (alliance == Alliance.Blue && hub.owner == HubOwner.BLUE);
+        boolean sameOwner = (alliance == Alliance.Red && hub.owner == HubOwner.RED) ||
+                (alliance == Alliance.Blue && hub.owner == HubOwner.BLUE);
 
-    return sameOwner ? currentAllianceHub : opposingAllianceHub;
-}
+        Pose3d currentAllianceHub  = new Pose3d();
+        Pose3d opposingAllianceHub = new Pose3d();
+        if (alliance == Alliance.Red) {
+            if (sameOwner) {
+                currentAllianceHub = redHub;
+                opposingAllianceHub = blueHub;
+            } else {
+                currentAllianceHub = blueHub;
+                opposingAllianceHub = redHub;
+            }
+        } else {
+            if (sameOwner) {
+                currentAllianceHub = blueHub;
+                opposingAllianceHub = redHub;
+            } else {
+                currentAllianceHub = redHub;
+                opposingAllianceHub = blueHub;
+            }
+        }
+               
+        return sameOwner ? currentAllianceHub : opposingAllianceHub;
+    }
 
-/**
- * Returns the field-relative {@link Pose3d} of my Hub target based on
- * the robot's alliance color
- *
- * <p>This method assumes a standard WPILib field coordinate system:
- * +X runs from the Blue alliance wall toward the Red alliance wall.
- * The Blue-side hub is defined at (4.620, 4.040, 3.057144).
- * The Red-side hub is computed by mirroring across the field length
- * and rotating 180 degrees about the Z-axis.</p>
- *
- * <p>If the hub is owned by the same alliance as the robot, the method
- * returns the hub on the robot's alliance side. Otherwise, it returns
- * the opposing alliance hub.</p>
- *
- * @param alliance The current {@code Alliance} of the robot (from DriverStation).
- * @return The {@code Pose3d} of the hub the robot should target.
- */
-public static Pose3d getMyHubCoordinates(Alliance alliance) {
+    /**
+     * Returns the field-relative {@link Pose3d} of my Hub target based on
+     * the robot's alliance color
+     *
+     * <p>
+     * This method assumes a standard WPILib field coordinate system:
+     * +X runs from the Blue alliance wall toward the Red alliance wall.
+     * The Blue-side hub is defined at (4.620, 4.040, 3.057144).
+     * The Red-side hub is computed by mirroring across the field length
+     * and rotating 180 degrees about the Z-axis.
+     * </p>
+     *
+     * <p>
+     * If the hub is owned by the same alliance as the robot, the method
+     * returns the hub on the robot's alliance side. Otherwise, it returns
+     * the opposing alliance hub.
+     * </p>
+     *
+     * @param alliance The current {@code Alliance} of the robot (from
+     *                 DriverStation).
+     * @return The {@code Pose3d} of the hub the robot should target.
+     */
+    public static Pose3d getMyHubCoordinates(Alliance alliance) {
 
-    Pose3d blueHub = new Pose3d();
-    Pose3d redHub = new Pose3d();
+        Pose3d blueHub = new Pose3d();
+        Pose3d redHub = new Pose3d();
 
-        double hubradius = Units.inchesToMeters(47 /2 );
-        if( alliance == Alliance.Red){
+        double hubradius = Units.inchesToMeters(47 / 2);
+        if (alliance == Alliance.Red) {
 
             redHub = new Pose3d(
                     12.5051566- hubradius,
                     4.0213534,
                     1.12395,
                     new Rotation3d(0, 0, Math.PI));
-
-        }
-        else{
+        } else {
             blueHub = new Pose3d(
-                    4.007866+ hubradius,
+                    4.007866 + hubradius,
                     4.0213534,
                     1.12395,
-                new Rotation3d());
-            
+                    new Rotation3d());
         }
-        
 
+        if (Alliance.Red == alliance) {
+            return redHub;
+        }
 
-    if(Alliance.Red== alliance){
-        return redHub;
+        return blueHub;
     }
-
-
-    return  blueHub;
-}
 }
