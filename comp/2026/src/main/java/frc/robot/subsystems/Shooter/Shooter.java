@@ -21,6 +21,7 @@ import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 import frc.robot.subsystems.Shooter.ShooterState.State;
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
 
@@ -240,15 +241,15 @@ public class Shooter extends SubsystemBase {
     setState(RobotState.getInstance().getShooterState());
   }
 
-  // public void shootFuel(DoubleSupplier flywheelrps, DoubleSupplier hoodrps, DoubleSupplier carwashrps){
-  //   RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
-  //   ShooterGoal goal = new ShooterGoal();
-  //   goal.flywheelSpeed = flywheelrps.get();
-  //   goal.hoodSpeed = hoodrps.get();
-  //   goal.intakeSpeed = carwashrps.get();
-  //   RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
-  //   setState(RobotState.getInstance().getShooterState()); 
-  // }
+  public void shootFuel(DoubleSupplier flywheelrps, DoubleSupplier hoodrps, DoubleSupplier carwashrps){
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = flywheelrps.getAsDouble();
+    goal.hoodSpeed = hoodrps.getAsDouble();
+    goal.intakeSpeed = carwashrps.getAsDouble();
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState()); 
+  }
 
   public void spinUp(double distanceToHub) {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);

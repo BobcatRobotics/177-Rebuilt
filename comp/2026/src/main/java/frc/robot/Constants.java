@@ -48,9 +48,9 @@ public final class Constants {
         public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
 
-        public static final double targetFlywheelSpeedRPS = 55;
+        public static final double targetFlywheelSpeedRPS = 56;
         public static final double targetIntakeSpeedRPS = 75;
-        public static final double targetHoodSpeedRPS = 25;
+        public static final double targetHoodSpeedRPS = 20;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;

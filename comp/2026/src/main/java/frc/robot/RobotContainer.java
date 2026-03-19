@@ -275,7 +275,7 @@ public class RobotContainer {
 
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
-                //controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -427,7 +427,7 @@ public class RobotContainer {
         //         return new RunCommand(() -> {
         //                 m_Hopper.runHopper();
         //         }, m_Hopper).alongWith(new RunCommand(() -> {
-        //                 m_Shooter.shootFuel(flywh);
+        //                 m_Shooter.shootFuel(() -> flywheelChooser.get(), () -> hoodChooser.get(), () -> carwashChooser.get());
         //         }, m_Shooter)).alongWith(new RunCommand(() -> {
         //                 intake.setVelocity(125);
         //         }, intake));
