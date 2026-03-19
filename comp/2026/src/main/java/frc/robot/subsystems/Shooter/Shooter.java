@@ -1,7 +1,5 @@
 package frc.robot.subsystems.Shooter;
 
-import static edu.wpi.first.units.Units.Rotation;
-
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
@@ -14,7 +12,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -87,31 +84,41 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
-
-    Pose2d robotPose = RobotState.getInstance().robotPose;
-    Pose2d newPose = robotPose.transformBy(new Transform2d(
-    new Translation2d(Units.inchesToMeters(95), 0),
-    new Rotation2d()
-));
-    Translation2d robotTranslation = robotPose.getTranslation();
-    Translation2d targetTranslation =newPose.getTranslation();
-    Translation2d[] shotLine = new Translation2d[] {
-          robotTranslation,
-          targetTranslation
-    };
-
-    Logger.recordOutput("Shooter/BallPath", shotLine);
-    Pose3d hubCoords = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
-    boolean hubInrange = hubCoords.toPose2d().getTranslation()
-                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(20);
-    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
-
+  
     double distanceToHub = distanceToHub();
-    Logger.recordOutput("Shooter/distanceToHub",distanceToHub);
-
+    boolean hubInrange = isHubInRange(distanceToHub,20);
+    Translation2d[] shotLine = getShotLine(distanceToHub);
+    ShooterState.ShooterGoal shooterSpeeds = getShooterSpeeds(distanceToHub);
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
+    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
+    Logger.recordOutput("Shooter/distanceToHub",distanceToHub);
+    Logger.recordOutput("Shooter/BallPath", shotLine);
+    Logger.recordOutput("Shooter/Speeds/flywheel", shooterSpeeds.flywheelSpeed);
+    Logger.recordOutput("Shooter/Speeds/carwash", shooterSpeeds.intakeSpeed);
+    Logger.recordOutput("Shooter/Speeds/hood", shooterSpeeds.hoodSpeed);
 
+  }
+
+  public ShooterState.ShooterGoal  getShooterSpeeds(double distance){
+    ShooterState.ShooterGoal goal = new ShooterGoal();
+    double angle = 90-24.7;
+    double partA = 3/Math.PI;
+    double numerator = 32.2 * (distance * distance);
+    double denominator = 2*Math.cos(angle)*(distance * Math.tan(angle)-4.657);
+    goal.flywheelSpeed = partA*Math.sqrt(numerator/denominator);
+    goal.intakeSpeed = 2* goal.flywheelSpeed;
+    goal.hoodSpeed = 0.4*goal.flywheelSpeed;
+    return goal;
+  }
+
+  public double getTrajectoryShotHeight(){
+    double theta = Math.toRadians(90-24.7);
+    double g = 32.2; // ft/s^2
+    double height = (velocity * velocity * Math.pow(Math.sin(theta), 2)) / (2 * g);
+    double shooterExitHeight = 17.2;
+    double totalHeight = shooterExitHeight + height;
+    return height;
   }
 
   public double distanceToHub(){
@@ -121,6 +128,33 @@ public class Shooter extends SubsystemBase {
     Translation2d robotTranslation = robotPose.getTranslation();
     double distance = robotTranslation.getDistance(target);
     return distance;
+  }
+
+  public Translation2d[] getShotLine(double distance){
+        Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose2d newPose = robotPose.transformBy(new Transform2d(
+    new Translation2d(Units.inchesToMeters(15)+distance, 0),
+    new Rotation2d()
+));
+    Translation2d robotTranslation = robotPose.getTranslation();
+    Translation2d targetTranslation =newPose.getTranslation();
+    Translation2d[] shotLine = new Translation2d[] {
+          robotTranslation,
+          targetTranslation
+    };
+    return shotLine;
+  }
+  public boolean isHubInRange(double distance, double radius){
+    
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose2d newPose = robotPose.transformBy(new Transform2d(
+    new Translation2d(Units.inchesToMeters(15)+distance, 0),
+    new Rotation2d()
+));
+    Pose3d hubCoords = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
+    boolean hubInrange = hubCoords.toPose2d().getTranslation()
+                 .getDistance(newPose.getTranslation()) <= Units.inchesToMeters(radius);
+    return hubInrange;
   }
   public void setState(ShooterState state) {
     desiredState = state;

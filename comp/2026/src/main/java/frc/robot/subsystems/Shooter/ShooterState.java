@@ -11,7 +11,6 @@ public class ShooterState {
     public double flywheelSpeed;
     public double intakeSpeed;
     public double hoodSpeed;
-    public double backspinSpeedRight;
   }
 
   public enum State {
