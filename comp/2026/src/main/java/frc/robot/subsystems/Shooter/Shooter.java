@@ -329,10 +329,10 @@ public class Shooter extends SubsystemBase {
 
     double MAIN_SPEED_TOLERANCE = 5;
     double HOOD_SPEED_TOLERANCE = 2;
-    isMainFlywheelWithinTolerance = Math.abs(io.getVelocityMainFlywheel()
+    isMainFlywheelWithinTolerance = Math.abs(getVelocityMainFlywheel()
         - RobotState.getInstance().getShooterState().getFlywheelSpeed()) <= MAIN_SPEED_TOLERANCE;
     isHoodWheelWithinTolerance = Math
-        .abs(io.getVelocityHood() - RobotState.getInstance().getShooterState().getHoodSpeed()) <= HOOD_SPEED_TOLERANCE;
+        .abs(getVelocityHood() - RobotState.getInstance().getShooterState().getHoodSpeed()) <= HOOD_SPEED_TOLERANCE;
     if (isMainFlywheelWithinTolerance && isHoodWheelWithinTolerance) {
       isAtTolerance = true;
     }
