@@ -90,6 +90,7 @@ public class Shooter extends SubsystemBase {
     ShooterState.ShooterGoal shooterSpeeds = getShooterSpeeds(distanceToHub);
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
+    RobotState.getInstance().hubDistance = distanceToHub;
     Logger.recordOutput("Shooter/IsInTarget", hubInrange);
     Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
     Logger.recordOutput("Shooter/BallPath", shotLine);

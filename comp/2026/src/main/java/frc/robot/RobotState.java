@@ -63,4 +63,5 @@ public class RobotState {
   public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
   public boolean hubInrange = false;
+  public double hubDistance = 0.0;
 }

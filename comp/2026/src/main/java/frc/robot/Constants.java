@@ -52,6 +52,12 @@ public final class Constants {
         public static final double targetIntakeSpeedRPS = 75;
         public static final double targetHoodSpeedRPS = 20;
 
+        public static final double[] targetDistances = {40,50,60,70,80,90,100,110};
+        public static final double[] targetFlywheelSpeedsInRPS = {70,66,61,49,45,45,45,45};
+        public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
+        public static final double[] targetHoodSpeedInRPS = {-40,-35,-25,4,16,20,22,24};
+
+
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
             public static final boolean isInvertedOuterLeft = true;
