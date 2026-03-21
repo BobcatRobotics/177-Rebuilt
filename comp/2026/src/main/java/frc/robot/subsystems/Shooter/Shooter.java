@@ -62,10 +62,6 @@ public class Shooter extends SubsystemBase {
         "Shooter/SysIdStateHood",
         this,
         this::runCharacterization_Hood, HoodSysIdconfig));
-    sysIdRegistry.register("SysIdStateIntake", new SysIdModule(
-        "Shooter/SysIdStateIntake",
-        this,
-        this::runCharacterization_Intake, intakeSysIdconfig));
 
     this.io = io;
 
@@ -95,6 +91,8 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/BallPath", shotLine);
 
   }
+
+
 
 
   public double distanceToHub() {
@@ -142,9 +140,8 @@ public class Shooter extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double shooterSpeed, double shooterHoodSpeedLeft, double shooterHoodSpeedRight,
-      double shooterIntakeSpeed) {
-    io.setVelocity(shooterSpeed, shooterHoodSpeedLeft, shooterHoodSpeedRight, shooterIntakeSpeed);
+  private void setVelocity(double shooterSpeed, double shooterHoodSpeedLeft, double shooterHoodSpeedRight) {
+    io.setVelocity(shooterSpeed, shooterHoodSpeedLeft, shooterHoodSpeedRight);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeed) {
@@ -157,10 +154,6 @@ public class Shooter extends SubsystemBase {
 
   public void setHoodSpeedRight(double shooterHoodSpeed) {
     io.setHoodSpeedRight(shooterHoodSpeed);
-  }
-
-  public void setIntakeSpeed(double shooterIntakeSpeed) {
-    io.setIntakeSpeed(shooterIntakeSpeed);
   }
 
   public void holdPosition() {
@@ -180,9 +173,6 @@ public class Shooter extends SubsystemBase {
 
   }
 
-  public void stopIntakeWheel() {
-    io.stopIntakeWheel();
-  }
 
   @Override
   public void simulationPeriodic() {
@@ -215,18 +205,6 @@ public class Shooter extends SubsystemBase {
     return output;
   }
 
-  public void runCharacterization_Intake(double output) {
-    io.runCharacterization_Intake(output);
-  }
-
-  /**
-   * Returns the average velocity of the modules in rotations/sec (Phoenix native
-   * units).
-   */
-  public double getFFCharacterizationVelocity_Intake() {
-    double output = io.getFFCharacterizationVelocity_Intake();
-    return output;
-  }
 
   public SysIdRegistry getRegistry() {
     return sysIdRegistry;
@@ -237,7 +215,6 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
     goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
-    goal.intakeSpeed = 0;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -247,7 +224,6 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
     goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
-    goal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -257,7 +233,6 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = flywheelrps.getAsDouble();
     goal.hoodSpeed = hoodrps.getAsDouble();
-    goal.intakeSpeed = carwashrps.getAsDouble();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -268,7 +243,7 @@ public class Shooter extends SubsystemBase {
     goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
     ;
     goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
-    goal.intakeSpeed = 0;
+
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -278,7 +253,6 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
     goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
-    goal.intakeSpeed = interpolator.getAsList(distanceToHub).get(2);
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -288,7 +262,6 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed() * -1;
     goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed() * -1;
-    goal.intakeSpeed = RobotState.getInstance().getShooterState().getIntakeSpeed() * -1;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }

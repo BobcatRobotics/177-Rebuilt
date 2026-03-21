@@ -9,7 +9,6 @@ public class ShooterState {
   /** Output goal for the shooter subsystem */
   public static class ShooterGoal {
     public double flywheelSpeed;
-    public double intakeSpeed;
     public double hoodSpeed;
   }
 
@@ -39,7 +38,6 @@ public class ShooterState {
    */
   public void setManualSpeeds(
       double flywheelSpeed,
-      double intakeSpeed,
       double hoodSpeed) {
     currentState = State.MANUAL;
   }
@@ -50,13 +48,11 @@ public class ShooterState {
     switch (currentState) {
       case IDLE -> {
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
       }
     }
@@ -72,10 +68,6 @@ public class ShooterState {
 
   public double getFlywheelSpeed() {
     return currentSetpoints.flywheelSpeed;
-  }
-
-  public double getIntakeSpeed() {
-    return currentSetpoints.intakeSpeed;
   }
 
   public double getHoodSpeed() {

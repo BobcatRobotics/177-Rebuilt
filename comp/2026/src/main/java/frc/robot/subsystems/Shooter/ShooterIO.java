@@ -12,34 +12,29 @@ public interface ShooterIO {
     public double velocityOfHoodWheelMotorRightRPS = 0;
     public double velocityOfMainFlywheelOuterRightRPS = 0;
     public double velocityOfMainFlywheelOuterLeftRPS = 0;
-    public double velocityOfIntakeRPS = 0;
     public double accelerationOfMainFlywheelLeft = 0;
     public double accelerationOfMainFlywheelRight = 0;
     public double accelerationOfMainFlywheelOuterRight = 0;
     public double accelerationOfMainFlywheelOuterLeft = 0;
     public double accelerationOfHoodLeft = 0;
-    public double accelerationOfIntake = 0;
     public double statorCurrentOfHoodLeftAmps = 0;
     public double statorCurrentOfHoodRightAmps = 0;
     public double statorCurrentOfMainFlywheelLeftAmps = 0;
     public double statorCurrentOfMainFlywheelRightAmps = 0;
     public double statorCurrentOfMainFlywheelOuterRightAmps = 0;
     public double statorCurrentOfMainFlywheelOuterLeftAmps = 0;
-    public double statorCurrentOfIntakeAmps = 0;
     public boolean HoodWheelMotorRightConnected = false;
     public boolean HoodWheelMotorLeftConnected = false;
     public boolean shooterFlywheelInnerLeftConnected = false;
     public boolean shooterFlywheelInnerRightConnected = false;
     public boolean shooterFlywheelOuterRightConnected = false;
     public boolean shooterFlywheelOuterLeftConnected = false;
-    public boolean shooterIntakeMotorConnected = false;
     public double outputOfHoodLeftVolts = 0;
     public double outputOfHoodRightVolts = 0;
     public double outputOfMainFlywheelLeftVolts = 0;
     public double outputOfMainFlywheelRightVolts = 0;
     public double outputOfMainFlywheelOuterRightVolts = 0;
     public double outputOfMainFlywheelOuterLeftVolts = 0;
-    public double outputOfIntakeVolts = 0;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {
@@ -49,7 +44,7 @@ public interface ShooterIO {
   }
 
   public default void setVelocity(double ShooterSpeed, double ShooterHoodSpeedLeft,
-      double ShooterHoodSpeedRight, double shooterIntakeSpeed) {
+      double ShooterHoodSpeedRight) {
   }
 
   public default void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
@@ -59,9 +54,6 @@ public interface ShooterIO {
   }
 
   public default void setHoodSpeedLeft(double shooterHoodSpeedInRPS) {
-  }
-
-  public default void setIntakeSpeed(double shooterIntakeSpeedInRPS) {
   }
 
   public default void holdPosition() {
@@ -82,9 +74,6 @@ public interface ShooterIO {
 
   }
 
-  public default void stopIntakeWheel() {
-  }
-
   public default void simulationPeriodic() {
 
   }
@@ -96,7 +85,6 @@ public interface ShooterIO {
     return 0.0;
   }
 
-
   public default void runCharacterization_Hood(double output) {
   }
 
@@ -104,17 +92,11 @@ public interface ShooterIO {
     return 0.0;
   }
 
-    public default void runCharacterization_Intake(double output) {
-  }
-
-  public default double getFFCharacterizationVelocity_Intake() {
+  public default double getVelocityHood() {
     return 0.0;
   }
 
-    public default double getVelocityHood(){
-    return 0.0;
-  }
-    public default double getVelocityMainFlywheel(){
+  public default double getVelocityMainFlywheel() {
     return 0.0;
   }
 }

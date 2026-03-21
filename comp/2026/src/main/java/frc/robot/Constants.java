@@ -41,20 +41,34 @@ public final class Constants {
         /** Replaying from a log file. */
         REPLAY
     }
-
+    public static final class CarwashConstants{
+        public static final double idleIntakeSpeedRPS = 0;
+        public static final double targetIntakeSpeedRPS = 75;
+        public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
+                public final static class SharedIntake {
+            public static final int intakeIDLeft = 15;
+            public static final double kIntakeMotorkP = 1.708;
+            public static final double kIntakeMotorkI = 0;
+            public static final double kIntakeMotorkD = 0;
+            public static final double kIntakeMotorkS = 0.375;
+            public static final double kIntakeMotorkV = 0.117;
+            public static final double kIntakeMotorkA = 0;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = false;
+        }
+    }
     public final static class ShooterConstants {
 
         public static final double idleFlywheelSpeedRPS = 0;
-        public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
 
         public static final double targetFlywheelSpeedRPS = 56;
-        public static final double targetIntakeSpeedRPS = 75;
         public static final double targetHoodSpeedRPS = 20;
 
         public static final double[] targetDistances = {40,50,60,70,80,90,100,110};
         public static final double[] targetFlywheelSpeedsInRPS = {70,66,61,49,45,45,45,45};
-        public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
         public static final double[] targetHoodSpeedInRPS = {-40,-35,-25,4,16,20,22,24};
 
 
@@ -82,19 +96,7 @@ public final class Constants {
         }
 
 
-        public final static class SharedIntake {
-            public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 1.708;
-            public static final double kIntakeMotorkI = 0;
-            public static final double kIntakeMotorkD = 0;
-            public static final double kIntakeMotorkS = 0.375;
-            public static final double kIntakeMotorkV = 0.117;
-            public static final double kIntakeMotorkA = 0;
-            public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
-            public static final boolean isInverted = false;
-            public static final boolean isCoast = false;
-        }
+
 
         public final static class Left {
 

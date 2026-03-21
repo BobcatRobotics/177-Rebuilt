@@ -27,9 +27,6 @@ public class ShooterAutoOptions {
         autoChooser.addOption("Hood Simple FF Characterization",
                 shooterCharacterizationCommands.feedforwardCharacterization_Hood(shooter)
                         .withTimeout(15));
-        autoChooser.addOption("Intake Simple FF Characterization",
-                shooterCharacterizationCommands.feedforwardCharacterization_Intake(shooter)
-                        .withTimeout(15));
 
         autoChooser.addOption("Flywheel SysId (Quasistatic Forward)",
                 shooter.getRegistry().get("SysIdStateFlywheel")
@@ -57,18 +54,6 @@ public class ShooterAutoOptions {
                 shooter.getRegistry().get("SysIdStateHood")
                         .dynamic(SysIdRoutine.Direction.kReverse));
 
-        autoChooser.addOption("Intake SysId (Quasistatic Forward)",
-                shooter.getRegistry().get("SysIdStateIntake")
-                        .quasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Intake SysId (Quasistatic Reverse)",
-                shooter.getRegistry().get("SysIdStateIntake")
-                        .quasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Intake SysId (Dynamic Forward)",
-                shooter.getRegistry().get("SysIdStateIntake")
-                        .dynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Intake SysId (Dynamic Reverse)",
-                shooter.getRegistry().get("SysIdStateIntake")
-                        .dynamic(SysIdRoutine.Direction.kReverse));
         return autoChooser;
     }
 }

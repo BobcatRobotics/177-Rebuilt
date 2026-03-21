@@ -10,10 +10,11 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.Carwash.Carwash;
 import frc.robot.subsystems.Shooter.Shooter;
 import org.ejml.simple.SimpleMatrix;
 
-public class shooterCharacterizationCommands {
+public class carwashCharacterizationCommands {
     private static final double FF_START_DELAY = 2.0; // Secs
     private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
 
@@ -31,7 +32,7 @@ public class shooterCharacterizationCommands {
     }
 
     private static Command characterize(
-            Shooter shooter,
+            Carwash shooter,
             Runnable zeroVoltage,
             java.util.function.DoubleConsumer applyVoltage,
             java.util.function.DoubleSupplier velocitySupplier,
@@ -141,28 +142,17 @@ public class shooterCharacterizationCommands {
                         }));
     }
 
-    public static Command feedforwardCharacterization_Flywheel(Shooter shooter) {
+    public static Command feedforwardCharacterization_Intake(Carwash carwash) {
         return characterize(
-                shooter,
-                () -> shooter.runCharacterization_Flywheel(0.0),
-                shooter::runCharacterization_Flywheel,
-                shooter::getFFCharacterizationVelocity_Flywheel,
-                "Shooter/Characterization/Flywheel",
-                "Flywheel");
+                carwash,
+                () -> carwash.runCharacterization_Intake(0.0),
+                carwash::runCharacterization_Intake,
+                carwash::getFFCharacterizationVelocity_Intake,
+                "Shooter/Characterization/Intake",
+                "Intake");
     }
 
-    public static Command feedforwardCharacterization_Hood(Shooter shooter) {
-        return characterize(
-                shooter,
-                () -> shooter.runCharacterization_Hood(0.0),
-                shooter::runCharacterization_Hood,
-                shooter::getFFCharacterizationVelocity_Hood,
-                "Shooter/Characterization/Hood",
-                "Hood");
-    }
-
-
-    public static Command characterizeForAll(Shooter shooter) {
-        return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Hood(shooter));
+    public static Command characterizeForAll(Carwash carwash) {
+        return feedforwardCharacterization_Intake(carwash);
     }
 }

@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.Carwash.CarwashState;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -33,6 +34,18 @@ public class RobotState {
 
   public ShooterState getShooterState() {
     return desiredShooterState;
+  }
+
+    // Save Carwash State
+  private CarwashState.State desiredCarwashStateType = CarwashState.State.IDLE;
+  private CarwashState desiredCarwashState = new CarwashState();
+
+  public CarwashState.State getDesiredCarwashStateType() {
+    return desiredCarwashStateType;
+  }
+
+  public CarwashState getCarwashState() {
+    return desiredCarwashState;
   }
 
   // Save Hopper State
