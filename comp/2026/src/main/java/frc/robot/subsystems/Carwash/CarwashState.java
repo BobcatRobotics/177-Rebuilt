@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Carwash;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 public class CarwashState {
@@ -12,6 +13,7 @@ public class CarwashState {
   public enum State {
     IDLE,
     MANUAL,
+    INTERPOLATING,
     TARGETING
   }
 
@@ -44,6 +46,11 @@ public class CarwashState {
     switch (currentState) {
       case IDLE -> {
         currentSetpoints.intakeSpeed = Constants.CarwashConstants.idleIntakeSpeedRPS;
+      }
+      case INTERPOLATING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        double hubDistance = frc.robot.RobotState.getInstance().hubDistance;
+        currentSetpoints.intakeSpeed = frc.robot.RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation

@@ -321,6 +321,8 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
+                operator.rightBumper().whileTrue(manualSpinUp());
+                operator.leftBumper().whileTrue(manualShootBalls());
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
@@ -439,7 +441,7 @@ public class RobotContainer {
 
         public Command SpinUp() {
                 return new RunCommand(() -> {
-                        m_Shooter.spinUp(RobotState.getInstance().hubDistance);
+                        m_Shooter.spinUp();
                         if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
                                 controller.setRumble(RumbleType.kBothRumble, 1);
                         } else {
@@ -459,6 +461,33 @@ public class RobotContainer {
                        m_Carwash.feedFuel();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         m_Shooter.shootFuel();
+                }, m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command manualSpinUp() {
+                return new RunCommand(() -> {
+                        m_Shooter.manualSpinUp();
+                        if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
+                                controller.setRumble(RumbleType.kBothRumble, 1);
+                        } else {
+                                controller.setRumble(RumbleType.kBothRumble, 0);
+                        }
+                }, m_Shooter).alongWith(new RunCommand(() -> {
+                       m_Carwash.spinUp();
+                }, m_Carwash)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }, intake));
+        }
+
+        public Command manualShootBalls() {
+                return new RunCommand(() -> {
+                        m_Hopper.runHopper();
+                }, m_Hopper).alongWith(new RunCommand(() -> {
+                       m_Carwash.manualFeedFuel();
+                }, m_Carwash)).alongWith(new RunCommand(() -> {
+                        m_Shooter.manualShootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));

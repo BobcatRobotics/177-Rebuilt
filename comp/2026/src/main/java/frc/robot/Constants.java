@@ -43,8 +43,8 @@ public final class Constants {
     }
     public static final class CarwashConstants{
         public static final double idleIntakeSpeedRPS = 0;
-        public static final double targetIntakeSpeedRPS = 75;
-        public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
+        public static final double targetIntakeSpeedRPS = 80;
+        // public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
                 public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
             public static final double kIntakeMotorkP = 1.708;
@@ -63,14 +63,9 @@ public final class Constants {
 
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
-
-        public static final double targetFlywheelSpeedRPS = 56;
-        public static final double targetHoodSpeedRPS = 20;
-
-        public static final double[] targetDistances = {40,50,60,70,80,90,100,110};
-        public static final double[] targetFlywheelSpeedsInRPS = {70,66,61,49,45,45,45,45};
-        public static final double[] targetHoodSpeedInRPS = {-40,-35,-25,4,16,20,22,24};
-
+//80in distance
+        public static final double targetFlywheelSpeedRPS = 45;
+        public static final double targetHoodSpeedRPS = 16;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -131,7 +126,7 @@ public final class Constants {
         }
 
         public final static class ValuesOfKnownShots{
-            public static final double[] distance = {1.016, 1.27, 1.524, 1.778, 2.032, 2.286, 2.54, 2.794}; //distance from front LL to center of hub (meters)
+            public static final double[] distance = {1.8923, 2.1463, 2.4003, 2.6543, 2.9083, 3.1623, 3.4163, 3.6703}; //distance from front LL to center of hub (meters)
             public static final double[] carwashSpeed ={80,80,80,80,80,80,80,80}; //RPS
             public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; //RPS
             public static final double[] hoodSpeed = {-40,-35,-25,4,16,20,22,24}; //RPS

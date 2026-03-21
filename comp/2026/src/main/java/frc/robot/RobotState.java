@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.Carwash.CarwashState;
@@ -72,6 +74,12 @@ public class RobotState {
     return desiredIntakeState;
   }
 
+    public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
+      Constants.ShooterConstants.ValuesOfKnownShots.distance,
+      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
+      true);
 
   public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
