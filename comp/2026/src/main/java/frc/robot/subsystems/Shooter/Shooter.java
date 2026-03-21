@@ -94,6 +94,7 @@ public class Shooter extends SubsystemBase {
 
 
 
+
   public double distanceToHub() {
     Pose2d robotPose = RobotState.getInstance().robotPose;
     Pose3d hubCoordinate = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
@@ -251,7 +252,6 @@ public class Shooter extends SubsystemBase {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
-    ;
     goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());

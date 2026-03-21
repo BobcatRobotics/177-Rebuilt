@@ -131,15 +131,11 @@ public final class Constants {
         }
 
         public final static class ValuesOfKnownShots{
-            public static final double[] distance = new double[5]; //distance from front LL to center of hub
-            public static final double[] carwashSpeed = new double[5]; 
-            public static final double[] mainFlyWheelSpeed = new double[5]; 
-            public static final double[] hoodSpeed = new double[5]; 
+            public static final double[] distance = {1.016, 1.27, 1.524, 1.778, 2.032, 2.286, 2.54, 2.794}; //distance from front LL to center of hub (meters)
+            public static final double[] carwashSpeed ={80,80,80,80,80,80,80,80}; //RPS
+            public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; //RPS
+            public static final double[] hoodSpeed = {-40,-35,-25,4,16,20,22,24}; //RPS
         }
-
-    
-
-
     }
 
     public static final class HopperConstants {
