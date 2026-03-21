@@ -126,8 +126,10 @@ public class RobotContainer {
                                                 new ModuleIOTalonFX(TunerConstants.BackRight));
                                 // Vision
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
-                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -154,8 +156,10 @@ public class RobotContainer {
                                 intake.applyState();
 
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight("limelight-shooter", drive::getRotation),
-                                                new VisionIOLimelight("limelight-intake", drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
                                 break;
 
                         default:
@@ -178,7 +182,9 @@ public class RobotContainer {
 
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
                                 break;
                 }
 
@@ -402,7 +408,7 @@ public class RobotContainer {
 
         public Command SpinUp() {
                 return new RunCommand(() -> {
-                        m_Shooter.spinUp();
+                        m_Shooter.spinUp(RobotState.getInstance().hubDistance);
                         if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
                                 controller.setRumble(RumbleType.kBothRumble, 1);
                         } else {
@@ -417,7 +423,7 @@ public class RobotContainer {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }, m_Hopper).alongWith(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
+                        m_Shooter.shootFuel(RobotState.getInstance().hubDistance);
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));

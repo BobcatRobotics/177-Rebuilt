@@ -87,44 +87,15 @@ public class Shooter extends SubsystemBase {
     double distanceToHub = distanceToHub();
     boolean hubInrange = isHubInRange(distanceToHub, 20);
     Translation2d[] shotLine = getShotLine(distanceToHub);
-    ShooterState.ShooterGoal shooterSpeeds = getShooterSpeeds(distanceToHub);
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
     RobotState.getInstance().hubDistance = distanceToHub;
     Logger.recordOutput("Shooter/IsInTarget", hubInrange);
     Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
     Logger.recordOutput("Shooter/BallPath", shotLine);
-    Logger.recordOutput("Shooter/Speeds/flywheel", shooterSpeeds.flywheelSpeed);
-    Logger.recordOutput("Shooter/Speeds/carwash", shooterSpeeds.intakeSpeed);
-    Logger.recordOutput("Shooter/Speeds/hood", shooterSpeeds.hoodSpeed);
 
   }
 
-  public ShooterState.ShooterGoal getShooterSpeeds(double distance) {
-    ShooterState.ShooterGoal goal = new ShooterGoal();
-    double angle = 90 - 24.7;
-    double partA = 3 / Math.PI;
-    double numerator = 32.2 * (distance * distance);
-    double denominator = 2 * Math.cos(angle) * (distance * Math.tan(angle) - 4.657);
-    goal.flywheelSpeed = partA * Math.sqrt(numerator / denominator);
-    goal.intakeSpeed = 2 * goal.flywheelSpeed;
-    goal.hoodSpeed = 0.4 * goal.flywheelSpeed;
-    return goal;
-  }
-
-  public double getTrajectoryShotHeight(ShooterState.ShooterGoal speeds) {
-    double theta = Math.toRadians(90 - 24.7);
-    double g = 32.2; // ft/s^2
-    double carwashRadius = 1;
-    double hoodRadius = 1;
-    double flywheelRadius = 2;
-    double velocity = carwashRadius * speeds.intakeSpeed + flywheelRadius * speeds.flywheelSpeed
-        + hoodRadius * speeds.hoodSpeed;
-    double height = (velocity * velocity * Math.pow(Math.sin(theta), 2)) / (2 * g);
-    double shooterExitHeight = 17.2;
-    double totalHeight = shooterExitHeight + height;
-    return totalHeight;
-  }
 
   public double distanceToHub() {
     Pose2d robotPose = RobotState.getInstance().robotPose;
@@ -306,7 +277,6 @@ public class Shooter extends SubsystemBase {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
-    ;
     goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
     goal.intakeSpeed = interpolator.getAsList(distanceToHub).get(2);
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
