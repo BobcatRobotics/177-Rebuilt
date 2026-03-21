@@ -135,7 +135,7 @@ public class Carwash extends SubsystemBase {
   public void feedFuel() {
     RobotState.getInstance().getCarwashState().setState(CarwashState.State.TARGETING);
     CarwashGoal goal = new CarwashGoal();
-    goal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
+    goal.intakeSpeed = Constants.CarwashConstants.targetIntakeSpeedRPS;
     RobotState.getInstance().getCarwashState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getCarwashState());
   }
@@ -159,7 +159,7 @@ public class Carwash extends SubsystemBase {
   public void reverseFuel() {
     RobotState.getInstance().getCarwashState().setState(CarwashState.State.TARGETING);
     CarwashGoal goal = new CarwashGoal();
-    goal.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS*-1;
+    goal.intakeSpeed = Constants.CarwashConstants.targetIntakeSpeedRPS*-1;
     RobotState.getInstance().getCarwashState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getCarwashState());
   }

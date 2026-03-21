@@ -43,11 +43,11 @@ public class CarwashState {
 
     switch (currentState) {
       case IDLE -> {
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.CarwashConstants.idleIntakeSpeedRPS;
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
+        currentSetpoints.intakeSpeed = Constants.CarwashConstants.targetIntakeSpeedRPS;
       }
     }
   }

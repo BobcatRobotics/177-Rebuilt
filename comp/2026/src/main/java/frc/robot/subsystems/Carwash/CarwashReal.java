@@ -46,23 +46,23 @@ public class CarwashReal implements CarwashIO {
 
   public CarwashReal() {
     Gains intakeGains = new Gains.Builder()
-        .kP(Constants.ShooterConstants.SharedIntake.kIntakeMotorkP)
-        .kI(Constants.ShooterConstants.SharedIntake.kIntakeMotorkI)
-        .kD(Constants.ShooterConstants.SharedIntake.kIntakeMotorkD)
-        .kS(Constants.ShooterConstants.SharedIntake.kIntakeMotorkS)
-        .kV(Constants.ShooterConstants.SharedIntake.kIntakeMotorkV)
-        .kA(Constants.ShooterConstants.SharedIntake.kIntakeMotorkA).build();
+        .kP(Constants.CarwashConstants.SharedIntake.kIntakeMotorkP)
+        .kI(Constants.CarwashConstants.SharedIntake.kIntakeMotorkI)
+        .kD(Constants.CarwashConstants.SharedIntake.kIntakeMotorkD)
+        .kS(Constants.CarwashConstants.SharedIntake.kIntakeMotorkS)
+        .kV(Constants.CarwashConstants.SharedIntake.kIntakeMotorkV)
+        .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
     setupIntake(intakeGains);
   }
 
   public void setupIntake(Gains g) {
     intakeWheelConfig = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedIntake.intakeIDLeft,
-        Constants.ShooterConstants.SharedIntake.isInverted,
-        Constants.ShooterConstants.SharedIntake.isCoast,
-        Constants.ShooterConstants.SharedIntake.statorCurrentLimit,
-        Constants.ShooterConstants.SharedIntake.supplyCurrentLimit);
+        Constants.CarwashConstants.SharedIntake.intakeIDLeft,
+        Constants.CarwashConstants.SharedIntake.isInverted,
+        Constants.CarwashConstants.SharedIntake.isCoast,
+        Constants.CarwashConstants.SharedIntake.statorCurrentLimit,
+        Constants.CarwashConstants.SharedIntake.supplyCurrentLimit);
     shooterIntakeMotor = new TalonFX(intakeWheelConfig.getMotorInnerId(), new CANBus("rio"));
     intakeWheelConfig.configureMotor(shooterIntakeMotor, g);
     if (Constants.lowTelemetryMode) {

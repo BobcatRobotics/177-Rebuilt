@@ -161,18 +161,8 @@ public class shooterCharacterizationCommands {
                 "Hood");
     }
 
-    public static Command feedforwardCharacterization_Intake(Shooter shooter) {
-        return characterize(
-                shooter,
-                () -> shooter.runCharacterization_Intake(0.0),
-                shooter::runCharacterization_Intake,
-                shooter::getFFCharacterizationVelocity_Intake,
-                "Shooter/Characterization/Intake",
-                "Intake");
-    }
 
     public static Command characterizeForAll(Shooter shooter) {
-        return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Hood(shooter))
-                .andThen(feedforwardCharacterization_Intake(shooter));
+        return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Hood(shooter));
     }
 }

@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.carwashCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
@@ -363,25 +364,28 @@ public class RobotContainer {
         }
 
         public Command characterizeAll() {
-                Command shooterFeeder = new InstantCommand(() -> {
+
+                // Carwash Flywheel
+                Command carwashFeeder = new InstantCommand(() -> {
                         RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;
-                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Intake(m_Shooter))
-                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
+                }).andThen(carwashCharacterizationCommands.feedforwardCharacterization_Intake(m_Carwash))
+                                .withTimeout(15).andThen(new InstantCommand(() -> m_Carwash.stopFeedingFuel()));
+                // Shooter Flywheels
                 Command shooterMainFlywheel = new InstantCommand(() -> {
                         RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;
                 }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter))
-                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
+                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopMainWheel()));
                 Command shooterHooder = new InstantCommand(() -> {
                         RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;
                 }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15)
-                                .andThen(new InstantCommand(() -> m_Shooter.stopIntakeWheel()));
-
+                                .andThen(new InstantCommand(() -> m_Shooter.stopHoodWheel()));
+                // Hopper Flywheels
                 Command hopperMain = new InstantCommand(() -> {
                         RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;
                 }).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15)
                                 .andThen(new InstantCommand(() -> m_Hopper.stop()));
 
-                return shooterFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
+                return carwashFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
         }
 
         /**
