@@ -135,9 +135,6 @@ public final class Constants {
             public static final double[] carwashSpeed ={80,80,80,80,80,80,80,80}; //RPS
             public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; //RPS
             public static final double[] hoodSpeed = {-40,-35,-25,4,16,20,22,24}; //RPS
-            public static final double[] carwashSpeed = {80,80,80,80,80,80,80,80}; 
-            public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; 
-            public static final double[] hoodSpeed = {-44,-35,-25,4,16,20,22,24}; 
         }
     }
 
