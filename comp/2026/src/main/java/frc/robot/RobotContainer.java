@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -46,6 +47,10 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Carwash.Carwash;
+import frc.robot.subsystems.Carwash.CarwashIO;
+import frc.robot.subsystems.Carwash.CarwashReal;
+import frc.robot.subsystems.Carwash.CarwashSim;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
@@ -86,6 +91,7 @@ public class RobotContainer {
         private final Drive drive;
         public Vision vision;
         public final Shooter m_Shooter;
+        public final Carwash m_Carwash;
         private final Hopper m_Hopper;
         public final Intake intake;
 
@@ -115,6 +121,9 @@ public class RobotContainer {
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
+                
+                configureSwitchablePort();
+
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
@@ -132,6 +141,9 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
 
+                                m_Carwash = new Carwash(new CarwashReal());
+                                m_Carwash.applyState();
+
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
                                 intake = new Intake(new IntakeReal());
@@ -146,6 +158,9 @@ public class RobotContainer {
                                                 new ModuleIOSim(TunerConstants.BackRight));
                                 m_Shooter = new Shooter(new ShooterSim());
                                 m_Shooter.applyState();
+
+                                m_Carwash = new Carwash(new CarwashSim());
+                                m_Carwash.applyState();
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
@@ -170,6 +185,10 @@ public class RobotContainer {
                                 m_Shooter = new Shooter(new ShooterIO() {
                                 });
                                 m_Shooter.applyState();
+
+                                m_Carwash = new Carwash(new CarwashIO(){});
+                                m_Carwash.applyState();
+
                                 m_Hopper = new Hopper(new HopperIO() {
 
                                 });
@@ -208,6 +227,14 @@ public class RobotContainer {
                 configureButtonBindings();
 
                 hub = new HubUtil();
+
+        }
+
+        private void configureSwitchablePort(){
+                PowerDistribution pdh = new  PowerDistribution();
+                if (pdh.getSwitchableChannel()) {
+                        pdh.setSwitchableChannel(true);
+                }
         }
 
         private void registerCommands() {
@@ -409,6 +436,8 @@ public class RobotContainer {
                                 controller.setRumble(RumbleType.kBothRumble, 0);
                         }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
+                       m_Carwash.spinUp();
+                }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));
         }
@@ -417,6 +446,8 @@ public class RobotContainer {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }, m_Hopper).alongWith(new RunCommand(() -> {
+                       m_Carwash.feedFuel();
+                }, m_Carwash)).alongWith(new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
