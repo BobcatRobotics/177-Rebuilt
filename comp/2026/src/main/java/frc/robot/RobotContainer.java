@@ -52,6 +52,8 @@ import frc.robot.subsystems.Carwash.Carwash;
 import frc.robot.subsystems.Carwash.CarwashIO;
 import frc.robot.subsystems.Carwash.CarwashReal;
 import frc.robot.subsystems.Carwash.CarwashSim;
+import frc.robot.subsystems.Carwash.CarwashState;
+import frc.robot.subsystems.Carwash.CarwashState.State;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
@@ -60,6 +62,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeAutoOptions;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
@@ -289,6 +292,12 @@ public class RobotContainer {
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
+                m_Carwash.setDefaultCommand(new RunCommand(() ->{ 
+                        m_Carwash.stop();
+                        CarwashState carwashState = RobotState.getInstance().getCarwashState();
+                        carwashState.setState(CarwashState.State.IDLE);
+                        m_Carwash.setState(carwashState);
+                        }, m_Carwash));
 
                 controller.rightTrigger().whileTrue(
                                 new AutoAimDrive(
@@ -310,6 +319,10 @@ public class RobotContainer {
                 controller.rightBumper().whileTrue(SpinUp());
                 controller.leftBumper().whileTrue(ShootBalls());
                 controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                controller.button(11).whileTrue(
+                       new InstantCommand( () -> Logger.recordOutput("Controller", 1))
+                );
+
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -439,6 +452,7 @@ public class RobotContainer {
 
         public Command SpinUp() {
                 return new RunCommand(() -> {
+<<<<<<< Updated upstream
                         m_Shooter.spinUp(RobotState.getInstance().hubDistance);
                         if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
                                 controller.setRumble(RumbleType.kBothRumble, 1);
@@ -446,22 +460,26 @@ public class RobotContainer {
                                 controller.setRumble(RumbleType.kBothRumble, 0);
                         }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
+=======
+                        m_Shooter.spinUp();
+                }).alongWith(new RunCommand(() -> {
+>>>>>>> Stashed changes
                        m_Carwash.spinUp();
-                }, m_Carwash)).alongWith(new RunCommand(() -> {
+                })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command ShootBalls() {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
-                }, m_Hopper).alongWith(new RunCommand(() -> {
+                }).alongWith(new RunCommand(() -> {
                        m_Carwash.feedFuel();
-                }, m_Carwash)).alongWith(new RunCommand(() -> {
+                })).alongWith(new RunCommand(() -> {
                         m_Shooter.shootFuel();
-                }, m_Shooter)).alongWith(new RunCommand(() -> {
+                })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         // public Command ShootBalls() {
