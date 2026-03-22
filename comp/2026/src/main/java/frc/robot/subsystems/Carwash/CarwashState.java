@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Carwash;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
@@ -50,7 +52,8 @@ public class CarwashState {
       case INTERPOLATING -> {
         // Placeholder – typically filled in by vision / interpolation
         double hubDistance = frc.robot.RobotState.getInstance().hubDistance;
-        currentSetpoints.intakeSpeed = frc.robot.RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        currentSetpoints.intakeSpeed = 80;
+        Logger.recordOutput("Carwash/GoalSpeed", currentSetpoints.intakeSpeed);
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation

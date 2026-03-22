@@ -108,6 +108,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     robotContainer.vision.periodic();
+    
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();

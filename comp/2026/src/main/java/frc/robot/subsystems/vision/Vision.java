@@ -187,4 +187,6 @@ public class Vision extends SubsystemBase {
   public Rotation2d getShooterTx(){
     return inputs[0].latestTargetObservation.tx();
   }
+
+
 }

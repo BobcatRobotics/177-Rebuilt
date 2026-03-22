@@ -79,7 +79,7 @@ public class RobotState {
       Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
       Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
       Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
-      true);
+      false);
 
   public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
