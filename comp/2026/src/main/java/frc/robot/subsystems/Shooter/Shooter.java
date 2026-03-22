@@ -28,12 +28,6 @@ public class Shooter extends SubsystemBase {
   private ShooterState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
 
-  private TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.ValuesOfKnownShots.distance,
-      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
-      true);
 
   public Shooter(ShooterIO io) {
     // Configure SysId
@@ -210,49 +204,39 @@ public class Shooter extends SubsystemBase {
     return sysIdRegistry;
   }
 
-  public void spinUp() {
+  public void manualSpinUp() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
     goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
     goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+
+  public void manualShootFuel() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
+    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
+
+
+  public void spinUp() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
+    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
 
   public void shootFuel() {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
-    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
-    setState(RobotState.getInstance().getShooterState());
-  }
-
-  public void shootFuel(DoubleSupplier flywheelrps, DoubleSupplier hoodrps, DoubleSupplier carwashrps) {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
-    ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = flywheelrps.getAsDouble();
-    goal.hoodSpeed = hoodrps.getAsDouble();
-    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
-    setState(RobotState.getInstance().getShooterState());
-  }
-
-  public void spinUp(double distanceToHub) {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
-    ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
-    ;
-    goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
-
-    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
-    setState(RobotState.getInstance().getShooterState());
-  }
-
-  public void shootFuel(double distanceToHub) {
-    RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
-    ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = interpolator.getAsList(distanceToHub).get(0);
-    goal.hoodSpeed = interpolator.getAsList(distanceToHub).get(1);
+    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
+    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }

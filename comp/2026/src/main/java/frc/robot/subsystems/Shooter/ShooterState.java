@@ -1,8 +1,11 @@
 package frc.robot.subsystems.Shooter;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 
 public class ShooterState {
 
@@ -15,14 +18,15 @@ public class ShooterState {
   public enum State {
     IDLE,
     MANUAL,
+    INTERPOLATING,
     TARGETING
   }
 
   private State currentState = State.IDLE;
   private ShooterGoal currentSetpoints = new ShooterGoal();
 
-  // Manual control values
 
+  // Manual control values
 
   public ShooterState() {
 
@@ -50,6 +54,13 @@ public class ShooterState {
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
       }
+      case
+          INTERPOLATING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        double hubDistance = RobotState.getInstance().hubDistance;
+        currentSetpoints.flywheelSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
+        currentSetpoints.hoodSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+      }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
@@ -58,7 +69,7 @@ public class ShooterState {
     }
   }
 
-  public void setCurrentSetPoints(ShooterGoal goal){
+  public void setCurrentSetPoints(ShooterGoal goal) {
     currentSetpoints = goal;
   }
 
