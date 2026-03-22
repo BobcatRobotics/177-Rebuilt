@@ -86,8 +86,17 @@ public class Shooter extends SubsystemBase {
 
   }
 
-
-
+  public void autoPeriodic(){
+    double distanceToHub = distanceToHub();
+    boolean hubInrange = isHubInRange(distanceToHub, 20);
+    Translation2d[] shotLine = getShotLine(distanceToHub);
+    RobotState.getInstance().hubInrange = hubInrange;
+    RobotState.getInstance().shooterUpToSpeed = atSpeed();
+    RobotState.getInstance().hubDistance = distanceToHub;
+    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
+    Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
+    Logger.recordOutput("Shooter/BallPath", shotLine);
+  }
 
   public double distanceToHub() {
     Pose2d robotPose = RobotState.getInstance().robotPose;

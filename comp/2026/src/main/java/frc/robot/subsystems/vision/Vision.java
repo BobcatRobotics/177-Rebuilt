@@ -101,9 +101,9 @@ public class Vision extends SubsystemBase {
                     > maxZError // Must have realistic Z coordinate
 
                 // Must be within the field boundaries
-                || observation.pose().getX() < 0.0
+                || observation.pose().getX() <= 0.0
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
-                || observation.pose().getY() < 0.0
+                || observation.pose().getY() <= 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth();
 
         // Add pose to log

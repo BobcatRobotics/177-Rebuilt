@@ -253,6 +253,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand(
                                 "ShootBalls", ShootBalls());
                 NamedCommands.registerCommand(
+                                "ManualSpinUp", manualSpinUp());
+                NamedCommands.registerCommand(
+                                "ManualShootBalls", manualShootBalls());
+                NamedCommands.registerCommand(
                                 "IntakeDown", IntakeDown());
                 NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
                 NamedCommands.registerCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder()));
@@ -261,6 +265,11 @@ public class RobotContainer {
                         intake.stop();
                 }, intake));
                 NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
+                NamedCommands.registerCommand("SpinupAndShoot",SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                NamedCommands.registerCommand("AutoAim", new AutoAimDrive(
+                                                drive,
+                                                () -> -controller.getLeftY(),
+                                                () -> -controller.getLeftX()));
         }
 
         /**

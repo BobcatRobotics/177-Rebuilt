@@ -60,7 +60,7 @@
       "command": {
         "type": "named",
         "data": {
-          "name": "SpinUp"
+          "name": "ManualSpinUp"
         }
       }
     }

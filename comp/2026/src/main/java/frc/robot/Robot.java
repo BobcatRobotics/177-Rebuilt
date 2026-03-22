@@ -137,6 +137,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    robotContainer.m_Shooter.autoPeriodic();
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();
