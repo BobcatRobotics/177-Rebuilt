@@ -127,7 +127,7 @@ public class Carwash extends SubsystemBase {
   public void spinUp() {
     RobotState.getInstance().getCarwashState().setState(CarwashState.State.TARGETING);
     CarwashGoal goal = new CarwashGoal();
-    goal.intakeSpeed = 0;
+    goal.intakeSpeed = -10;
     RobotState.getInstance().getCarwashState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getCarwashState());
   }
