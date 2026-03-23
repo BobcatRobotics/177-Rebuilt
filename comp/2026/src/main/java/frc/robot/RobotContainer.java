@@ -249,9 +249,9 @@ public class RobotContainer {
 
         private void registerCommands() {
                 NamedCommands.registerCommand(
-                                "SpinUp", SpinUp());
+                                "SpinUp", AutonomousSpinUp());
                 NamedCommands.registerCommand(
-                                "ShootBalls", ShootBalls());
+                                "ShootBalls", AutonomousShootBalls());
                 NamedCommands.registerCommand(
                                 "ManualSpinUp", manualSpinUp());
                 NamedCommands.registerCommand(
@@ -260,16 +260,14 @@ public class RobotContainer {
                                 "IntakeDown", IntakeDown());
                 NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
                 NamedCommands.registerCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder()));
+                NamedCommands.registerCommand("RunHopper", new RunCommand(() ->m_Hopper.runHopper()));
                 NamedCommands.registerCommand("RunIntakeRollers", RunIntakeRollers());
                 NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
                 NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
                 NamedCommands.registerCommand("SpinupAndShoot",SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
-                NamedCommands.registerCommand("AutoAim", new AutoAimDrive(
-                                                drive,
-                                                () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX()));
+                NamedCommands.registerCommand("AutoAim", new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange));
         }
 
         /**
@@ -486,6 +484,29 @@ public class RobotContainer {
                         intake.setVelocity(125);
                 }));
         }
+
+
+
+        public Command AutonomousSpinUp() {
+                return new RunCommand(() -> {
+                        m_Shooter.spinUp();
+                }, m_Shooter).alongWith(new RunCommand(() -> {
+                        m_Carwash.spinUp();
+                })).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }));
+        }
+
+        public Command AutonomousShootBalls() {
+                return new RunCommand(() -> {
+                       m_Carwash.manualFeedFuel();
+                }).alongWith(new RunCommand(() -> {
+                        m_Shooter.shootFuel();
+                },m_Shooter)).alongWith(new RunCommand(() -> {
+                        intake.setVelocity(125);
+                }));
+        }
+
 
         public Command manualSpinUp() {
                 return new RunCommand(() -> {
