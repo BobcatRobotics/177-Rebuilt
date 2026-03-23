@@ -1,25 +1,18 @@
 package frc.robot.subsystems.Carwash;
 
-import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
+import java.util.function.DoubleSupplier;
+
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Carwash.CarwashState.CarwashGoal;
 import frc.robot.subsystems.Carwash.CarwashState.State;
-
-import java.util.function.DoubleSupplier;
 
 public class Carwash extends SubsystemBase {
 

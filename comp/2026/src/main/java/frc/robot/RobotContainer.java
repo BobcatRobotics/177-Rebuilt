@@ -249,13 +249,17 @@ public class RobotContainer {
 
         private void registerCommands() {
                 NamedCommands.registerCommand(
-                                "SpinUp", AutonomousSpinUp());
+                                "AutoSpinUp", AutonomousSpinUp());
                 NamedCommands.registerCommand(
-                                "ShootBalls", AutonomousShootBalls());
+                                "AutoShootBalls", AutonomousShootBalls());
                 NamedCommands.registerCommand(
-                                "ManualSpinUp", manualSpinUp());
+                                "CalculatedSpinUp", InterpolatedSpinUp());
                 NamedCommands.registerCommand(
-                                "ManualShootBalls", manualShootBalls());
+                                "CalculatedShootBalls", InterpolatedShootBalls());
+                NamedCommands.registerCommand(
+                                "PresetSpinUp", manualSpinUp());
+                NamedCommands.registerCommand(
+                                "PresetShootBalls", manualShootBalls());
                 NamedCommands.registerCommand(
                                 "IntakeDown", IntakeDown());
                 NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
@@ -266,7 +270,7 @@ public class RobotContainer {
                         intake.stop();
                 }, intake));
                 NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
-                NamedCommands.registerCommand("SpinupAndShoot",SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                NamedCommands.registerCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls()));
                 NamedCommands.registerCommand("AutoAim", new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange));
         }
 
@@ -325,9 +329,9 @@ public class RobotContainer {
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
-                controller.rightBumper().whileTrue(SpinUp());
-                controller.leftBumper().whileTrue(ShootBalls());
-                controller.leftTrigger().whileTrue(SpinUp().until(()->m_Shooter.atSpeed()).andThen(ShootBalls()));
+                controller.rightBumper().whileTrue(InterpolatedSpinUp());
+                controller.leftBumper().whileTrue(InterpolatedShootBalls());
+                controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -457,7 +461,7 @@ public class RobotContainer {
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
         }
 
-        public Command SpinUp() {
+        public Command InterpolatedSpinUp() {
                 return new RunCommand(() -> {
                         m_Shooter.spinUp();
                         if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
@@ -473,7 +477,7 @@ public class RobotContainer {
                 })));
         }
 
-        public Command ShootBalls() {
+        public Command InterpolatedShootBalls() {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }).alongWith(new RunCommand(() -> {

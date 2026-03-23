@@ -7,20 +7,16 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.security.spec.ECPublicKeySpec;
-
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
-import org.littletonrobotics.junction.Logger;
+import org.bobcatrobotics.Util.Tunables.Gains;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -28,8 +24,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
-import org.bobcatrobotics.Util.Tunables.Gains;
-import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class CarwashReal implements CarwashIO {
   private TalonFX shooterIntakeMotor;
