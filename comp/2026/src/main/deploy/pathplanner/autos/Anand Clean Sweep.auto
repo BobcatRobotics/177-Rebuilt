@@ -49,25 +49,38 @@
                       }
                     },
                     {
-                      "type": "parallel",
+                      "type": "deadline",
                       "data": {
                         "commands": [
                           {
-                            "type": "named",
+                            "type": "wait",
                             "data": {
-                              "name": "AutoRunHopper"
+                              "waitTime": 7.0
                             }
                           },
                           {
-                            "type": "named",
+                            "type": "parallel",
                             "data": {
-                              "name": "ManualSpinUp"
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "AutoShootBalls"
+                              "commands": [
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "AutoRunHopper"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "ManualSpinUp"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "AutoShootBalls"
+                                  }
+                                }
+                              ]
                             }
                           }
                         ]
@@ -77,6 +90,30 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Anand Clean Sweep Part 7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAim"
           }
         }
       ]

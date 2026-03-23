@@ -1,0 +1,107 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.2794008559201138,
+        "y": 5.956390870185448
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9233771929824566,
+        "y": 5.544747807017543
+      },
+      "isLocked": false,
+      "linkedName": "FinishedShootingDepotSide"
+    },
+    {
+      "anchor": {
+        "x": 3.23109649122807,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 2.7022039473684214,
+        "y": 5.727456140350875
+      },
+      "nextControl": {
+        "x": 3.4954302723669133,
+        "y": 5.583233172169333
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.615921052631579,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 5.063253292351503,
+        "y": 5.621684023101161
+      },
+      "nextControl": {
+        "x": 6.168588812911656,
+        "y": 5.640903696197083
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.067883771929825,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 5.673618421052632,
+        "y": 5.602445175438596
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "OverBumpSecondTImeDepotSide"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 130.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 130.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 3.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.75,
+    "rotation": 79.21570213243746
+  },
+  "reversed": false,
+  "folder": "Depot Clean Sweep",
+  "idealStartingState": {
+    "velocity": 1.5,
+    "rotation": -40.0
+  },
+  "useDefaultConstraints": false
+}

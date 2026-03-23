@@ -41,7 +41,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FinishedShootingDepotSide"
     }
   ],
   "rotationTargets": [
@@ -94,7 +94,7 @@
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 1.75,
     "rotation": 44.996008726320596
   },
   "useDefaultConstraints": false

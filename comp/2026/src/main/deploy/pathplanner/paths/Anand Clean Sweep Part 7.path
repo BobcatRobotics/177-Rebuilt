@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.868901569186875,
-        "y": 3.9
+        "x": 6.067883771929825,
+        "y": 2.6310307017543857
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.39857980741488,
-        "y": 3.7706816840115533
+        "x": 4.740844298245614,
+        "y": 2.640646929824561
       },
       "isLocked": false,
-      "linkedName": "CenterLineHopperFilled"
+      "linkedName": "SecondSweepDepotSideEndPoint"
     },
     {
       "anchor": {
-        "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "x": 2.0098355263157894,
+        "y": 2.6310307017543857
       },
       "prevControl": {
-        "x": 6.7811782627584165,
-        "y": 5.432962007970913
+        "x": 2.9906907894736845,
+        "y": 2.650263157894736
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AngledDepotBump"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -35,7 +35,7 @@
     {
       "name": "IntakeFuel",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
+      "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
         "data": {
@@ -45,22 +45,22 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.5,
-    "rotation": 44.996008726320596
+    "velocity": 0,
+    "rotation": 28.686147573739397
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
     "velocity": 1.75,
-    "rotation": 89.23610153907
+    "rotation": 45.0
   },
   "useDefaultConstraints": false
 }
