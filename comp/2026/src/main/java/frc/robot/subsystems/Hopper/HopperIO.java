@@ -11,12 +11,6 @@ public interface HopperIO {
     public double outputOfHopperTopVolts = 0.0;
     public double accelerationOfHopperTop = 0.0;
     public boolean hopperTopConnected = false;
-
-    public double velocityOfHopperBottomRPS = 0.0;
-    public double statorCurrentOfHopperBottomAmps = 0.0;
-    public double outputOfHopperBottomVolts = 0.0;
-    public double accelerationOfHopperBottom = 0.0;
-    public boolean hopperBottomConnected = false;
   }
 
   default void updateInputs(HopperIOInputs inputs) {
@@ -26,15 +20,11 @@ public interface HopperIO {
   public default void setVelocity(HopperState desiredState) {
   }
 
-  public default void setVelocity(double topVelocity, double bottomVelocity){
+  public default void setVelocity(double topVelocity){
   }
 
   public default void setTopSpeed(double speed){
 
-  }
-
-  public default void setBottomSpeed(double speed){
-    
   }
 
   public default void holdPosition() {
@@ -49,8 +39,6 @@ public interface HopperIO {
   }
 
   public default void stopTop() {
-  }
- public default void stopBottom() {
   }
 
   public default void simulationPeriodic() {

@@ -55,7 +55,7 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "RunHopper"
+                              "name": "AutoRunHopper"
                             }
                           },
                           {
@@ -67,7 +67,7 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "ShootBalls"
+                              "name": "AutoShootBalls"
                             }
                           }
                         ]

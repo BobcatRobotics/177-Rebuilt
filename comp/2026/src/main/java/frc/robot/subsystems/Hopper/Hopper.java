@@ -60,19 +60,14 @@ public class Hopper extends SubsystemBase {
     io.setVelocity(desiredState);
   }
 
-  private void setVelocity(double topVelocity, double bottomVelocity) {
-    io.setVelocity(topVelocity, bottomVelocity);
+  private void setVelocity(double topVelocity) {
+    io.setVelocity(topVelocity);
   }
 
 
   public void setTopVelocity(double topVelocity) {
     io.setTopSpeed(topVelocity);
   }
-
-  public void setBottomVelocity(double bottomVelocity) {
-    io.setBottomSpeed(bottomVelocity);
-  }
-
 
   public void holdPosition() {
     io.holdPosition();
@@ -88,9 +83,6 @@ public class Hopper extends SubsystemBase {
 
   }
 
-  public void stopBottomWheel() {
-    io.stopBottom();
-  }
 
   @Override
   public void simulationPeriodic() {

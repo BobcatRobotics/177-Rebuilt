@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Depot Clean Sweep",
+    "TestPaths",
     "Outpost Clean Sweep"
   ],
   "autoFolders": [],

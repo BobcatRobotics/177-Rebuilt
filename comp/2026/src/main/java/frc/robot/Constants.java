@@ -147,22 +147,9 @@ public final class Constants {
             public static final int hopperMotorId = 16;
         }
 
-        public static final class Bottom {
-            public static final boolean isInverted = false;
-            public static final boolean isCoast = true;
-            public static final double kHopperP = 2.755;
-            public static final double kHopperI = 0;
-            public static final double kHopperD = 0.1;
-            public static final double kHopperV = 0.073;
-            public static final double kHopperS = 0.739;
-            public static final double kHopperA = 0;
-            public static final double hopperCurrentLimit = 40;
-            public static final int hopperMotorId = 16;
-        }
 
         public static final double idleHopperSpeed = 0.0;
         public static final double topMotorTargetVelocity = 90;
-        public static final double bottomMotorTargetVelocity = 90;
 
     }
 

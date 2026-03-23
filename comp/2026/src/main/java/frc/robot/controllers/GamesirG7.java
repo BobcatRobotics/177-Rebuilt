@@ -16,12 +16,11 @@ public class GamesirG7 extends CommandXboxController {
         rightPaddle = super.button(10);
     }
 
-    public Trigger getLeftTrigger() {
+    public Trigger getLeftPaddle() {
         return leftPaddle;
-
     }
 
-    public Trigger getRightTrigger() {
+    public Trigger getRightPaddle() {
         return rightPaddle;
     }
 
