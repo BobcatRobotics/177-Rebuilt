@@ -53,13 +53,13 @@ public class CarwashState {
         // Placeholder – typically filled in by vision / interpolation
         double hubDistance = frc.robot.RobotState.getInstance().hubDistance;
         currentSetpoints.intakeSpeed = 80;
-        Logger.recordOutput("Carwash/GoalSpeed", currentSetpoints.intakeSpeed);
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.intakeSpeed = Constants.CarwashConstants.targetIntakeSpeedRPS;
       }
     }
+    Logger.recordOutput("Carwash/GoalSpeed", currentSetpoints.intakeSpeed);
   }
 
   public void setCurrentSetPoints(CarwashGoal goal){

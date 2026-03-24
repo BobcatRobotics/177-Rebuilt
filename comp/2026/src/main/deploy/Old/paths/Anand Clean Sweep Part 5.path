@@ -1,0 +1,147 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.2794008559201138,
+        "y": 5.956390870185448
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9233771929824566,
+        "y": 5.544747807017543
+      },
+      "isLocked": false,
+      "linkedName": "FinishedShootingDepotSide"
+    },
+    {
+      "anchor": {
+        "x": 3.23109649122807,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 2.7022039473684214,
+        "y": 5.727456140350875
+      },
+      "nextControl": {
+        "x": 3.4954302723669133,
+        "y": 5.583233172169333
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.852415026833631,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 5.299747266553554,
+        "y": 5.621684023101161
+      },
+      "nextControl": {
+        "x": 6.405082787113708,
+        "y": 5.640903696197083
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.280250447227192,
+        "y": 6.5418246869409655
+      },
+      "prevControl": {
+        "x": 6.160697674418604,
+        "y": 6.6391771019678
+      },
+      "nextControl": {
+        "x": 7.726481523306453,
+        "y": 6.503021984673204
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.9779427549195,
+        "y": 5.631293859649122
+      },
+      "prevControl": {
+        "x": 7.870405361742798,
+        "y": 6.174562578749844
+      },
+      "nextControl": {
+        "x": 8.253774597495529,
+        "y": 4.237817531305903
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.355402504472272,
+        "y": 3.9133094812164577
+      },
+      "prevControl": {
+        "x": 7.7994633273703045,
+        "y": 3.1182647584973164
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "OverBumpSecondTImeDepotSide"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 130.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 130.0
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 5.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 360.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.75,
+    "rotation": -53.80679269443523
+  },
+  "reversed": false,
+  "folder": "Depot Clean Sweep",
+  "idealStartingState": {
+    "velocity": 1.5,
+    "rotation": -40.0
+  },
+  "useDefaultConstraints": false
+}

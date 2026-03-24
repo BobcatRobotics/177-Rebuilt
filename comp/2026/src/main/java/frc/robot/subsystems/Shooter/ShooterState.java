@@ -61,15 +61,16 @@ public class ShooterState {
         double hubDistance = RobotState.getInstance().hubDistance;
         currentSetpoints.flywheelSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
         currentSetpoints.hoodSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
-        Logger.recordOutput("Shooter/Flywheel/GoalSpeeds", currentSetpoints.flywheelSpeed);
-        Logger.recordOutput("Shooter/Hood/GoalSpeeds", currentSetpoints.hoodSpeed);
+
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
       }
-    }
+    }        
+    Logger.recordOutput("Shooter/Flywheel/GoalSpeeds", currentSetpoints.flywheelSpeed);
+    Logger.recordOutput("Shooter/Hood/GoalSpeeds", currentSetpoints.hoodSpeed);
   }
 
   public void setCurrentSetPoints(ShooterGoal goal) {

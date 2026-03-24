@@ -419,6 +419,14 @@ public class ShooterRealQuad implements ShooterIO {
   public void holdPosition() {
   }
 
+  @Override
+  public void stop(){
+    stopMainWheel();
+    stopHoodLeftWheel();
+    stopHoodRightWheel();
+    setVelocity(0,0,0);
+  }
+
   public void stopMainWheel() {
     mainFlywheelSetpoint = 0;
     shooterFlywheelInnerLeft.stopMotor();

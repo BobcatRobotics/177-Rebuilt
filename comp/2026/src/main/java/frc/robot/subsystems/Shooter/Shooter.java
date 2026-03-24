@@ -74,15 +74,7 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
-    double distanceToHub = distanceToHub();
-    boolean hubInrange = isHubInRange(distanceToHub, 20);
-    Translation2d[] shotLine = getShotLine(distanceToHub);
-    RobotState.getInstance().hubInrange = hubInrange;
-    RobotState.getInstance().shooterUpToSpeed = atSpeed();
-    RobotState.getInstance().hubDistance = distanceToHub;
-    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
-    Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
-    Logger.recordOutput("Shooter/BallPath", shotLine);
+    autoPeriodic();
 
   }
 
@@ -164,6 +156,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void stop() {
+    setIdle();
     io.stop();
   }
 
@@ -211,6 +204,16 @@ public class Shooter extends SubsystemBase {
 
   public SysIdRegistry getRegistry() {
     return sysIdRegistry;
+  }
+
+
+  public void setIdle() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.IDLE);
+    ShooterGoal goal = new ShooterGoal();
+    goal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
+    goal.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
   }
 
   public void manualSpinUp() {

@@ -240,29 +240,32 @@ public class RobotContainer {
 
         private void registerCommands() {
                 NamedCommands.registerCommand(
-                                "AutoSpinUp", AutonomousSpinUp());
+                                "AutoStopShooter", loggableCommand("AutoStopShooter",AutonomousStopShooter()));
                 NamedCommands.registerCommand(
-                                "AutoShootBalls", AutonomousShootBalls());
+                                "AutoSpinUp", loggableCommand("AutoSpinUp",AutonomousSpinUp()));
                 NamedCommands.registerCommand(
-                                "CalculatedSpinUp", InterpolatedSpinUp());
+                                "AutoShootBalls", loggableCommand("AutoShootBalls",AutonomousShootBalls()));
+                NamedCommands.registerCommand("AutoSpinUpAndShootAndEnd",  loggableCommand("AutoSpinUpAndShootAndEnd",AutoSpinUpAndShoot()));
                 NamedCommands.registerCommand(
-                                "CalculatedShootBalls", InterpolatedShootBalls());
+                                "CalculatedSpinUp",  loggableCommand("CalculatedSpinUp",InterpolatedSpinUp()));
                 NamedCommands.registerCommand(
-                                "PresetSpinUp", manualSpinUp());
+                                "CalculatedShootBalls",  loggableCommand("CalculatedShootBalls",InterpolatedShootBalls()));
                 NamedCommands.registerCommand(
-                                "PresetShootBalls", manualShootBalls());
+                                "PresetSpinUp",  loggableCommand("PresetSpinUp",manualSpinUp()));
                 NamedCommands.registerCommand(
-                                "IntakeDown", IntakeDown());
-                NamedCommands.registerCommand("IntakeUp", intake.retractAndStop());
-                NamedCommands.registerCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder()));
-                NamedCommands.registerCommand("AutoRunHopper", AutoRunHopper());
-                NamedCommands.registerCommand("RunIntakeRollers", RunIntakeRollers());
-                NamedCommands.registerCommand("StopIntake", new InstantCommand(() -> {
+                                "PresetShootBalls",  loggableCommand("PresetShootBalls",manualShootBalls()));
+                NamedCommands.registerCommand(
+                                "IntakeDown",  loggableCommand("IntakeDown",IntakeDown()));
+                NamedCommands.registerCommand("IntakeUp",  loggableCommand("IntakeUp",intake.retractAndStop()));
+                NamedCommands.registerCommand("IntakePosReset",  loggableCommand("IntakePosReset",new InstantCommand(() -> intake.resetEncoder())));
+                NamedCommands.registerCommand("AutoRunHopper",  loggableCommand("AutoRunHopper",AutoRunHopper()));
+                NamedCommands.registerCommand("RunIntakeRollers",  loggableCommand("RunIntakeRollers",RunIntakeRollers()));
+                NamedCommands.registerCommand("StopIntake",  loggableCommand("StopIntake",new InstantCommand(() -> {
                         intake.stop();
-                }, intake));
-                NamedCommands.registerCommand("WaitHumanLoad", new WaitCommand(5));
-                NamedCommands.registerCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls()));
-                NamedCommands.registerCommand("AutoAim", new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange));
+                }, intake)));
+                NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
+                NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange)));
         }
 
         /**
@@ -492,22 +495,46 @@ public class RobotContainer {
 
         public Command AutonomousSpinUp() {
                 return new RunCommand(() -> {
-                        m_Shooter.spinUp();
+                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
+                                m_Shooter.stop();
+                        } else {
+                                m_Shooter.spinUp();
+                        }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
-                        m_Carwash.spinUp();
-                },m_Carwash)).alongWith(new RunCommand(() -> {
+                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
+                                m_Carwash.stop();
+                        } else {
+                                m_Carwash.spinUp();
+                        }
+                }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                },intake));
+                }, intake));
+        }
+
+        public Command AutoSpinUpAndShoot(){
+                return AutonomousSpinUp().until(()->m_Shooter.atSpeed()).andThen(AutonomousShootBalls()).andThen(AutonomousStopShooter());
+        }
+
+        public Command AutonomousStopShooter(){
+               return new InstantCommand(()->m_Shooter.stop());
         }
 
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
-                       m_Carwash.manualFeedFuel();
-                },m_Carwash).alongWith(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
-                },m_Shooter)).alongWith(new RunCommand(() -> {
+                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
+                                m_Carwash.stop();
+                        } else {
+                                m_Carwash.manualFeedFuel();
+                        }
+                }, m_Carwash).alongWith(new RunCommand(() -> {
+                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
+                                m_Shooter.stop();
+                        } else {
+                                m_Shooter.shootFuel();
+                        }
+                }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                },intake));
+                }, intake));
         }
 
 
@@ -538,17 +565,6 @@ public class RobotContainer {
                 }));
         }
 
-        // public Command ShootBalls() {
-        //         return new RunCommand(() -> {
-        //                 m_Hopper.runHopper();
-        //         }, m_Hopper).alongWith(new RunCommand(() -> {
-        //                 m_Shooter.shootFuel(() -> flywheelChooser.get(), () -> hoodChooser.get(), () -> carwashChooser.get());
-        //         }, m_Shooter)).alongWith(new RunCommand(() -> {
-        //                 intake.setVelocity(125);
-        //         }, intake));
-        // }
-      
-
         public Command IntakeDown() {
                 return new RunCommand(() -> {
                         intake.setPosition(11.7);
@@ -561,18 +577,9 @@ public class RobotContainer {
                 }, intake);
         }
 
-        // public double getDistanceToHub(){
-        //         Pose2d robotPose = drive.getPose();
-        //         Alliance currAlliance;
-        //         if(DriverStation.getAlliance().get()!=null){
-        //            currAlliance = DriverStation.getAlliance().get();
-        //         }
-        //         Pose2d hubPose = HubUtil.getMyHubCoordinates(currAlliance).toPose2d();
-
-        //         double x = robotPose.getTranslation().getDistance(hubPose.getTranslation());
-        //         double y = 10 - 1.12395;
-        //         Logger.recordOutput("distance to hub", x);
-        //         return Math.hypot(x, y);
-
-        // }
+        public static Command loggableCommand(String name, Command command) {
+    return command
+        .beforeStarting(() -> Logger.recordOutput("PathPlanner/ActiveCommands/" + name, true))
+        .finallyDo((interrupted) -> Logger.recordOutput("PathPlanner/ActiveCommands/" + name, false));
+}
 }
