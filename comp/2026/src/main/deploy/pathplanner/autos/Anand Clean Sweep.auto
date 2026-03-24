@@ -105,12 +105,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Anand Clean Sweep Part 7"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "AutoAim"

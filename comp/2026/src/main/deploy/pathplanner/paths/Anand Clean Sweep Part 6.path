@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.067883771929825,
-        "y": 5.631293859649122
+        "x": 6.355402504472272,
+        "y": 3.9133094812164577
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.106348684210526,
-        "y": 4.736984649122807
+        "x": 6.306726296958854,
+        "y": 4.659677996422182
       },
       "isLocked": false,
       "linkedName": "OverBumpSecondTImeDepotSide"
     },
     {
       "anchor": {
-        "x": 6.067883771929825,
-        "y": 3.7080482456140347
+        "x": 6.047119856887299,
+        "y": 5.389821109123434
       },
       "prevControl": {
-        "x": 6.063676672149123,
-        "y": 4.484558662280704
+        "x": 6.224632217472829,
+        "y": 5.123552568245142
       },
       "nextControl": {
-        "x": 6.072090871710527,
-        "y": 2.931537828947368
+        "x": 5.908444807830992,
+        "y": 5.597833682707895
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.067883771929825,
-        "y": 2.6310307017543857
+        "x": 1.9096422182468693,
+        "y": 5.681878354203935
       },
       "prevControl": {
-        "x": 6.144813596491229,
-        "y": 3.5638048245614025
+        "x": 2.2016994633273703,
+        "y": 5.600751341681574
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 78.27488798483498
+      "rotationDegrees": -45.0
     }
   ],
   "constraintZones": [],
@@ -74,14 +74,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.75,
-    "rotation": 45.0
+    "velocity": 0.0,
+    "rotation": -29.24882633654702
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
     "velocity": 1.75,
-    "rotation": 79.21570213243746
+    "rotation": -53.80679269443523
   },
   "useDefaultConstraints": false
 }
