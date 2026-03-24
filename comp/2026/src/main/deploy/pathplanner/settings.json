@@ -3,7 +3,8 @@
   "robotLength": 0.965,
   "holonomicMode": true,
   "pathFolders": [
-    "Depot Clean Sweep"
+    "Depot Clean Sweep",
+    "Outpost Clean Sweep"
   ],
   "autoFolders": [],
   "defaultMaxVel": 0.5,
