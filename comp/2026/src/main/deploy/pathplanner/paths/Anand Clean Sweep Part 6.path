@@ -20,12 +20,12 @@
         "y": 5.389821109123434
       },
       "prevControl": {
-        "x": 6.224632217472829,
-        "y": 5.123552568245142
+        "x": 6.366426033329347,
+        "y": 5.368534030693963
       },
       "nextControl": {
-        "x": 5.908444807830992,
-        "y": 5.597833682707895
+        "x": 5.797673567423147,
+        "y": 5.4064508617543785
       },
       "isLocked": false,
       "linkedName": null
@@ -66,7 +66,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 2.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -75,12 +75,12 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -29.24882633654702
+    "rotation": -30.699722550814364
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 1.75,
+    "velocity": 2.5,
     "rotation": -53.80679269443523
   },
   "useDefaultConstraints": false

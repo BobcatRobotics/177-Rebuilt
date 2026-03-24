@@ -134,13 +134,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.75,
+    "velocity": 2.5,
     "rotation": -53.80679269443523
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 1.5,
+    "velocity": 2.5,
     "rotation": -40.0
   },
   "useDefaultConstraints": false
