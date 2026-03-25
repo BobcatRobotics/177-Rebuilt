@@ -64,7 +64,7 @@
   "reversed": false,
   "folder": "Outpost Clean Sweep",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": false

@@ -41,7 +41,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FinishedShootingOutpostSide"
     }
   ],
   "rotationTargets": [
@@ -62,7 +62,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": 40.0
   },
   "reversed": false,
