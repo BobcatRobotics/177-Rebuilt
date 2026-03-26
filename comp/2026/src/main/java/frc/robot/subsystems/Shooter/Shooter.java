@@ -3,7 +3,6 @@ package frc.robot.subsystems.Shooter;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;

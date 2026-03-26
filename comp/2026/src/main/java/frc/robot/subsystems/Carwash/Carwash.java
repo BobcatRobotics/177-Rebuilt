@@ -4,7 +4,6 @@ import java.util.function.DoubleSupplier;
 
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,12 +21,6 @@ public class Carwash extends SubsystemBase {
   private CarwashState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
 
-  private TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.ValuesOfKnownShots.distance,
-      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
-      true);
 
   public Carwash(CarwashIO io) {
     // Configure SysId
