@@ -64,8 +64,8 @@ public final class Constants {
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
 //80in distance
-        public static final double targetFlywheelSpeedRPS = 45;
-        public static final double targetHoodSpeedRPS = 16;
+        public static final double targetFlywheelSpeedRPS = 40;
+        public static final double targetHoodSpeedRPS = 15;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -75,11 +75,11 @@ public final class Constants {
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
             // Motor Constants
-            public static final double kshooterMainkP = 1.66;
+            public static final double kshooterMainkP =4.7;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0;
             public static final double kshooterMainkS = 0.303;
-            public static final double kshooterMainkV = 0.12;
+            public static final double kshooterMainkV = 0.25;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -97,10 +97,10 @@ public final class Constants {
 
             public static final int HoodID = 12;
             // Motor Constants
-            public static final double kHoodMotorkP = 1.629;
+            public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
             public static final double kHoodMotorkD = 0;
-            public static final double kHoodMotorkS = 0.301;
+            public static final double kHoodMotorkS = 0.78;
             public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
@@ -113,10 +113,10 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int HoodID = 17;
-            public static final double kHoodMotorkP = 1.629;
+            public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
             public static final double kHoodMotorkD = 0;
-            public static final double kHoodMotorkS = 0.301;
+            public static final double kHoodMotorkS = 0.78;
             public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
