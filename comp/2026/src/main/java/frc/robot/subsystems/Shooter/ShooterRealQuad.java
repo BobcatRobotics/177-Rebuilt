@@ -154,7 +154,6 @@ public class ShooterRealQuad implements ShooterIO {
       flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
           statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
     }
-
   }
 
   public void setupRightFlywheel(Gains g) {

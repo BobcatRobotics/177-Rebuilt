@@ -74,6 +74,7 @@ public class RobotState {
     return desiredIntakeState;
   }
 
+
     public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
       Constants.ShooterConstants.ValuesOfKnownShots.distance,
       Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,

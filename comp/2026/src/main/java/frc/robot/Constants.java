@@ -4,16 +4,7 @@
 
 package frc.robot;
 
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
-
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-// import frc.robot.util.VisionObservation;
-// import frc.robot.util.VisionObservation.LLTYPE;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -44,8 +35,7 @@ public final class Constants {
     public static final class CarwashConstants{
         public static final double idleIntakeSpeedRPS = 0;
         public static final double targetIntakeSpeedRPS = 80;
-        // public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
-                public final static class SharedIntake {
+        public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
             public static final double kIntakeMotorkP = 1.708;
             public static final double kIntakeMotorkI = 0;
@@ -63,10 +53,8 @@ public final class Constants {
 
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
-//80in distance
         public static final double targetFlywheelSpeedRPS = 41.5;
         public static final double targetHoodSpeedRPS = 22;
-
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
             public static final boolean isInvertedOuterLeft = true;
@@ -74,7 +62,6 @@ public final class Constants {
             public static final boolean isInvertedOuterRight = false;
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
-            // Motor Constants
             public static final double kshooterMainkP = 4.7;
             public static final double kshooterMainkI = 0;
             public static final double kshooterMainkD = 0;
@@ -83,20 +70,13 @@ public final class Constants {
             public static final double kshooterMainkA = 0.0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
-
             public static final int FlywheelOuterIDLeft = 14;
             public static final int FlywheelInnerIDLeft = 13;
             public static final int FlywheelOuterIDRight = 11;
             public static final int FlywheelInnerIDRight = 14; // NOT USED ANYMORE
         }
-
-
-
-
         public final static class Left {
-
             public static final int HoodID = 12;
-            // Motor Constants
             public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
             public static final double kHoodMotorkD = 0;
@@ -107,11 +87,8 @@ public final class Constants {
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
-
         }
-
         public final static class Right {
-            // ID Constants
             public static final int HoodID = 17;
             public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
@@ -125,11 +102,12 @@ public final class Constants {
             public static final boolean isCoast = true;
         }
 
-        public final static class ValuesOfKnownShots{
-            public static final double[] distance = {1.8923, 2.1463, 2.4003, 2.6543, 2.9083, 3.1623, 3.4163, 3.6703}; //distance from front LL to center of hub (meters)
-            public static final double[] carwashSpeed ={80,80,80,80,80,80,80,80}; //RPS
-            public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; //RPS
-            public static final double[] hoodSpeed = {-40,-35,-25,4,16,20,22,24}; //RPS
+        public final static class ValuesOfKnownShots {
+            public static final double offsetDistanceInMeters = 0.92837;
+            public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
+            public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
+            public static final double[] mainFlyWheelSpeed = {  55, 45, 40, 40,  40,  41.5 }; // RPS
+            public static final double[] hoodSpeed =         { -24,  2, 15, 17,  19,  22.0 }; // RPS
         }
     }
 
@@ -146,11 +124,8 @@ public final class Constants {
             public static final double hopperCurrentLimit = 40;
             public static final int hopperMotorId = 16;
         }
-
-
         public static final double idleHopperSpeed = 0.0;
         public static final double topMotorTargetVelocity = 90;
-
     }
 
     public static final class IntakeConstants {
@@ -158,8 +133,6 @@ public final class Constants {
         public static double targetIntakePosition = 0;
         public static double idleRollerSpeed = 0;
         public static double targetIntakeSpeed = 20;
-
-
         public static final class PivotConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = false;
@@ -188,10 +161,8 @@ public final class Constants {
             public static double currentLimit = 60;
             public static double peakForwardLimit = 90;
             public static double peakReverseLimit = -90;
-//UPDATE ID
             public static int rollerMotorId = 19;
         }
-//Original motor
          public static final class LeftRollerConstants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
@@ -204,13 +175,7 @@ public final class Constants {
             public static double currentLimit = 60;
             public static double peakForwardLimit = 90;
             public static double peakReverseLimit = -90;
-
             public static int rollerMotorId = 18;
         }
-
-
     }
-
-    
-
 }

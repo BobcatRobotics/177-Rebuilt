@@ -3,7 +3,6 @@ package frc.robot.subsystems.Shooter;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Hardware.Characterization.SysIdModule;
 import org.bobcatrobotics.Hardware.Characterization.SysIdRegistry;
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +17,6 @@ import frc.robot.Constants;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 import frc.robot.subsystems.Shooter.ShooterState.State;
-import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
 
@@ -74,37 +72,30 @@ public class Shooter extends SubsystemBase {
     Logger.processInputs("Shooter/inputs", inputs);
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
-    double distanceToHub = distanceToHub();
-    boolean hubInrange = isHubInRange(distanceToHub, 20);
-    Translation2d[] shotLine = getShotLine(distanceToHub);
-    RobotState.getInstance().hubInrange = hubInrange;
-    RobotState.getInstance().shooterUpToSpeed = atSpeed();
-    RobotState.getInstance().hubDistance = distanceToHub;
-    Logger.recordOutput("Shooter/IsInTarget", hubInrange);
-    Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
-    Logger.recordOutput("Shooter/BallPath", shotLine);
+    autoPeriodic();
 
   }
 
   public void autoPeriodic(){
-    double distanceToHub = distanceToHub();
-    boolean hubInrange = isHubInRange(distanceToHub, 20);
-    Translation2d[] shotLine = getShotLine(distanceToHub);
+    Distance distanceToHub = distanceToHub();
+    boolean hubInrange = isHubInRange(distanceToHub.getActualDistance(), 15);
+    Translation2d[] shotLine = getShotLine(distanceToHub.getActualDistance());
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
-    RobotState.getInstance().hubDistance = distanceToHub;
+    RobotState.getInstance().hubDistance = distanceToHub.getActualDistance();
     Logger.recordOutput("Shooter/IsInTarget", hubInrange);
-    Logger.recordOutput("Shooter/distanceToHub", distanceToHub);
+    Logger.recordOutput("Shooter/distanceToHub/actual", distanceToHub.getActualDistance());
+    Logger.recordOutput("Shooter/distanceToHub/offset", distanceToHub.getOffsetDistance());
     Logger.recordOutput("Shooter/BallPath", shotLine);
   }
 
-  public double distanceToHub() {
+  public Distance distanceToHub() {
     Pose2d robotPose = RobotState.getInstance().robotPose;
     Pose3d hubCoordinate = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
     Translation2d target = hubCoordinate.toPose2d().getTranslation();
     Translation2d robotTranslation = robotPose.getTranslation();
     double distance = robotTranslation.getDistance(target);
-    return distance;
+    return new Distance(distance, Constants.ShooterConstants.ValuesOfKnownShots.offsetDistanceInMeters);
   }
 
   public Translation2d[] getShotLine(double distance) {

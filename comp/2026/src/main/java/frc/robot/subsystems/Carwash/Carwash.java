@@ -22,13 +22,6 @@ public class Carwash extends SubsystemBase {
   private CarwashState desiredState;
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
 
-  private TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.ValuesOfKnownShots.distance,
-      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
-      true);
-
   public Carwash(CarwashIO io) {
     // Configure SysId
 
