@@ -82,7 +82,7 @@ public class Shooter extends SubsystemBase {
     Translation2d[] shotLine = getShotLine(distanceToHub.getActualDistance());
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();
-    RobotState.getInstance().hubDistance = distanceToHub.getActualDistance();
+    RobotState.getInstance().hubDistance = distanceToHub.getOffsetDistance();
     Logger.recordOutput("Shooter/IsInTarget", hubInrange);
     Logger.recordOutput("Shooter/distanceToHub/actual", distanceToHub.getActualDistance());
     Logger.recordOutput("Shooter/distanceToHub/offset", distanceToHub.getOffsetDistance());
