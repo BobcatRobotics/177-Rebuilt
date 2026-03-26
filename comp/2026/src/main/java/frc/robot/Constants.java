@@ -126,10 +126,11 @@ public final class Constants {
         }
 
         public final static class ValuesOfKnownShots{
-            public static final double[] distance = {1.8923, 2.1463, 2.4003, 2.6543, 2.9083, 3.1623, 3.4163, 3.6703}; //distance from front LL to center of hub (meters)
-            public static final double[] carwashSpeed ={80,80,80,80,80,80,80,80}; //RPS
-            public static final double[] mainFlyWheelSpeed = {70,66,61,49,45,45,45,45}; //RPS
-            public static final double[] hoodSpeed = {-40,-35,-25,4,16,20,22,24}; //RPS
+            public static final double offsetDistanceInMeters = 0.92837;
+            public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
+            public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
+            public static final double[] mainFlyWheelSpeed = {  55, 45, 40, 40,  40,  41.5 }; // RPS
+            public static final double[] hoodSpeed =         { -24,  2, 15, 17,  19,  22.0 }; // RPS
         }
     }
 
