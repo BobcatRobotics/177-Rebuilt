@@ -1,0 +1,107 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.0,
+        "y": 3.7
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.25,
+        "y": 3.7
+      },
+      "isLocked": false,
+      "linkedName": "HopperFilledOPSide1"
+    },
+    {
+      "anchor": {
+        "x": 6.05826754385965,
+        "y": 2.448322368421052
+      },
+      "prevControl": {
+        "x": 6.307669142822835,
+        "y": 2.46560942816545
+      },
+      "nextControl": {
+        "x": 5.808865944896466,
+        "y": 2.4310353086766545
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.7695175438596493,
+        "y": 2.28484649122807
+      },
+      "prevControl": {
+        "x": 3.010034970395072,
+        "y": 2.565933122239347
+      },
+      "nextControl": {
+        "x": 1.9713706140350873,
+        "y": 1.352072368421052
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.3272587719298246,
+        "y": 0.9001096491228067
+      },
+      "prevControl": {
+        "x": 3.085638084956424,
+        "y": 0.9642925411307393
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "FinishedShootingOutpostSideGoUnderTrench"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -45.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -45.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 2.99461400359066,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": 68.74949449286677
+  },
+  "reversed": false,
+  "folder": "Trench Outpost Sweep",
+  "idealStartingState": {
+    "velocity": 3.0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": false
+}

@@ -4,6 +4,8 @@
   "holonomicMode": true,
   "pathFolders": [
     "Depot Clean Sweep",
+    "Trench Depot Sweep",
+    "Trench Outpost Sweep",
     "Outpost Clean Sweep"
   ],
   "autoFolders": [],
