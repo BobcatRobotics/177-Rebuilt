@@ -266,7 +266,7 @@ public class RobotContainer {
                 }, intake)));
                 NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange)));
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).withTimeout(1)));
         }
 
         /**
@@ -496,17 +496,9 @@ public class RobotContainer {
 
         public Command AutonomousSpinUp() {
                 return new RunCommand(() -> {
-                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
-                                m_Shooter.stop();
-                        } else {
                                 m_Shooter.spinUp();
-                        }
                 }, m_Shooter).alongWith(new RunCommand(() -> {
-                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
-                                m_Carwash.stop();
-                        } else {
                                 m_Carwash.spinUp();
-                        }
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));
@@ -517,25 +509,22 @@ public class RobotContainer {
         }
 
         public Command AutonomousStopShooter(){
-               return new InstantCommand(()->m_Shooter.stop());
+               return new InstantCommand(()->m_Shooter.stop()).andThen(new InstantCommand(()-> m_Carwash.spinUp()).andThen(new InstantCommand(()->{
+                        HopperState hopperState = RobotState.getInstance().getHopperState();
+                        hopperState.setState(HopperState.State.IDLE);
+                        m_Hopper.setState(hopperState);
+               })));
         }
 
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
-                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
-                                m_Carwash.stop();
-                        } else {
                                 m_Carwash.manualFeedFuel();
-                        }
                 }, m_Carwash).alongWith(new RunCommand(() -> {
-                        if(RobotState.getInstance().hubInrange == false || RobotState.getInstance() == null){
-                                m_Shooter.stop();
-                        } else {
+                       
                                 m_Shooter.shootFuel();
-                        }
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }, intake)).withTimeout(5);
         }
 
 
