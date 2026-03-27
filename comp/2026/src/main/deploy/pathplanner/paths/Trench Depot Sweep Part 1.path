@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.625
+        "x": 4.0196271929824565,
+        "y": 7.425
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.249982067040587,
-        "y": 0.6220056456262445
+        "x": 4.984554659649024,
+        "y": 7.346639621245899
       },
       "isLocked": false,
       "linkedName": null
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 6.25,
-        "y": 0.625
+        "y": 7.425
       },
       "prevControl": {
-        "x": 6.000000447680104,
-        "y": 0.6245268828353624
+        "x": 5.830697122697346,
+        "y": 7.457833899752415
       },
       "nextControl": {
-        "x": 6.499999552319896,
-        "y": 0.6254731171646376
+        "x": 6.64308921005752,
+        "y": 7.394218785714488
       },
       "isLocked": false,
       "linkedName": null
@@ -33,20 +33,20 @@
     {
       "anchor": {
         "x": 8.0,
-        "y": 1.5
+        "y": 5.3
       },
       "prevControl": {
-        "x": 7.443937173707949,
-        "y": 0.5743812728055909
+        "x": 7.915850022629097,
+        "y": 7.1571963334798125
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ReachedCenterlineFromTrenchOP1"
+      "linkedName": "ReachedCenterlineFromTrenchDP1"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 0.9968553459119461,
       "rotationDegrees": 180.0
     }
   ],
@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "IntakeDown",
-      "waypointRelativePos": 0.9371633752244165,
+      "waypointRelativePos": 0.7289048473967688,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -66,7 +66,7 @@
     },
     {
       "name": "IntakeFuel",
-      "waypointRelativePos": 1.4829443447037693,
+      "waypointRelativePos": 1.3357271095152607,
       "endWaypointRelativePos": 2.0,
       "command": {
         "type": "named",
@@ -77,7 +77,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.5,
     "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -86,10 +86,10 @@
   },
   "goalEndState": {
     "velocity": 4.0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Trench Outpost Sweep",
+  "folder": "Trench Depot Sweep",
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": 180.0

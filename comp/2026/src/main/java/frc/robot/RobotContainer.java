@@ -211,9 +211,10 @@ public class RobotContainer {
 
                
                // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
-                autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
                 autoChooser.addOption("Anand Depot Side Clean Sweep", new PathPlannerAuto("Anand Depot Side Clean Sweep"));
                 autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
+                autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
+                autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
                 // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
                 autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
 

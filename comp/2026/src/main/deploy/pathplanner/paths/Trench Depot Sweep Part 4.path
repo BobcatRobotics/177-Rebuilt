@@ -1,0 +1,181 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.3561074561403514,
+        "y": 7.11219298245614
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.623932588728596,
+        "y": 7.335924203773263
+      },
+      "isLocked": false,
+      "linkedName": "FinishedShootingDepotSideGoUnderTrench"
+    },
+    {
+      "anchor": {
+        "x": 4.288881578947369,
+        "y": 7.352598684210526
+      },
+      "prevControl": {
+        "x": 3.568995362628897,
+        "y": 7.183180156052457
+      },
+      "nextControl": {
+        "x": 4.614298374996786,
+        "y": 7.429182501729011
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.414067982456141,
+        "y": 7.352598684210526
+      },
+      "prevControl": {
+        "x": 5.71935181930713,
+        "y": 7.276443499570168
+      },
+      "nextControl": {
+        "x": 7.286452495253453,
+        "y": 7.44822997533858
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.856502192982456,
+        "y": 6.515986842105263
+      },
+      "prevControl": {
+        "x": 7.717084984248997,
+        "y": 6.924745288375611
+      },
+      "nextControl": {
+        "x": 8.074531480875198,
+        "y": 5.876745002664537
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.337225877192983,
+        "y": 4.208092105263157
+      },
+      "prevControl": {
+        "x": 8.356979769632787,
+        "y": 4.419044479939868
+      },
+      "nextControl": {
+        "x": 6.465679490236571,
+        "y": 4.027798819468992
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.84671052631579,
+        "y": 5.44858552631579
+      },
+      "prevControl": {
+        "x": 6.161512185833596,
+        "y": 5.19695798916294
+      },
+      "nextControl": {
+        "x": 5.339850494454833,
+        "y": 5.853729329222501
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.9617543859649125,
+        "y": 5.660142543859649
+      },
+      "prevControl": {
+        "x": 2.664060221837623,
+        "y": 5.483465944932435
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 170.0
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": 90.0
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": 11.534620653644756
+    },
+    {
+      "waypointRelativePos": 5.0,
+      "rotationDegrees": -53.53076560994817
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 4.987432675044881,
+      "maxWaypointRelativePos": 5.730700179533212,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0.33393177737881474,
+      "endWaypointRelativePos": 6.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -30.80144597613687
+  },
+  "reversed": false,
+  "folder": "Trench Depot Sweep",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -67.49647150023257
+  },
+  "useDefaultConstraints": false
+}
