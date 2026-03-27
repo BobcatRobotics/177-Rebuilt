@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 3.7
+        "x": 7.971896929824561,
+        "y": 3.217620614035087
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.25,
-        "y": 3.7
+        "x": 7.834832732187849,
+        "y": 3.426698125322657
       },
       "isLocked": false,
       "linkedName": "HopperFilledOPSide1"
     },
     {
       "anchor": {
-        "x": 7.361377459749552,
-        "y": 4.237817531305903
+        "x": 7.212214912280703,
+        "y": 3.6407346491228063
       },
       "prevControl": {
-        "x": 7.6088648331648425,
-        "y": 4.27317287036523
+        "x": 7.533060018241515,
+        "y": 3.6469750024432095
       },
       "nextControl": {
-        "x": 6.907066189624328,
-        "y": 4.1729159212880145
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 6.420304114490161,
-        "y": 3.7
-      },
-      "prevControl": {
-        "x": 6.575459525939178,
-        "y": 4.012338998211092
-      },
-      "nextControl": {
-        "x": 6.265148703041144,
-        "y": 3.3876610017889086
+        "x": 6.248089917781946,
+        "y": 3.6219826703675535
       },
       "isLocked": false,
       "linkedName": null
@@ -52,12 +36,12 @@
         "y": 2.680178890876565
       },
       "prevControl": {
-        "x": 6.20937388193202,
-        "y": 2.8748837209302316
+        "x": 6.226410976586056,
+        "y": 2.8977822229764194
       },
       "nextControl": {
-        "x": 5.729300073539802,
-        "y": 2.536008091476902
+        "x": 5.52592631086987,
+        "y": 2.37731802221021
       },
       "isLocked": false,
       "linkedName": null
@@ -68,24 +52,24 @@
         "y": 2.534150268336315
       },
       "prevControl": {
-        "x": 3.569546185658808,
-        "y": 2.8137126687928347
+        "x": 3.684477217542509,
+        "y": 2.8241000301857717
       },
       "nextControl": {
-        "x": 2.694468074255406,
-        "y": 1.804007155635062
+        "x": 3.0026681702413285,
+        "y": 2.270684120901712
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3272587719298246,
-        "y": 0.9001096491228067
+        "x": 3.2791776315789476,
+        "y": 1.0155043859649118
       },
       "prevControl": {
-        "x": 2.8020393559928443,
-        "y": 1.0576386404293374
+        "x": 3.180106882808447,
+        "y": 1.2450364899025796
       },
       "nextControl": null,
       "isLocked": false,
@@ -94,15 +78,29 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 3.0,
+      "waypointRelativePos": 2.0,
       "rotationDegrees": 51.44601203448236
     },
     {
-      "waypointRelativePos": 4.0,
+      "waypointRelativePos": 3.0,
       "rotationDegrees": 45.28553083421417
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.838420107719928,
+      "maxWaypointRelativePos": 3.296229802513467,
+      "constraints": {
+        "maxVelocity": 1.75,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -126,8 +124,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.0,
-    "rotation": 68.74949449286677
+    "velocity": 1.0,
+    "rotation": 67.30620505490764
   },
   "reversed": false,
   "folder": "Trench Outpost Sweep",

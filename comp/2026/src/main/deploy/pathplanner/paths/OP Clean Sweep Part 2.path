@@ -45,7 +45,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.5,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -53,13 +53,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.5,
+    "velocity": 3.0,
     "rotation": -90.0
   },
   "reversed": false,
   "folder": "Outpost Clean Sweep",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 3.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": false

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.000000000000002,
-        "y": 0.625
+        "x": 4.7142825128001355,
+        "y": 0.6164441264062637
       },
       "isLocked": false,
       "linkedName": null
@@ -20,12 +20,12 @@
         "y": 0.625
       },
       "prevControl": {
-        "x": 6.0,
-        "y": 0.625
+        "x": 6.000000447680104,
+        "y": 0.6245268828353624
       },
       "nextControl": {
-        "x": 6.5,
-        "y": 0.625
+        "x": 6.499999552319896,
+        "y": 0.6254731171646376
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 1.5
       },
       "prevControl": {
-        "x": 7.741275615702484,
-        "y": 0.742991616314673
+        "x": 7.443937173707949,
+        "y": 0.5743812728055909
       },
       "nextControl": null,
       "isLocked": false,
@@ -91,7 +91,7 @@
   "reversed": false,
   "folder": "Trench Outpost Sweep",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": 180.0
   },
   "useDefaultConstraints": false

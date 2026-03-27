@@ -3,44 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.3272587719298246,
-        "y": 0.9001096491228067
+        "x": 3.2791776315789476,
+        "y": 1.0155043859649118
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.9135855263157895,
-        "y": 0.9481907894736836
+        "x": 3.3398115378380315,
+        "y": 0.7729687609285789
       },
       "isLocked": false,
       "linkedName": "FinishedShootingOutpostSideGoUnderTrench"
     },
     {
       "anchor": {
-        "x": 3.731140350877193,
+        "x": 3.7599890350877194,
         "y": 0.5923903508771924
       },
       "prevControl": {
-        "x": 1.6121962584480705,
-        "y": 0.7039137241629345
+        "x": 3.4762463904504792,
+        "y": 0.6775131442683637
       },
       "nextControl": {
-        "x": 4.461973684210527,
-        "y": 0.5539254385964909
+        "x": 3.9994456063930075,
+        "y": 0.5205533794856065
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.039035087719299,
+        "x": 6.048651315789474,
         "y": 0.5923903508771924
       },
       "prevControl": {
-        "x": 5.303393640350878,
+        "x": 5.313009868421053,
         "y": 0.5773649945175435
       },
       "nextControl": {
-        "x": 6.774676535087719,
+        "x": 6.784292763157895,
         "y": 0.6074157072368412
       },
       "isLocked": false,
@@ -48,15 +48,15 @@
     },
     {
       "anchor": {
-        "x": 7.414155701754385,
+        "x": 7.548782894736842,
         "y": 1.2270614035087715
       },
       "prevControl": {
-        "x": 7.106135896381578,
-        "y": 0.8278752484237932
+        "x": 7.240763089364035,
+        "y": 0.8278752484237931
       },
       "nextControl": {
-        "x": 7.722175507127194,
+        "x": 7.85680270010965,
         "y": 1.6262475585937497
       },
       "isLocked": false,
@@ -64,32 +64,32 @@
     },
     {
       "anchor": {
-        "x": 7.5583991228070175,
-        "y": 3.8042105263157886
+        "x": 7.548782894736842,
+        "y": 3.3330153508771923
       },
       "prevControl": {
-        "x": 7.5772528416950955,
-        "y": 3.5549224654623113
+        "x": 7.56763661362492,
+        "y": 3.0837272900237105
       },
       "nextControl": {
-        "x": 7.471853070175439,
-        "y": 4.948541666666666
+        "x": 7.462236842105264,
+        "y": 4.477346491228069
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.346754385964913,
-        "y": 4.073464912280701
+        "x": 6.385219298245614,
+        "y": 3.756129385964912
       },
       "prevControl": {
-        "x": 6.618042406758847,
-        "y": 4.732307248494537
+        "x": 6.656507319039548,
+        "y": 4.414971722178748
       },
       "nextControl": {
-        "x": 6.251566934651339,
-        "y": 3.8422953876620225
+        "x": 6.29003184693204,
+        "y": 3.5249598613462334
       },
       "isLocked": false,
       "linkedName": null
@@ -127,11 +127,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": -1.0609116902642315
+      "rotationDegrees": 179.21517539700812
     },
     {
       "waypointRelativePos": 2,
-      "rotationDegrees": 0.0
+      "rotationDegrees": -179.01223960036018
     },
     {
       "waypointRelativePos": 3,
@@ -147,10 +147,24 @@
     },
     {
       "waypointRelativePos": 6.0,
-      "rotationDegrees": 41.794784068986495
+      "rotationDegrees": 41.7947840689865
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 5.8312387791741465,
+      "maxWaypointRelativePos": 6.974865350089764,
+      "constraints": {
+        "maxVelocity": 1.75,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -174,14 +188,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": 31.67546873810927
   },
   "reversed": false,
   "folder": "Trench Outpost Sweep",
   "idealStartingState": {
     "velocity": 2.5,
-    "rotation": 68.74949449286677
+    "rotation": 67.30620505490764
   },
   "useDefaultConstraints": false
 }
