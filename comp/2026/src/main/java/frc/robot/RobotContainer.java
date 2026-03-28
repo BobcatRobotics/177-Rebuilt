@@ -18,6 +18,7 @@ import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -118,6 +120,7 @@ public class RobotContainer {
 
                 
                 configureSwitchablePort();
+                RobotController.setBrownoutVoltage(6);
 
                 switch (Constants.currentMode) {
                         case REAL:
