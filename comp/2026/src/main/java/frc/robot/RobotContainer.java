@@ -134,9 +134,9 @@ public class RobotContainer {
                                 // Vision
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                                                //new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                                //new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -199,9 +199,9 @@ public class RobotContainer {
 
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                                                //new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                                //new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
                                 break;
                 }
 
@@ -270,7 +270,7 @@ public class RobotContainer {
                 }, intake)));
                 NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).withTimeout(1)));
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).withTimeout(2))); //was 1
         }
 
         /**
@@ -344,6 +344,7 @@ public class RobotContainer {
                                 }, intake));
                 operator.rightBumper().whileTrue(manualSpinUp());
                 operator.leftBumper().whileTrue(manualShootBalls());
+                operator.rightTrigger().whileTrue(new RunCommand(()->intake.manualRetractIntake(),intake)).onFalse(new InstantCommand(() -> intake.stop()));
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)

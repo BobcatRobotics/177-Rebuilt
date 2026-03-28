@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 6.018673323823109,
-        "y": 5.244764621968616
+        "x": 6.057489300998572,
+        "y": 5.632924393723252
       },
       "prevControl": {
-        "x": 6.259643796680052,
-        "y": 5.178182107664171
+        "x": 6.7811782627584165,
+        "y": 5.432962007970913
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,7 +59,7 @@
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": 89.23610153907
   },
   "useDefaultConstraints": false

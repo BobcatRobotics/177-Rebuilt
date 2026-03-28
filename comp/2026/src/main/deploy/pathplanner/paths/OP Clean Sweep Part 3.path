@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.9927960057061345,
-        "y": 2.747603423680457
+        "x": 6.057,
+        "y": 2.436
       },
       "prevControl": {
-        "x": 6.2427960057061345,
-        "y": 2.747603423680457
+        "x": 6.307,
+        "y": 2.436
       },
       "nextControl": null,
       "isLocked": false,
@@ -64,7 +64,7 @@
   "reversed": false,
   "folder": "Outpost Clean Sweep",
   "idealStartingState": {
-    "velocity": 2.5,
+    "velocity": 2.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": false

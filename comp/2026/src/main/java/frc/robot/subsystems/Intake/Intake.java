@@ -149,6 +149,10 @@ public class Intake extends SubsystemBase {
     setState(RobotState.getInstance().getIntakeState());
   }
 
+  public void manualRetractIntake(){
+    io.manualRetractIntake();
+  }
+
   public double getPosition(){
     return inputs.intakePosition;
   }

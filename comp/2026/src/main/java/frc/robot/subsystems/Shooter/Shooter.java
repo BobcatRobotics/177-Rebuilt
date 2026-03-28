@@ -80,7 +80,7 @@ public class Shooter extends SubsystemBase {
 
   public void autoPeriodic(){
     Distance distanceToHub = distanceToHub();
-    boolean hubInrange = isHubInRange(distanceToHub.getActualDistance(), 15);
+    boolean hubInrange = isHubInRange(distanceToHub.getActualDistance(), 5);
     Translation2d[] shotLine = getShotLine(distanceToHub.getActualDistance());
     RobotState.getInstance().hubInrange = hubInrange;
     RobotState.getInstance().shooterUpToSpeed = atSpeed();

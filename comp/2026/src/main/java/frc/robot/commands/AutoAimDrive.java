@@ -36,7 +36,7 @@ public class AutoAimDrive extends Command {
                         12, // kP
                         0.0,
                         0.2,
-                        new TrapezoidProfile.Constraints(5.0, 3.0));
+                        new TrapezoidProfile.Constraints(3.5, 3.0));
 
         public AutoAimDrive(
                         Drive drive,
