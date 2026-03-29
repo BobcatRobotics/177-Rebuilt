@@ -85,4 +85,6 @@ public class RobotState {
   public boolean shooterUpToSpeed = false;
   public boolean hubInrange = false;
   public double hubDistance = 0.0;
+  // used by new align command not to be confused with hubInRange;
+  public boolean isRobotAlignedToHub = false;
 }

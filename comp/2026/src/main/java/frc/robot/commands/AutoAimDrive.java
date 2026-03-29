@@ -72,9 +72,9 @@ public class AutoAimDrive extends Command {
                                 target.getY() - robotTranslation.getY(),
                                 target.getX() - robotTranslation.getX()));
 
-                double rotation = Units.degreesToRotations(thetaController.calculate(
+                double rotation =thetaController.calculate(
                                 robotPose.getRotation().getRadians(),
-                                angleToTarget.getRadians()));
+                                angleToTarget.getRadians());
 
                 Logger.recordOutput("AutoAim/rotation", rotation);
                 if(edu.wpi.first.wpilibj.RobotState.isAutonomous()){

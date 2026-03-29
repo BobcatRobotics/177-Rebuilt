@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AlignToHub;
 import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.carwashCharacterizationCommands;
@@ -270,7 +271,7 @@ public class RobotContainer {
                 }, intake)));
                 NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange))); //was 1
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AlignToHub(drive).until(()->RobotState.getInstance().isRobotAlignedToHub))); //was 1
         }
 
         /**
@@ -312,10 +313,7 @@ public class RobotContainer {
                 
 
                 controller.a().whileTrue(
-                                 loggableCommand("AutoAimDrive",new AutoAimDrive(
-                                                drive,
-                                                () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX()).withTimeout(1)));
+                                 loggableCommand("AutoAlign",new AlignToHub(drive).until(()->RobotState.getInstance().isRobotAlignedToHub)));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
