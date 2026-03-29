@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Robot;
@@ -23,7 +24,7 @@ import org.littletonrobotics.junction.Logger;
 public class AutoAimDrive extends Command {
 
         private final Drive drive;
-
+        private double thetaOffset = 10;
         private DoubleSupplier xSupplier;
         private DoubleSupplier ySupplier;
 
@@ -36,7 +37,7 @@ public class AutoAimDrive extends Command {
                         12, // kP
                         0.0,
                         0.2,
-                        new TrapezoidProfile.Constraints(3.5, 3.0));
+                        new TrapezoidProfile.Constraints(5, 3.0));
 
         public AutoAimDrive(
                         Drive drive,
@@ -71,19 +72,19 @@ public class AutoAimDrive extends Command {
                                 target.getY() - robotTranslation.getY(),
                                 target.getX() - robotTranslation.getX()));
 
-                double rotation = thetaController.calculate(
+                double rotation = Units.degreesToRotations(thetaController.calculate(
                                 robotPose.getRotation().getRadians(),
-                                angleToTarget.getRadians());
+                                angleToTarget.getRadians()));
 
                 Logger.recordOutput("AutoAim/rotation", rotation);
                 if(edu.wpi.first.wpilibj.RobotState.isAutonomous()){
                         drive(rotation);
-                }else{
-                if (RobotState.getInstance().alliance == Alliance.Red) {
-                        drive(xSupplier.getAsDouble() * -1, ySupplier.getAsDouble() * -1, rotation);
-                } else {
-                        drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
-                }
+                }else {
+                        if (RobotState.getInstance().alliance == Alliance.Red) {
+                                drive(xSupplier.getAsDouble() * -1, ySupplier.getAsDouble() * -1, rotation);
+                        } else {
+                                drive(xSupplier.getAsDouble(), ySupplier.getAsDouble(), rotation);
+                        }
                 }
 
                 Pose2d targetPose = new Pose2d(target, new Rotation2d());

@@ -4,15 +4,12 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-
-import static edu.wpi.first.units.Units.Inches;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -101,16 +98,19 @@ public final class HubUtil {
      * @return The {@code Pose3d} of the hub the robot should target.
      */
     public static Pose3d getActiveHubCoordinates(Alliance alliance) {
+        double hubradius = Units.inchesToMeters(41.5 / 2);
         Pose3d blueHub = new Pose3d(
-                    hubPosition(Alliance.Blue).getX(),
-                    hubPosition(Alliance.Blue).getY(),
+                    4.007866 + hubradius,
+                    4.0213534,
                     1.12395,
                     new Rotation3d());
         Pose3d redHub = new Pose3d(
-                    hubPosition(Alliance.Red).getX(),
-                    hubPosition(Alliance.Red).getY(),
+                    12.5051566 + hubradius,
+                    4.0213534,
                     1.12395,
-                    new Rotation3d());
+                    new Rotation3d(0, 0, Math.PI));
+
+        
 
         HubData hub = getHubData();
 
@@ -163,20 +163,31 @@ public final class HubUtil {
      * @return The {@code Pose3d} of the hub the robot should target.
      */
     public static Pose3d getMyHubCoordinates(Alliance alliance) {
-        Pose3d hubPose = new Pose3d();
-        Translation2d hub = hubPosition(alliance);
-        hubPose = new Pose3d(
-                    hub.getX(),
-                    hub.getY(),
+
+        Pose3d blueHub = new Pose3d();
+        Pose3d redHub = new Pose3d();
+
+        double hubradius = Units.inchesToMeters(41.5 / 2);
+        
+        if (alliance == Alliance.Red) {
+
+            redHub = new Pose3d(
+                    12.5051566- hubradius,
+                    4.0213534,
+                    1.12395,
+                    new Rotation3d(0, 0, Math.PI));
+        } else {
+            blueHub = new Pose3d(
+                    4.007866 + hubradius,
+                    4.0213534,
                     1.12395,
                     new Rotation3d());
-        return hubPose;
-    }
-
-    public static Translation2d hubPosition(Alliance allianceGet ) {
-        if (allianceGet == Alliance.Blue) {
-            return new Translation2d(Units.inchesToMeters(182.105), Units.inchesToMeters(158.845));
         }
-        return new Translation2d(Units.inchesToMeters(469.115), Units.inchesToMeters(158.845));
+
+        if (Alliance.Red == alliance) {
+            return redHub;
+        }
+
+        return blueHub;
     }
 }

@@ -270,7 +270,7 @@ public class RobotContainer {
                 }, intake)));
                 NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).withTimeout(2))); //was 1
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AutoAimDrive(drive).until(()->RobotState.getInstance().hubInrange))); //was 1
         }
 
         /**
@@ -311,11 +311,11 @@ public class RobotContainer {
                         }, m_Carwash));
                 
 
-                controller.rightTrigger().whileTrue(
-                                new AutoAimDrive(
+                controller.a().whileTrue(
+                                 loggableCommand("AutoAimDrive",new AutoAimDrive(
                                                 drive,
                                                 () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX()));
+                                                () -> -controller.getLeftX()).withTimeout(1)));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()

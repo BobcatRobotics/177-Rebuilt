@@ -29,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "AutoAim"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -75,12 +69,6 @@
           "type": "path",
           "data": {
             "pathName": "Anand Clean Sweep Part 6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoAim"
           }
         },
         {
