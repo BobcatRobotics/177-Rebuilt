@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 6.057,
-        "y": 2.436
+        "y": 2.63
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.5665723684210535,
-        "y": 2.5033135964912274
+        "x": 5.566572023555865,
+        "y": 2.6973110838542156
       },
       "isLocked": false,
       "linkedName": "AngledOPBump"

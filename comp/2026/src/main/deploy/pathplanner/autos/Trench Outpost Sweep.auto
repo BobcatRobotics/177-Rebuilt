@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "AutoAim"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -57,6 +63,12 @@
           "type": "path",
           "data": {
             "pathName": "Trench Outpost Sweep Part 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoAim"
           }
         },
         {

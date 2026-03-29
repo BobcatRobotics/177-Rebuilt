@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "y": 5.433
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.2126662987642893,
-        "y": 5.61801337171544
+        "y": 5.418088977992188
       },
       "isLocked": false,
       "linkedName": "AngledDepotBump"

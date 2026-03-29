@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.868901569186875,
-        "y": 3.9
+        "y": 4.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 8.39857980741488,
-        "y": 3.7706816840115533
+        "y": 4.370681684011554
       },
       "isLocked": false,
       "linkedName": "CenterLineHopperFilled"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "y": 5.433
       },
       "prevControl": {
-        "x": 6.7811782627584165,
-        "y": 5.432962007970913
+        "x": 6.225753262158957,
+        "y": 4.74422744494816
       },
       "nextControl": null,
       "isLocked": false,
