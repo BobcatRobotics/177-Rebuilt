@@ -1,0 +1,147 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.279,
+        "y": 2.113
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.0429096846939117,
+        "y": 2.1247470690322383
+      },
+      "isLocked": false,
+      "linkedName": "FinishedShootingOutpostSide"
+    },
+    {
+      "anchor": {
+        "x": 3.231,
+        "y": 2.438
+      },
+      "prevControl": {
+        "x": 2.701678246256292,
+        "y": 2.3417582158639747
+      },
+      "nextControl": {
+        "x": 3.495660876871854,
+        "y": 2.486120892068013
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.852,
+        "y": 2.438
+      },
+      "prevControl": {
+        "x": 5.299083552146415,
+        "y": 2.447612579933261
+      },
+      "nextControl": {
+        "x": 6.404916447853585,
+        "y": 2.4283874200667395
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.28,
+        "y": 1.527
+      },
+      "prevControl": {
+        "x": 6.160226019500833,
+        "y": 1.4296232440617835
+      },
+      "nextControl": {
+        "x": 7.726315607885789,
+        "y": 1.5658120877760862
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.978,
+        "y": 2.438
+      },
+      "prevControl": {
+        "x": 7.870422624502898,
+        "y": 1.8945452104533853
+      },
+      "nextControl": {
+        "x": 8.253934026320186,
+        "y": 3.831951725533826
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.355,
+        "y": 4.156
+      },
+      "prevControl": {
+        "x": 7.798654282715063,
+        "y": 4.950837286492311
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SecondSweepOPSideEndPoint"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -130.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -130.0
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 5.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 2.5,
+    "rotation": 53.81
+  },
+  "reversed": false,
+  "folder": "Outpost Clean Sweep",
+  "idealStartingState": {
+    "velocity": 2.5,
+    "rotation": 40.0
+  },
+  "useDefaultConstraints": false
+}

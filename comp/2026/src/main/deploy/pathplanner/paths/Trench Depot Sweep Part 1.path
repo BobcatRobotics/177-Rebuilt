@@ -1,0 +1,98 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.0196271929824565,
+        "y": 7.425
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.984554659649024,
+        "y": 7.346639621245899
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.25,
+        "y": 7.425
+      },
+      "prevControl": {
+        "x": 5.830697122697346,
+        "y": 7.457833899752415
+      },
+      "nextControl": {
+        "x": 6.64308921005752,
+        "y": 7.394218785714488
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.0,
+        "y": 5.3
+      },
+      "prevControl": {
+        "x": 7.915850022629097,
+        "y": 7.1571963334798125
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ReachedCenterlineFromTrenchDP1"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.9968553459119461,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeDown",
+      "waypointRelativePos": 0.7289048473967688,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeDown"
+        }
+      }
+    },
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 1.3357271095152607,
+      "endWaypointRelativePos": 2.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 4.0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Trench Depot Sweep",
+  "idealStartingState": {
+    "velocity": 2.0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

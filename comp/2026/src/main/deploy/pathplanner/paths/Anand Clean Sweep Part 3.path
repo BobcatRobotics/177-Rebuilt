@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.752,
-        "y": 5.171
+        "x": 7.868901569186875,
+        "y": 4.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.281678238228006,
-        "y": 5.041681684011554
+        "x": 8.39857980741488,
+        "y": 4.370681684011554
       },
       "isLocked": false,
       "linkedName": "CenterLineHopperFilled"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "y": 5.433
       },
       "prevControl": {
-        "x": 6.7811782627584165,
-        "y": 5.432962007970913
+        "x": 6.225753262158957,
+        "y": 4.74422744494816
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -53,13 +53,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 2.5,
     "rotation": 44.996008726320596
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 2.0,
     "rotation": 89.23610153907
   },
   "useDefaultConstraints": false

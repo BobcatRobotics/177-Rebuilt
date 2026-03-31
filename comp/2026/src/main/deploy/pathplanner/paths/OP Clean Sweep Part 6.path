@@ -1,0 +1,87 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 6.355,
+        "y": 4.156
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.102911576113935,
+        "y": 4.167501057115333
+      },
+      "isLocked": false,
+      "linkedName": "SecondSweepOPSideEndPoint"
+    },
+    {
+      "anchor": {
+        "x": 6.047,
+        "y": 2.679
+      },
+      "prevControl": {
+        "x": 6.366291278315697,
+        "y": 2.700285666339767
+      },
+      "nextControl": {
+        "x": 5.797553688815861,
+        "y": 2.6623705731720566
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.91,
+        "y": 2.387
+      },
+      "prevControl": {
+        "x": 2.150879607030892,
+        "y": 2.453910499300506
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 45.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 2.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 30.7
+  },
+  "reversed": false,
+  "folder": "Outpost Clean Sweep",
+  "idealStartingState": {
+    "velocity": 2.5,
+    "rotation": 53.81
+  },
+  "useDefaultConstraints": false
+}

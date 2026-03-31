@@ -10,7 +10,6 @@ public class HopperState {
   /** Output goal for the shooter subsystem */
   public static class HopperGoal {
     public double hopperSpeedTop;
-    public double hopperSpeedBottom;
   }
 
   public enum State {
@@ -46,12 +45,10 @@ public class HopperState {
     switch (currentState) {
       case IDLE -> {
          currentSetpoints.hopperSpeedTop = Constants.HopperConstants.idleHopperSpeed;
-        currentSetpoints.hopperSpeedBottom = Constants.HopperConstants.idleHopperSpeed;
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.hopperSpeedTop = Constants.HopperConstants.topMotorTargetVelocity;
-        currentSetpoints.hopperSpeedBottom = Constants.HopperConstants.bottomMotorTargetVelocity;
       }
     }
   }
@@ -67,8 +64,5 @@ public class HopperState {
 
   public double getHopperSpeedOfTop() {
     return currentSetpoints.hopperSpeedTop;
-  }
-  public double getHopperSpeedOfBottom() {
-    return currentSetpoints.hopperSpeedBottom;
   }
 }

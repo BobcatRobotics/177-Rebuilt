@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.0,
+        "y": 1.5
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.99702900370644,
+        "y": 1.7499823457387014
+      },
+      "isLocked": false,
+      "linkedName": "ReachedCenterlineFromTrenchOP1"
+    },
+    {
+      "anchor": {
+        "x": 7.971896929824561,
+        "y": 3.217620614035087
+      },
+      "prevControl": {
+        "x": 7.965855789012205,
+        "y": 2.9676936154581317
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "HopperFilledOPSide1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Trench Outpost Sweep",
+  "idealStartingState": {
+    "velocity": 3.5,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": false
+}

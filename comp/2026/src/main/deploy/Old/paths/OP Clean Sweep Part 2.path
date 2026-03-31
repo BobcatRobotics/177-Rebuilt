@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.718336314847942,
+        "y": 1.6093023255813943
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.732690410735898,
+        "y": 2.2869595393048976
+      },
+      "isLocked": false,
+      "linkedName": "OP Clean Sweep Center Line"
+    },
+    {
+      "anchor": {
+        "x": 7.718336314847942,
+        "y": 2.8099821109123435
+      },
+      "prevControl": {
+        "x": 7.710908390035552,
+        "y": 3.091746212783328
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "OPCenterLineHopperFilled"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 0.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -89.81441437052688
+  },
+  "reversed": false,
+  "folder": "Outpost Clean Sweep",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -91.70740245295093
+  },
+  "useDefaultConstraints": true
+}

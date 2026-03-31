@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -38,16 +41,31 @@ public final class Constants {
         /** Replaying from a log file. */
         REPLAY
     }
-
+    public static final class CarwashConstants{
+        public static final double idleIntakeSpeedRPS = 0;
+        public static final double targetIntakeSpeedRPS = 80;
+        // public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
+                public final static class SharedIntake {
+            public static final int intakeIDLeft = 15;
+            public static final double kIntakeMotorkP = 1.708;
+            public static final double kIntakeMotorkI = 0;
+            public static final double kIntakeMotorkD = 0;
+            public static final double kIntakeMotorkS = 0.375;
+            public static final double kIntakeMotorkV = 0.117;
+            public static final double kIntakeMotorkA = 0;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = false;
+        }
+    }
     public final static class ShooterConstants {
 
         public static final double idleFlywheelSpeedRPS = 0;
-        public static final double idleIntakeSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
-
-        public static final double targetFlywheelSpeedRPS = 45;
-        public static final double targetIntakeSpeedRPS = 75;
-        public static final double targetHoodSpeedRPS = 18;
+//passing distance
+        public static final double targetFlywheelSpeedRPS = 35;
+        public static final double targetHoodSpeedRPS = 70;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -57,11 +75,11 @@ public final class Constants {
             public static final boolean isCoastLeft = true;
             public static final boolean isCoastRight = true;
             // Motor Constants
-            public static final double kshooterMainkP = 1.66;
+            public static final double kshooterMainkP =4.7;
             public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0.1;
-            public static final double kshooterMainkS = 0.291;
-            public static final double kshooterMainkV = 0.121;
+            public static final double kshooterMainkD = 0;
+            public static final double kshooterMainkS = 0.303;
+            public static final double kshooterMainkV = 0.25;
             public static final double kshooterMainkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -72,29 +90,18 @@ public final class Constants {
             public static final int FlywheelInnerIDRight = 14; // NOT USED ANYMORE
         }
 
-        public final static class SharedIntake {
-            public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 1.684;
-            public static final double kIntakeMotorkI = 0;
-            public static final double kIntakeMotorkD = 0.1;
-            public static final double kIntakeMotorkS = 0.371;
-            public static final double kIntakeMotorkV = 0.119;
-            public static final double kIntakeMotorkA = 0;
-            public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
-            public static final boolean isInverted = false;
-            public static final boolean isCoast = false;
-        }
+
+
 
         public final static class Left {
 
             public static final int HoodID = 12;
             // Motor Constants
-            public static final double kHoodMotorkP = 1.602;
+            public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.1;
-            public static final double kHoodMotorkS = 0.322;
-            public static final double kHoodMotorkV = 0.125;
+            public static final double kHoodMotorkD = 0;
+            public static final double kHoodMotorkS = 0.78;
+            public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
@@ -106,16 +113,24 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             public static final int HoodID = 17;
-            public static final double kHoodMotorkP = 1.602;
+            public static final double kHoodMotorkP = 2.8;
             public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0.1;
-            public static final double kHoodMotorkS = 0.322;
-            public static final double kHoodMotorkV = 0.125;
+            public static final double kHoodMotorkD = 0;
+            public static final double kHoodMotorkS = 0.78;
+            public static final double kHoodMotorkV = 0.123;
             public static final double kHoodMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
+        }
+
+        public final static class ValuesOfKnownShots{
+            public static final double offsetDistanceInMeters = 0.92837;
+            public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
+            public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
+            public static final double[] mainFlyWheelSpeed = {  55, 45, 40, 40,  40,  41.5 }; // RPS
+            public static final double[] hoodSpeed =         { -24,  2, 15, 17,  19,  22.0 }; // RPS
         }
     }
 
@@ -133,22 +148,9 @@ public final class Constants {
             public static final int hopperMotorId = 16;
         }
 
-        public static final class Bottom {
-            public static final boolean isInverted = false;
-            public static final boolean isCoast = true;
-            public static final double kHopperP = 2.755;
-            public static final double kHopperI = 0;
-            public static final double kHopperD = 0.1;
-            public static final double kHopperV = 0.073;
-            public static final double kHopperS = 0.739;
-            public static final double kHopperA = 0;
-            public static final double hopperCurrentLimit = 40;
-            public static final int hopperMotorId = 16;
-        }
 
         public static final double idleHopperSpeed = 0.0;
         public static final double topMotorTargetVelocity = 90;
-        public static final double bottomMotorTargetVelocity = 90;
 
     }
 

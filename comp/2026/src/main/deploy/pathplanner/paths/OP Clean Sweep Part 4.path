@@ -3,84 +3,86 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.1928947368421055,
-        "y": 2.4098574561403505
+        "x": 6.057,
+        "y": 2.63
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.702467105263159,
-        "y": 2.477171052631578
+        "x": 5.566572023555865,
+        "y": 2.6973110838542156
       },
       "isLocked": false,
       "linkedName": "AngledOPBump"
     },
     {
       "anchor": {
-        "x": 3.952313596491228,
-        "y": 2.4098574561403505
+        "x": 3.714,
+        "y": 2.436
       },
       "prevControl": {
-        "x": 4.331143030194076,
-        "y": 2.477204911020857
+        "x": 4.173937698837104,
+        "y": 2.4435705474325897
       },
       "nextControl": {
-        "x": 3.5195833333333333,
-        "y": 2.3329276315789467
+        "x": 3.344050111804938,
+        "y": 2.429910646630309
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4993580599144076,
-        "y": 2.0230385164051357
+        "x": 2.279,
+        "y": 2.113
       },
       "prevControl": {
-        "x": 3.201342709037214,
-        "y": 2.4365363234226796
+        "x": 3.27980574199325,
+        "y": 2.4101933155260062
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FinishedShootingOutpostSide"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 1.56,
       "rotationDegrees": -45.0
     }
   ],
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [
+  "constraintZones": [
     {
-      "name": "SpinUp",
-      "waypointRelativePos": 1.5763016157989187,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "SpinUp"
-        }
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.6947935368043088,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.25,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
       }
     }
   ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 3.25,
-    "maxAngularVelocity": 540.0,
+    "maxVelocity": 2.25,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 45.00000000000013
+    "velocity": 0.0,
+    "rotation": 40.0
   },
   "reversed": false,
   "folder": "Outpost Clean Sweep",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 2.0,
     "rotation": -45.0
   },
   "useDefaultConstraints": false

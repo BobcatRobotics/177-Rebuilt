@@ -1,0 +1,201 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.2791776315789476,
+        "y": 1.0155043859649118
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.3398115378380315,
+        "y": 0.7729687609285789
+      },
+      "isLocked": false,
+      "linkedName": "FinishedShootingOutpostSideGoUnderTrench"
+    },
+    {
+      "anchor": {
+        "x": 3.7599890350877194,
+        "y": 0.5923903508771924
+      },
+      "prevControl": {
+        "x": 3.4762463904504792,
+        "y": 0.6775131442683637
+      },
+      "nextControl": {
+        "x": 3.9994456063930075,
+        "y": 0.5205533794856065
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.048651315789474,
+        "y": 0.5923903508771924
+      },
+      "prevControl": {
+        "x": 5.313009868421053,
+        "y": 0.5773649945175435
+      },
+      "nextControl": {
+        "x": 6.784292763157895,
+        "y": 0.6074157072368412
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.548782894736842,
+        "y": 1.2270614035087715
+      },
+      "prevControl": {
+        "x": 7.240763089364035,
+        "y": 0.8278752484237931
+      },
+      "nextControl": {
+        "x": 7.85680270010965,
+        "y": 1.6262475585937497
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.548782894736842,
+        "y": 3.3330153508771923
+      },
+      "prevControl": {
+        "x": 7.56763661362492,
+        "y": 3.0837272900237105
+      },
+      "nextControl": {
+        "x": 7.462236842105264,
+        "y": 4.477346491228069
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.385219298245614,
+        "y": 3.756129385964912
+      },
+      "prevControl": {
+        "x": 6.656507319039548,
+        "y": 4.414971722178748
+      },
+      "nextControl": {
+        "x": 6.29003184693204,
+        "y": 3.5249598613462334
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8563267543859645,
+        "y": 2.554100877192982
+      },
+      "prevControl": {
+        "x": 6.183278508771929,
+        "y": 2.53486842105263
+      },
+      "nextControl": {
+        "x": 5.548988507135783,
+        "y": 2.572179597619464
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.182927631578947,
+        "y": 2.554100877192982
+      },
+      "prevControl": {
+        "x": 2.4309971007573643,
+        "y": 2.52309219354568
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 179.21517539700812
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -179.01223960036018
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -91.04162667600998
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -74.26799521489278
+    },
+    {
+      "waypointRelativePos": 5,
+      "rotationDegrees": 71.91655461695147
+    },
+    {
+      "waypointRelativePos": 6.0,
+      "rotationDegrees": 41.7947840689865
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 5.8312387791741465,
+      "maxWaypointRelativePos": 6.974865350089764,
+      "constraints": {
+        "maxVelocity": 1.75,
+        "maxAcceleration": 4.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 2.0736086175942536,
+      "endWaypointRelativePos": 7.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 2.0,
+    "rotation": 31.67546873810927
+  },
+  "reversed": false,
+  "folder": "Trench Outpost Sweep",
+  "idealStartingState": {
+    "velocity": 2.5,
+    "rotation": 67.30620505490764
+  },
+  "useDefaultConstraints": false
+}

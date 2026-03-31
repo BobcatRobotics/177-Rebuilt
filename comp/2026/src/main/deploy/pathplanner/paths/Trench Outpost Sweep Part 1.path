@@ -1,0 +1,98 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.0,
+        "y": 0.625
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.249982067040587,
+        "y": 0.6220056456262445
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.25,
+        "y": 0.625
+      },
+      "prevControl": {
+        "x": 6.000000447680104,
+        "y": 0.6245268828353624
+      },
+      "nextControl": {
+        "x": 6.499999552319896,
+        "y": 0.6254731171646376
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.0,
+        "y": 1.5
+      },
+      "prevControl": {
+        "x": 7.443937173707949,
+        "y": 0.5743812728055909
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ReachedCenterlineFromTrenchOP1"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeDown",
+      "waypointRelativePos": 0.9371633752244165,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "IntakeDown"
+        }
+      }
+    },
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 1.4829443447037693,
+      "endWaypointRelativePos": 2.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 4.0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Trench Outpost Sweep",
+  "idealStartingState": {
+    "velocity": 2.0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

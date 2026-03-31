@@ -259,6 +259,10 @@ public class IntakeReal implements IntakeIO {
     positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.7));
   }
 
+  public void manualRetractIntake() {
+    positionMotor.set(-.2);
+  }
+
   public double getRightVelocity() {
     return rightVelocityMotor.getVelocity().getValueAsDouble();
   }

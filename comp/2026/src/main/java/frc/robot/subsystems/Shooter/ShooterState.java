@@ -1,30 +1,33 @@
 package frc.robot.subsystems.Shooter;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
+import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 
 public class ShooterState {
 
   /** Output goal for the shooter subsystem */
   public static class ShooterGoal {
     public double flywheelSpeed;
-    public double intakeSpeed;
     public double hoodSpeed;
-    public double backspinSpeedRight;
   }
 
   public enum State {
     IDLE,
     MANUAL,
+    INTERPOLATING,
     TARGETING
   }
 
   private State currentState = State.IDLE;
   private ShooterGoal currentSetpoints = new ShooterGoal();
 
-  // Manual control values
 
+  // Manual control values
 
   public ShooterState() {
 
@@ -40,7 +43,6 @@ public class ShooterState {
    */
   public void setManualSpeeds(
       double flywheelSpeed,
-      double intakeSpeed,
       double hoodSpeed) {
     currentState = State.MANUAL;
   }
@@ -51,19 +53,27 @@ public class ShooterState {
     switch (currentState) {
       case IDLE -> {
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.idleIntakeSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+      }
+      case
+          INTERPOLATING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        double hubDistance = RobotState.getInstance().hubDistance;
+        currentSetpoints.flywheelSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
+        currentSetpoints.hoodSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
         currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        currentSetpoints.intakeSpeed = Constants.ShooterConstants.targetIntakeSpeedRPS;
         currentSetpoints.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
       }
-    }
+    }        
+    Logger.recordOutput("Shooter/Flywheel/GoalSpeeds", currentSetpoints.flywheelSpeed);
+    Logger.recordOutput("Shooter/Hood/GoalSpeeds", currentSetpoints.hoodSpeed);
   }
 
-  public void setCurrentSetPoints(ShooterGoal goal){
+  public void setCurrentSetPoints(ShooterGoal goal) {
     currentSetpoints = goal;
   }
 
@@ -73,10 +83,6 @@ public class ShooterState {
 
   public double getFlywheelSpeed() {
     return currentSetpoints.flywheelSpeed;
-  }
-
-  public double getIntakeSpeed() {
-    return currentSetpoints.intakeSpeed;
   }
 
   public double getHoodSpeed() {

@@ -15,15 +15,21 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "AutoAim"
+                }
+              },
+              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 1.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootBalls"
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               }
             ]

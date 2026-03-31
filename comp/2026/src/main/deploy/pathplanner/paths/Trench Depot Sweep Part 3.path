@@ -1,0 +1,141 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.010361842105263,
+        "y": 4.823530701754386
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.918193337479831,
+        "y": 4.082842782143043
+      },
+      "isLocked": false,
+      "linkedName": "HopperFilledDepotSide1"
+    },
+    {
+      "anchor": {
+        "x": 7.029506578947369,
+        "y": 4.034999999999999
+      },
+      "prevControl": {
+        "x": 7.404277701828219,
+        "y": 3.9469485161038893
+      },
+      "nextControl": {
+        "x": 6.425270438544758,
+        "y": 4.176963682732896
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.942872807017544,
+        "y": 5.410120614035087
+      },
+      "prevControl": {
+        "x": 6.7474898781250445,
+        "y": 5.336132837381523
+      },
+      "nextControl": {
+        "x": 5.1062609649122805,
+        "y": 5.487050438596491
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.3561074561403514,
+        "y": 5.592828947368421
+      },
+      "prevControl": {
+        "x": 3.971546052631579,
+        "y": 5.227412280701754
+      },
+      "nextControl": {
+        "x": 2.6462278982483456,
+        "y": 6.0143199348668
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.3561074561403514,
+        "y": 7.11219298245614
+      },
+      "prevControl": {
+        "x": 3.213827242707216,
+        "y": 6.838532148975466
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "FinishedShootingDepotSideGoUnderTrench"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -18.434948822921868
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -46.30195267257888
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -41.18592516570963
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.788150807899463,
+      "maxWaypointRelativePos": 3.087971274685816,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 4.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 1.0,
+    "rotation": -67.49647150023257
+  },
+  "reversed": false,
+  "folder": "Trench Depot Sweep",
+  "idealStartingState": {
+    "velocity": 3.0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": false
+}

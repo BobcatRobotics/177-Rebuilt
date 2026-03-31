@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 6.057489300998572,
-        "y": 5.632924393723252
+        "y": 5.433
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.2126662987642893,
-        "y": 5.61801337171544
+        "y": 5.418088977992188
       },
       "isLocked": false,
       "linkedName": "AngledDepotBump"
@@ -32,55 +32,57 @@
     },
     {
       "anchor": {
-        "x": 2.4217261055634807,
-        "y": 5.917574893009986
+        "x": 2.2794008559201138,
+        "y": 5.956390870185448
       },
       "prevControl": {
-        "x": 3.4224746653170235,
-        "y": 5.620400099580562
+        "x": 3.2801489949874876,
+        "y": 5.65921466008141
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FinishedShootingDepotSide"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 1.5565031982942445,
       "rotationDegrees": 45.0
     }
   ],
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [
+  "constraintZones": [
     {
-      "name": "SpinUp",
-      "waypointRelativePos": 2.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "SpinUp"
-        }
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.7555705604321343,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 3.25,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
       }
     }
   ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
-    "maxAcceleration": 3.25,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -42.27368900609379
+    "velocity": 0.0,
+    "rotation": -40.0
   },
   "reversed": false,
   "folder": "Depot Clean Sweep",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 2.0,
     "rotation": 44.996008726320596
   },
   "useDefaultConstraints": false

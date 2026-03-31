@@ -1,8 +1,10 @@
 package frc.robot;
 
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.subsystems.Carwash.CarwashState;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -36,6 +38,18 @@ public class RobotState {
     return desiredShooterState;
   }
 
+    // Save Carwash State
+  private CarwashState.State desiredCarwashStateType = CarwashState.State.IDLE;
+  private CarwashState desiredCarwashState = new CarwashState();
+
+  public CarwashState.State getDesiredCarwashStateType() {
+    return desiredCarwashStateType;
+  }
+
+  public CarwashState getCarwashState() {
+    return desiredCarwashState;
+  }
+
   // Save Hopper State
   private HopperState.State desiredHopperStateType = HopperState.State.IDLE;
   private HopperState desiredHopperState  = new HopperState();
@@ -60,8 +74,17 @@ public class RobotState {
     return desiredIntakeState;
   }
 
+    public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
+      Constants.ShooterConstants.ValuesOfKnownShots.distance,
+      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
+      false);
 
   public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
   public boolean hubInrange = false;
+  public double hubDistance = 0.0;
+  // used by new align command not to be confused with hubInRange;
+  public boolean isRobotAlignedToHub = false;
 }

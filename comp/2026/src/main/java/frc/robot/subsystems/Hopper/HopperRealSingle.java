@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.Tunables.Gains;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -31,24 +32,17 @@ public class HopperRealSingle implements HopperIO {
   public ModuleConfigurator hopperConfig;
 
   private final VelocityTorqueCurrentFOC topRequestVelocity = new VelocityTorqueCurrentFOC(0);
-  private final VelocityTorqueCurrentFOC bottomRequestVelocity = new VelocityTorqueCurrentFOC(0);
 
   private StatusSignal<AngularVelocity> velocityOfHopperTopRPS;
   private StatusSignal<Current> statorCurrentOfHopperTopAmps;
   private StatusSignal<Voltage> outputOfHopperTopVolts;
   private StatusSignal<AngularAcceleration> accelerationOfHopperTop;
 
-  private StatusSignal<AngularVelocity> velocityOfHopperBottomRPS;
-  private StatusSignal<Current> statorCurrentOfHopperBottomAmps;
-  private StatusSignal<Voltage> outputOfHopperBottomVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfHopperBottom;
-
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
 
-  public double hopperSetpointTop = 0;
-  public double hopperSetpointBottom = 0;
+  public double hopperSetpoint = 0;
 
   public HopperRealSingle() {
 
@@ -114,34 +108,30 @@ public class HopperRealSingle implements HopperIO {
   }
 
   public void setVelocity(HopperState desiredState) {
-    setVelocity(desiredState.getHopperSpeedOfTop(),
-        desiredState.getHopperSpeedOfBottom());
+    setVelocity(desiredState.getHopperSpeedOfTop());
   }
 
-  public void setVelocity(double topVelocity, double bottomVelocity) {
+  public void setVelocity(double topVelocity) {
     setTopSpeed(topVelocity);
-    setBottomSpeed(bottomVelocity);
   }
 
   public void setTopSpeed(double speed) {
-    hopperMotor.setControl(topRequestVelocity.withVelocity(speed));
-  }
-
-  public void setBottomSpeed(double speed) {
+    hopperSetpoint = speed;
+    
+    Logger.recordOutput("/Hopper/SetPointSpeed",hopperSetpoint);
+    hopperMotor.setControl(topRequestVelocity.withVelocity(hopperSetpoint));
   }
 
   public void stopTop() {
-    hopperSetpointTop = 0.0;
+    hopperSetpoint = 0.0;
+    Logger.recordOutput("/Hopper/SetPointSpeed",hopperSetpoint);
     hopperMotor.stopMotor();
   }
 
-  public void stopBottom() {
-  }
 
   @Override
   public void stop() {
     stopTop();
-    stopBottom();
   }
 
   @Override
