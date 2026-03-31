@@ -22,8 +22,10 @@ public class AlignToHub extends Command {
     private static final double DEADBAND = 0.1;
     private static final double ANGLE_KP = 5.0;
     private static final double ANGLE_KD = 0.4;
-    private static final double ANGLE_MAX_VELOCITY = 8.0;
-    private static final double ANGLE_MAX_ACCELERATION = 20.0;
+    // private static final double ANGLE_MAX_VELOCITY = 8.0;
+    // private static final double ANGLE_MAX_ACCELERATION = 20.0;
+    private final double ANGLE_MAX_VELOCITY;
+    private final double ANGLE_MAX_ACCELERATION;
 
     private final Drive drive;
     private final ProfiledPIDController angleController;
@@ -32,6 +34,8 @@ public class AlignToHub extends Command {
 
     public AlignToHub(Drive drive) {
 
+        ANGLE_MAX_VELOCITY = 8.0;
+        ANGLE_MAX_ACCELERATION = 20.0;
         this.drive = drive;
 
         // Create PID controller
@@ -43,6 +47,23 @@ public class AlignToHub extends Command {
         angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.reset(drive.getRotation().getRadians());
     }
+
+    public AlignToHub(Drive drive, double velocity, double acceleration) {
+
+        ANGLE_MAX_VELOCITY = velocity;
+        ANGLE_MAX_ACCELERATION = acceleration;
+        this.drive = drive;
+
+        // Create PID controller
+        angleController = new ProfiledPIDController(
+                ANGLE_KP,
+                0.0,
+                ANGLE_KD,
+                new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+        angleController.enableContinuousInput(-Math.PI, Math.PI);
+        angleController.reset(drive.getRotation().getRadians());
+    }
+
 
     @Override
     public void execute() {

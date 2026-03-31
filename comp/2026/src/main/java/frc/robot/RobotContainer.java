@@ -271,7 +271,7 @@ public class RobotContainer {
                 }, intake)));
                 NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AlignToHub(drive).until(()->RobotState.getInstance().isRobotAlignedToHub))); //was 1
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AlignToHub(drive,4,10).until(()->RobotState.getInstance().isRobotAlignedToHub).withTimeout(2))); //was 1
         }
 
         /**
