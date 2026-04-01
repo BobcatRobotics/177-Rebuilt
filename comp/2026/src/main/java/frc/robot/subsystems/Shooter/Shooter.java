@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase {
   public Translation2d[] getShotLine(double distance) {
     Pose2d robotPose = RobotState.getInstance().robotPose;
     Pose2d newPose = robotPose.transformBy(new Transform2d(
-        new Translation2d(Units.inchesToMeters(15 + distance), 0),
+        new Translation2d(Units.inchesToMeters(distance), 0),
         new Rotation2d()));
     Translation2d robotTranslation = robotPose.getTranslation();
     Translation2d targetTranslation = newPose.getTranslation();

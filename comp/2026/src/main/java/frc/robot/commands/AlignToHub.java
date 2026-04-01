@@ -3,11 +3,9 @@ package frc.robot.commands;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -18,7 +16,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 
 public class AlignToHub extends Command {
-
+    private boolean done = false;
     private static final double DEADBAND = 0.1;
     private static final double ANGLE_KP = 5.0;
     private static final double ANGLE_KD = 0.4;
@@ -67,17 +65,24 @@ public class AlignToHub extends Command {
 
     @Override
     public void execute() {
-        target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
-        Pose2d robotPose = drive.getPose();
-        Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
+            target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
+            Pose2d robotPose = drive.getPose();
+            Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
+            boolean isAtSetpoint = isAligned(robotPose.getRotation().getDegrees(), targetHeading.getDegrees());
+            RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+            Logger.recordOutput("Align/RobotHeadingPose", robotPose);
+            Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
+            Logger.recordOutput("Align/IsAligned", isAtSetpoint);
+            drive(targetHeading.getRadians());
+            done = isAtSetpoint;
+            if( isAtSetpoint){
+                this.cancel();
+            }
+    }
 
-        boolean isAtSetpoint = isAligned(robotPose.getRotation().getDegrees(), targetHeading.getDegrees());
-
-        Logger.recordOutput("Align/RobotHeadingPose", robotPose);
-        Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
-        Logger.recordOutput("Align/IsAligned", isAtSetpoint);
-        drive(targetHeading.getRadians());
-        RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+        @Override
+    public boolean isFinished() {
+        return done;
     }
 
     public boolean isAligned() {
@@ -92,20 +97,18 @@ public class AlignToHub extends Command {
     public boolean isAligned(double actual, double setpoint) {
         boolean isAtTolerance = false;
         boolean isMainFlywheelWithinTolerance = false;
-        boolean isHoodWheelWithinTolerance = false;
 
         double MAIN_SPEED_TOLERANCE = 1;
         isMainFlywheelWithinTolerance = Math.abs(actual - setpoint) <= MAIN_SPEED_TOLERANCE;
         if (isMainFlywheelWithinTolerance) {
             isAtTolerance = true;
         }
-        Logger.recordOutput("Align/isAligned", isAtTolerance);
         return isAtTolerance;
     }
 
     @Override
     public void end(boolean interrupted) {
-        drive(0);
+        drive.stopWithX();
     }
 
     public void drive(double chassisHeadingInRadians) {

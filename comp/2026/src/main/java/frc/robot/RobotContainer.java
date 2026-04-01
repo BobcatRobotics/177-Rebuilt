@@ -93,7 +93,6 @@ public class RobotContainer {
         private final Hopper m_Hopper;
         public final Intake intake;
 
-
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -106,10 +105,7 @@ public class RobotContainer {
         private LoggedDashboardChooser<Double> hoodChooser;
         private LoggedDashboardChooser<Double> carwashChooser;
 
-
         private final HubUtil hub;
-
-
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -119,7 +115,6 @@ public class RobotContainer {
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
-                
                 configureSwitchablePort();
                 RobotController.setBrownoutVoltage(6);
 
@@ -136,8 +131,8 @@ public class RobotContainer {
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                                                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-                                                //new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                                //new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -189,7 +184,8 @@ public class RobotContainer {
                                 });
                                 m_Shooter.applyState();
 
-                                m_Carwash = new Carwash(new CarwashIO(){});
+                                m_Carwash = new Carwash(new CarwashIO() {
+                                });
                                 m_Carwash.applyState();
 
                                 m_Hopper = new Hopper(new HopperIO() {
@@ -201,8 +197,8 @@ public class RobotContainer {
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                                                 new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-                                                //new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                                //new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
+                                // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
                                 break;
                 }
 
@@ -210,12 +206,13 @@ public class RobotContainer {
                 registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
-              //  autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
+                // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
                 autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
-               
-               // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to Hub"));
-                autoChooser.addOption("Anand Depot Side Clean Sweep", new PathPlannerAuto("Anand Depot Side Clean Sweep"));
+                // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
+                // Hub"));
+                autoChooser.addOption("Anand Depot Side Clean Sweep",
+                                new PathPlannerAuto("Anand Depot Side Clean Sweep"));
                 autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
                 autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
                 autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
@@ -237,8 +234,8 @@ public class RobotContainer {
 
         }
 
-        private void configureSwitchablePort(){
-                PowerDistribution pdh = new  PowerDistribution();
+        private void configureSwitchablePort() {
+                PowerDistribution pdh = new PowerDistribution();
                 if (pdh.getSwitchableChannel()) {
                         pdh.setSwitchableChannel(true);
                 }
@@ -246,32 +243,37 @@ public class RobotContainer {
 
         private void registerCommands() {
                 NamedCommands.registerCommand(
-                                "AutoStopShooter", loggableCommand("AutoStopShooter",AutonomousStopShooter()));
+                                "AutoStopShooter", loggableCommand("AutoStopShooter", AutonomousStopShooter()));
                 NamedCommands.registerCommand(
-                                "AutoSpinUp", loggableCommand("AutoSpinUp",AutonomousSpinUp()));
+                                "AutoSpinUp", loggableCommand("AutoSpinUp", AutonomousSpinUp()));
                 NamedCommands.registerCommand(
-                                "AutoShootBalls", loggableCommand("AutoShootBalls",AutonomousShootBalls()));
-                NamedCommands.registerCommand("AutoSpinUpAndShootAndEnd",  loggableCommand("AutoSpinUpAndShootAndEnd",AutoSpinUpAndShoot()));
+                                "AutoShootBalls", loggableCommand("AutoShootBalls", AutonomousShootBalls()));
+                NamedCommands.registerCommand("AutoSpinUpAndShootAndEnd",
+                                loggableCommand("AutoSpinUpAndShootAndEnd", AutoSpinUpAndShoot()));
                 NamedCommands.registerCommand(
-                                "CalculatedSpinUp",  loggableCommand("CalculatedSpinUp",InterpolatedSpinUp()));
+                                "CalculatedSpinUp", loggableCommand("CalculatedSpinUp", InterpolatedSpinUp()));
                 NamedCommands.registerCommand(
-                                "CalculatedShootBalls",  loggableCommand("CalculatedShootBalls",InterpolatedShootBalls()));
+                                "CalculatedShootBalls",
+                                loggableCommand("CalculatedShootBalls", InterpolatedShootBalls()));
                 NamedCommands.registerCommand(
-                                "PresetSpinUp",  loggableCommand("PresetSpinUp",manualSpinUp()));
+                                "PresetSpinUp", loggableCommand("PresetSpinUp", manualSpinUp()));
                 NamedCommands.registerCommand(
-                                "PresetShootBalls",  loggableCommand("PresetShootBalls",manualShootBalls()));
+                                "PresetShootBalls", loggableCommand("PresetShootBalls", manualShootBalls()));
                 NamedCommands.registerCommand(
-                                "IntakeDown",  loggableCommand("IntakeDown",IntakeDown()));
-                NamedCommands.registerCommand("IntakeUp",  loggableCommand("IntakeUp",intake.retractAndStop()));
-                NamedCommands.registerCommand("IntakePosReset",  loggableCommand("IntakePosReset",new InstantCommand(() -> intake.resetEncoder())));
-                NamedCommands.registerCommand("AutoRunHopper",  loggableCommand("AutoRunHopper",AutoRunHopper()));
-                NamedCommands.registerCommand("RunIntakeRollers",  loggableCommand("RunIntakeRollers",RunIntakeRollers()));
-                NamedCommands.registerCommand("StopIntake",  loggableCommand("StopIntake",new InstantCommand(() -> {
+                                "IntakeDown", loggableCommand("IntakeDown", IntakeDown()));
+                NamedCommands.registerCommand("IntakeUp", loggableCommand("IntakeUp", intake.retractAndStop()));
+                NamedCommands.registerCommand("IntakePosReset",
+                                loggableCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder())));
+                NamedCommands.registerCommand("AutoRunHopper", loggableCommand("AutoRunHopper", AutoRunHopper()));
+                NamedCommands.registerCommand("RunIntakeRollers",
+                                loggableCommand("RunIntakeRollers", RunIntakeRollers()));
+                NamedCommands.registerCommand("StopIntake", loggableCommand("StopIntake", new InstantCommand(() -> {
                         intake.stop();
                 }, intake)));
-                NamedCommands.registerCommand("WaitHumanLoad",  loggableCommand("WaitHumanLoad",new WaitCommand(5)));
-                NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot",InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim",new AlignToHub(drive,4,10).until(()->RobotState.getInstance().isRobotAlignedToHub).withTimeout(2))); //was 1
+                NamedCommands.registerCommand("WaitHumanLoad", loggableCommand("WaitHumanLoad", new WaitCommand(5)));
+                NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot", InterpolatedSpinUp()
+                                .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10).until(()-> RobotState.getInstance().isRobotAlignedToHub))); // was 1
         }
 
         /**
@@ -304,16 +306,16 @@ public class RobotContainer {
                         m_Hopper.setState(hopperState);
                 }, m_Hopper));
                 intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
-                m_Carwash.setDefaultCommand(new RunCommand(() ->{ 
+                m_Carwash.setDefaultCommand(new RunCommand(() -> {
                         m_Carwash.stop();
                         CarwashState carwashState = RobotState.getInstance().getCarwashState();
                         carwashState.setState(CarwashState.State.IDLE);
                         m_Carwash.setState(carwashState);
-                        }, m_Carwash));
-                
+                }, m_Carwash));
 
                 controller.a().whileTrue(
-                                 loggableCommand("AutoAlign",new AlignToHub(drive).until(()->RobotState.getInstance().isRobotAlignedToHub)));
+                                loggableCommand("AutoAlign", new AlignToHub(drive)
+                                                .until(() -> RobotState.getInstance().isRobotAlignedToHub)));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
@@ -328,7 +330,8 @@ public class RobotContainer {
 
                 controller.rightBumper().whileTrue(InterpolatedSpinUp());
                 controller.leftBumper().whileTrue(InterpolatedShootBalls());
-                controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(()->m_Shooter.atSpeed()).andThen(InterpolatedShootBalls()));
+                controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
+                                .andThen(InterpolatedShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -342,7 +345,8 @@ public class RobotContainer {
                                 }, intake));
                 operator.rightBumper().whileTrue(manualSpinUp());
                 operator.leftBumper().whileTrue(manualShootBalls());
-                operator.rightTrigger().whileTrue(new RunCommand(()->intake.manualRetractIntake(),intake)).onFalse(new InstantCommand(() -> intake.stop()));
+                operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
+                                .onFalse(new InstantCommand(() -> intake.stop()));
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
@@ -380,7 +384,6 @@ public class RobotContainer {
                                 swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
                 devController.rightBumper().whileTrue(characterizeAll());
 
-
                 if (Robot.isSimulation()) {
 
                         simulationButtonBindings();
@@ -388,7 +391,7 @@ public class RobotContainer {
         }
 
         public void simulationButtonBindings() {
-     
+
         }
 
         public Command characterizeAll() {
@@ -442,7 +445,7 @@ public class RobotContainer {
                                 HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
-               
+
         }
 
         public void simTelePeriodic() {
@@ -460,13 +463,15 @@ public class RobotContainer {
         }
 
         public Command AutoRunHopper() {
-                Command cmd = new RunCommand(() -> m_Hopper.runHopper(),m_Hopper);
+                Command cmd = new RunCommand(() -> m_Hopper.runHopper(), m_Hopper);
                 return cmd;
         }
+
         public Command RunHopper() {
                 Command cmd = new RunCommand(() -> m_Hopper.runHopper());
                 return cmd;
         }
+
         public Command InterpolatedSpinUp() {
                 return new RunCommand(() -> {
                         m_Shooter.spinUp();
@@ -477,7 +482,7 @@ public class RobotContainer {
                         controller.setRumble(RumbleType.kBothRumble, 0);
                         m_Shooter.spinUp();
                 }).alongWith(new RunCommand(() -> {
-                       m_Carwash.spinUp();
+                        m_Carwash.spinUp();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 })));
@@ -487,7 +492,7 @@ public class RobotContainer {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }).alongWith(new RunCommand(() -> {
-                       m_Carwash.manualFeedFuel();
+                        m_Carwash.manualFeedFuel();
                 })).alongWith(new RunCommand(() -> {
                         m_Shooter.shootFuel();
                 })).alongWith(new RunCommand(() -> {
@@ -495,41 +500,40 @@ public class RobotContainer {
                 }));
         }
 
-
-
         public Command AutonomousSpinUp() {
                 return new RunCommand(() -> {
-                                m_Shooter.spinUp();
+                        m_Shooter.spinUp();
                 }, m_Shooter).alongWith(new RunCommand(() -> {
-                                m_Carwash.spinUp();
+                        m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake));
         }
 
-        public Command AutoSpinUpAndShoot(){
-                return AutonomousSpinUp().until(()->m_Shooter.atSpeed()).andThen(AutonomousShootBalls()).andThen(AutonomousStopShooter());
+        public Command AutoSpinUpAndShoot() {
+                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed()).andThen(AutonomousShootBalls())
+                                .andThen(AutonomousStopShooter());
         }
 
-        public Command AutonomousStopShooter(){
-               return new InstantCommand(()->m_Shooter.stop()).andThen(new InstantCommand(()-> m_Carwash.spinUp()).andThen(new InstantCommand(()->{
-                        HopperState hopperState = RobotState.getInstance().getHopperState();
-                        hopperState.setState(HopperState.State.IDLE);
-                        m_Hopper.setState(hopperState);
-               })));
+        public Command AutonomousStopShooter() {
+                return new InstantCommand(() -> m_Shooter.stop())
+                                .andThen(new InstantCommand(() -> m_Carwash.spinUp()).andThen(new InstantCommand(() -> {
+                                        HopperState hopperState = RobotState.getInstance().getHopperState();
+                                        hopperState.setState(HopperState.State.IDLE);
+                                        m_Hopper.setState(hopperState);
+                                })));
         }
 
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
-                                m_Carwash.manualFeedFuel();
+                        m_Carwash.manualFeedFuel();
                 }, m_Carwash).alongWith(new RunCommand(() -> {
-                       
-                                m_Shooter.shootFuel();
+
+                        m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }, intake)).withTimeout(5);
         }
-
 
         public Command manualSpinUp() {
                 return new RunCommand(() -> {
@@ -540,7 +544,7 @@ public class RobotContainer {
                                 controller.setRumble(RumbleType.kBothRumble, 0);
                         }
                 }).alongWith(new RunCommand(() -> {
-                       m_Carwash.spinUp();
+                        m_Carwash.spinUp();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }));
@@ -550,7 +554,7 @@ public class RobotContainer {
                 return new RunCommand(() -> {
                         m_Hopper.runHopper();
                 }).alongWith(new RunCommand(() -> {
-                       m_Carwash.manualFeedFuel();
+                        m_Carwash.manualFeedFuel();
                 })).alongWith(new RunCommand(() -> {
                         m_Shooter.manualShootFuel();
                 })).alongWith(new RunCommand(() -> {
@@ -571,8 +575,9 @@ public class RobotContainer {
         }
 
         public static Command loggableCommand(String name, Command command) {
-    return command
-        .beforeStarting(() -> Logger.recordOutput("PathPlanner/ActiveCommands/" + name, true))
-        .finallyDo((interrupted) -> Logger.recordOutput("PathPlanner/ActiveCommands/" + name, false));
-}
+                return command
+                                .beforeStarting(() -> Logger.recordOutput("Commands/ActiveCommands/" + name, true))
+                                .finallyDo((interrupted) -> Logger.recordOutput("Commands/ActiveCommands/" + name,
+                                                false));
+        }
 }
