@@ -329,7 +329,7 @@ public class RobotContainer {
                                                 drive).ignoringDisable(true));
 
                 controller.rightBumper().whileTrue(InterpolatedSpinUp());
-                controller.leftBumper().whileTrue(InterpolatedShootBalls());
+                controller.leftBumper().whileTrue(loggableCommand("InterpolatedShootBalls", InterpolatedShootBalls()));
                 controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
                                 .andThen(InterpolatedShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
@@ -497,7 +497,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command AutonomousSpinUp() {
@@ -559,7 +559,7 @@ public class RobotContainer {
                         m_Shooter.manualShootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command IntakeDown() {
