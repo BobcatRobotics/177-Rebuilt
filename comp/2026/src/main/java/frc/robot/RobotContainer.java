@@ -14,6 +14,8 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
+
 import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
@@ -70,6 +72,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -127,10 +130,10 @@ public class RobotContainer {
                                                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                                                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                                                 new ModuleIOTalonFX(TunerConstants.BackRight));
-                                // Vision
+                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation));
                                 // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
                                 // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
 
@@ -164,11 +167,12 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeReal());
                                 intake.applyState();
 
+                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
                                 break;
 
                         default:
@@ -194,9 +198,10 @@ public class RobotContainer {
                                 intake = new Intake(new IntakeIO() {
                                 });
 
+                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                                                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation));
                                 // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
                                 // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
                                 break;

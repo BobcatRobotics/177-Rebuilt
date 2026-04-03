@@ -17,11 +17,13 @@ public class VisionConstants {
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-  // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-shooter";
-  public static String camera1Name = "limelight-intake";
-  public static String camera2Name = "limelight-fleft";
-  public static String camera3Name = "limelight-fright";
+  // Camera data, names must match names configured on coprocessor
+  public static limelightConstants[] cameraConstants = {
+    new limelightConstants("limelight-shooter", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0), 
+    new limelightConstants("limelight-intake", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
+    new limelightConstants("limelight-fleft", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
+    new limelightConstants("limelight-fright", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0)
+};
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
