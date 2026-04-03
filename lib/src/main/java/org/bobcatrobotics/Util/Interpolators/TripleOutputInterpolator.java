@@ -18,7 +18,7 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
         public final double two;
         public final double three;
 
-        private Speeds(double one, double two, double three) {
+        public Speeds(double one, double two, double three) {
             this.one = one;
             this.two = two;
             this.three = three;
@@ -95,7 +95,7 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
      *
      * No heap allocations occur in this method.
      */
-    private Speeds get(double distance) {
+    public Speeds get(double distance) {
 
         int index = Arrays.binarySearch(distances, distance);
 
