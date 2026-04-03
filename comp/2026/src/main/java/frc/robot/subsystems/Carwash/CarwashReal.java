@@ -109,6 +109,10 @@ public class CarwashReal implements CarwashIO {
     setIntakeSpeed(shooterIntakeSpeed);
   }
 
+  public void reverseCarwash(double shooterIntakeSpeed) {
+    setIntakeSpeed(-shooterIntakeSpeed);
+  }
+
   public void setIntakeSpeed(double shooterIntakeSpeedInRPS) {
     intakeSetpoint = shooterIntakeSpeedInRPS;
     shooterIntakeMotor.setControl(velIntakeRequest.withVelocity(intakeSetpoint));

@@ -46,6 +46,9 @@ public interface CarwashIO {
   public default void runCharacterization_Intake(double output) {
   }
 
+  public default void reverseCarwash(double shooterIntakeSpeed) {
+  }
+
   public default double getFFCharacterizationVelocity_Intake() {
     return 0.0;
   }

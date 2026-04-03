@@ -568,6 +568,8 @@ public class RobotContainer {
                         intake.manualReverseIntake(); 
                 }).alongWith(new RunCommand(() -> {
                         m_Hopper.reverseHopper();        
+                })).alongWith(new RunCommand(() -> {
+                        m_Carwash.reverseCarwash(-20);
                 }));
         }
 
