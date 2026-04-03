@@ -37,6 +37,10 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   Timer m_gcTimer = new Timer();
+  
+  // imu mode numbers for disabled and enabled
+  private final int IMU_MODE_DISABLED = 0;
+  private final int IMU_MODE_ENABLED = 1;
 
   public Robot() {
     // Record metadata
@@ -107,6 +111,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.intake.setNeturalCoast();
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_DISABLED);
+    }
   }
 
   /** This function is called periodically when disabled. */
@@ -137,6 +144,9 @@ public class Robot extends LoggedRobot {
                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
 
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_ENABLED);
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -161,6 +171,10 @@ public class Robot extends LoggedRobot {
     }
 
     robotContainer.intake.setNeturalBrake();
+
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_ENABLED);
+    }
   }
 
   /** This function is called periodically during operator control. */

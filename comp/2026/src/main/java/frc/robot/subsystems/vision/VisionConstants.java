@@ -17,7 +17,11 @@ public class VisionConstants {
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
+
+  // Limelight constants are configured here and the name should be accessed from here
+  // when constructor for the limelightConstants runs it will upload the offsets to the limelight
   // Camera data, names must match names configured on coprocessor
+  // side is right-positive
   public static limelightConstants[] cameraConstants = {
     new limelightConstants("limelight-shooter", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0), 
     new limelightConstants("limelight-intake", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0),

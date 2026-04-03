@@ -51,7 +51,7 @@ public class VisionIOLimelight implements VisionIO {
     // table.getEntry("imumode_set").setDouble(0);
     table.getEntry("pipeline").setNumber(1);
     this.name = name;
-    LimelightHelpers.SetIMUMode(name, 0);
+    //LimelightHelpers.SetIMUMode(name, 0);
 
     allianceRotation = new Rotation2d();
     allianceRotation = rotationSupplier.get();
