@@ -40,7 +40,7 @@ public class Robot extends LoggedRobot {
   
   // imu mode numbers for disabled and enabled
   private final int IMU_MODE_DISABLED = 0;
-  private final int IMU_MODE_ENABLED = 1;
+  private final int IMU_MODE_ENABLED = 0;
 
   public Robot() {
     // Record metadata

@@ -39,6 +39,10 @@ public class Vision extends SubsystemBase {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
 
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.setCameraPose_RobotSpace(camera.name, camera.forward, camera.side, camera.up, camera.roll, camera.pitch, camera.yaw);
+    }
+
     // Initialize disconnected alerts
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {

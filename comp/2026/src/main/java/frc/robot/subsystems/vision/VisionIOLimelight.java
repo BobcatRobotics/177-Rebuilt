@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
