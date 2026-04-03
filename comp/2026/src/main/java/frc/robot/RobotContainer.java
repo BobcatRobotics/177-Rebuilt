@@ -133,9 +133,9 @@ public class RobotContainer {
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation));
-                                // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -201,9 +201,9 @@ public class RobotContainer {
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation));
-                                // new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation),
-                                // new VisionIOLimelight(VisionConstants.camera3Name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
                                 break;
                 }
 
