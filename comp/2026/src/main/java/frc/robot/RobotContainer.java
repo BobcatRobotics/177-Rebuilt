@@ -565,7 +565,7 @@ public class RobotContainer {
         }
         public Command manualOuttake(){ //PR check for revision
                 return new RunCommand(() -> {
-                        intake.setVelocity(-125); 
+                        intake.manualReverseIntake(); 
                 }).alongWith(new RunCommand(() -> {
                         m_Hopper.reverseHopper();        
                 }));
