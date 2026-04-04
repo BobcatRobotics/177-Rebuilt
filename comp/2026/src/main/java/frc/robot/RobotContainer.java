@@ -328,7 +328,7 @@ public class RobotContainer {
                                                 drive).ignoringDisable(true));
 
                 controller.rightBumper().whileTrue(InterpolatedSpinUp());
-                controller.leftBumper().whileTrue(InterpolatedShootBalls());
+                controller.leftBumper().whileTrue(loggableCommand("InterpolatedShootBalls", InterpolatedShootBalls()));
                 controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
                                 .andThen(InterpolatedShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
@@ -346,6 +346,8 @@ public class RobotContainer {
                 operator.leftBumper().whileTrue(manualShootBalls());
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
                                 .onFalse(new InstantCommand(() -> intake.stop()));
+
+                operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
@@ -501,7 +503,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command AutonomousSpinUp() {
@@ -563,6 +565,15 @@ public class RobotContainer {
                         m_Shooter.manualShootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
+        }
+        public Command manualOuttake(){ //PR check for revision
+                return new RunCommand(() -> {
+                        intake.manualReverseIntake(); 
+                }).alongWith(new RunCommand(() -> {
+                        m_Hopper.reverseHopper();        
+                })).alongWith(new RunCommand(() -> {
+                        m_Carwash.reverseCarwash(-20);
                 }));
         }
 

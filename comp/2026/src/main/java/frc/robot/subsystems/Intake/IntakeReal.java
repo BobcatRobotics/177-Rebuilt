@@ -239,6 +239,12 @@ public class IntakeReal implements IntakeIO {
     rightVelocityMotor.set(1);
     leftVelocityMotor.set(1);
   }
+    public void manualReverseIntake(double velocity) {
+    intakeVelocitySetpoint = velocity;
+    // velocityMotor.setControl(requestVelocity.withVelocity(velocity).withFeedForward(0.6));
+    rightVelocityMotor.set(velocity);
+    leftVelocityMotor.set(velocity);
+  }
 
   public void setVelocity(IntakeState desiredState) {
     setVelocity(desiredState.getSpeed());
