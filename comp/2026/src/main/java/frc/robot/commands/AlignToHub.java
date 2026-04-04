@@ -118,13 +118,17 @@ public class AlignToHub extends Command {
         // Calculate angular speed
         double omega = angleController.calculate(
                 drive.getRotation().getRadians(), chassisHeadingInRadians);
+        double vx = RobotState.getInstance().vx;
+        double vy = RobotState.getInstance().vy;
 
         Logger.recordOutput("Align/ThetaError", angleController.getPositionError());
         Logger.recordOutput("Align/ThetaSetpoint", angleController.getSetpoint().position);
         Logger.recordOutput("Align/ThetaVelocitySetpoint", angleController.getSetpoint().velocity);
+        Logger.recordOutput("Chassis Velocity - x", vx);
+        Logger.recordOutput("Chassis Velocity - y", vy);
 
         // Convert to field relative speeds & send command
-        ChassisSpeeds speeds = new ChassisSpeeds(0, 0,
+        ChassisSpeeds speeds = new ChassisSpeeds(vx, vy,
                 omega);
         boolean isFlipped = DriverStation.getAlliance().isPresent()
                 && DriverStation.getAlliance().get() == Alliance.Red;

@@ -25,6 +25,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
-import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.carwashCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
@@ -446,6 +446,11 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
 
+                
+                double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
+                double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
+                RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
+                RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
         }
 
         public void simTelePeriodic() {
