@@ -314,7 +314,7 @@ public class RobotContainer {
                 }, m_Carwash));
 
                 controller.a().whileTrue(
-                                loggableCommand("AutoAlign", new AlignToHub(drive, ()-> -controller.getLeftX(), ()-> -controller.getLeftY() )));
+                                loggableCommand("AutoAlign", new AlignToHub(drive, ()-> -controller.getLeftY(), ()-> -controller.getLeftX() )));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
