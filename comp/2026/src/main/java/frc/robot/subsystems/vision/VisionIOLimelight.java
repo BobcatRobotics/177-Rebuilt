@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +53,7 @@ public class VisionIOLimelight implements VisionIO {
     // table.getEntry("imumode_set").setDouble(0);
     table.getEntry("pipeline").setNumber(1);
     this.name = name;
-    LimelightHelpers.SetIMUMode(name, 0);
+    //LimelightHelpers.SetIMUMode(name, 0);
 
     allianceRotation = new Rotation2d();
     allianceRotation = rotationSupplier.get();
@@ -68,6 +70,7 @@ public class VisionIOLimelight implements VisionIO {
     megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
     megatag2Subscriber = table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
 
+    // limelight is configured
   }
 
   @Override

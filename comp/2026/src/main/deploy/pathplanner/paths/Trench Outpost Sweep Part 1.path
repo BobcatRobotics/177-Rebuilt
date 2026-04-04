@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "IntakeDown",
-      "waypointRelativePos": 0.9371633752244165,
+      "waypointRelativePos": 0.6661404893449173,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -66,7 +66,7 @@
     },
     {
       "name": "IntakeFuel",
-      "waypointRelativePos": 1.4829443447037693,
+      "waypointRelativePos": 1.0102604577742698,
       "endWaypointRelativePos": 2.0,
       "command": {
         "type": "named",
