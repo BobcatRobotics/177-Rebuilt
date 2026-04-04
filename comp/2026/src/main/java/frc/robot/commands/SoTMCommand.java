@@ -31,14 +31,8 @@ public class SoTMCommand extends Command{
     Pose2d robotPose = drive.getPose();
     ChassisSpeeds robotSpeed = drive.getChassisSpeeds();
 
-    // Check if shot is valid
-    if (!ShootOnTheMove.isShotValid(robotPose)) {
-      shooter.stop(); // when outside bounds
-      return;
-    }
-
-    // Get calculated speeds
-    TripleOutputInterpolator.Speeds speeds = ShootOnTheMove.calculateRequiredSpeeds(robotPose, robotSpeed);
+    //Get calculated speeds
+    TripleOutputInterpolator.Speeds speeds = ShootOnTheMove.calculateSpeeds(drive, robotSpeed);
     shooter.setVelocity(speeds.one, speeds.two, speeds.three); 
   }
 
