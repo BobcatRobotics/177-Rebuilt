@@ -25,8 +25,8 @@ public class VisionConstants {
   public static limelightConstants[] cameraConstants = {
     new limelightConstants("limelight-shooter", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0), 
     new limelightConstants("limelight-intake", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
-    new limelightConstants("limelight-fleft", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
-    new limelightConstants("limelight-fright", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0)
+    new limelightConstants("limelight-fleft", 0.381, -0.2477516, 0.1929384, 0.0, -0.4, 0.0),
+    new limelightConstants("limelight-fright", 0.381, 0.2477516, 0.1929384, 0.0, -0.4, 0.0)
 };
 
   // Robot to camera transforms
