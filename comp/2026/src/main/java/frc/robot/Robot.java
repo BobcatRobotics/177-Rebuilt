@@ -38,9 +38,6 @@ public class Robot extends LoggedRobot {
   private RobotContainer robotContainer;
   Timer m_gcTimer = new Timer();
   
-  // imu mode numbers for disabled and enabled
-  private final int IMU_MODE_DISABLED = 0;
-  private final int IMU_MODE_ENABLED = 0;
 
   public Robot() {
     // Record metadata
@@ -112,7 +109,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.intake.setNeturalCoast();
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_DISABLED);
+      LimelightHelpers.SetIMUMode(camera.name, 0);
     }
   }
 
@@ -145,7 +142,7 @@ public class Robot extends LoggedRobot {
                 }
 
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_ENABLED);
+      LimelightHelpers.SetIMUMode(camera.name, 1);
     }
   }
 
@@ -173,7 +170,7 @@ public class Robot extends LoggedRobot {
     robotContainer.intake.setNeturalBrake();
 
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, IMU_MODE_ENABLED);
+      LimelightHelpers.SetIMUMode(camera.name, 1);
     }
   }
 
