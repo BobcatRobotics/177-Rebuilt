@@ -135,7 +135,8 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation)
+                                                );
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -203,7 +204,8 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation)
+                                                );
                                 break;
                 }
 

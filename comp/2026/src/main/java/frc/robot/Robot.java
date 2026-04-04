@@ -37,6 +37,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   Timer m_gcTimer = new Timer();
+  
 
   public Robot() {
     // Record metadata
@@ -107,6 +108,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.intake.setNeturalCoast();
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, 0);
+    }
   }
 
   /** This function is called periodically when disabled. */
@@ -137,6 +141,9 @@ public class Robot extends LoggedRobot {
                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
 
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, 0);
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -161,6 +168,10 @@ public class Robot extends LoggedRobot {
     }
 
     robotContainer.intake.setNeturalBrake();
+
+    for (limelightConstants camera : cameraConstants) {
+      LimelightHelpers.SetIMUMode(camera.name, 0);
+    }
   }
 
   /** This function is called periodically during operator control. */

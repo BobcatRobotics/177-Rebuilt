@@ -30,14 +30,13 @@ public class limelightConstants {
       double pitch,
       double yaw) {
     this.name = name;
-    this.forward = forward; // degrees obviously
+    this.forward = forward;
     this.side = side;
     this.up = up;
-    this.roll = roll;
+    this.roll = roll; // degrees obviously you fool
     this.pitch = pitch;
     this.yaw = yaw;
-    // upload offsets to limelight
-    LimelightHelpers.setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw);
+    
   }
 }
 

@@ -17,12 +17,17 @@ public class VisionConstants {
   public static AprilTagFieldLayout aprilTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
+
+  // Limelight constants are configured here and the name should be accessed from here
+  // when constructor for the limelightConstants runs it will upload the offsets to the limelight
   // Camera data, names must match names configured on coprocessor
+  // side is right-positive
   public static limelightConstants[] cameraConstants = {
-    new limelightConstants("limelight-shooter", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0), 
-    new limelightConstants("limelight-intake", 0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
-    new limelightConstants("limelight-fleft", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0),
-    new limelightConstants("limelight-fright", -0.2, 0.0, 0.2, 0.0, -0.4, 0.0)
+    new limelightConstants("limelight-shooter", 0.42, 0.0, 0.2, 0.0, 27, 0.0), 
+    //new limelightConstants("limelight-intake", 0.08586724, 0.0, 0.53385466, 0.0, 23, 180),
+    new limelightConstants("limelight-intake", 0.1838452, 0.2422652, 0.492506, 0.0, 26, 180),
+    new limelightConstants("limelight-fleft", 0.381, -0.2477516, 0.1929384, 0.0, 27, 90),
+    new limelightConstants("limelight-fright", 0.381, 0.2477516, 0.1929384, 0.0, 27, -90)
 };
 
   // Robot to camera transforms
