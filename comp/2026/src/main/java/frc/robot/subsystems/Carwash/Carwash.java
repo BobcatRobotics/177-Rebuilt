@@ -77,6 +77,10 @@ public class Carwash extends SubsystemBase {
     io.setVelocity( shooterIntakeSpeed);
   }
 
+  public void reverseCarwash(double shooterOuttakeSpeed) {
+    io.setVelocity(shooterOuttakeSpeed);
+  }
+  
 
   public void setIntakeSpeed(double shooterIntakeSpeed) {
     io.setIntakeSpeed(shooterIntakeSpeed);

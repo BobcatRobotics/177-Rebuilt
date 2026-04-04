@@ -152,6 +152,9 @@ public class Intake extends SubsystemBase {
   public void manualRetractIntake(){
     io.manualRetractIntake();
   }
+    public void manualReverseIntake(){
+    io.manualReverseIntake(-1);
+  }
 
   public double getPosition(){
     return inputs.intakePosition;

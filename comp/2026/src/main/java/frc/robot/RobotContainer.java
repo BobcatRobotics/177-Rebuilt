@@ -348,6 +348,8 @@ public class RobotContainer {
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
                                 .onFalse(new InstantCommand(() -> intake.stop()));
 
+                operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
+
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
                                 .withTimeout(runTestTime)
@@ -560,6 +562,15 @@ public class RobotContainer {
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
+        }
+        public Command manualOuttake(){ //PR check for revision
+                return new RunCommand(() -> {
+                        intake.manualReverseIntake(); 
+                }).alongWith(new RunCommand(() -> {
+                        m_Hopper.reverseHopper();        
+                })).alongWith(new RunCommand(() -> {
+                        m_Carwash.reverseCarwash(-20);
+                }));
         }
 
         public Command IntakeDown() {
