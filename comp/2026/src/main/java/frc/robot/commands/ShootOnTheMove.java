@@ -1,90 +1,85 @@
 package frc.robot.commands;
 
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
+
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.RobotState;
+import frc.robot.subsystems.drive.Drive;
+
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 
 public class ShootOnTheMove{
-    private static final double HOOD_ANGLE_RAD = Math.toRadians(45.0); // Need to get
+    private static final double HOOD_ANGLE_RAD = Math.toRadians(65.3); // Need to get
+    // private static final double TOF_SECONDS_PER_IN = 0.09; //Random number
 
     // Time of flight map to get better future pose value
-    private static final InterpolatingDoubleTreeMap timeOfFlightMap = 
-        new InterpolatingDoubleTreeMap();
+    // private static final InterpolatingDoubleTreeMap timeOfFlightMap = 
+    //     new InterpolatingDoubleTreeMap();
     
-    static {
-        // distance (meters) -> time (seconds)
-        timeOfFlightMap.put(0.0,0.0); // add values
+    // static {
+    //     // distance (meters) -> time (seconds)
+    //     timeOfFlightMap.put(0.0,0.0); // add values
+    // }
+
+
+    private static final LinearFilter velocityFilter = LinearFilter.movingAverage(5);
+ 
+    //Avoiding Stale State
+    public static void clearFilter() {
+        velocityFilter.reset();
     }
 
-    private static final TripleOutputInterpolator shooterInterpolator = new TripleOutputInterpolator(
-        new double[]{},  // add values
-        new double[]{},  // add values
-        new double[]{},  // add values
-        new double[]{},  // add values
-        true
-    );
-
-    public static TripleOutputInterpolator.Speeds calculateRequiredSpeeds(Pose2d robotPose, ChassisSpeeds robotSpeed) {
+    public static TripleOutputInterpolator.Speeds calculateSpeeds(Drive drive, ChassisSpeeds robotSpeed) {
         //Initial Target Vector
         Translation2d goalLocation = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
-        Translation2d robotPos = robotPose.getTranslation();
+        Translation2d robotPos = drive.getPose().getTranslation();
         double initialDistance = goalLocation.getDistance(robotPos);
+
+        //Base speeds at current distance
+        double mainFlyWheelSpeedRPM  = RobotState.getInstance().interpolator.getAsList(initialDistance).get(0);
         
         //Lookahead Calculations
-        Translation2d futurePos = robotPos;
-        double futureDistance = initialDistance;
-        double timeOfFlight = timeOfFlightMap.get(initialDistance);
-        
-        //Iterating to get accurate shot
-        for (int i = 0; i < 20; i++) {
-            //Get time of flight for current distance estimate
-            timeOfFlight = timeOfFlightMap.get(futureDistance);
-            
-            //Calculate where robot will be when note arrives
-            double offsetX = robotSpeed.vxMetersPerSecond * timeOfFlight;
-            double offsetY = robotSpeed.vyMetersPerSecond * timeOfFlight;
-            futurePos = robotPos.plus(new Translation2d(offsetX, offsetY));
-            
-            //Recalculate distance from future position
-            futureDistance = goalLocation.getDistance(futurePos);
-        }
-        
-        //Target Vector from future position
-        Translation2d targetVec = goalLocation.minus(futurePos);
-        Rotation2d targetAngle = targetVec.getAngle();
-        
-        //Components of robot velocity
-        Translation2d robotVelVec = new Translation2d(
-            robotSpeed.vxMetersPerSecond, 
-            robotSpeed.vyMetersPerSecond
+        double mainFlyWheelSpeedMS = mainFlyWheelSpeedRPM * (2*Math.PI*0.0508); //0.0508 is flywheel radius in meters
+        double vSinTheta = mainFlyWheelSpeedMS * Math.sin(HOOD_ANGLE_RAD);
+        double timeOfFlight = (vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * 1.3912)) / 9.81;
+        Translation2d futurePos = new Translation2d(
+            robotPos.getX() + robotSpeed.vxMetersPerSecond * timeOfFlight,
+            robotPos.getY() + robotSpeed.vyMetersPerSecond * timeOfFlight
         );
-        
-        //Velocity component along the shot direction
-        double velocityAlongShot = robotVelVec.getX() * Math.cos(targetAngle.getRadians()) 
-                                  + robotVelVec.getY() * Math.sin(targetAngle.getRadians());
-        
+        double futureDistance = goalLocation.getDistance(futurePos);
+
         //Base speeds at future position
-        TripleOutputInterpolator.Speeds baseSpeeds = shooterInterpolator.get(futureDistance);
+        double adjustedMainRPM = RobotState.getInstance().interpolator.getAsList(futureDistance).get(0);
+        double adjustedHoodRPM = RobotState.getInstance().interpolator.getAsList(futureDistance).get(2);
         
-        //Horizontal velocity component of fuel
-        double baseHorizontalSpeed = baseSpeeds.one * Math.cos(HOOD_ANGLE_RAD);
-        
-        //Adjust for robot velocity along shot direction
-        double requiredHorizontalSpeed = baseHorizontalSpeed - velocityAlongShot;
-        
-        //Scale factor based on initial stationary speeds
-        double scaleFactor = requiredHorizontalSpeed / baseHorizontalSpeed;
-        
-        //Scaled speeds
+        //Projecting robot velocity onto the shot direction
+        double shotDirX = (goalLocation.getX() - robotPos.getX()) / initialDistance;
+        double shotDirY = (goalLocation.getY() - robotPos.getY()) / initialDistance;
+ 
+        //Changing speeds based on direction of shot
+        double rawVelocityAlongShot =
+            robotSpeed.vxMetersPerSecond * shotDirX +
+            robotSpeed.vyMetersPerSecond * shotDirY;
+ 
+        double velocityAlongShot = velocityFilter.calculate(rawVelocityAlongShot);
+ 
+        //Scale motors
+        double adjustedMainMS = adjustedMainRPM * (2 * Math.PI * 0.0508) / 60.0;
+        double baseHorizontalSpeed = adjustedMainMS * Math.cos(HOOD_ANGLE_RAD);
+        double scaleFactor = (baseHorizontalSpeed - velocityAlongShot) / baseHorizontalSpeed;
+ 
+        //Clamp to prevent absurd values if driving very fast
+        scaleFactor = Math.max(0.5, Math.min(1.5, scaleFactor)); //Tune clamp range
+ 
         return new TripleOutputInterpolator.Speeds(
-            baseSpeeds.one * scaleFactor,
-            baseSpeeds.two * scaleFactor,
-            baseSpeeds.three * scaleFactor
+            adjustedMainRPM * scaleFactor,
+            80,
+            adjustedHoodRPM * scaleFactor
         );
     }
     
