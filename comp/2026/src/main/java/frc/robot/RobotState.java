@@ -13,6 +13,8 @@ public class RobotState {
   public CharacterizationType characterizationType = CharacterizationType.DRIVE;
   public Alliance alliance;
   private static RobotState instance;
+  public double vx = 0.0;
+  public double vy = 0.0;
 
   public static RobotState getInstance() {
     if (instance == null)

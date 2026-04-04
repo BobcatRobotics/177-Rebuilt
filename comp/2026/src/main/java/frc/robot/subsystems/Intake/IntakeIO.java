@@ -111,4 +111,7 @@ public interface IntakeIO {
   public default void setNeturalBrake(){
     
   }
+  public default void manualReverseIntake(double velocity){
+    
+  }
 }

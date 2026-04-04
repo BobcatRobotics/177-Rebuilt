@@ -27,6 +27,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,7 +42,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
-import frc.robot.commands.AutoAimDrive;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.carwashCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
@@ -321,8 +321,7 @@ public class RobotContainer {
                 }, m_Carwash));
 
                 controller.a().whileTrue(
-                                loggableCommand("AutoAlign", new AlignToHub(drive)
-                                                .until(() -> RobotState.getInstance().isRobotAlignedToHub)));
+                                loggableCommand("AutoAlign", new AlignToHub(drive, ()-> -controller.getLeftY(), ()-> -controller.getLeftX() )));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
@@ -336,7 +335,7 @@ public class RobotContainer {
                                                 drive).ignoringDisable(true));
 
                 controller.rightBumper().whileTrue(InterpolatedSpinUp());
-                controller.leftBumper().whileTrue(InterpolatedShootBalls());
+                controller.leftBumper().whileTrue(loggableCommand("InterpolatedShootBalls", InterpolatedShootBalls()));
                 controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
                                 .andThen(InterpolatedShootBalls()));
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
@@ -354,6 +353,8 @@ public class RobotContainer {
                 operator.leftBumper().whileTrue(manualShootBalls());
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
                                 .onFalse(new InstantCommand(() -> intake.stop()));
+
+                operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
                 double runTestTime = 5;
                 Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
@@ -453,6 +454,11 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
 
+                
+                double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
+                double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
+                RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
+                RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
         }
 
         public void simTelePeriodic() {
@@ -504,7 +510,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command AutonomousSpinUp() {
@@ -566,6 +572,15 @@ public class RobotContainer {
                         m_Shooter.manualShootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
+                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
+        }
+        public Command manualOuttake(){ //PR check for revision
+                return new RunCommand(() -> {
+                        intake.manualReverseIntake(); 
+                }).alongWith(new RunCommand(() -> {
+                        m_Hopper.reverseHopper();        
+                })).alongWith(new RunCommand(() -> {
+                        m_Carwash.reverseCarwash(-20);
                 }));
         }
 
