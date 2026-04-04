@@ -142,7 +142,7 @@ public class Robot extends LoggedRobot {
                 }
 
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 1);
+      LimelightHelpers.SetIMUMode(camera.name, 0);
     }
   }
 
@@ -170,7 +170,7 @@ public class Robot extends LoggedRobot {
     robotContainer.intake.setNeturalBrake();
 
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 1);
+      LimelightHelpers.SetIMUMode(camera.name, 0);
     }
   }
 
