@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,7 +21,7 @@ import frc.robot.subsystems.drive.Drive;
 public class AlignToHub extends Command {
     private boolean done = false;
     private static final double DEADBAND = 0.1;
-    private static final double ANGLE_KP = 5.0;
+    private static final double ANGLE_KP = 7.5;
     private static final double ANGLE_KD = 0.4;
     // private static final double ANGLE_MAX_VELOCITY = 8.0;
     // private static final double ANGLE_MAX_ACCELERATION = 20.0;
@@ -29,6 +32,8 @@ public class AlignToHub extends Command {
     private final ProfiledPIDController angleController;
     // Field position of hub/goal
     private Translation2d target;
+    private DoubleSupplier xSupplier;
+    private DoubleSupplier ySupplier;
 
     public AlignToHub(Drive drive) {
 
@@ -44,6 +49,25 @@ public class AlignToHub extends Command {
                 new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
         angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.reset(drive.getRotation().getRadians());
+    }
+
+        public AlignToHub(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+
+        ANGLE_MAX_VELOCITY = 8.0;
+        ANGLE_MAX_ACCELERATION = 20.0;
+        this.drive = drive;
+        this.xSupplier = xSupplier;
+        this.ySupplier = ySupplier;
+
+        // Create PID controller
+        angleController = new ProfiledPIDController(
+                ANGLE_KP,
+                0.0,
+                ANGLE_KD,
+                new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+        angleController.enableContinuousInput(-Math.PI, Math.PI);
+        angleController.reset(drive.getRotation().getRadians());
+        
     }
 
     public AlignToHub(Drive drive, double velocity, double acceleration) {
@@ -74,16 +98,11 @@ public class AlignToHub extends Command {
             Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
             Logger.recordOutput("Align/IsAligned", isAtSetpoint);
             drive(targetHeading.getRadians());
-            done = isAtSetpoint;
-            if( isAtSetpoint){
-                this.cancel();
-            }
+            
+           
     }
 
-        @Override
-    public boolean isFinished() {
-        return done;
-    }
+      
 
     public boolean isAligned() {
         Translation2d targetTranslation = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d()
@@ -118,15 +137,19 @@ public class AlignToHub extends Command {
         // Calculate angular speed
         double omega = angleController.calculate(
                 drive.getRotation().getRadians(), chassisHeadingInRadians);
+        // double vx = RobotState.getInstance().vx;
+        // double vy = RobotState.getInstance().vy;
+        ChassisSpeeds speeds = new ChassisSpeeds(0, 0, omega);
 
         Logger.recordOutput("Align/ThetaError", angleController.getPositionError());
         Logger.recordOutput("Align/ThetaSetpoint", angleController.getSetpoint().position);
         Logger.recordOutput("Align/ThetaVelocitySetpoint", angleController.getSetpoint().velocity);
+        // Logger.recordOutput("Chassis Velocity - x", vx);
+        // Logger.recordOutput("Chassis Velocity - y", vy);
 
-        // Convert to field relative speeds & send command
-        ChassisSpeeds speeds = new ChassisSpeeds(0, 0,
-                omega);
-        boolean isFlipped = DriverStation.getAlliance().isPresent()
+        if (xSupplier == null && ySupplier == null) {
+            // Convert to field relative speeds & send command
+            boolean isFlipped = DriverStation.getAlliance().isPresent()
                 && DriverStation.getAlliance().get() == Alliance.Red;
         drive.runVelocity(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -134,5 +157,28 @@ public class AlignToHub extends Command {
                         isFlipped
                                 ? drive.getRotation().plus(new Rotation2d(Math.PI))
                                 : drive.getRotation()));
+        }
+        else {
+            Translation2d linearVelocity =
+                    DriveCommands.getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+               // Convert to field relative speeds & send command
+             speeds =
+                  new ChassisSpeeds(
+                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                      omega);
+            boolean isFlipped = DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+            drive.runVelocity(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        speeds,
+                        isFlipped
+                                ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                                : drive.getRotation()));
+        }
+        }
+        
+
+        
     }
-}
+
