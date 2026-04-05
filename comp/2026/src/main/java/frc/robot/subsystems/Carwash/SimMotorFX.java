@@ -97,6 +97,10 @@ public class SimMotorFX {
 
     public double setTorque(double velocityInRPS) {
         double velocityInRMP = velocityInRPS * 60;
+        if(velocityInRMP == 0){
+            appliedTorque = 0;
+            return appliedTorque;
+        }
         appliedTorque = falconStallTorqueInNm * (1 - (velocityInRMP / falconFreeSpeedInRPM));
         return appliedTorque;
     }
