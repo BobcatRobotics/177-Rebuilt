@@ -33,21 +33,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 5.0
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "AutoRunHopper"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               }
             ]
@@ -76,21 +70,15 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 5.0
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "AutoRunHopper"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               }
             ]

@@ -33,9 +33,9 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 5.0
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               },
               {
@@ -43,20 +43,8 @@
                 "data": {
                   "name": "AutoRunHopper"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoSpinUpAndShootAndEnd"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoStopShooter"
           }
         },
         {
@@ -76,9 +64,9 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 5.0
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               },
               {
@@ -86,20 +74,8 @@
                 "data": {
                   "name": "AutoRunHopper"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoSpinUpAndShootAndEnd"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoStopShooter"
           }
         }
       ]
