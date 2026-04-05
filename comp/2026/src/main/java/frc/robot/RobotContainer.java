@@ -564,7 +564,7 @@ public class RobotContainer {
         }
 
         public Command ShootOnTheMove() {
-                return new SoTMCommand(m_Shooter, drive);
+                return new SoTMCommand(m_Shooter, drive, m_Carwash);
         }
 
         public Command AutonomousSpinUp() {

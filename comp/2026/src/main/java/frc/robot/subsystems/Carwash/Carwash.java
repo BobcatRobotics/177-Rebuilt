@@ -68,7 +68,7 @@ public class Carwash extends SubsystemBase {
     setVelocity(desiredState.getCurrentState());
   }
 
-  private void setVelocity(CarwashState.State state) {
+  public void setVelocity(CarwashState.State state) {
     desiredState.setState(state);
     io.setVelocity(desiredState);
   }
