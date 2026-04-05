@@ -109,7 +109,7 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     robotContainer.intake.setNeturalCoast();
     for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 0);
+      LimelightHelpers.SetIMUMode(camera.name, 1);
     }
   }
 
