@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -77,6 +78,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
+import frc.robot.util.DebouncedCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -135,8 +137,7 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation)
-                                                );
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
 
                                 m_Shooter = new Shooter(new ShooterRealQuad());
                                 m_Shooter.applyState();
@@ -204,8 +205,7 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation)
-                                                );
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
                                 break;
                 }
 
@@ -280,7 +280,8 @@ public class RobotContainer {
                 NamedCommands.registerCommand("WaitHumanLoad", loggableCommand("WaitHumanLoad", new WaitCommand(5)));
                 NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot", InterpolatedSpinUp()
                                 .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10).until(()-> RobotState.getInstance().isRobotAlignedToHub))); // was 1
+                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
+                                .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
         }
 
         /**
@@ -321,7 +322,8 @@ public class RobotContainer {
                 }, m_Carwash));
 
                 controller.a().whileTrue(
-                                loggableCommand("AutoAlign", new AlignToHub(drive, ()-> -controller.getLeftY(), ()-> -controller.getLeftX() )));
+                                loggableCommand("AutoAlign", new AlignToHub(drive, () -> -controller.getLeftY(),
+                                                () -> -controller.getLeftX())));
 
                 // Switch to X pattern when X button is pressed
                 controller.x()
@@ -454,7 +456,6 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
 
-                
                 double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
                 double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
                 RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
@@ -524,7 +525,10 @@ public class RobotContainer {
         }
 
         public Command AutoSpinUpAndShoot() {
-                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed()).andThen(AutonomousShootBalls())
+                Timer timer = new Timer();
+                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.05,
+                                                () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
 
@@ -541,11 +545,10 @@ public class RobotContainer {
                 return new RunCommand(() -> {
                         m_Carwash.manualFeedFuel();
                 }, m_Carwash).alongWith(new RunCommand(() -> {
-
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake)).withTimeout(5);
+                }, intake));
         }
 
         public Command manualSpinUp() {
@@ -574,11 +577,12 @@ public class RobotContainer {
                         intake.setVelocity(125);
                 })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
         }
-        public Command manualOuttake(){ //PR check for revision
+
+        public Command manualOuttake() { // PR check for revision
                 return new RunCommand(() -> {
-                        intake.manualReverseIntake(); 
+                        intake.manualReverseIntake();
                 }).alongWith(new RunCommand(() -> {
-                        m_Hopper.reverseHopper();        
+                        m_Hopper.reverseHopper();
                 })).alongWith(new RunCommand(() -> {
                         m_Carwash.reverseCarwash(-20);
                 }));
