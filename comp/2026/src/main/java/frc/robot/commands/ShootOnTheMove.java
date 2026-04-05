@@ -8,10 +8,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.RobotState;
 import frc.robot.subsystems.drive.Drive;
 
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+import org.littletonrobotics.junction.Logger;
 
 public class ShootOnTheMove{
     private static final double HOOD_ANGLE_RAD = Math.toRadians(65.3); // Need to get
@@ -26,7 +30,7 @@ public class ShootOnTheMove{
     //     timeOfFlightMap.put(0.0,0.0); // add values
     // }
 
-
+    //Filter for rpm to smoothen based on 6328
     private static final LinearFilter velocityFilter = LinearFilter.movingAverage(5);
  
     //Avoiding Stale State
@@ -41,21 +45,18 @@ public class ShootOnTheMove{
         double initialDistance = goalLocation.getDistance(robotPos);
 
         //Base speeds at current distance
-        double mainFlyWheelSpeedRPM  = RobotState.getInstance().interpolator.getAsList(initialDistance).get(0);
+        double initialDistanceInch = Units.metersToInches(initialDistance);
+        double mainFlyWheelSpeedRPS  = RobotState.getInstance().interpolator.getAsList(initialDistanceInch).get(0);
         
         //Lookahead Calculations
-        double mainFlyWheelSpeedMS = mainFlyWheelSpeedRPM * (2*Math.PI*0.0508); //0.0508 is flywheel radius in meters
-        double vSinTheta = mainFlyWheelSpeedMS * Math.sin(HOOD_ANGLE_RAD);
-        double timeOfFlight = (vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * 1.3912)) / 9.81;
-        Translation2d futurePos = new Translation2d(
-            robotPos.getX() + robotSpeed.vxMetersPerSecond * timeOfFlight,
-            robotPos.getY() + robotSpeed.vyMetersPerSecond * timeOfFlight
-        );
-        double futureDistance = goalLocation.getDistance(futurePos);
+
+        double futureDistance = goalLocation.getDistance(RobotState.getInstance().futurePos.getTranslation());
+        Logger.recordOutput("ShootOnTheMove/futureDistance", futureDistance);
+        double futureDistanceInch = Units.metersToInches(futureDistance);
 
         //Base speeds at future position
-        double adjustedMainRPM = RobotState.getInstance().interpolator.getAsList(futureDistance).get(0);
-        double adjustedHoodRPM = RobotState.getInstance().interpolator.getAsList(futureDistance).get(2);
+        double adjustedMainRPS = RobotState.getInstance().interpolator.getAsList(futureDistanceInch).get(2);
+        double adjustedHoodRPS = RobotState.getInstance().interpolator.getAsList(futureDistanceInch).get(1);
         
         //Projecting robot velocity onto the shot direction
         double shotDirX = (goalLocation.getX() - robotPos.getX()) / initialDistance;
@@ -69,7 +70,7 @@ public class ShootOnTheMove{
         double velocityAlongShot = velocityFilter.calculate(rawVelocityAlongShot);
  
         //Scale motors
-        double adjustedMainMS = adjustedMainRPM * (2 * Math.PI * 0.0508) / 60.0;
+        double adjustedMainMS = adjustedMainRPS * (2 * Math.PI * 0.0508);
         double baseHorizontalSpeed = adjustedMainMS * Math.cos(HOOD_ANGLE_RAD);
         double scaleFactor = (baseHorizontalSpeed - velocityAlongShot) / baseHorizontalSpeed;
  
@@ -77,9 +78,9 @@ public class ShootOnTheMove{
         scaleFactor = Math.max(0.5, Math.min(1.5, scaleFactor)); //Tune clamp range
  
         return new TripleOutputInterpolator.Speeds(
-            adjustedMainRPM * scaleFactor,
+            adjustedMainRPS * scaleFactor,
             80,
-            adjustedHoodRPM * scaleFactor
+            adjustedHoodRPS * scaleFactor
         );
     }
     

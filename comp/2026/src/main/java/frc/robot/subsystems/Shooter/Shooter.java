@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -75,6 +76,7 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/State", desiredState.getCurrentState());
 
     autoPeriodic();
+    updateFuturePos();
 
   }
 
@@ -316,5 +318,28 @@ public class Shooter extends SubsystemBase {
       count += 1;
     }
     return avg / count;
+  }
+
+  public void updateFuturePos() {
+        double HOOD_ANGLE_RAD = Math.toRadians(65.3);
+        double mainFlyWheelSpeedMS = getVelocityMainFlywheel() * (2*Math.PI*0.0508); //0.0508 is flywheel radius in meters
+        double vSinTheta = mainFlyWheelSpeedMS * Math.sin(HOOD_ANGLE_RAD);
+        double timeOfFlight = ((vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * -1.3912)) / 9.81) / 100;
+        Translation2d futurePos = new Translation2d();
+        if (RobotState.getInstance().alliance == Alliance.Red) {
+        futurePos = new Translation2d(
+            RobotState.getInstance().robotPose.getX() - RobotState.getInstance().vx * timeOfFlight,
+            RobotState.getInstance().robotPose.getY() - RobotState.getInstance().vy * timeOfFlight
+        );
+        }
+        else {
+            futurePos = new Translation2d(
+            RobotState.getInstance().robotPose.getX() + RobotState.getInstance().vx * timeOfFlight,
+            RobotState.getInstance().robotPose.getY() + RobotState.getInstance().vy * timeOfFlight
+        );
+        }
+        RobotState.getInstance().futurePos = new Pose2d(futurePos, RobotState.getInstance().robotPose.getRotation());
+        Logger.recordOutput("ShootOnTheMove/futurePos", new Pose2d(RobotState.getInstance().futurePos.getTranslation(), RobotState.getInstance().robotPose.getRotation()));
+        Logger.recordOutput("ShootOnTheMove/TOF", timeOfFlight);
   }
 }

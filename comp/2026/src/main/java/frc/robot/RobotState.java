@@ -97,4 +97,5 @@ public class RobotState {
 
 
   public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
+  public Pose2d futurePos = new Pose2d();
 }

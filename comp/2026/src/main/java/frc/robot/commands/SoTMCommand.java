@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
+import org.littletonrobotics.junction.Logger;
+
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.drive.Drive;
 
@@ -18,22 +20,25 @@ public class SoTMCommand extends Command{
         this.shooter = shooter;
         this.drive = drive;
 
-        addRequirements(shooter, drive);
+        addRequirements(shooter);
     }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d robotPose = drive.getPose();
     ChassisSpeeds robotSpeed = drive.getChassisSpeeds();
 
     //Get calculated speeds
     TripleOutputInterpolator.Speeds speeds = ShootOnTheMove.calculateSpeeds(drive, robotSpeed);
-    shooter.setVelocity(speeds.one, speeds.two, speeds.three); 
+    shooter.setVelocity(speeds.one, speeds.three, speeds.three);
+    
+    Logger.recordOutput("ShootOnTheMove/mainFlyWheelSpeed", speeds.one);
+    Logger.recordOutput("ShootOnTheMove/hoodFlyWheelSpeed", speeds.three);
   }
 
   // Called once the command ends or is interrupted.

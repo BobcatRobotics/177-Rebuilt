@@ -53,6 +53,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SoTMCommand;
 import frc.robot.commands.carwashCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
@@ -360,8 +361,8 @@ public class RobotContainer {
                                                 () -> -controller.getLeftX())));
 
                 // Switch to X pattern when X button is pressed
-                controller.x()
-                                .onTrue(new ActionFactory().singleAction("X-Command", () -> drive.stopWithX(), drive));
+                // controller.x()
+                //                 .onTrue(new ActionFactory().singleAction("X-Command", () -> drive.stopWithX(), drive));
 
                 // Reset gyro to 0° when B button is pressed
                 controller.b()
@@ -389,6 +390,7 @@ public class RobotContainer {
                 operator.leftBumper().whileTrue(manualShootBalls());
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
                                 .onFalse(new InstantCommand(() -> intake.stop()));
+                controller.x().whileTrue(ShootOnTheMove()).onFalse(new InstantCommand(() -> m_Shooter.stop()));
 
                 operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
@@ -559,6 +561,10 @@ public class RobotContainer {
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 })).alongWith(new InstantCommand(() -> drive.stopWithX(), drive));
+        }
+
+        public Command ShootOnTheMove() {
+                return new SoTMCommand(m_Shooter, drive);
         }
 
         public Command AutonomousSpinUp() {
