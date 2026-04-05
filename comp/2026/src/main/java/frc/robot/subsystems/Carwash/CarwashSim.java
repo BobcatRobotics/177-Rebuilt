@@ -2,6 +2,7 @@ package frc.robot.subsystems.Carwash;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -15,20 +16,33 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.sim.ChassisReference;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState.MotorType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class CarwashSim implements CarwashIO {
   private TalonFX shooterIntakeMotor;
-  private SimMotorFX shooterIntakeMotorSim;
+  private  TalonFXSimState shooterIntakeMotorState;
+  private FlywheelSim m_motorSimModel
+  
+  ;
   public ModuleConfigurator intakeWheelConfig;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
@@ -55,7 +69,14 @@ public class CarwashSim implements CarwashIO {
         .kV(Constants.CarwashConstants.SharedIntake.kIntakeMotorkV)
         .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
+    
+    DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
+    m_motorSimModel = new FlywheelSim(LinearSystemId.createFlywheelSystem(motorModel, .00003, 1),motorModel);
+
     setupIntake(intakeGains);
+    shooterIntakeMotorState = shooterIntakeMotor.getSimState();
+
+
   }
 
   public void setupIntake(Gains g) {
@@ -76,7 +97,8 @@ public class CarwashSim implements CarwashIO {
     accelerationOfIntake = shooterIntakeMotor.getAcceleration();
     intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
         statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
-  }
+    
+    }
 
   public void updateInputs(CarwashIOInputs inputs) {
 
@@ -119,9 +141,22 @@ public class CarwashSim implements CarwashIO {
 
   @Override
   public void periodic() {
+
   }
 
   public void simulationPeriodic() {
+    // Get  Motor Output Voltage
+    shooterIntakeMotorState = shooterIntakeMotor.getSimState();
+    double motorVoltage = shooterIntakeMotorState.getMotorVoltage();
+    // Feed Into Physics Simulation
+    m_motorSimModel.setInputVoltage(motorVoltage);
+    // Udpate SIM ( 20ms loop )
+    m_motorSimModel.update(0.02);
+    // get voltage ( rad/sec -> rotations/sec)
+    double velocityRadPerSec = m_motorSimModel.getAngularVelocityRadPerSec();
+    double velocityRotPerSec = velocityRadPerSec / (2*Math.PI);
+    // PUSH intop the TalonFX simulated Sensor the value
+    shooterIntakeMotorState.setRotorVelocity(-velocityRotPerSec);
   }
 
   /* Characterization */
@@ -134,7 +169,7 @@ public class CarwashSim implements CarwashIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Intake() {
-    double avg = shooterIntakeMotorSim.getVelocity();
+    double avg = shooterIntakeMotor.getVelocity().getValueAsDouble();
     return avg;
   }
 }
