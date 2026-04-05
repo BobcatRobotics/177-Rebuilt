@@ -28,6 +28,7 @@ public class Carwash extends SubsystemBase {
       Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
       Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
       true);
+  
 
   public Carwash(CarwashIO io) {
     // Configure SysId
@@ -171,5 +172,31 @@ public class Carwash extends SubsystemBase {
     goal.intakeSpeed = carwashrps.getAsDouble() * -1;
     RobotState.getInstance().getCarwashState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getCarwashState());
+  }
+
+
+
+  public boolean atSpeed() {
+    boolean isAtTolerance = false;
+    boolean isHoodWheelWithinTolerance = false;
+    double HOOD_SPEED_TOLERANCE = 2;
+    isHoodWheelWithinTolerance = Math
+        .abs(
+            getVelocityCarwash() - RobotState.getInstance().getCarwashState().getIntakeSpeed()) <= HOOD_SPEED_TOLERANCE;
+    if (isHoodWheelWithinTolerance) {
+      isAtTolerance = true;
+    }
+    Logger.recordOutput("Carwash/isUpToSpeed", isAtTolerance);
+    return isAtTolerance;
+  }
+
+  public double getVelocityCarwash() {
+    int count = 0;
+    double avg = 0;
+    if (inputs.velocityOfIntakeRPS > 0) {
+      avg += inputs.velocityOfIntakeRPS;
+      count += 1;
+    }
+    return avg / count;
   }
 }
