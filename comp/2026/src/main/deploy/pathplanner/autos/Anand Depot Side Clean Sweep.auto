@@ -41,13 +41,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoRunHopper"
+                  "name": "AutoSpinUpAndShootAndEnd"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoSpinUpAndShootAndEnd"
+                  "name": "AutoRunHopper"
                 }
               }
             ]
