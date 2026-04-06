@@ -15,8 +15,9 @@ public final class DebouncedCommand {
         return cmd.beforeStarting(() -> timer.reset())
                 .until(() -> {
                     if (isAtSpeed.getAsBoolean()) {
-                        if (!timer.isRunning())
+                        if (!timer.isRunning()) {
                             timer.start();
+                        }
                     } else {
                         timer.stop();
                         timer.reset();

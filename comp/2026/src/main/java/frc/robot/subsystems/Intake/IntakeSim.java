@@ -10,6 +10,10 @@ import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Hardware.Motors.Sim.PidContants;
+import org.bobcatrobotics.Hardware.Motors.Sim.SimMotor;
+import org.bobcatrobotics.Hardware.Motors.Sim.SimMotorPos;
+import org.bobcatrobotics.Hardware.Motors.Sim.SimMotorVel;
 import org.bobcatrobotics.Util.Tunables.Gains;
 // import org.bobcatrobotics.Util.Tunables.TunablePID;
 
@@ -23,6 +27,8 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -34,15 +40,15 @@ public class IntakeSim implements IntakeIO {
 
   private TalonFX positionMotor;
   public ModuleConfigurator intakePivotConfig;
-  private SimMotorFX positionMotorSim;
+  private SimMotor positionMotorSim;
 
   private TalonFX leftVelocityMotor;
   public ModuleConfigurator leftintakeVelocityConfig;
-  private SimMotorFX leftVelocityMotorSim;
+  private SimMotor leftVelocityMotorSim;
 
   private TalonFX rightVelocityMotor;
   public ModuleConfigurator rightIntakeVelocityConfig;
-  private SimMotorFX rightVelocityMotorSim;
+  private SimMotor rightVelocityMotorSim;
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
@@ -131,7 +137,7 @@ public class IntakeSim implements IntakeIO {
       rightIntakeVelocityConfig.configureSignals(rightVelocityMotor, 50.0, rightVelocityOfIntakeSpeedRPS,
           rightStatorCurrentOfIntakeSpeedAmps, rightOutputOfIntakeSpeedVolts, rightAccelerationOfIntakeSpeed);
     }
-    rightVelocityMotorSim = new SimMotorFX(rightVelocityMotor, Constants.IntakeConstants.RightRollerConstants.isInverted);
+    rightVelocityMotorSim = new SimMotorVel(rightVelocityMotor, Constants.IntakeConstants.RightRollerConstants.isInverted,new PidContants(5,Constants.IntakeConstants.LeftRollerConstants.kS),new PIDController(300, 0,0.01)) ;
   }
 
   public void setUpLeftRollerMotor(Gains g) {
@@ -158,7 +164,7 @@ public class IntakeSim implements IntakeIO {
       leftintakeVelocityConfig.configureSignals(leftVelocityMotor, 50.0, leftVelocityOfIntakeSpeedRPS,
           leftStatorCurrentOfIntakeSpeedAmps, leftOutputOfIntakeSpeedVolts, leftAccelerationOfIntakeSpeed);
     }
-    leftVelocityMotorSim = new SimMotorFX(leftVelocityMotor, Constants.IntakeConstants.LeftRollerConstants.isInverted);
+    leftVelocityMotorSim = new SimMotorVel(leftVelocityMotor, Constants.IntakeConstants.LeftRollerConstants.isInverted,new PidContants(5,Constants.IntakeConstants.RightRollerConstants.kS),new PIDController(300, 0,0.01)) ;
   }
 
   public void setupPivotMotor(Gains g) {
@@ -185,15 +191,12 @@ public class IntakeSim implements IntakeIO {
       intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
           statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts, accelerationOfIntakePosition);
     }
-    positionMotorSim = new SimMotorFX(positionMotor, Constants.IntakeConstants.PivotConstants.isInverted);
-
+    positionMotorSim = new SimMotorPos(positionMotor, Constants.IntakeConstants.PivotConstants.isInverted,new PidContants(5,Constants.IntakeConstants.PivotConstants.kS),new PIDController(300, 0,0.01)) ;
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    positionMotorSim.update();
-    leftVelocityMotorSim.update();
-    rightVelocityMotorSim.update();
+
     if (Constants.lowTelemetryMode) {
       lowTelemetry(inputs);
     } else {
@@ -270,13 +273,13 @@ public class IntakeSim implements IntakeIO {
   public void setPosition(double pos) {
     intakePivotSetpoint = pos;
     positionMotor.setControl(requestPositionVoltage.withPosition(pos).withFeedForward(.8));
-    positionMotorSim.setPosition(pos);
+    positionMotorSim.setPosition(Rotation2d.fromRotations(pos));
   }
 
   public void retractIntake() {
     intakePivotSetpoint = 0;
     positionMotor.setControl(requestPositionVoltage.withPosition(0).withFeedForward(-.7));
-    positionMotorSim.setPosition(0);
+    positionMotorSim.setPosition(Rotation2d.fromDegrees(0));
   }
 
   public void manualRetractIntake() {
@@ -341,6 +344,10 @@ public class IntakeSim implements IntakeIO {
   }
 
   public void simulationPeriodic() {
+    positionMotorSim.update();
+    leftVelocityMotorSim.update();
+    rightVelocityMotorSim.update();
+
   }
 
   /* Characterization */

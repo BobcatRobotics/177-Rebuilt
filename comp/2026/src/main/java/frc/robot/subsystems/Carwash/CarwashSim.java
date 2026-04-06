@@ -22,6 +22,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState.MotorType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -36,10 +37,13 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
+import org.bobcatrobotics.Hardware.Motors.Sim.PidContants;
+import org.bobcatrobotics.Hardware.Motors.Sim.SimMotor;
+import org.bobcatrobotics.Hardware.Motors.Sim.SimMotorVel;
 
 public class CarwashSim implements CarwashIO {
   private TalonFX shooterIntakeMotor;
-  private SimMotorFX shooterIntakeMotorSim;
+  private SimMotor shooterIntakeMotorSim;
   
   ;
   public ModuleConfigurator intakeWheelConfig;
@@ -71,7 +75,7 @@ public class CarwashSim implements CarwashIO {
   
     setupIntake(intakeGains);
 
-    shooterIntakeMotorSim = new SimMotorFX(shooterIntakeMotor, Constants.CarwashConstants.SharedIntake.isInverted);
+    shooterIntakeMotorSim = new SimMotorVel(shooterIntakeMotor, Constants.CarwashConstants.SharedIntake.isInverted,new PidContants(5,Constants.CarwashConstants.SharedIntake.kIntakeMotorkS),new PIDController(300, 0,0.01)) ;
   }
 
   public void setupIntake(Gains g) {
