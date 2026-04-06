@@ -282,6 +282,8 @@ public class RobotContainer {
                                 .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
                 NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
                                 .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
+                 NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
+                                loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
         }
 
         /**
@@ -527,7 +529,15 @@ public class RobotContainer {
         public Command AutoSpinUpAndShoot() {
                 Timer timer = new Timer();
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.16,
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.2,
+                                                () -> m_Carwash.atSpeed()))
+                                .andThen(AutonomousStopShooter());
+        }
+
+        public Command longAutoSpinUpAndShoot() {
+                Timer timer = new Timer();
+                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.32,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
@@ -540,6 +550,8 @@ public class RobotContainer {
                                         m_Hopper.setState(hopperState);
                                 })));
         }
+
+      
 
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
