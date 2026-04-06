@@ -1,16 +1,12 @@
 package frc.robot.subsystems.Hopper;
 
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.ChassisReference;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 
 // --- Simulated Motor Class ---
 public class SimMotorFX {
@@ -20,89 +16,55 @@ public class SimMotorFX {
         KRAKEN,
         KRAKEN_FOC
     }
-    private final DCMotor motorModel;
-    private final DCMotorSim sim;
-    private double appliedVolts = 0.0;
-    private double velocity = 0.0;
-    private double acceleration = 0.0;
-    private double position = 0.0;
-    private double supplyCurrent = 0.0;
-
-    private double appliedTorque = 0.0;
 
     private double falconStallTorqueInNm = 4.69;
     private double krakenStallTorqueInNm = 7.16;
     private double falconFreeSpeedInRPM = 6380;
     private double krakenFreeSpeedInRPM = 6050;
 
-    public SimMotorFX() {
-        motorModel = DCMotor.getKrakenX60Foc(1);
-        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
-                motorModel);
-        setTorque(0);
-    }
+    private double velocity = 0.0;
+    private double position = 0.0;
+    private double voltage = 0.0;
 
-    public SimMotorFX(MotorType motorType) {
-        motorModel = selectMotor(motorType);
+    private TalonFX motor;
 
-        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, .025, 1),
-                motorModel);
-        setTorque(0);
-    }
-
-    private DCMotor selectMotor(MotorType type) {
-        return switch (type) {
-            case FALCON      -> DCMotor.getFalcon500(1);
-            case FALCON_FOC  -> DCMotor.getFalcon500Foc(1);
-            case KRAKEN      -> DCMotor.getKrakenX60(1);
-            case KRAKEN_FOC  -> DCMotor.getKrakenX60Foc(1);
-        };
+    public SimMotorFX(TalonFX motor, boolean isInverted) {
+        this.motor = motor;
+        // in simulationPeriodic()
+        var sim = motor.getSimState();
+        sim.Orientation = ChassisReference.CounterClockwise_Positive;
+        if(isInverted){
+            sim.Orientation = ChassisReference.Clockwise_Positive;
+        }
     }
 
     // Update based on a target setpoint
     public void update() {
-        appliedVolts = motorModel.getVoltage(appliedTorque,
-                Units.RotationsPerSecond.convertFrom(sim.getAngularVelocityRadPerSec(), RadiansPerSecond));
-
-        // Update sim state
-        sim.setInputVoltage(MathUtil.clamp(appliedVolts, -12.0, 12.0));
-        sim.update(0.02);
-
-        supplyCurrent = sim.getCurrentDrawAmps();
-        position = Units.Rotations.convertFrom(sim.getAngularPositionRad(), Radians);
-        velocity = Units.RotationsPerSecond.convertFrom(sim.getAngularVelocityRadPerSec(), RadiansPerSecond);
-        acceleration = Units.RotationsPerSecondPerSecond.convertFrom(sim.getAngularAccelerationRadPerSecSq(),
-                RadiansPerSecondPerSecond);
+        // in simulationPeriodic()
+        var sim = motor.getSimState();
+        // set supply voltage (important!)
+        sim.setSupplyVoltage(RobotController.getBatteryVoltage());
+        // simulate rotor velocity (rot/s)
+        sim.setRotorVelocity(velocity);
+        // simulate rotor velocity (rotations)
+        sim.setRawRotorPosition(position);
+        // simulate voltage
+        sim.setSupplyVoltage(voltage);
     }
 
     public double getVelocity() {
         return velocity;
     }
 
-    public double getAcceleration() {
-        return acceleration;
+    public void setVelocity(double velInRotationsPerSec) {
+        this.velocity = velInRotationsPerSec ;
     }
 
-    public double getVoltage() {
-        return appliedVolts;
+    public void setPosition(double posInRotations){
+        this.position = posInRotations;
     }
 
-    public double getCurrent() {
-        return supplyCurrent;
-    }
-
-    public double getPosition() {
-        return position;
-    }
-
-    public double setTorque(double velocityInRPS) {
-        double velocityInRMP = velocityInRPS * 60;
-        appliedTorque = falconStallTorqueInNm * (1 - (velocityInRMP / falconFreeSpeedInRPM));
-        return appliedTorque;
-    }
-
-    public TalonFX apply(TalonFX motor){
-        motor.setVoltage(appliedVolts);
-        return motor;
+        public void set(double output){
+        this.voltage = RobotController.getBatteryVoltage() * output;
     }
 }

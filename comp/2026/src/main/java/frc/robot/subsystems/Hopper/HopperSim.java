@@ -1,6 +1,11 @@
 package frc.robot.subsystems.Hopper;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Minute;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.Tunables.Gains;
@@ -23,9 +28,9 @@ import frc.robot.subsystems.Hopper.Modules.ModuleConfigurator;
 
 public class HopperSim implements HopperIO {
 
-  private  TalonFX hopperTopMotor;
+  private TalonFX hopperMotor;
+  public ModuleConfigurator hopperConfig;
   private SimMotorFX hopperTopMotorSim;
-  public ModuleConfigurator hopperConfigTop;
 
   private final VelocityTorqueCurrentFOC topRequestVelocity = new VelocityTorqueCurrentFOC(0);
 
@@ -36,10 +41,6 @@ public class HopperSim implements HopperIO {
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
-
-
-  private TunablePID hopperTopPID;
-  private TunablePID hopperBottomPID;
 
   public double hopperSetpointTop = 0;
   public double hopperSetpointBottom = 0;
@@ -54,24 +55,32 @@ public class HopperSim implements HopperIO {
         .kS(Constants.HopperConstants.Top.kHopperS)
         .kV(Constants.HopperConstants.Top.kHopperV)
         .kA(Constants.HopperConstants.Top.kHopperA).build();
+
+    setupTopMotor(topMotorGains);
   }
 
   public void setupTopMotor(Gains g) {
-    hopperTopPID = new TunablePID(
-        "/Hopper/Top/PID", g);
-    hopperConfigTop = new ModuleConfigurator(g.toSlot0Configs(),
+    hopperConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.HopperConstants.Top.hopperMotorId,
         Constants.HopperConstants.Top.isInverted,
         Constants.HopperConstants.Top.isCoast,
         Constants.HopperConstants.Top.hopperCurrentLimit);
-    hopperTopMotor = new TalonFX(hopperConfigTop.getMotorInnerId(), new CANBus("rio"));
-    hopperConfigTop.configureMotor(hopperTopMotor, hopperTopPID);
-    velocityOfHopperTopRPS = hopperTopMotor.getVelocity();
-    statorCurrentOfHopperTopAmps = hopperTopMotor.getStatorCurrent();
-    outputOfHopperTopVolts = hopperTopMotor.getMotorVoltage();
-    accelerationOfHopperTop = hopperTopMotor.getAcceleration();
-    hopperConfigTop.configureSignals(hopperTopMotor, 50.0, velocityOfHopperTopRPS,
-        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
+    hopperMotor = new TalonFX(hopperConfig.getMotorInnerId(), new CANBus("rio"));
+    hopperConfig.configureMotor(hopperMotor, g);
+    if (Constants.lowTelemetryMode) {
+      velocityOfHopperTopRPS = hopperMotor.getVelocity();
+      statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
+      hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
+          statorCurrentOfHopperTopAmps);
+    } else {
+      velocityOfHopperTopRPS = hopperMotor.getVelocity();
+      statorCurrentOfHopperTopAmps = hopperMotor.getStatorCurrent();
+      outputOfHopperTopVolts = hopperMotor.getMotorVoltage();
+      accelerationOfHopperTop = hopperMotor.getAcceleration();
+      hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
+          statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
+    }
+        hopperTopMotorSim = new SimMotorFX(hopperMotor, Constants.HopperConstants.Top.isInverted);
   }
 
 
@@ -79,16 +88,25 @@ public class HopperSim implements HopperIO {
   @Override
   public void updateInputs(HopperIOInputs inputs) {
     hopperTopMotorSim.update();
-    hopperTopMotor = hopperTopMotorSim.apply(hopperTopMotor);
+    if (Constants.lowTelemetryMode) {
+      lowTelemetry(inputs);
+    } else {
+      highTelemetry(inputs);
+    }
+  }
+  public void highTelemetry(HopperIOInputs inputs) {
+    BaseStatusSignal.refreshAll( accelerationOfHopperTop, outputOfHopperTopVolts);
+    inputs.accelerationOfHopperTop = accelerationOfHopperTop.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.outputOfHopperTopVolts = outputOfHopperTopVolts.getValue().in(Volts);
+    lowTelemetry(inputs);
+  }
 
-    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,
-        statorCurrentOfHopperTopAmps, accelerationOfHopperTop, outputOfHopperTopVolts);
-
-    inputs.velocityOfHopperTopRPS = hopperTopMotorSim.getVelocity();
-    inputs.statorCurrentOfHopperTopAmps = hopperTopMotorSim.getCurrent();
-      inputs.accelerationOfHopperTop = hopperTopMotorSim.getAcceleration();
-    inputs.outputOfHopperTopVolts = hopperTopMotorSim.getVoltage();
-    inputs.hopperTopConnected = hopperTopMotor.isConnected();
+  public void lowTelemetry(HopperIOInputs inputs) {
+    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,statorCurrentOfHopperTopAmps);
+    inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
+    inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);
+    inputs.hopperTopConnected = hopperMotor.isConnected();
   }
 
 
@@ -102,13 +120,15 @@ public class HopperSim implements HopperIO {
   }
 
   public void setTopSpeed(double speed){
-    hopperTopMotor.setControl(topRequestVelocity.withVelocity(speed));
+    hopperMotor.setControl(topRequestVelocity.withVelocity(speed));
+    hopperTopMotorSim.setVelocity(speed);
   }
 
 
   public void stopTop(){
     hopperSetpointTop = 0.0;
-    hopperTopMotor.stopMotor();
+    hopperMotor.stopMotor();
+    hopperTopMotorSim.setVelocity(0);
   }
 
   @Override
@@ -118,14 +138,11 @@ public class HopperSim implements HopperIO {
 
   @Override
   public void periodic() {
-    if (hopperTopPID.hasChanged()) {
-      hopperConfigTop.updateMotorPID(hopperTopMotor, hopperTopPID);
-    }
   }
 
     /* Characterization */
   public void runCharacterization_Hopper(double output) {
-    hopperTopMotor.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
+    hopperMotor.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
@@ -134,7 +151,7 @@ public class HopperSim implements HopperIO {
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Hopper() {
     double avg = (
-        hopperTopMotor.getVelocity().getValue().in(RotationsPerSecond)) / 1;
+        hopperMotor.getVelocity().getValue().in(RotationsPerSecond)) / 1;
     return avg;
   }
 }

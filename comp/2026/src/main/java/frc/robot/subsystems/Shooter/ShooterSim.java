@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -30,12 +31,15 @@ public class ShooterSim implements ShooterIO {
   private TalonFX shooterFlywheelInnerLeft;
   private SimMotorFX shooterFlywheelInnerLeftSim;
   public ModuleConfigurator flywheelConfigLeft;
+
   private TalonFX shooterFlywheelInnerRight;
   private SimMotorFX shooterFlywheelInnerRightSim;
   public ModuleConfigurator flywheelConfigRight;
+
   private TalonFX shooterFlywheelOuterRight;
   private SimMotorFX shooterFlywheelOuterRightSim;
   public ModuleConfigurator flywheelConfigOuterRight;
+
   public ModuleConfigurator intakeWheelConfig;
   private TalonFX HoodWheelMotorLeft;
   private SimMotorFX HoodWheelMotorLeftSim;
@@ -82,12 +86,6 @@ public class ShooterSim implements ShooterIO {
   public double HoodSetpointRight = 0;
   public double HoodSetpointLeft = 0;
 
-  private TunablePID flywheelLeftPID;
-  private TunablePID flywheelRighPID;
-  private TunablePID flywheelOuterRightPID;
-  private TunablePID HoodLeftPID;
-  private TunablePID HoodRightPID;
-
   public ShooterSim() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
@@ -120,8 +118,6 @@ public class ShooterSim implements ShooterIO {
   }
 
   public void setupLeftFlywheel(Gains g) {
-    flywheelLeftPID = new TunablePID(
-        "/Shooter/Flywheel/Left/PID", g);
     flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
         Constants.ShooterConstants.SharedFlywheel.isInvertedInnerLeft,
@@ -129,19 +125,18 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, flywheelLeftPID);
+    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, g);
     velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
     statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
     outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
     accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
     flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
-    shooterFlywheelInnerLeftSim = new SimMotorFX();
+    shooterFlywheelInnerLeftSim = new SimMotorFX(shooterFlywheelInnerLeft,
+        Constants.ShooterConstants.SharedFlywheel.isInvertedInnerLeft);
   }
 
   public void setupRightFlywheel(Gains g) {
-    flywheelRighPID = new TunablePID(
-        "/Shooter/Flywheel/Right/PID", g);
     // Flywheel Configuration
     flywheelConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
@@ -150,7 +145,7 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelInnerRight = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigRight.configureMotor(shooterFlywheelInnerRight, flywheelRighPID);
+    flywheelConfigRight.configureMotor(shooterFlywheelInnerRight, g);
     velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
     statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
     outputOfMainFlywheelRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
@@ -158,12 +153,11 @@ public class ShooterSim implements ShooterIO {
     flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
         statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
 
-    shooterFlywheelInnerRightSim = new SimMotorFX();
+    shooterFlywheelInnerRightSim = new SimMotorFX(shooterFlywheelInnerRight,
+        Constants.ShooterConstants.SharedFlywheel.isInvertedInnerRight);
   }
 
   public void setupOuterRightFlywheel(Gains g) {
-    flywheelOuterRightPID = new TunablePID(
-        "/Shooter/Flywheel/Outer/PID", g);
     // Flywheel Configuration
     flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
@@ -172,7 +166,7 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, flywheelOuterRightPID);
+    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, g);
     velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
     statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
     outputOfMainFlywheelOuterRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
@@ -180,12 +174,12 @@ public class ShooterSim implements ShooterIO {
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
-    shooterFlywheelOuterRightSim = new SimMotorFX();
+
+    shooterFlywheelOuterRightSim = new SimMotorFX(shooterFlywheelOuterRight,
+        Constants.ShooterConstants.SharedFlywheel.isInvertedInnerRight);
   }
 
   public void setupLeftHood(Gains g) {
-    HoodLeftPID = new TunablePID(
-        "/Shooter/Hood/Left/PID", g);
     // Flywheel Configuration
     HoodMConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.Left.HoodID,
@@ -194,18 +188,18 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit);
     HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, HoodLeftPID);
+    HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
     velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
     statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
     outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
     accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
+
+    HoodWheelMotorLeftSim = new SimMotorFX(HoodWheelMotorLeft, Constants.ShooterConstants.Left.isInverted);
   }
 
   public void setupRightHood(Gains g) {
-    HoodRightPID = new TunablePID(
-        "/Shooter/Hood/Right/PID", g);
     // Flywheel Configuration
     HoodMConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.Right.HoodID,
@@ -214,22 +208,23 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit);
     HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigRight.configureMotor(HoodWheelMotorRight, HoodRightPID);
+    HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
     velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
     statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
     outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
     accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
+
+    HoodWheelMotorRightSim = new SimMotorFX(HoodWheelMotorRight, Constants.ShooterConstants.Right.isInverted);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
     shooterFlywheelInnerLeftSim.update();
-    shooterFlywheelInnerLeft = shooterFlywheelInnerLeftSim.apply(shooterFlywheelInnerLeft);
     shooterFlywheelInnerRightSim.update();
-    shooterFlywheelInnerRight = shooterFlywheelInnerRightSim.apply(shooterFlywheelInnerRight);
     shooterFlywheelOuterRightSim.update();
-    shooterFlywheelOuterRight = shooterFlywheelOuterRightSim.apply(shooterFlywheelOuterRight);
+    HoodWheelMotorLeftSim.update();
+    HoodWheelMotorRightSim.update();
 
     BaseStatusSignal.refreshAll(
         velocityOfMainFlywhelLeftRPS,
@@ -305,7 +300,6 @@ public class ShooterSim implements ShooterIO {
     setMainWheelSpeed(shooterFlywheelSpeed);
     setHoodSpeedOfLeft(shooterHoodSpeedOfLeft);
     setHoodSpeedOfRight(shooterHoodSpeedOfRight);
-    setHoodSpeedOfRight(shooterFlywheelSpeed);
   }
 
   public void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
@@ -313,16 +307,21 @@ public class ShooterSim implements ShooterIO {
     shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
     shooterFlywheelInnerRight.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
     shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint));
+    shooterFlywheelInnerLeftSim.setVelocity(shooterFlywheelSpeedInRPS);
+    shooterFlywheelInnerRightSim.setVelocity(shooterFlywheelSpeedInRPS);
+    shooterFlywheelOuterRightSim.setVelocity(shooterFlywheelSpeedInRPS);
   }
 
   public void setHoodSpeedOfLeft(double shooterHoodSpeedInRPS) {
     HoodSetpointLeft = shooterHoodSpeedInRPS;
     HoodWheelMotorLeft.setControl(velHoodLeftRequest.withVelocity(HoodSetpointLeft));
+    HoodWheelMotorLeftSim.setVelocity(shooterHoodSpeedInRPS);
   }
 
   public void setHoodSpeedOfRight(double shooterHoodSpeedInRPS) {
     HoodSetpointRight = shooterHoodSpeedInRPS;
     HoodWheelMotorRight.setControl(velHoodRightRequest.withVelocity(HoodSetpointRight));
+    HoodWheelMotorRightSim.setVelocity(shooterHoodSpeedInRPS);
   }
 
   public void holdPosition() {
@@ -333,33 +332,25 @@ public class ShooterSim implements ShooterIO {
     shooterFlywheelInnerLeft.stopMotor();
     shooterFlywheelInnerRight.stopMotor();
     shooterFlywheelOuterRight.stopMotor();
+    shooterFlywheelInnerLeftSim.setVelocity(0);
+    shooterFlywheelInnerRightSim.setVelocity(0);
+    shooterFlywheelOuterRightSim.setVelocity(0);
   }
 
   public void stopHoodLeftWheel() {
     HoodSetpointLeft = 0;
     HoodWheelMotorLeft.stopMotor();
+    HoodWheelMotorLeftSim.setVelocity(0);
   }
 
   public void stopHoodRightWheel() {
     HoodSetpointRight = 0;
     HoodWheelMotorRight.stopMotor();
+    HoodWheelMotorRightSim.setVelocity(0);
   }
 
   @Override
   public void periodic() {
-    if (flywheelLeftPID.hasChanged()) {
-      flywheelConfigLeft.updateMotorPID(shooterFlywheelInnerLeft, flywheelLeftPID);
-    }
-    if (flywheelRighPID.hasChanged()) {
-      flywheelConfigRight.updateMotorPID(shooterFlywheelInnerRight, flywheelRighPID);
-    }
-
-    if (HoodLeftPID.hasChanged()) {
-      HoodMConfigLeft.updateMotorPID(HoodWheelMotorRight, HoodLeftPID);
-    }
-    if (HoodRightPID.hasChanged()) {
-      HoodMConfigRight.updateMotorPID(HoodWheelMotorRight, HoodRightPID);
-    }
   }
 
   public void simulationPeriodic() {

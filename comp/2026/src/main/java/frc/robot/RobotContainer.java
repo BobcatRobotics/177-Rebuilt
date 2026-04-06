@@ -56,10 +56,12 @@ import frc.robot.subsystems.Carwash.CarwashState;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperRealSingle;
+import frc.robot.subsystems.Hopper.HopperSim;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeReal;
+import frc.robot.subsystems.Intake.IntakeSim;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
@@ -163,10 +165,10 @@ public class RobotContainer {
                                 m_Carwash = new Carwash(new CarwashSim());
                                 m_Carwash.applyState();
 
-                                m_Hopper = new Hopper(new HopperRealSingle());
+                                m_Hopper = new Hopper(new HopperSim());
                                 m_Hopper.applyState();
 
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeSim());
                                 intake.applyState();
 
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)

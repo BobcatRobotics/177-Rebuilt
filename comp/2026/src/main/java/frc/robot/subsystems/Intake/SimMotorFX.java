@@ -1,4 +1,5 @@
-package frc.robot.subsystems.Carwash;
+package frc.robot.subsystems.Intake;
+
 
 import org.littletonrobotics.junction.Logger;
 
@@ -48,7 +49,7 @@ public class SimMotorFX {
         sim.setRotorVelocity(velocity);
         // simulate rotor velocity (rotations)
         sim.setRawRotorPosition(position);
-        // simulate voltage
+
         sim.setSupplyVoltage(voltage);
     }
 

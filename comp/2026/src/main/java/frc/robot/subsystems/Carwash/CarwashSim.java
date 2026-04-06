@@ -39,8 +39,7 @@ import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class CarwashSim implements CarwashIO {
   private TalonFX shooterIntakeMotor;
-  private  TalonFXSimState shooterIntakeMotorState;
-  private FlywheelSim m_motorSimModel
+  private SimMotorFX shooterIntakeMotorSim;
   
   ;
   public ModuleConfigurator intakeWheelConfig;
@@ -69,14 +68,10 @@ public class CarwashSim implements CarwashIO {
         .kV(Constants.CarwashConstants.SharedIntake.kIntakeMotorkV)
         .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
-    
-    DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
-    m_motorSimModel = new FlywheelSim(LinearSystemId.createFlywheelSystem(motorModel, .00003, 1),motorModel);
-
+  
     setupIntake(intakeGains);
-    shooterIntakeMotorState = shooterIntakeMotor.getSimState();
 
-
+    shooterIntakeMotorSim = new SimMotorFX(shooterIntakeMotor, Constants.CarwashConstants.SharedIntake.isInverted);
   }
 
   public void setupIntake(Gains g) {
@@ -128,6 +123,7 @@ public class CarwashSim implements CarwashIO {
   public void setIntakeSpeed(double shooterIntakeSpeedInRPS) {
     intakeSetpoint = shooterIntakeSpeedInRPS;
     shooterIntakeMotor.setControl(velIntakeRequest.withVelocity(intakeSetpoint));
+    shooterIntakeMotorSim.setVelocity(shooterIntakeSpeedInRPS);
   }
 
   public void holdPosition() {
@@ -145,18 +141,7 @@ public class CarwashSim implements CarwashIO {
   }
 
   public void simulationPeriodic() {
-    // Get  Motor Output Voltage
-    shooterIntakeMotorState = shooterIntakeMotor.getSimState();
-    double motorVoltage = shooterIntakeMotorState.getMotorVoltage();
-    // Feed Into Physics Simulation
-    m_motorSimModel.setInputVoltage(motorVoltage);
-    // Udpate SIM ( 20ms loop )
-    m_motorSimModel.update(0.02);
-    // get voltage ( rad/sec -> rotations/sec)
-    double velocityRadPerSec = m_motorSimModel.getAngularVelocityRadPerSec();
-    double velocityRotPerSec = velocityRadPerSec / (2*Math.PI);
-    // PUSH intop the TalonFX simulated Sensor the value
-    shooterIntakeMotorState.setRotorVelocity(-velocityRotPerSec);
+    shooterIntakeMotorSim.update();
   }
 
   /* Characterization */
