@@ -40,7 +40,7 @@ public class SoTMCommand extends Command{
     //Get calculated speeds
     TripleOutputInterpolator.Speeds speeds = ShootOnTheMove.calculateSpeeds(drive, robotSpeed);
     shooter.setVelocity(speeds.one, speeds.three, speeds.three);
-    carwash.setVelocity(CarwashState.State.INTERPOLATING);
+    carwash.setVelocity(CarwashState.State.TARGETING);
     
     Logger.recordOutput("ShootOnTheMove/mainFlyWheelSpeed", speeds.one);
     Logger.recordOutput("ShootOnTheMove/hoodFlyWheelSpeed", speeds.three);

@@ -7,6 +7,7 @@ import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.subsystems.Carwash.CarwashState;
 import frc.robot.subsystems.Hopper.HopperState;
@@ -98,4 +99,5 @@ public class RobotState {
 
   public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
   public Pose2d futurePos = new Pose2d();
+  public Rotation2d robotHeading = new Rotation2d();
 }

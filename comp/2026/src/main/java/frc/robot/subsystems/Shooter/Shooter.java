@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.ShooterState.ShooterGoal;
 import frc.robot.subsystems.Shooter.ShooterState.State;
@@ -325,21 +326,22 @@ public class Shooter extends SubsystemBase {
         double mainFlyWheelSpeedMS = getVelocityMainFlywheel() * (2*Math.PI*0.0508); //0.0508 is flywheel radius in meters
         double vSinTheta = mainFlyWheelSpeedMS * Math.sin(HOOD_ANGLE_RAD);
         double timeOfFlight = ((vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * -1.3912)) / 9.81) / 100;
+
+        double vx = RobotState.getInstance().vx;
+        double vy = RobotState.getInstance().vy;
+
         Translation2d futurePos = new Translation2d();
-        if (RobotState.getInstance().alliance == Alliance.Red) {
+
         futurePos = new Translation2d(
-            RobotState.getInstance().robotPose.getX() - RobotState.getInstance().vx * timeOfFlight,
-            RobotState.getInstance().robotPose.getY() - RobotState.getInstance().vy * timeOfFlight
+            RobotState.getInstance().robotPose.getX() + vx * timeOfFlight,
+            RobotState.getInstance().robotPose.getY() + vy * timeOfFlight
         );
-        }
-        else {
-            futurePos = new Translation2d(
-            RobotState.getInstance().robotPose.getX() + RobotState.getInstance().vx * timeOfFlight,
-            RobotState.getInstance().robotPose.getY() + RobotState.getInstance().vy * timeOfFlight
-        );
-        }
+
         RobotState.getInstance().futurePos = new Pose2d(futurePos, RobotState.getInstance().robotPose.getRotation());
         Logger.recordOutput("ShootOnTheMove/futurePos", new Pose2d(RobotState.getInstance().futurePos.getTranslation(), RobotState.getInstance().robotPose.getRotation()));
         Logger.recordOutput("ShootOnTheMove/TOF", timeOfFlight);
+        Logger.recordOutput("ShootOnTheMove/Heading", RobotState.getInstance().robotPose.getRotation().getRadians());
+        Logger.recordOutput("ShootOnTheMove/vx", vx);
+        Logger.recordOutput("ShootOnTheMove/vy", vy);
   }
 }

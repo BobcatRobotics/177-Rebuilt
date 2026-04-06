@@ -41,14 +41,14 @@ public class AlignToHub extends Command {
         ANGLE_MAX_ACCELERATION = 20.0;
         this.drive = drive;
 
-        // Create PID controller
-        angleController = new ProfiledPIDController(
-                ANGLE_KP,
-                0.0,
-                ANGLE_KD,
-                new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-        angleController.enableContinuousInput(-Math.PI, Math.PI);
-        angleController.reset(drive.getRotation().getRadians());
+            // Create PID controller
+            angleController = new ProfiledPIDController(
+                    ANGLE_KP,
+                    0.0,
+                    ANGLE_KD,
+                    new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+            angleController.enableContinuousInput(-Math.PI, Math.PI);
+            angleController.reset(drive.getRotation().getRadians());
     }
 
         public AlignToHub(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
@@ -70,21 +70,23 @@ public class AlignToHub extends Command {
         
     }
 
-    public AlignToHub(Drive drive, double velocity, double acceleration) {
+        public AlignToHub(Drive drive, double velocity, double acceleration) {
 
-        ANGLE_MAX_VELOCITY = velocity;
-        ANGLE_MAX_ACCELERATION = acceleration;
-        this.drive = drive;
+            ANGLE_MAX_VELOCITY = velocity;
+            ANGLE_MAX_ACCELERATION = acceleration;
+            this.drive = drive;
 
-        // Create PID controller
-        angleController = new ProfiledPIDController(
-                ANGLE_KP,
-                0.0,
-                ANGLE_KD,
-                new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-        angleController.enableContinuousInput(-Math.PI, Math.PI);
-        angleController.reset(drive.getRotation().getRadians());
-    }
+            // Create PID controller
+            angleController = new ProfiledPIDController(
+                    ANGLE_KP,
+                    0.0,
+                    ANGLE_KD,
+                    new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+            angleController.enableContinuousInput(-Math.PI, Math.PI);
+            angleController.reset(drive.getRotation().getRadians());
+        }
+
+
 
 
     @Override
@@ -144,8 +146,6 @@ public class AlignToHub extends Command {
         Logger.recordOutput("Align/ThetaError", angleController.getPositionError());
         Logger.recordOutput("Align/ThetaSetpoint", angleController.getSetpoint().position);
         Logger.recordOutput("Align/ThetaVelocitySetpoint", angleController.getSetpoint().velocity);
-        // Logger.recordOutput("Chassis Velocity - x", vx);
-        // Logger.recordOutput("Chassis Velocity - y", vy);
 
         if (xSupplier == null && ySupplier == null) {
             // Convert to field relative speeds & send command
@@ -176,9 +176,6 @@ public class AlignToHub extends Command {
                                 ? drive.getRotation().plus(new Rotation2d(Math.PI))
                                 : drive.getRotation()));
         }
-        }
-        
-
-        
     }
+}
 
