@@ -609,7 +609,7 @@ public class RobotContainer {
 
          public Command IntakeMid() {
                 return new RunCommand(() -> {
-                        intake.setPosition(5);
+                        intake.setPosition(4.5);
                 }, intake);
         }
 

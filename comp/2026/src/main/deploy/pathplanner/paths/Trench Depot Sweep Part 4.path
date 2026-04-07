@@ -84,24 +84,40 @@
         "y": 5.44858552631579
       },
       "prevControl": {
-        "x": 6.161512185833596,
-        "y": 5.19695798916294
+        "x": 6.214054269879443,
+        "y": 5.282829451454519
       },
       "nextControl": {
-        "x": 5.339850494454833,
-        "y": 5.853729329222501
+        "x": 5.618835055251285,
+        "y": 5.551409500597716
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.9617543859649125,
-        "y": 5.660142543859649
+        "x": 3.3561074561403514,
+        "y": 5.600462633451957
       },
       "prevControl": {
-        "x": 2.664060221837623,
-        "y": 5.483465944932435
+        "x": 3.584359017576839,
+        "y": 5.49847623876225
+      },
+      "nextControl": {
+        "x": 2.4169988137603804,
+        "y": 6.020071174377224
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.3561074561403514,
+        "y": 7.11219298245614
+      },
+      "prevControl": {
+        "x": 3.2430650932639193,
+        "y": 6.889209969212276
       },
       "nextControl": null,
       "isLocked": false,
@@ -130,21 +146,7 @@
       "rotationDegrees": -53.53076560994817
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 4.987432675044881,
-      "maxWaypointRelativePos": 5.730700179533212,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -169,7 +171,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.80144597613687
+    "rotation": -69.54872620207288
   },
   "reversed": false,
   "folder": "Trench Depot Sweep",

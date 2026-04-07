@@ -100,24 +100,40 @@
         "y": 2.554100877192982
       },
       "prevControl": {
-        "x": 6.183278508771929,
-        "y": 2.53486842105263
+        "x": 6.182243353567648,
+        "y": 2.5864382772600534
       },
       "nextControl": {
-        "x": 5.548988507135783,
-        "y": 2.572179597619464
+        "x": 5.607548315066642,
+        "y": 2.5294171147196076
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.182927631578947,
+        "x": 3.105587188612101,
         "y": 2.554100877192982
       },
       "prevControl": {
-        "x": 2.4309971007573643,
-        "y": 2.52309219354568
+        "x": 3.1846441301163115,
+        "y": 2.79127170170561
+      },
+      "nextControl": {
+        "x": 2.883780735324126,
+        "y": 1.8886815173290654
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2791776315789476,
+        "y": 1.0155043859649118
+      },
+      "prevControl": {
+        "x": 3.5272471007573647,
+        "y": 0.98449570231761
       },
       "nextControl": null,
       "isLocked": false,
@@ -150,21 +166,7 @@
       "rotationDegrees": 41.7947840689865
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 5.8312387791741465,
-      "maxWaypointRelativePos": 6.974865350089764,
-      "constraints": {
-        "maxVelocity": 1.75,
-        "maxAcceleration": 4.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -189,7 +191,7 @@
   },
   "goalEndState": {
     "velocity": 2.0,
-    "rotation": 31.67546873810927
+    "rotation": 67.58199963908145
   },
   "reversed": false,
   "folder": "Trench Outpost Sweep",
