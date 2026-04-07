@@ -60,7 +60,7 @@
       }
     },
     {
-      "name": "IntakeFuel",
+      "name": "RunIntakeRollers",
       "waypointRelativePos": 0.7,
       "endWaypointRelativePos": 2.0,
       "command": {
