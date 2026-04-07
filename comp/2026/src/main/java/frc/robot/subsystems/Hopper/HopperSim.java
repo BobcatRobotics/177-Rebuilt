@@ -2,7 +2,11 @@ package frc.robot.subsystems.Hopper;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.List;
+
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
@@ -19,6 +23,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Hopper.Modules.ModuleConfigurator;
 
 public class HopperSim implements HopperIO {
@@ -72,6 +77,11 @@ public class HopperSim implements HopperIO {
     accelerationOfHopperTop = hopperTopMotor.getAcceleration();
     hopperConfigTop.configureSignals(hopperTopMotor, 50.0, velocityOfHopperTopRPS,
         statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
+    
+      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfigTop.getMotorId(),"rio",Manufacturer.Ctre,"Hopper");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
 

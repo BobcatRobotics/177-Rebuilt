@@ -7,7 +7,11 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.List;
+
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -23,6 +27,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 
 public class CarwashReal implements CarwashIO {
@@ -72,7 +77,10 @@ public class CarwashReal implements CarwashIO {
       intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
           statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
     }
-
+    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Manufacturer.Ctre,"Carwash");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void updateInputs(CarwashIOInputs inputs) {
