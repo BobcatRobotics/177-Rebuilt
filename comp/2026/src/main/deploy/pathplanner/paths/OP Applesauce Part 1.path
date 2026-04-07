@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 4.427218259629101,
-        "y": 7.41845934379458
+        "y": 0.582
       },
       "prevControl": null,
       "nextControl": {
         "x": 6.31626248216833,
-        "y": 7.379643366619116
+        "y": 0.5431840228245362
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.717,
-        "y": 7.120870185449359
+        "x": 6.759611111111111,
+        "y": 1.0337111111111108
       },
       "prevControl": {
-        "x": 5.940680456490727,
-        "y": 7.133808844507846
+        "x": 5.999544444444444,
+        "y": 0.7803555555555559
       },
       "nextControl": {
-        "x": 7.1441124271833685,
-        "y": 7.113751644996303
+        "x": 7.164861810265826,
+        "y": 1.1687946774960156
       },
       "isLocked": false,
       "linkedName": null
@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 8.672557837210492,
-        "y": 5.197815016155102
+        "y": 2.802
       },
       "prevControl": {
-        "x": 8.658159771754635,
-        "y": 7.263195435092724
+        "x": 8.689011111111112,
+        "y": 1.3357888888888885
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ApplesauceDepotStop"
+      "linkedName": "ApplesauceOPStop"
     }
   ],
   "rotationTargets": [],
@@ -81,10 +81,10 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 45.0
+    "rotation": -45.0
   },
   "reversed": false,
-  "folder": "Depot Applesauce",
+  "folder": "OP Applesauce",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
