@@ -282,6 +282,9 @@ public class RobotContainer {
                                 .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
                 NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
                                 .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
+                NamedCommands.registerCommand("X-Mode", loggableCommand("X-Mode", new RunCommand(() -> {
+                        drive.stopWithX();
+                }, drive)));
         }
 
         /**

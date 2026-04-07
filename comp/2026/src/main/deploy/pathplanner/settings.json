@@ -3,10 +3,11 @@
   "robotLength": 0.965,
   "holonomicMode": true,
   "pathFolders": [
+    "Depot Applesauce",
     "Depot Clean Sweep",
+    "Outpost Clean Sweep",
     "Trench Depot Sweep",
-    "Trench Outpost Sweep",
-    "Outpost Clean Sweep"
+    "Trench Outpost Sweep"
   ],
   "autoFolders": [],
   "defaultMaxVel": 0.5,
