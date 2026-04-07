@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.List;
+
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -22,7 +24,11 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
@@ -137,6 +143,11 @@ public class ShooterSim implements ShooterIO {
     flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
     shooterFlywheelInnerLeftSim = new SimMotorFX();
+
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigLeft.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void setupRightFlywheel(Gains g) {
@@ -159,6 +170,11 @@ public class ShooterSim implements ShooterIO {
         statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
 
     shooterFlywheelInnerRightSim = new SimMotorFX();
+
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigRight.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void setupOuterRightFlywheel(Gains g) {
@@ -181,6 +197,12 @@ public class ShooterSim implements ShooterIO {
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
     shooterFlywheelOuterRightSim = new SimMotorFX();
+
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigOuterRight.getMotorId(), "rio", Manufacturer.Ctre,
+        "Shooter");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void setupLeftHood(Gains g) {
@@ -201,6 +223,11 @@ public class ShooterSim implements ShooterIO {
     accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
+
+    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigLeft.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void setupRightHood(Gains g) {
@@ -221,6 +248,11 @@ public class ShooterSim implements ShooterIO {
     accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
+
+    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigRight.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace("rio", rioDevices);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {

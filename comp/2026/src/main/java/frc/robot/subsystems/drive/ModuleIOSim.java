@@ -7,6 +7,11 @@
 
 package frc.robot.subsystems.drive;
 
+import java.util.List;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -18,6 +23,8 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.RobotState;
+import frc.robot.generated.TunerConstants;
 
 /**
  * Physics sim implementation of module IO. The sim models are configured using a set of module
@@ -65,6 +72,15 @@ public class ModuleIOSim implements ModuleIO {
 
     // Enable wrapping for turn PID
     turnController.enableContinuousInput(-Math.PI, Math.PI);
+
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
+    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
   }
 
   @Override

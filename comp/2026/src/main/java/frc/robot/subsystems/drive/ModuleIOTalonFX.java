@@ -34,8 +34,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
+
+import java.util.List;
 import java.util.Queue;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 
 /**
  * Module IO implementation for Talon FX drive motor controller, Talon FX turn motor controller, and
@@ -188,6 +194,19 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnAppliedVolts,
         turnCurrent);
     ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
+
+
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
+    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
+
+
+
   }
 
   @Override
