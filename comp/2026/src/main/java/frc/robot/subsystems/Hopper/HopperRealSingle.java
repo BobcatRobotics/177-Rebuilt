@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.littletonrobotics.junction.Logger;
@@ -84,7 +85,7 @@ public class HopperRealSingle implements HopperIO {
       hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
           statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
     }
-      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfig.getMotorId(),"rio",Manufacturer.Ctre,"Hopper");
+      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Hopper");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);

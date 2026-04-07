@@ -38,6 +38,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
@@ -102,7 +103,7 @@ public class CarwashSim implements CarwashIO {
     accelerationOfIntake = shooterIntakeMotor.getAcceleration();
     intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
         statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
-    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Manufacturer.Ctre,"Carwash");
+    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Carwash");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);

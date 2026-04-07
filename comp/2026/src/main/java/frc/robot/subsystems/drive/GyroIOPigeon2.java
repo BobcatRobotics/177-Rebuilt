@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 
 /** IO implementation for Pigeon 2. */
@@ -49,7 +50,7 @@ public class GyroIOPigeon2 implements GyroIO {
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw.clone());
 
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Hardware.Pigeon2,Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
   }

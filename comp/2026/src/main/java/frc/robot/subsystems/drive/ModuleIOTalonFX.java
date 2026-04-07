@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 
 /**
@@ -197,11 +198,11 @@ public class ModuleIOTalonFX implements ModuleIO {
 
 
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Hardware.CANcoder,Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
 

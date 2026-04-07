@@ -10,9 +10,24 @@ import java.util.Objects;
 public record CANDeviceDetails(
     int id,
     String bus,
+    Hardware hardware,
     Manufacturer manufacturer,
     String subsystemName
 ) {
+
+        /**
+     * Enum representing the manufacturer of the CAN device.
+     */
+    public enum Hardware {        
+        /** Unknown vendor */
+        Unknown,
+        /** TalonFX vendor */
+        TalonFX,
+        /** CANcoder vendor */
+        CANcoder,
+        /** Pigeon2 vendor */
+        Pigeon2
+    }
     /**
      * Enum representing the manufacturer of the CAN device.
      */
@@ -39,6 +54,7 @@ public record CANDeviceDetails(
      *
      * @param id            the CAN ID of the device (0 to 63 typical range)
      * @param bus           the name of the CAN bus the device is on (e.g., "rio", "canivore")
+     * @param hardware  the hardware of the device
      * @param manufacturer  the manufacturer of the device
      * @param subsystemName the robot subsystem this device belongs to (e.g., "drive", "arm")
      * @throws NullPointerException if any of the arguments are null
@@ -46,6 +62,7 @@ public record CANDeviceDetails(
     public CANDeviceDetails {
         Objects.requireNonNull(id, "CAN ID cannot be null");
         Objects.requireNonNull(bus, "Bus name cannot be null");
+        Objects.requireNonNull(hardware, "Hardware cannot be null");
         Objects.requireNonNull(manufacturer, "Manufacturer cannot be null");
         Objects.requireNonNull(subsystemName, "Subsystem name cannot be null");
     }
@@ -58,7 +75,7 @@ public record CANDeviceDetails(
      * @param id the CAN ID of the device
      */
     public CANDeviceDetails(int id) {
-        this(id, "", Manufacturer.Unknown, "");
+        this(id, "", Hardware.Unknown, Manufacturer.Unknown, "");
     }
 
     /**
@@ -69,7 +86,7 @@ public record CANDeviceDetails(
      * @param bus the name of the CAN bus
      */
     public CANDeviceDetails(int id, String bus) {
-        this(id, bus, Manufacturer.Unknown, "");
+        this(id, bus, Hardware.Unknown,Manufacturer.Unknown, "");
     }
 
     /**
@@ -78,9 +95,10 @@ public record CANDeviceDetails(
      *
      * @param id           the CAN ID of the device
      * @param bus          the name of the CAN bus
+     * @param hardware     the hardware type
      * @param manufacturer the manufacturer of the device
      */
-    public CANDeviceDetails(int id, String bus, Manufacturer manufacturer) {
-        this(id, bus, manufacturer, "");
+    public CANDeviceDetails(int id, String bus, Hardware hardware, Manufacturer manufacturer) {
+        this(id, bus, hardware, manufacturer, "");
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
@@ -78,7 +79,7 @@ public class HopperSim implements HopperIO {
     hopperConfigTop.configureSignals(hopperTopMotor, 50.0, velocityOfHopperTopRPS,
         statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
     
-      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfigTop.getMotorId(),"rio",Manufacturer.Ctre,"Hopper");
+      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfigTop.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Hopper");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);

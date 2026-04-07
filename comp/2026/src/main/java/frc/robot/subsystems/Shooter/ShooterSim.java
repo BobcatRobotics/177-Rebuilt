@@ -28,6 +28,7 @@ import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
@@ -144,7 +145,7 @@ public class ShooterSim implements ShooterIO {
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
     shooterFlywheelInnerLeftSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigLeft.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigLeft.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -171,7 +172,7 @@ public class ShooterSim implements ShooterIO {
 
     shooterFlywheelInnerRightSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigRight.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigRight.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -198,7 +199,7 @@ public class ShooterSim implements ShooterIO {
         accelerationOfMainFlywheelOuterRight);
     shooterFlywheelOuterRightSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigOuterRight.getMotorId(), "rio", Manufacturer.Ctre,
+    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigOuterRight.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre,
         "Shooter");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
@@ -224,7 +225,7 @@ public class ShooterSim implements ShooterIO {
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
 
-    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigLeft.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigLeft.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -249,7 +250,7 @@ public class ShooterSim implements ShooterIO {
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
 
-    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigRight.getMotorId(), "rio", Manufacturer.Ctre, "Shooter");
+    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigRight.getMotorId(), "rio", Hardware.TalonFX,Manufacturer.Ctre, "Shooter");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
