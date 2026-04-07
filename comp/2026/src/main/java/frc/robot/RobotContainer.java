@@ -284,6 +284,7 @@ public class RobotContainer {
                                 .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
                  NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
                                 loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
+                 NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
         }
 
         /**
@@ -523,7 +524,7 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command AutoSpinUpAndShoot() {
@@ -537,7 +538,7 @@ public class RobotContainer {
         public Command longAutoSpinUpAndShoot() {
                 Timer timer = new Timer();
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.32,
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.34,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
@@ -560,7 +561,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command manualSpinUp() {
@@ -603,6 +604,12 @@ public class RobotContainer {
         public Command IntakeDown() {
                 return new RunCommand(() -> {
                         intake.setPosition(11.7);
+                }, intake);
+        }
+
+         public Command IntakeMid() {
+                return new RunCommand(() -> {
+                        intake.setPosition(5);
                 }, intake);
         }
 
