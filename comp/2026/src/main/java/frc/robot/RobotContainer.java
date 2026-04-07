@@ -287,6 +287,9 @@ public class RobotContainer {
                 NamedCommands.registerCommand("X-Mode", loggableCommand("X-Mode", new RunCommand(() -> {
                         drive.stopWithX();
                 }, drive)));
+                 NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
+                                loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
+                 NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
         }
 
         /**
@@ -532,7 +535,15 @@ public class RobotContainer {
         public Command AutoSpinUpAndShoot() {
                 Timer timer = new Timer();
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.16,
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.2,
+                                                () -> m_Carwash.atSpeed()))
+                                .andThen(AutonomousStopShooter());
+        }
+
+        public Command longAutoSpinUpAndShoot() {
+                Timer timer = new Timer();
+                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.34,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
@@ -592,6 +603,13 @@ public class RobotContainer {
                         m_Carwash.reverseCarwash(-20);
                 }));
         }
+
+        public Command IntakeMid() {
+                return new RunCommand(() -> {
+                        intake.setPosition(4.5);
+                }, intake);
+        }
+
 
         public Command IntakeDown() {
                 return new RunCommand(() -> {
