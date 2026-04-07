@@ -225,6 +225,8 @@ public class RobotContainer {
                 autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
                 // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
                 autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                autoChooser.addOption("Depot Applesauce", new PathPlannerAuto("Depot Applesauce"));
+                autoChooser.addOption("Outpost Applesauce", new PathPlannerAuto("Outpost Applesauce"));
 
                 flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
                 hoodChooser = new LoggedDashboardChooser<>("Hood");
