@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.2567388271949005,
-        "y": 5.571322071202963
+        "x": 6.042499729229531,
+        "y": 5.437224949243127
       },
       "isLocked": false,
       "linkedName": "ApplesauceDepotPreBump"
     },
     {
       "anchor": {
-        "x": 2.675012048192771,
-        "y": 5.608590361445783
+        "x": 2.257677777777778,
+        "y": 5.4228192771084345
       },
       "prevControl": {
-        "x": 3.76778313253012,
-        "y": 5.5758072289156635
+        "x": 2.5051892830270988,
+        "y": 5.387633274647008
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,7 @@
     {
       "name": "RunIntakeRollers",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.9967553536664474,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": -42.33699923393285
+    "rotation": -30.780081256925083
   },
   "reversed": false,
   "folder": "Depot Applesauce",

@@ -35,7 +35,7 @@
     {
       "name": "RunIntakeRollers",
       "waypointRelativePos": 0,
-      "endWaypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {

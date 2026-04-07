@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.2567388271949005,
-        "y": 2.7255027940945284
+        "x": 6.047009920531825,
+        "y": 2.6263814765020883
       },
       "isLocked": false,
       "linkedName": "ApplesauceOPPreBump"
     },
     {
       "anchor": {
-        "x": 2.675012048192771,
-        "y": 2.391
+        "x": 2.014066666666667,
+        "y": 2.43691111111111
       },
       "prevControl": {
-        "x": 3.76778313253012,
-        "y": 2.3582168674698805
+        "x": 2.2615540400819585,
+        "y": 2.4015557720517835
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,7 @@
     {
       "name": "RunIntakeRollers",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 0.9967553536664474,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 42.337
+    "rotation": 31.476839349583983
   },
   "reversed": false,
   "folder": "OP Applesauce",

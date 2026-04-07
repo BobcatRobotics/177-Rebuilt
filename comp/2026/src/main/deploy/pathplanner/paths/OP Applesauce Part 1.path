@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 6.759611111111111,
-        "y": 1.0337111111111108
+        "y": 1.189622222222222
       },
       "prevControl": {
         "x": 5.999544444444444,
-        "y": 0.7803555555555559
+        "y": 0.936266666666667
       },
       "nextControl": {
         "x": 7.164861810265826,
-        "y": 1.1687946774960156
+        "y": 1.3247057886071267
       },
       "isLocked": false,
       "linkedName": null
@@ -62,7 +62,7 @@
     {
       "name": "RunIntakeRollers",
       "waypointRelativePos": 0.7,
-      "endWaypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
