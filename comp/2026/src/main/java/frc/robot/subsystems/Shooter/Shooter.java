@@ -325,23 +325,28 @@ public class Shooter extends SubsystemBase {
         double HOOD_ANGLE_RAD = Math.toRadians(65.3);
         double mainFlyWheelSpeedMS = getVelocityMainFlywheel() * (2*Math.PI*0.0508); //0.0508 is flywheel radius in meters
         double vSinTheta = mainFlyWheelSpeedMS * Math.sin(HOOD_ANGLE_RAD);
-        double timeOfFlight = ((vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * -1.3912)) / 9.81) / 100;
+        double timeOfFlight = ((vSinTheta + Math.sqrt(vSinTheta * vSinTheta + 2 * 9.81 * -1.3912)) / 9.81) / 100; //1.3912 is top of hub - release height
 
-        double vx = RobotState.getInstance().vx;
-        double vy = RobotState.getInstance().vy;
+        double heading = RobotState.getInstance().robotPose.getRotation().getRadians();
+        double vxRobot = RobotState.getInstance().vx;
+        double vyRobot = RobotState.getInstance().vy;
+
+        //Adjusting from robot relative to field relative
+        double vxField = vxRobot * Math.cos(heading) - vyRobot * Math.sin(heading);
+        double vyField = vxRobot * Math.sin(heading) + vyRobot * Math.cos(heading);
 
         Translation2d futurePos = new Translation2d();
 
         futurePos = new Translation2d(
-            RobotState.getInstance().robotPose.getX() + vx * timeOfFlight,
-            RobotState.getInstance().robotPose.getY() + vy * timeOfFlight
+            RobotState.getInstance().robotPose.getX() + vxField * timeOfFlight,
+            RobotState.getInstance().robotPose.getY() + vyField * timeOfFlight
         );
 
         RobotState.getInstance().futurePos = new Pose2d(futurePos, RobotState.getInstance().robotPose.getRotation());
         Logger.recordOutput("ShootOnTheMove/futurePos", new Pose2d(RobotState.getInstance().futurePos.getTranslation(), RobotState.getInstance().robotPose.getRotation()));
         Logger.recordOutput("ShootOnTheMove/TOF", timeOfFlight);
         Logger.recordOutput("ShootOnTheMove/Heading", RobotState.getInstance().robotPose.getRotation().getRadians());
-        Logger.recordOutput("ShootOnTheMove/vx", vx);
-        Logger.recordOutput("ShootOnTheMove/vy", vy);
+        Logger.recordOutput("ShootOnTheMove/vx", vxField);
+        Logger.recordOutput("ShootOnTheMove/vy", vyField);
   }
 }
