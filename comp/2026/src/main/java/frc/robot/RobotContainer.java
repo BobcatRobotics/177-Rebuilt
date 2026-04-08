@@ -529,7 +529,7 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command AutoSpinUpAndShoot() {
@@ -564,7 +564,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command manualSpinUp() {
