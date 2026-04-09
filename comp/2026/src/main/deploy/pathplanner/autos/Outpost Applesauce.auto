@@ -60,13 +60,38 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoRunHopper"
+                  "name": "LongAutoSpinUpAndShootAndEnd"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "LongAutoSpinUpAndShootAndEnd"
+                  "name": "AutoRunHopper"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeMid"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeDown"
                 }
               }
             ]
