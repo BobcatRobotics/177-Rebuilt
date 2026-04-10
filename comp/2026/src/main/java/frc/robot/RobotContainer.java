@@ -212,19 +212,25 @@ public class RobotContainer {
                 // Set up auto routines
                 registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-                autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
+                // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
-                autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
+                // autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
-                // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
-                // Hub"));
-                autoChooser.addOption("Anand Depot Side Clean Sweep",
-                                new PathPlannerAuto("Anand Depot Side Clean Sweep"));
-                autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
-                autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
-                autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
-                // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
-                autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                // autoChooser.addOption("Long Trench Depot Sweep",
+                //                 new PathPlannerAuto("Long Trench Depot Sweep"));
+                // autoChooser.addOption("Long Trench Outpost Sweep",
+                //                 new PathPlannerAuto("Long Trench Outpost Sweep"));
+
+
+                // // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
+                // // Hub"));
+                // autoChooser.addOption("Anand Depot Side Clean Sweep",
+                //                 new PathPlannerAuto("Anand Depot Side Clean Sweep"));
+                // autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
+                // autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
+                // autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
+                // // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
+                // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
 
                 flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
                 hoodChooser = new LoggedDashboardChooser<>("Hood");
@@ -608,7 +614,7 @@ public class RobotContainer {
         }
 
          public Command IntakeMid() {
-                return new RunCommand(() -> {
+                return new InstantCommand(() -> {
                         intake.setPosition(4.5);
                 }, intake);
         }

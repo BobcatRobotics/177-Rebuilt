@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.3561074561403514,
-        "y": 7.11219298245614
+        "x": 3.210984308131241,
+        "y": 7.133808844507846
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.623932588728596,
-        "y": 7.335924203773263
+        "x": 3.478317313236877,
+        "y": 7.358127870493499
       },
       "isLocked": false,
       "linkedName": "FinishedShootingDepotSideGoUnderTrench"
@@ -96,28 +96,28 @@
     },
     {
       "anchor": {
-        "x": 3.3561074561403514,
-        "y": 5.600462633451957
+        "x": 3.210984308131241,
+        "y": 5.44858552631579
       },
       "prevControl": {
-        "x": 3.584359017576839,
-        "y": 5.49847623876225
+        "x": 3.4317697816145896,
+        "y": 5.33130903805521
       },
       "nextControl": {
-        "x": 2.4169988137603804,
-        "y": 6.020071174377224
+        "x": 2.693437945791726,
+        "y": 5.723495007132667
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3561074561403514,
-        "y": 7.11219298245614
+        "x": 3.210984308131241,
+        "y": 7.133808844507846
       },
       "prevControl": {
-        "x": 3.2430650932639193,
-        "y": 6.889209969212276
+        "x": 3.0979419452548087,
+        "y": 6.910825831263982
       },
       "nextControl": null,
       "isLocked": false,
@@ -144,6 +144,10 @@
     {
       "waypointRelativePos": 5.0,
       "rotationDegrees": -53.53076560994817
+    },
+    {
+      "waypointRelativePos": 6,
+      "rotationDegrees": -53.0
     }
   ],
   "constraintZones": [],
@@ -171,13 +175,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -69.54872620207288
+    "rotation": -65.0
   },
   "reversed": false,
   "folder": "Trench Depot Sweep",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -67.49647150023257
+    "rotation": -66.4477363271054
   },
   "useDefaultConstraints": false
 }

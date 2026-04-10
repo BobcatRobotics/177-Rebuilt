@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.2791776315789476,
-        "y": 1.0155043859649118
+        "x": 3.09453637660485,
+        "y": 1.1043937232524967
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3398115378380315,
-        "y": 0.7729687609285789
+        "x": 3.155170282863934,
+        "y": 0.8618580982161639
       },
       "isLocked": false,
       "linkedName": "FinishedShootingOutpostSideGoUnderTrench"
@@ -20,12 +20,12 @@
         "y": 0.5923903508771924
       },
       "prevControl": {
-        "x": 3.4762463904504792,
-        "y": 0.6775131442683637
+        "x": 3.510892927385424,
+        "y": 0.6136301514310247
       },
       "nextControl": {
-        "x": 3.9994456063930075,
-        "y": 0.5205533794856065
+        "x": 4.009085142790014,
+        "y": 0.57115055032336
       },
       "isLocked": false,
       "linkedName": null
@@ -128,12 +128,12 @@
     },
     {
       "anchor": {
-        "x": 3.2791776315789476,
-        "y": 1.0155043859649118
+        "x": 3.105587188612101,
+        "y": 1.1043937232524967
       },
       "prevControl": {
-        "x": 3.5272471007573647,
-        "y": 0.98449570231761
+        "x": 3.0913753327021993,
+        "y": 1.3539894426701105
       },
       "nextControl": null,
       "isLocked": false,
@@ -191,13 +191,13 @@
   },
   "goalEndState": {
     "velocity": 2.0,
-    "rotation": 67.58199963908145
+    "rotation": 64.0577045101284
   },
   "reversed": false,
   "folder": "Trench Outpost Sweep",
   "idealStartingState": {
     "velocity": 2.5,
-    "rotation": 67.30620505490764
+    "rotation": 62.35402463626137
   },
   "useDefaultConstraints": false
 }
