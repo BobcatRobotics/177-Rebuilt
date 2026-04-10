@@ -36,40 +36,40 @@
         "y": 5.410120614035087
       },
       "prevControl": {
-        "x": 6.7474898781250445,
-        "y": 5.336132837381523
+        "x": 6.174744291716189,
+        "y": 5.316656104280604
       },
       "nextControl": {
-        "x": 5.1062609649122805,
-        "y": 5.487050438596491
+        "x": 5.711001322318897,
+        "y": 5.503585123789571
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3561074561403514,
-        "y": 5.592828947368421
+        "x": 3.210984308131241,
+        "y": 5.568231098430813
       },
       "prevControl": {
-        "x": 3.971546052631579,
-        "y": 5.227412280701754
+        "x": 3.4050641940085593,
+        "y": 5.374151212553495
       },
       "nextControl": {
-        "x": 2.6462278982483456,
-        "y": 6.0143199348668
+        "x": 2.627210533773695,
+        "y": 6.152004872788356
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.3561074561403514,
-        "y": 7.11219298245614
+        "x": 3.210984308131241,
+        "y": 7.133808844507846
       },
       "prevControl": {
-        "x": 3.213827242707216,
-        "y": 6.838532148975466
+        "x": 3.0687040946981052,
+        "y": 6.860148011027172
       },
       "nextControl": null,
       "isLocked": false,
@@ -90,21 +90,7 @@
       "rotationDegrees": -41.18592516570963
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.788150807899463,
-      "maxWaypointRelativePos": 3.087971274685816,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -128,8 +114,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
-    "rotation": -67.49647150023257
+    "velocity": 0.0,
+    "rotation": -66.4477363271054
   },
   "reversed": false,
   "folder": "Trench Depot Sweep",

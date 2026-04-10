@@ -227,19 +227,25 @@ public class RobotContainer {
                 // Set up auto routines
                 registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-                autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
+                // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
-                autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
+                // autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
-                // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
-                // Hub"));
-                autoChooser.addOption("Anand Depot Side Clean Sweep",
-                                new PathPlannerAuto("Anand Depot Side Clean Sweep"));
-                autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
-                autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
-                autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
-                // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
-                autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                // autoChooser.addOption("Long Trench Depot Sweep",
+                //                 new PathPlannerAuto("Long Trench Depot Sweep"));
+                // autoChooser.addOption("Long Trench Outpost Sweep",
+                //                 new PathPlannerAuto("Long Trench Outpost Sweep"));
+
+
+                // // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
+                // // Hub"));
+                // autoChooser.addOption("Anand Depot Side Clean Sweep",
+                //                 new PathPlannerAuto("Anand Depot Side Clean Sweep"));
+                // autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
+                // autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
+                // autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
+                // // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
+                // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
 
                 flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
                 hoodChooser = new LoggedDashboardChooser<>("Hood");
@@ -299,6 +305,9 @@ public class RobotContainer {
                                 .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
                 NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
                                 .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
+                 NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
+                                loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
+                 NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
         }
 
         /**
@@ -547,13 +556,21 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command AutoSpinUpAndShoot() {
                 Timer timer = new Timer();
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.16,
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.2,
+                                                () -> m_Carwash.atSpeed()))
+                                .andThen(AutonomousStopShooter());
+        }
+
+        public Command longAutoSpinUpAndShoot() {
+                Timer timer = new Timer();
+                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.34,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
@@ -567,6 +584,8 @@ public class RobotContainer {
                                 })));
         }
 
+      
+
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
                         m_Carwash.manualFeedFuel();
@@ -574,7 +593,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }, intake));
+                }));
         }
 
         public Command manualSpinUp() {
@@ -617,6 +636,12 @@ public class RobotContainer {
         public Command IntakeDown() {
                 return new RunCommand(() -> {
                         intake.setPosition(11.7);
+                }, intake);
+        }
+
+         public Command IntakeMid() {
+                return new InstantCommand(() -> {
+                        intake.setPosition(4.5);
                 }, intake);
         }
 
