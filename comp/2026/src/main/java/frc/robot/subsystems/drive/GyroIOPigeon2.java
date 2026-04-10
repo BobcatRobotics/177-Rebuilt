@@ -16,8 +16,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
+
+import java.util.List;
 import java.util.Queue;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
@@ -41,6 +47,11 @@ public class GyroIOPigeon2 implements GyroIO {
     pigeon.optimizeBusUtilization();
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw.clone());
+
+    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
+    CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    rioDevices.add(tmp);
+    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
   }
 
   @Override

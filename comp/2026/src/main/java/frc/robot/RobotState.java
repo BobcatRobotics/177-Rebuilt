@@ -1,5 +1,9 @@
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -89,4 +93,8 @@ public class RobotState {
   public double hubDistance = 0.0;
   // used by new align command not to be confused with hubInRange;
   public boolean isRobotAlignedToHub = false;
+
+
+
+  public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
 }

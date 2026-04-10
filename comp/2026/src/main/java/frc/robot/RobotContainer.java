@@ -16,9 +16,14 @@ package frc.robot;
 
 import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
+import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -30,9 +35,12 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -112,10 +120,17 @@ public class RobotContainer {
 
         private final HubUtil hub;
 
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+
+                RobotState.getInstance().devices.putIfAbsent("rio", new ArrayList<CANDeviceDetails>());
+                RobotState.getInstance().devices.putIfAbsent("CANivore", new ArrayList<CANDeviceDetails>());
+
                 controller = new CommandXboxController(0);
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
@@ -244,6 +259,8 @@ public class RobotContainer {
                 configureButtonBindings();
 
                 hub = new HubUtil();
+
+                table = inst.getTable("CAN");
 
         }
 
@@ -469,6 +486,15 @@ public class RobotContainer {
                 double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
                 RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
                 RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+
+                List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
+                publishCanDevices("rio",rioDevices);
+                List<CANDeviceDetails> canivoreDevices = RobotState.getInstance().devices.get("CANivore");
+                publishCanDevices("CANivore",canivoreDevices);
+
+        }
+        public void publishCanDevices(String name, List<CANDeviceDetails> devices){
+                table.getEntry(name).setStringArray(devices.stream().map(Object::toString).toArray(String[]::new));
         }
 
         public void simTelePeriodic() {
