@@ -59,7 +59,7 @@
   "reversed": false,
   "folder": "Depot Applesauce",
   "idealStartingState": {
-    "velocity": 3.0,
+    "velocity": 2.0,
     "rotation": -45.113183101154355
   },
   "useDefaultConstraints": false
