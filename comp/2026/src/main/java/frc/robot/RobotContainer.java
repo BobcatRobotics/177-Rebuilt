@@ -229,6 +229,7 @@ public class RobotContainer {
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
+
                 // autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
                 // autoChooser.addOption("Long Trench Depot Sweep",
@@ -305,6 +306,9 @@ public class RobotContainer {
                                 .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
                 NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
                                 .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
+                NamedCommands.registerCommand("X-Mode", loggableCommand("X-Mode", new RunCommand(() -> {
+                        drive.stopWithX();
+                }, drive)));
                  NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
                                 loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
                  NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
@@ -556,7 +560,7 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                },intake));
         }
 
         public Command AutoSpinUpAndShoot() {
@@ -593,7 +597,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                },intake));
         }
 
         public Command manualSpinUp() {
@@ -632,6 +636,13 @@ public class RobotContainer {
                         m_Carwash.reverseCarwash(-20);
                 }));
         }
+
+        public Command IntakeMid() {
+                return new RunCommand(() -> {
+                        intake.setPosition(4.5);
+                }, intake);
+        }
+
 
         public Command IntakeDown() {
                 return new RunCommand(() -> {

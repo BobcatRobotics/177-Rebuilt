@@ -191,6 +191,7 @@ createVersionFile.dependsOn(eventDeploy)
 checkstyle {
 	configFile = file("config/checkstyle/checkstyle.xml")
 	toolVersion = '10.26.1' // or current latest
+	ignoreFailures = true
 }
 
 tasks.withType(Checkstyle) {

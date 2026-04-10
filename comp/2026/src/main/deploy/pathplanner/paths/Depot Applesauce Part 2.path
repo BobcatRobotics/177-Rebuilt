@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.672557837210492,
+        "y": 5.197815016155102
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.288486404793645,
+        "y": 4.6861691735153865
+      },
+      "isLocked": false,
+      "linkedName": "ApplesauceDepotStop"
+    },
+    {
+      "anchor": {
+        "x": 6.292084337349398,
+        "y": 5.4228192771084345
+      },
+      "prevControl": {
+        "x": 7.24595984446438,
+        "y": 4.925456442200572
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ApplesauceDepotPreBump"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "RunIntakeRollers",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": -45.113183101154355
+  },
+  "reversed": false,
+  "folder": "Depot Applesauce",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 45.0
+  },
+  "useDefaultConstraints": false
+}

@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.672557837210492,
+        "y": 2.802
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.026894256531664,
+        "y": 3.4924883994471765
+      },
+      "isLocked": false,
+      "linkedName": "ApplesauceOPStop"
+    },
+    {
+      "anchor": {
+        "x": 6.292084337349398,
+        "y": 2.577
+      },
+      "prevControl": {
+        "x": 6.840041311809962,
+        "y": 2.614004642355761
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ApplesauceOPPreBump"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "RunIntakeRollers",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": 45.113
+  },
+  "reversed": false,
+  "folder": "OP Applesauce",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -45.0
+  },
+  "useDefaultConstraints": false
+}
