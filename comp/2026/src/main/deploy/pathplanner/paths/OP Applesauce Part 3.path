@@ -59,7 +59,7 @@
   "reversed": false,
   "folder": "OP Applesauce",
   "idealStartingState": {
-    "velocity": 3.0,
+    "velocity": 2.0,
     "rotation": 45.113
   },
   "useDefaultConstraints": false
