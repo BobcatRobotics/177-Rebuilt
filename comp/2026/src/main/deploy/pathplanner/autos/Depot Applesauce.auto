@@ -68,30 +68,30 @@
                 "data": {
                   "name": "AutoRunHopper"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "sequential",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeMid"
-                }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 2.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeDown"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeMid"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeDown"
+                      }
+                    }
+                  ]
                 }
               }
             ]
