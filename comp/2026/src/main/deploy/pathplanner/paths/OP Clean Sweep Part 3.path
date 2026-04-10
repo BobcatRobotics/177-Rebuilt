@@ -16,24 +16,19 @@
     },
     {
       "anchor": {
-        "x": 6.057,
-        "y": 2.636
+        "x": 6.109243937232525,
+        "y": 2.436
       },
       "prevControl": {
-        "x": 6.30467806906642,
-        "y": 2.602006263760365
+        "x": 6.356922006298944,
+        "y": 2.4020062637603647
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "AngledOPBump"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": -45.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
