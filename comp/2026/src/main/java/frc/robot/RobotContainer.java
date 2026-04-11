@@ -638,7 +638,7 @@ public class RobotContainer {
         }
 
         public Command IntakeMid() {
-                return new RunCommand(() -> {
+                return new InstantCommand(() -> {
                         intake.setPosition(4.5);
                 }, intake);
         }
