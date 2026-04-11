@@ -12,7 +12,8 @@ public record CANDeviceDetails(
     String bus,
     Hardware hardware,
     Manufacturer manufacturer,
-    String subsystemName
+    String subsystemName,
+    boolean status
 ) {
 
         /**
@@ -57,6 +58,7 @@ public record CANDeviceDetails(
      * @param hardware  the hardware of the device
      * @param manufacturer  the manufacturer of the device
      * @param subsystemName the robot subsystem this device belongs to (e.g., "drive", "arm")
+     * @param status the status of the device on the bus (IE connected / disconnected)
      * @throws NullPointerException if any of the arguments are null
      */
     public CANDeviceDetails {
@@ -75,7 +77,7 @@ public record CANDeviceDetails(
      * @param id the CAN ID of the device
      */
     public CANDeviceDetails(int id) {
-        this(id, "", Hardware.Unknown, Manufacturer.Unknown, "");
+        this(id, "", Hardware.Unknown, Manufacturer.Unknown, "",false);
     }
 
     /**
@@ -86,7 +88,7 @@ public record CANDeviceDetails(
      * @param bus the name of the CAN bus
      */
     public CANDeviceDetails(int id, String bus) {
-        this(id, bus, Hardware.Unknown,Manufacturer.Unknown, "");
+        this(id, bus, Hardware.Unknown,Manufacturer.Unknown, "",false);
     }
 
     /**
@@ -99,6 +101,20 @@ public record CANDeviceDetails(
      * @param manufacturer the manufacturer of the device
      */
     public CANDeviceDetails(int id, String bus, Hardware hardware, Manufacturer manufacturer) {
-        this(id, bus, hardware, manufacturer, "");
+        this(id, bus, hardware, manufacturer, "",false);
+    }
+
+        /**
+     * Constructs a {@code CANDeviceDetails} with ID, bus, and manufacturer.
+     * The subsystem name is set to an empty string.
+     *
+     * @param id           the CAN ID of the device
+     * @param bus          the name of the CAN bus
+     * @param hardware     the hardware type
+     * @param manufacturer the manufacturer of the device
+     * @param status the status of the device
+     */
+    public CANDeviceDetails(int id, String bus, Hardware hardware, Manufacturer manufacturer, boolean status) {
+        this(id, bus, hardware, manufacturer, "",status);
     }
 }

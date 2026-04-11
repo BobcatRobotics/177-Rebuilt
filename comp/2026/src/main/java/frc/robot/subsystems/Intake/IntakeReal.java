@@ -9,7 +9,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
@@ -79,6 +81,10 @@ public class IntakeReal implements IntakeIO {
   Gains rightRollerMotorGains;
   Gains leftRollerMotorGains;
 
+
+  List<CANDeviceDetails> subsystemDevices = new ArrayList<CANDeviceDetails>();
+
+
   public IntakeReal() {
     pivotMotorGains = new Gains.Builder()
         .kP(Constants.IntakeConstants.PivotConstants.kP)
@@ -109,6 +115,50 @@ public class IntakeReal implements IntakeIO {
 
     // seekLowerRange = new FindLimit(false, positionMotor);
   }
+  
+    public void updateDeviceDetails(boolean status){
+      for (CANDeviceDetails canDeviceDetails : RobotState.getInstance().subsytemHopperDevices) {
+          updateCanDetails(canDeviceDetails.bus(), canDeviceDetails.id(), canDeviceDetails.hardware(), canDeviceDetails.manufacturer(), canDeviceDetails.subsystemName(), status);
+      }
+    }
+
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      RobotState.getInstance().subsytemIntakeDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
 
   public void setUpRightRollerMotor(Gains g) {
     rightIntakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
@@ -135,11 +185,8 @@ public class IntakeReal implements IntakeIO {
           rightStatorCurrentOfIntakeSpeedAmps, rightOutputOfIntakeSpeedVolts, rightAccelerationOfIntakeSpeed);
     }
 
-    CANDeviceDetails tmp = new CANDeviceDetails(rightIntakeVelocityConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Intake");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+     updateCanDetails("rio",rightIntakeVelocityConfig.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Intake",rightVelocityMotor.isConnected());
+    }
 
   public void setUpLeftRollerMotor(Gains g) {
     leftintakeVelocityConfig = new ModuleConfigurator(g.toSlot0Configs(),
@@ -165,11 +212,8 @@ public class IntakeReal implements IntakeIO {
       leftintakeVelocityConfig.configureSignals(leftVelocityMotor, 50.0, leftVelocityOfIntakeSpeedRPS,
           leftStatorCurrentOfIntakeSpeedAmps, leftOutputOfIntakeSpeedVolts, leftAccelerationOfIntakeSpeed);
     }
-        CANDeviceDetails tmp = new CANDeviceDetails(leftintakeVelocityConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Intake");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+     updateCanDetails("rio",leftintakeVelocityConfig.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Intake",leftVelocityMotor.isConnected());
+    }
 
   public void setupPivotMotor(Gains g) {
     intakePivotConfig = new ModuleConfigurator(g.toSlot0Configs(),
@@ -195,11 +239,8 @@ public class IntakeReal implements IntakeIO {
       intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
           statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts, accelerationOfIntakePosition);
     }
-    CANDeviceDetails tmp = new CANDeviceDetails(intakePivotConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Intake");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+     updateCanDetails("rio",intakePivotConfig.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Intake",positionMotor.isConnected());
+    }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
@@ -209,6 +250,9 @@ public class IntakeReal implements IntakeIO {
       highTelemetry(inputs);
     }
 
+        updateCanDetails("rio",rightIntakeVelocityConfig.getMotorInnerId(),Hardware.TalonFX,rightVelocityMotor.isConnected());
+        updateCanDetails("rio",leftintakeVelocityConfig.getMotorInnerId(),Hardware.TalonFX,leftVelocityMotor.isConnected());
+        updateCanDetails("rio",intakePivotConfig.getMotorInnerId(),Hardware.TalonFX,positionMotor.isConnected());
   }
 
   public void lowTelemetry(IntakeIOInputs inputs) {

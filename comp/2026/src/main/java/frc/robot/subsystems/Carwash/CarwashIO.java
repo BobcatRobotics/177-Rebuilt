@@ -52,5 +52,5 @@ public interface CarwashIO {
   public default double getFFCharacterizationVelocity_Intake() {
     return 0.0;
   }
-
+  public default void updateCanDetails(boolean status){}
 }

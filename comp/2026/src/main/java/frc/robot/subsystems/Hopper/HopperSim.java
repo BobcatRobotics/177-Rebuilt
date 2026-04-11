@@ -2,7 +2,9 @@ package frc.robot.subsystems.Hopper;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
@@ -50,6 +52,8 @@ public class HopperSim implements HopperIO {
   public double hopperSetpointTop = 0;
   public double hopperSetpointBottom = 0;
 
+
+
   public HopperSim() {
 
     // Flywheel Configuration
@@ -61,6 +65,50 @@ public class HopperSim implements HopperIO {
         .kV(Constants.HopperConstants.Top.kHopperV)
         .kA(Constants.HopperConstants.Top.kHopperA).build();
   }
+
+    public void updateDeviceDetails(boolean status){
+      for (CANDeviceDetails canDeviceDetails : RobotState.getInstance().subsytemHopperDevices) {
+          updateCanDetails(canDeviceDetails.bus(), canDeviceDetails.id(), canDeviceDetails.hardware(), canDeviceDetails.manufacturer(), canDeviceDetails.subsystemName(), status);
+      }
+    }
+    
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      RobotState.getInstance().subsytemHopperDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
 
   public void setupTopMotor(Gains g) {
     hopperTopPID = new TunablePID(
@@ -79,11 +127,8 @@ public class HopperSim implements HopperIO {
     hopperConfigTop.configureSignals(hopperTopMotor, 50.0, velocityOfHopperTopRPS,
         statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
     
-      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfigTop.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Hopper");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+    updateCanDetails("rio",hopperConfigTop.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Hopper",hopperTopMotor.isConnected());
+    }
 
 
 

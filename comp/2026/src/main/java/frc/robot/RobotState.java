@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,6 +96,11 @@ public class RobotState {
   public boolean isRobotAlignedToHub = false;
 
 
-
+  // CAN Device & Subsystem Devices
   public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
+  public List<CANDeviceDetails> subsytemDriveDevices = new ArrayList<CANDeviceDetails>(); 
+  public List<CANDeviceDetails> subsytemHopperDevices = new ArrayList<CANDeviceDetails>(); 
+  public List<CANDeviceDetails> subsytemCarwashDevices = new ArrayList<CANDeviceDetails>();
+  public List<CANDeviceDetails> subsytemIntakeDevices = new ArrayList<CANDeviceDetails>();
+  public List<CANDeviceDetails> subsytemShooterDevices = new ArrayList<CANDeviceDetails>();
 }

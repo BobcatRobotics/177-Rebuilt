@@ -6,7 +6,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 
@@ -95,6 +97,7 @@ public class ShooterSim implements ShooterIO {
   private TunablePID HoodLeftPID;
   private TunablePID HoodRightPID;
 
+
   public ShooterSim() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
@@ -126,6 +129,44 @@ public class ShooterSim implements ShooterIO {
     setupRightHood(HoodRightGains);
   }
 
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+       RobotState.getInstance().subsytemShooterDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
+
   public void setupLeftFlywheel(Gains g) {
     flywheelLeftPID = new TunablePID(
         "/Shooter/Flywheel/Left/PID", g);
@@ -145,11 +186,8 @@ public class ShooterSim implements ShooterIO {
         statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
     shooterFlywheelInnerLeftSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigLeft.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+        updateCanDetails("rio",flywheelConfigLeft.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelInnerLeft.isConnected());
+    }
 
   public void setupRightFlywheel(Gains g) {
     flywheelRighPID = new TunablePID(
@@ -172,11 +210,8 @@ public class ShooterSim implements ShooterIO {
 
     shooterFlywheelInnerRightSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigRight.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+        updateCanDetails("rio",flywheelConfigRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelInnerRight.isConnected());
+    }
 
   public void setupOuterRightFlywheel(Gains g) {
     flywheelOuterRightPID = new TunablePID(
@@ -190,21 +225,17 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, flywheelOuterRightPID);
-    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-    outputOfMainFlywheelOuterRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
-    accelerationOfMainFlywheelOuterRight = shooterFlywheelInnerRight.getAcceleration();
+    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelOuterRight.getVelocity();
+    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelOuterRight.getStatorCurrent();
+    outputOfMainFlywheelOuterRightVolts = shooterFlywheelOuterRight.getMotorVoltage();
+    accelerationOfMainFlywheelOuterRight = shooterFlywheelOuterRight.getAcceleration();
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
         accelerationOfMainFlywheelOuterRight);
     shooterFlywheelOuterRightSim = new SimMotorFX();
 
-    CANDeviceDetails tmp = new CANDeviceDetails(flywheelConfigOuterRight.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre,
-        "Shooter");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+        updateCanDetails("rio",flywheelConfigOuterRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelOuterRight.isConnected());
+    }
 
   public void setupLeftHood(Gains g) {
     HoodLeftPID = new TunablePID(
@@ -225,11 +256,8 @@ public class ShooterSim implements ShooterIO {
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
 
-    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigLeft.getMotorId(), "rio",Hardware.TalonFX, Manufacturer.Ctre, "Shooter");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+        updateCanDetails("rio",HoodMConfigLeft.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",HoodWheelMotorLeft.isConnected());
+    }
 
   public void setupRightHood(Gains g) {
     HoodRightPID = new TunablePID(
@@ -250,11 +278,8 @@ public class ShooterSim implements ShooterIO {
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
 
-    CANDeviceDetails tmp = new CANDeviceDetails(HoodMConfigRight.getMotorId(), "rio", Hardware.TalonFX,Manufacturer.Ctre, "Shooter");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+      updateCanDetails("rio",HoodMConfigRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",HoodWheelMotorRight.isConnected());
+    }
 
   public void updateInputs(ShooterIOInputs inputs) {
     shooterFlywheelInnerLeftSim.update();
@@ -317,6 +342,14 @@ public class ShooterSim implements ShooterIO {
     inputs.outputOfMainFlywheelRightVolts = outputOfMainFlywheelRightVolts.getValue().in(Volts);
     inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterRightVolts.getValue().in(Volts);
 
+    updateCanDetails("rio", flywheelConfigLeft.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelInnerLeft.isConnected());
+    updateCanDetails("rio", flywheelConfigRight.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelInnerRight.isConnected());
+    updateCanDetails("rio", flywheelConfigOuterRight.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelOuterRight.isConnected());
+    updateCanDetails("rio", HoodMConfigLeft.getMotorInnerId(), Hardware.TalonFX, HoodWheelMotorLeft.isConnected());
+    updateCanDetails("rio", HoodMConfigRight.getMotorInnerId(), Hardware.TalonFX, HoodWheelMotorRight.isConnected());
   }
 
   public void setOutput(double shooterOutput, double HoodOutputLeft, double HoodOutputRight) {

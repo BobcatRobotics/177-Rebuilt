@@ -7,7 +7,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
@@ -44,6 +46,8 @@ public class CarwashReal implements CarwashIO {
   private StatusSignal<AngularAcceleration> accelerationOfIntake;
   public double intakeSetpoint = 0;
 
+
+
   public CarwashReal() {
     Gains intakeGains = new Gains.Builder()
         .kP(Constants.CarwashConstants.SharedIntake.kIntakeMotorkP)
@@ -78,11 +82,49 @@ public class CarwashReal implements CarwashIO {
       intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
           statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
     }
-    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Carwash");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
-  }
+
+        updateCanDetails("rio",intakeWheelConfig.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Carwash",shooterIntakeMotor.isConnected());
+    }
+
+  
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      RobotState.getInstance().subsytemCarwashDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
+
 
   public void updateInputs(CarwashIOInputs inputs) {
     if (Constants.lowTelemetryMode) {
@@ -90,6 +132,8 @@ public class CarwashReal implements CarwashIO {
     } else {
       highTelemetry(inputs);
     }
+
+     updateCanDetails("rio",intakeWheelConfig.getMotorInnerId(),Hardware.TalonFX,shooterIntakeMotor.isConnected());
   }
 
   public void highTelemetry(CarwashIOInputs inputs) {

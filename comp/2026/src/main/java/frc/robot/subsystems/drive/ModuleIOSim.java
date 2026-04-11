@@ -8,6 +8,7 @@
 package frc.robot.subsystems.drive;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
@@ -56,6 +57,10 @@ public class ModuleIOSim implements ModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
 
+  private int driveMotorId = 0;
+  private int steerMotorId = 0;
+  private int absoluteEncoderId = 0;
+
   public ModuleIOSim(
       SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
           constants) {
@@ -74,15 +79,69 @@ public class ModuleIOSim implements ModuleIO {
     // Enable wrapping for turn PID
     turnController.enableContinuousInput(-Math.PI, Math.PI);
 
+
+    driveMotorId = constants.DriveMotorId;
+    steerMotorId = constants.SteerMotorId;
+    absoluteEncoderId = constants.EncoderId;
+
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive");    
+    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive",false);    
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Hardware.TalonFX,Manufacturer.Ctre,"Drive",false);      
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Hardware.CANcoder,Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Hardware.CANcoder,Manufacturer.Ctre,"Drive",false);  
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
-  }
+
+    updateCanDetails("CANivore",constants.DriveMotorId,Hardware.TalonFX,Manufacturer.Ctre,"Drive",true);
+    updateCanDetails("CANivore",constants.SteerMotorId,Hardware.TalonFX,Manufacturer.Ctre,"Drive",true);
+    updateCanDetails("CANivore",constants.EncoderId,Hardware.CANcoder,Manufacturer.Ctre,"Drive",true);
+    }
+
+
+    public void updateDeviceDetails() {
+        updateCanDetails("CANivore", driveMotorId, Hardware.TalonFX, true);
+        updateCanDetails("CANivore", steerMotorId, Hardware.TalonFX, true);
+        updateCanDetails("CANivore", absoluteEncoderId, Hardware.CANcoder, true);
+    }
+
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      RobotState.getInstance().subsytemDriveDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
@@ -126,6 +185,8 @@ public class ModuleIOSim implements ModuleIO {
     inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
     inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
     inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
+
+    updateDeviceDetails();
   }
 
   @Override

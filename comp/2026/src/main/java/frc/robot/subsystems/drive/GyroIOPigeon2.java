@@ -19,7 +19,9 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.RobotState;
 import frc.robot.generated.TunerConstants;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
@@ -49,11 +51,46 @@ public class GyroIOPigeon2 implements GyroIO {
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw.clone());
 
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Hardware.Pigeon2,Manufacturer.Ctre,"Drive");    
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
-  }
+    updateCanDetails("CANivore",TunerConstants.DrivetrainConstants.Pigeon2Id,Hardware.Pigeon2,Manufacturer.Ctre,"Drive",pigeon.isConnected());
+    }
+
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      RobotState.getInstance().subsytemDriveDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
@@ -69,5 +106,7 @@ public class GyroIOPigeon2 implements GyroIO {
             .toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();
+
+      updateCanDetails("CANivore",pigeon.getDeviceID(),Hardware.Pigeon2,pigeon.isConnected());
   }
 }

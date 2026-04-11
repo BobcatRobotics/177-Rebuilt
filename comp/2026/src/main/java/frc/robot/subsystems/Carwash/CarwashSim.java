@@ -7,7 +7,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 
@@ -46,10 +48,9 @@ import org.bobcatrobotics.Util.Tunables.TunablePID;
 public class CarwashSim implements CarwashIO {
   private TalonFX shooterIntakeMotor;
   private  TalonFXSimState shooterIntakeMotorState;
-  private FlywheelSim m_motorSimModel
-  
-  ;
+  private FlywheelSim m_motorSimModel;
   public ModuleConfigurator intakeWheelConfig;
+  public CANDeviceDetails carwashDeviceDetails;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
@@ -65,6 +66,9 @@ public class CarwashSim implements CarwashIO {
 
   public double intakeSetpoint = 0;
   private TunablePID intakePID;
+
+  List<CANDeviceDetails> subsystemDevices = new ArrayList<CANDeviceDetails>();
+
 
   public CarwashSim() {
     Gains intakeGains = new Gains.Builder()
@@ -103,11 +107,48 @@ public class CarwashSim implements CarwashIO {
     accelerationOfIntake = shooterIntakeMotor.getAcceleration();
     intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
         statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
-    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Hardware.TalonFX,Manufacturer.Ctre,"Carwash");
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace("rio", rioDevices);
+        updateCanDetails("rio",intakeWheelConfig.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Carwash",shooterIntakeMotor.isConnected());
     }
+
+
+
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+      subsystemDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
 
   public void updateInputs(CarwashIOInputs inputs) {
 
@@ -123,7 +164,8 @@ public class CarwashSim implements CarwashIO {
 
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
     inputs.outputOfIntakeVolts = outputOfIntakeVolts.getValue().in(Volts);
-
+    
+     updateCanDetails("rio",intakeWheelConfig.getMotorInnerId(),Hardware.TalonFX,shooterIntakeMotor.isConnected());
   }
 
   public void setVelocity(CarwashState desiredState) {

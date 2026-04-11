@@ -114,4 +114,5 @@ public interface IntakeIO {
   public default void manualReverseIntake(double velocity){
     
   }
+  public default void updateCanDetails(boolean status){}
 }

@@ -174,6 +174,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     io.simulationPeriodic();
+    io.updateDeviceDetails();
   }
 
   public void runCharacterization_Flywheel(double output) {

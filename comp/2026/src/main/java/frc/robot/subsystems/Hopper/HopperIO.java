@@ -52,4 +52,5 @@ public interface HopperIO {
     return 0.0;
   }
 
+  public default void updateCanDetails(boolean status){}
 }

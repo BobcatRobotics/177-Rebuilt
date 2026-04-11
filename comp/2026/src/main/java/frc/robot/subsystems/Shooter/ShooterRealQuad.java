@@ -8,6 +8,9 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.security.spec.ECPublicKeySpec;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.littletonrobotics.junction.Logger;
@@ -27,7 +30,12 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.RobotState;
 import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
+
+import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.Hardware;
+import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
@@ -93,13 +101,11 @@ public class ShooterRealQuad implements ShooterIO {
   private StatusSignal<Voltage> outputOfMainFlywheelOuterLeftVolts;
   private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelOuterLeft;
 
-
-
   public double mainFlywheelSetpoint = 0;
   public double intakeSetpoint = 0;
   public double HoodSetpointRight = 0;
   public double HoodSetpointLeft = 0;
-
+ 
   public ShooterRealQuad() {
     // Flywheel Configuration
     Gains flywheelGains = new Gains.Builder()
@@ -132,6 +138,50 @@ public class ShooterRealQuad implements ShooterIO {
     setupRightHood(HoodRightGains);
   }
 
+    public void updateDeviceDetails(boolean status){
+      for (CANDeviceDetails canDeviceDetails : RobotState.getInstance().subsytemShooterDevices) {
+          updateCanDetails(canDeviceDetails.bus(), canDeviceDetails.id(), canDeviceDetails.hardware(), canDeviceDetails.manufacturer(), canDeviceDetails.subsystemName(), status);
+      }
+    }
+
+    public void updateCanDetails(String bus, int id, Hardware hardware, Manufacturer manufacturer , String subsystemname, boolean status) {
+      CANDeviceDetails carwashDeviceDetails = new CANDeviceDetails(id,bus,hardware,manufacturer,subsystemname,status);
+      List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(bus);
+      rioDevices.add(carwashDeviceDetails);
+      RobotState.getInstance().devices.replace(bus, rioDevices);
+       RobotState.getInstance().subsytemShooterDevices.add(carwashDeviceDetails);
+    }
+
+
+  public void updateCanDetails(String bus, int id, Hardware hardware, boolean status) {
+    List<CANDeviceDetails> fulldevices = RobotState.getInstance().devices.get(bus);
+
+    Optional<CANDeviceDetails> opt = fulldevices.stream()
+        .filter(obj -> obj.id() == id && obj.hardware().equals(hardware))
+        .findFirst();
+
+    if (opt.isEmpty()) {
+        return; // or handle error/log
+    }
+
+    CANDeviceDetails old = opt.get();
+
+    CANDeviceDetails updated = new CANDeviceDetails(
+        old.id(),
+        old.bus(),
+        old.hardware(),
+        old.manufacturer(),
+        old.subsystemName(),
+        status
+    );
+
+    fulldevices.replaceAll(item ->
+        (item.id() == id && item.hardware().equals(hardware)) ? updated : item
+    );
+
+    RobotState.getInstance().devices.put(bus, fulldevices);
+}
+
   public void setupLeftFlywheel(Gains g) {
     flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
@@ -154,8 +204,8 @@ public class ShooterRealQuad implements ShooterIO {
       flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
           statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
     }
-
-  }
+      updateCanDetails("rio",flywheelConfigLeft.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelInnerLeft.isConnected());
+    }
 
   public void setupRightFlywheel(Gains g) {
     // Flywheel Configuration
@@ -180,8 +230,8 @@ public class ShooterRealQuad implements ShooterIO {
       flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
           statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
     }
-
-  }
+      updateCanDetails("rio",flywheelConfigRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelInnerRight.isConnected());
+    }
 
   public void setupOuterRightFlywheel(Gains g) {
     // Flywheel Configuration
@@ -194,8 +244,8 @@ public class ShooterRealQuad implements ShooterIO {
     shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
     flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, g);
     if(Constants.lowTelemetryMode){
-    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
+    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelOuterRight.getVelocity();
+    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelOuterRight.getStatorCurrent();
     flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
         statorCurrentOfMainFlywheelOuterRightAmps);
     }else{
@@ -208,7 +258,8 @@ public class ShooterRealQuad implements ShooterIO {
         accelerationOfMainFlywheelOuterRight);
     }
 
-  }
+      updateCanDetails("rio",flywheelConfigOuterRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelOuterRight.isConnected());
+    }
 
     public void setupOuterLeftFlywheel(Gains g) {
     // Flywheel Configuration
@@ -234,8 +285,8 @@ public class ShooterRealQuad implements ShooterIO {
         statorCurrentOfMainFlywheelOuterLeftAmps, outputOfMainFlywheelOuterLeftVolts,
         accelerationOfMainFlywheelOuterLeft);
     }
-
-  }
+      updateCanDetails("rio",flywheelConfigOuterLeft.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",shooterFlywheelOuterLeft.isConnected());
+    }
 
   public void setupLeftHood(Gains g) {
     // Flywheel Configuration
@@ -260,8 +311,8 @@ public class ShooterRealQuad implements ShooterIO {
     HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
         statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
     }
-
-  }
+      updateCanDetails("rio",HoodMConfigLeft.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",HoodWheelMotorLeft.isConnected());
+    }
 
   public void setupRightHood(Gains g) {
     // Flywheel Configuration
@@ -287,8 +338,8 @@ public class ShooterRealQuad implements ShooterIO {
     flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
         statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
     }
-
-  }
+      updateCanDetails("rio",HoodMConfigRight.getMotorInnerId(),Hardware.TalonFX,Manufacturer.Ctre,"Shooter",HoodWheelMotorRight.isConnected());
+    }
 
   public void updateInputs(ShooterIOInputs inputs) {
     if(Constants.lowTelemetryMode){
@@ -297,6 +348,16 @@ public class ShooterRealQuad implements ShooterIO {
     else{
       highTelemetry(inputs);
     }
+    updateCanDetails("rio", flywheelConfigLeft.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelInnerLeft.isConnected());
+    updateCanDetails("rio", flywheelConfigRight.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelInnerRight.isConnected());
+    updateCanDetails("rio", flywheelConfigOuterRight.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelOuterRight.isConnected());
+    updateCanDetails("rio", flywheelConfigOuterLeft.getMotorInnerId(), Hardware.TalonFX,
+        shooterFlywheelOuterLeft.isConnected());
+    updateCanDetails("rio", HoodMConfigLeft.getMotorInnerId(), Hardware.TalonFX, HoodWheelMotorLeft.isConnected());
+    updateCanDetails("rio", HoodMConfigRight.getMotorInnerId(), Hardware.TalonFX, HoodWheelMotorRight.isConnected());
   }
 
   public void highTelemetry(ShooterIOInputs inputs) {

@@ -500,8 +500,10 @@ public class RobotContainer {
                                 HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
+        
+        
         }
-
+        
         public Command AutoRunHopper() {
                 Command cmd = new RunCommand(() -> m_Hopper.runHopper(), m_Hopper);
                 return cmd;
