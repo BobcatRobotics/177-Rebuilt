@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 8.25,
-        "y": 3.0
+        "y": 5.069000000000001
       },
       "prevControl": null,
       "nextControl": {
         "x": 8.25,
-        "y": 3.25
+        "y": 4.819000000000001
       },
       "isLocked": false,
-      "linkedName": "OP Trench Only Outtatheway Part 1 End Point"
+      "linkedName": "mirrored_OP Trench Only Outtatheway Part 1 End Point"
     },
     {
       "anchor": {
         "x": 8.25,
-        "y": 1.0
+        "y": 7.069000000000001
       },
       "prevControl": {
         "x": 8.25,
-        "y": 1.25
+        "y": 6.819000000000001
       },
       "nextControl": {
         "x": 8.25,
-        "y": 0.75
+        "y": 7.319000000000001
       },
       "isLocked": false,
       "linkedName": null
@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 6.0,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "prevControl": {
         "x": 5.75,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "nextControl": {
         "x": 6.25,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "isLocked": false,
       "linkedName": null
@@ -49,15 +49,15 @@
     {
       "anchor": {
         "x": 2.55,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "prevControl": {
         "x": 2.8,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "nextControl": {
         "x": 2.3,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "isLocked": false,
       "linkedName": null
@@ -65,11 +65,11 @@
     {
       "anchor": {
         "x": 2.25,
-        "y": 1.0
+        "y": 7.069000000000001
       },
       "prevControl": {
         "x": 1.6072123903134607,
-        "y": 0.2339555568810221
+        "y": 7.835044443118979
       },
       "nextControl": null,
       "isLocked": false,
@@ -79,7 +79,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": -90.0
+      "rotationDegrees": 90.0
     },
     {
       "waypointRelativePos": 2.0,
@@ -103,13 +103,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 50.0
+    "rotation": 310.0
   },
   "reversed": false,
-  "folder": "OP Trench Only Outtatheway",
+  "folder": "mirrored_OP Trench Only Outtatheway",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": false
 }

@@ -40,6 +40,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
@@ -122,6 +123,9 @@ public class RobotContainer {
 
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable table;
+
+
+        Field2d field = new Field2d();
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -496,6 +500,10 @@ public class RobotContainer {
                 List<CANDeviceDetails> canivoreDevices = RobotState.getInstance().devices.get("CANivore");
                 publishCanDevices("CANivore",canivoreDevices);
 
+
+                field.setRobotPose(RobotState.getInstance().robotPose);
+                SmartDashboard.putData("Field",field);
+
         }
         public void publishCanDevices(String name, List<CANDeviceDetails> devices){
                 table.getEntry(name).setStringArray(devices.stream().map(Object::toString).toArray(String[]::new));
@@ -550,7 +558,7 @@ public class RobotContainer {
                         m_Shooter.shootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
+                })).alongWith(new InstantCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command AutonomousSpinUp() {
@@ -624,7 +632,7 @@ public class RobotContainer {
                         m_Shooter.manualShootFuel();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                })).alongWith(new RunCommand(() -> drive.stopWithX(), drive));
+                })).alongWith(new InstantCommand(() -> drive.stopWithX(), drive));
         }
 
         public Command manualOuttake() { // PR check for revision
