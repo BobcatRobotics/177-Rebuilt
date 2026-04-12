@@ -3,13 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.65
+        "x": 8.25,
+        "y": 5.069000000000001
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.25,
-        "y": 0.6500000000000001
+        "x": 8.25,
+        "y": 4.819000000000001
+      },
+      "isLocked": false,
+      "linkedName": "mirrored_OP Trench Only Outtatheway Part 1 End Point"
+    },
+    {
+      "anchor": {
+        "x": 8.25,
+        "y": 7.069000000000001
+      },
+      "prevControl": {
+        "x": 8.25,
+        "y": 6.819000000000001
+      },
+      "nextControl": {
+        "x": 8.25,
+        "y": 7.319000000000001
       },
       "isLocked": false,
       "linkedName": null
@@ -17,85 +33,66 @@
     {
       "anchor": {
         "x": 6.0,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "prevControl": {
         "x": 5.75,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "nextControl": {
         "x": 6.25,
-        "y": 0.65
+        "y": 7.4190000000000005
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.25,
-        "y": 1.0
+        "x": 2.55,
+        "y": 7.4190000000000005
       },
       "prevControl": {
-        "x": 8.25,
-        "y": 0.75
+        "x": 2.8,
+        "y": 7.4190000000000005
       },
       "nextControl": {
-        "x": 8.25,
-        "y": 1.25
+        "x": 2.3,
+        "y": 7.4190000000000005
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.25,
-        "y": 3.0
+        "x": 2.25,
+        "y": 7.069000000000001
       },
       "prevControl": {
-        "x": 8.25,
-        "y": 2.75
+        "x": 1.6072123903134607,
+        "y": 7.835044443118979
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OP Trench Only Outtatheway Part 1 End Point"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": 180.0
+      "rotationDegrees": 90.0
     },
     {
       "waypointRelativePos": 2.0,
-      "rotationDegrees": -90.0
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "IntakeDown",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "IntakeDown"
-        }
-      }
-    },
-    {
-      "name": "RunIntakeRollers",
-      "waypointRelativePos": 0.9613259668508312,
-      "endWaypointRelativePos": 3.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RunIntakeRollers"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
@@ -105,14 +102,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": 310.0
   },
   "reversed": false,
   "folder": "OP Trench Only Outtatheway",
   "idealStartingState": {
-    "velocity": 0.0,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": 90.0
   },
   "useDefaultConstraints": false
 }
