@@ -23,6 +23,9 @@ import java.util.stream.Collectors;
 import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
+import org.bobcatrobotics.Hardware.CAN.CANLogger;
+import org.bobcatrobotics.Hardware.CAN.CanivoreReaderAdapter;
+import org.bobcatrobotics.Hardware.CAN.RioReaderAdapter;
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
@@ -124,8 +127,12 @@ public class RobotContainer {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable table;
 
-
         Field2d field = new Field2d();
+
+        private final CANLogger canLogger = new CANLogger(
+                        List.of(
+                                        new RioReaderAdapter(),
+                                        new CanivoreReaderAdapter("CANivore")));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -237,20 +244,23 @@ public class RobotContainer {
                 // autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
 
                 // autoChooser.addOption("Long Trench Depot Sweep",
-                //                 new PathPlannerAuto("Long Trench Depot Sweep"));
+                // new PathPlannerAuto("Long Trench Depot Sweep"));
                 // autoChooser.addOption("Long Trench Outpost Sweep",
-                //                 new PathPlannerAuto("Long Trench Outpost Sweep"));
-
+                // new PathPlannerAuto("Long Trench Outpost Sweep"));
 
                 // // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
                 // // Hub"));
                 // autoChooser.addOption("Anand Depot Side Clean Sweep",
-                //                 new PathPlannerAuto("Anand Depot Side Clean Sweep"));
-                // autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand OP Side Clean Sweep"));
-                // autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench Outpost Sweep"));
-                // autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot Sweep"));
+                // new PathPlannerAuto("Anand Depot Side Clean Sweep"));
+                // autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand
+                // OP Side Clean Sweep"));
+                // autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench
+                // Outpost Sweep"));
+                // autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot
+                // Sweep"));
                 // // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
-                // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand Depot Trench Shot"));
+                // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
+                // Depot Trench Shot"));
 
                 flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
                 hoodChooser = new LoggedDashboardChooser<>("Hood");
@@ -313,9 +323,9 @@ public class RobotContainer {
                 NamedCommands.registerCommand("X-Mode", loggableCommand("X-Mode", new RunCommand(() -> {
                         drive.stopWithX();
                 }, drive)));
-                 NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
+                NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
                                 loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
-                 NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
+                NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
         }
 
         /**
@@ -496,16 +506,18 @@ public class RobotContainer {
                 RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
 
                 List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-                publishCanDevices("rio",rioDevices);
+                publishCanDevices("rio", rioDevices);
                 List<CANDeviceDetails> canivoreDevices = RobotState.getInstance().devices.get("CANivore");
-                publishCanDevices("CANivore",canivoreDevices);
-
+                publishCanDevices("CANivore", canivoreDevices);
 
                 field.setRobotPose(RobotState.getInstance().robotPose);
-                SmartDashboard.putData("Field",field);
+                SmartDashboard.putData("Field", field);
+
+                canLogger.periodic();
 
         }
-        public void publishCanDevices(String name, List<CANDeviceDetails> devices){
+
+        public void publishCanDevices(String name, List<CANDeviceDetails> devices) {
                 table.getEntry(name).setStringArray(devices.stream().map(Object::toString).toArray(String[]::new));
         }
 
@@ -596,8 +608,6 @@ public class RobotContainer {
                                 })));
         }
 
-      
-
         public Command AutonomousShootBalls() {
                 return new RunCommand(() -> {
                         m_Carwash.manualFeedFuel();
@@ -651,13 +661,11 @@ public class RobotContainer {
                 }, intake);
         }
 
-
         public Command IntakeDown() {
                 return new RunCommand(() -> {
                         intake.setPosition(11.7);
                 }, intake);
         }
-
 
         public Command RunIntakeRollers() {
                 return new RunCommand(() -> {
