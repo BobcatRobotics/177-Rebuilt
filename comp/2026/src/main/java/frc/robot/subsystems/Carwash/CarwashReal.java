@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Hardware.Motors.LoggedStallDetector;
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
@@ -43,6 +44,9 @@ public class CarwashReal implements CarwashIO {
   private StatusSignal<AngularAcceleration> accelerationOfIntake;
   public double intakeSetpoint = 0;
 
+LoggedStallDetector stallDetector ;
+
+
   public CarwashReal() {
     Gains intakeGains = new Gains.Builder()
         .kP(Constants.CarwashConstants.SharedIntake.kIntakeMotorkP)
@@ -53,6 +57,13 @@ public class CarwashReal implements CarwashIO {
         .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
     setupIntake(intakeGains);
+
+    stallDetector = new LoggedStallDetector(
+    "Carwash", // unique name per motor
+    1.0,           // velocity threshold
+    40.0,          // current threshold
+    0.25           // time threshold
+);
   }
 
   public void setupIntake(Gains g) {
@@ -106,7 +117,14 @@ public class CarwashReal implements CarwashIO {
         velocityOfIntakeRPS, statorCurrentOfIntakeAmps);
     inputs.velocityOfIntakeRPS = velocityOfIntakeRPS.getValue().in(Rotations.per(Seconds));
     inputs.statorCurrentOfIntakeAmps = statorCurrentOfIntakeAmps.getValue().in(Amps);
+    inputs.torqueCurrentOfIntakeAmps = shooterIntakeMotor.getTorqueCurrent().getValue().in(Amps);
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
+
+    boolean isDriving = Math.abs(RobotState.getInstance().getCarwashState().getIntakeSpeed()) > 5;
+    inputs.motorStalled = stallDetector.update(
+        isDriving ? inputs.velocityOfIntakeRPS : Double.MAX_VALUE,
+        inputs.torqueCurrentOfIntakeAmps
+    );
   }
 
   public void setVelocity(CarwashState desiredState) {

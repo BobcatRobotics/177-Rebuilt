@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
+import org.bobcatrobotics.Hardware.Motors.LoggedStallDetector;
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
@@ -46,8 +47,8 @@ public class HopperRealSingle implements HopperIO {
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-
   public double hopperSetpoint = 0;
+  LoggedStallDetector stallDetector;
 
   public HopperRealSingle() {
 
@@ -61,6 +62,12 @@ public class HopperRealSingle implements HopperIO {
         .kA(Constants.HopperConstants.Top.kHopperA).build();
 
     setupTopMotor(topMotorGains);
+    stallDetector = new LoggedStallDetector(
+        "Carwash", // unique name per motor
+        1.0, // velocity threshold
+        40.0, // current threshold
+        0.25 // time threshold
+    );
   }
 
   public void setupTopMotor(Gains g) {
@@ -84,7 +91,7 @@ public class HopperRealSingle implements HopperIO {
       hopperConfig.configureSignals(hopperMotor, 50.0, velocityOfHopperTopRPS,
           statorCurrentOfHopperTopAmps, accelerationOfHopperTop, accelerationOfHopperTop);
     }
-      CANDeviceDetails tmp = new CANDeviceDetails(hopperConfig.getMotorId(),"rio",Manufacturer.Ctre,"Hopper");
+    CANDeviceDetails tmp = new CANDeviceDetails(hopperConfig.getMotorId(), "rio", Manufacturer.Ctre, "Hopper");
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -101,7 +108,7 @@ public class HopperRealSingle implements HopperIO {
   }
 
   public void highTelemetry(HopperIOInputs inputs) {
-    BaseStatusSignal.refreshAll( accelerationOfHopperTop, outputOfHopperTopVolts);
+    BaseStatusSignal.refreshAll(accelerationOfHopperTop, outputOfHopperTopVolts);
     inputs.accelerationOfHopperTop = accelerationOfHopperTop.getValue()
         .in(RotationsPerSecondPerSecond);
     inputs.outputOfHopperTopVolts = outputOfHopperTopVolts.getValue().in(Volts);
@@ -109,10 +116,16 @@ public class HopperRealSingle implements HopperIO {
   }
 
   public void lowTelemetry(HopperIOInputs inputs) {
-    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS,statorCurrentOfHopperTopAmps);
+    BaseStatusSignal.refreshAll(velocityOfHopperTopRPS, statorCurrentOfHopperTopAmps);
     inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
     inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);
+    inputs.torqueCurrentOfHopperTopAmps = hopperMotor.getTorqueCurrent().getValue().in(Amps);
     inputs.hopperTopConnected = hopperMotor.isConnected();
+
+    boolean isDriving = Math.abs(RobotState.getInstance().getCarwashState().getIntakeSpeed()) > 5;
+    inputs.motorStalled = stallDetector.update(
+        isDriving ? inputs.velocityOfHopperTopRPS : Double.MAX_VALUE,
+        inputs.statorCurrentOfHopperTopAmps);
   }
 
   public void setVelocity(HopperState desiredState) {
@@ -125,17 +138,16 @@ public class HopperRealSingle implements HopperIO {
 
   public void setTopSpeed(double speed) {
     hopperSetpoint = speed;
-    
-    Logger.recordOutput("/Hopper/SetPointSpeed",hopperSetpoint);
+
+    Logger.recordOutput("/Hopper/SetPointSpeed", hopperSetpoint);
     hopperMotor.setControl(topRequestVelocity.withVelocity(hopperSetpoint));
   }
 
   public void stopTop() {
     hopperSetpoint = 0.0;
-    Logger.recordOutput("/Hopper/SetPointSpeed",hopperSetpoint);
+    Logger.recordOutput("/Hopper/SetPointSpeed", hopperSetpoint);
     hopperMotor.stopMotor();
   }
-
 
   @Override
   public void stop() {

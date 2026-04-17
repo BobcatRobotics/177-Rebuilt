@@ -8,10 +8,13 @@ public interface HopperIO {
   class HopperIOInputs {
     public double velocityOfHopperTopRPS = 0.0;
     public double statorCurrentOfHopperTopAmps = 0.0;
+    public double torqueCurrentOfHopperTopAmps = 0.0;
     public double outputOfHopperTopVolts = 0.0;
     public double accelerationOfHopperTop = 0.0;
     public boolean hopperTopConnected = false;
+    public boolean motorStalled = false;
   }
+
 
   default void updateInputs(HopperIOInputs inputs) {
   }
