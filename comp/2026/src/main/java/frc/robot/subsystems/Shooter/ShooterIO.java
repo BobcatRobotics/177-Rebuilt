@@ -23,6 +23,14 @@ public interface ShooterIO {
     public double statorCurrentOfMainFlywheelRightAmps = 0;
     public double statorCurrentOfMainFlywheelOuterRightAmps = 0;
     public double statorCurrentOfMainFlywheelOuterLeftAmps = 0;
+
+    public double torqueCurrentOfHoodLeftAmps = 0;
+    public double torqueCurrentOfHoodRightAmps = 0;
+    public double torqueCurrentOfMainFlywheelLeftAmps = 0;
+    public double torqueCurrentOfMainFlywheelRightAmps = 0;
+    public double torqueCurrentOfMainFlywheelOuterRightAmps = 0;
+    public double torqueCurrentOfMainFlywheelOuterLeftAmps = 0;
+
     public boolean HoodWheelMotorRightConnected = false;
     public boolean HoodWheelMotorLeftConnected = false;
     public boolean shooterFlywheelInnerLeftConnected = false;
@@ -35,6 +43,14 @@ public interface ShooterIO {
     public double outputOfMainFlywheelRightVolts = 0;
     public double outputOfMainFlywheelOuterRightVolts = 0;
     public double outputOfMainFlywheelOuterLeftVolts = 0;
+
+
+    public boolean HoodWheelMotorRightStalled = false;
+    public boolean HoodWheelMotorLeftStalled = false;
+    public boolean shooterFlywheelInnerLeftStalled = false;
+    public boolean shooterFlywheelInnerRightStalled = false;
+    public boolean shooterFlywheelOuterRightStalled= false;
+    public boolean shooterFlywheelOuterLeftStalled = false;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {
