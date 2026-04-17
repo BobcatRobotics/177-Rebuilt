@@ -73,17 +73,17 @@ public class LoggedStallDetector {
         if (stalled && !lastStalled) {
             Logger.recordOutput(name+"/Stall/Event", "STALL_START");
         } else if (!stalled && lastStalled) {
-            Logger.recordOutput(name+"/Stall//Event", "STALL_END");
+            Logger.recordOutput(name+"/Stall/Event", "STALL_END");
         }
 
         lastStalled = stalled;
 
         // 📊 Continuous logging (Elastic + AdvantageScope)
-        Logger.recordOutput(name+"/Stall//Velocity", velocity);
-        Logger.recordOutput(name+"/Stall//Current", current);
-        Logger.recordOutput(name+"/Stall//IsCandidate", candidate);
-        Logger.recordOutput(name+"/Stall//IsStalled", stalled);
-        Logger.recordOutput(name+"/Stall//TimeSinceStart",
+        Logger.recordOutput(name+"/Stall/Velocity", velocity);
+        Logger.recordOutput(name+"/Stall/Current", current);
+        Logger.recordOutput(name+"/Stall/IsCandidate", candidate);
+        Logger.recordOutput(name+"/Stall/IsStalled", stalled);
+        Logger.recordOutput(name+"/Stall/TimeSinceStart",
                 stallStartTime < 0 ? 0 : now - stallStartTime);
 
         return stalled;
