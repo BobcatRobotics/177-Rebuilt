@@ -107,6 +107,7 @@ public class CarwashReal implements CarwashIO {
     inputs.velocityOfIntakeRPS = velocityOfIntakeRPS.getValue().in(Rotations.per(Seconds));
     inputs.statorCurrentOfIntakeAmps = statorCurrentOfIntakeAmps.getValue().in(Amps);
     inputs.shooterIntakeMotorConnected = shooterIntakeMotor.isConnected();
+    inputs.torqueCurrentCarwashAmps = shooterIntakeMotor.getTorqueCurrent().getValue().in(Amps);
   }
 
   public void setVelocity(CarwashState desiredState) {

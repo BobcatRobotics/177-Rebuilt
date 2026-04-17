@@ -11,6 +11,7 @@ public interface CarwashIO {
     public double statorCurrentOfIntakeAmps = 0;
     public boolean shooterIntakeMotorConnected = false;
     public double outputOfIntakeVolts = 0;
+    public double torqueCurrentCarwashAmps = 0.0;
   }
 
   default void updateInputs(CarwashIOInputs inputs) {

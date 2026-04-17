@@ -54,7 +54,7 @@ public final class Constants {
             public static final double kIntakeMotorkV = 0.117;
             public static final double kIntakeMotorkA = 0;
             public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
+            public static final double supplyCurrentLimit = 80;
             public static final boolean isInverted = false;
             public static final boolean isCoast = false;
         }
@@ -144,12 +144,12 @@ public final class Constants {
             public static final double kHopperV = 0.073;
             public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
-            public static final double hopperCurrentLimit = 40;
+            public static final double hopperCurrentLimit = 120;
             public static final int hopperMotorId = 16;
         }
 
 
-        public static final double idleHopperSpeed = 0.0;
+        public static final double idleHopperSpeed = 0;
         public static final double topMotorTargetVelocity = 90;
 
     }

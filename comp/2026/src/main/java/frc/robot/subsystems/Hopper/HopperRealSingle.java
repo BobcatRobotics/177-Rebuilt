@@ -113,6 +113,7 @@ public class HopperRealSingle implements HopperIO {
     inputs.velocityOfHopperTopRPS = velocityOfHopperTopRPS.getValue().in(Rotation.per(Minute));
     inputs.statorCurrentOfHopperTopAmps = statorCurrentOfHopperTopAmps.getValue().in(Amps);
     inputs.hopperTopConnected = hopperMotor.isConnected();
+    inputs.torqueCurrentHopperTopAmps = hopperMotor.getTorqueCurrent().getValue().in(Amps);
   }
 
   public void setVelocity(HopperState desiredState) {

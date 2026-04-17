@@ -122,4 +122,12 @@ public class Hopper extends SubsystemBase {
     setState(RobotState.getInstance().getHopperState());
   }
 
+   public void hopperSpinUp(){
+    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
+    HopperGoal goal = new HopperGoal();
+    goal.hopperSpeedTop = -30;
+    RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getHopperState());
+  }
+
 }

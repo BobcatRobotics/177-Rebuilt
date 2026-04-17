@@ -117,6 +117,13 @@ public final class ModuleConfigurator {
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
 
+        fxConfig.CurrentLimits.SupplyCurrentLimit = getCurrentLimit();
+        fxConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+
+        fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = 120;
+        fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = -120;
+
         motor.getConfigurator().apply(fxConfig);
     }
     public void configureMotor(
@@ -141,6 +148,12 @@ public final class ModuleConfigurator {
 
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getCurrentLimit();
+
+        fxConfig.CurrentLimits.SupplyCurrentLimit = getCurrentLimit();
+        fxConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = 120;
+        fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = -120;
 
         motor.getConfigurator().apply(fxConfig);
     }
