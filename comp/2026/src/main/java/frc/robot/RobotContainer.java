@@ -560,7 +560,7 @@ public class RobotContainer {
                         intake.setVelocity(125);
                 })).alongWith(new RunCommand(() -> {
                         m_Hopper.hopperSpinUp();
-                })));
+                }).withTimeout(1)));
         }
 
         public Command InterpolatedShootBalls() {
@@ -582,7 +582,9 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 }, m_Carwash)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                }).alongWith(new RunCommand(() -> {
+                        m_Hopper.hopperSpinUp();
+                }).withTimeout(1)));
         }
 
         public Command AutoSpinUpAndShoot() {
@@ -632,7 +634,9 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
-                }));
+                }).alongWith(new RunCommand(() -> {
+                        m_Hopper.hopperSpinUp();
+                }).withTimeout(1)));
         }
 
         public Command manualShootBalls() {

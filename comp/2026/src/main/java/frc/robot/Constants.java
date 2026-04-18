@@ -63,9 +63,9 @@ public final class Constants {
 
         public static final double idleFlywheelSpeedRPS = 0;
         public static final double idleHoodSpeedRPS = 0;
-//passing distance
-        public static final double targetFlywheelSpeedRPS = 35;
-        public static final double targetHoodSpeedRPS = 70;
+//100 distance
+        public static final double targetFlywheelSpeedRPS = 40;
+        public static final double targetHoodSpeedRPS = 19;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;

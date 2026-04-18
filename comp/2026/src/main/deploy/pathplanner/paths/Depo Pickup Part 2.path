@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1027710503472228,
-        "y": 5.474035807291666
+        "x": 0.7708422301304869,
+        "y": 6.945361803084223
       },
       "isLocked": false,
       "linkedName": "CenterDepoPickup"
+    },
+    {
+      "anchor": {
+        "x": 0.935332971643519,
+        "y": 7.203582443653618
+      },
+      "prevControl": {
+        "x": 0.7104732377035126,
+        "y": 7.312844056548667
+      },
+      "nextControl": {
+        "x": 2.3524436536180313,
+        "y": 6.514994068801898
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -28,10 +44,27 @@
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6329787234042745,
+      "rotationDegrees": -58.07802756715959
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "IntakeFuel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": 0.8113654301499552,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RunIntakeRollers"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
