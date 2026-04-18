@@ -380,7 +380,7 @@ public class RobotContainer {
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
-                controller.rightBumper().whileTrue(InterpolatedSpinUp());
+                controller.rightBumper().whileTrue(loggableCommand("InterpolatedSpinUp",InterpolatedSpinUp()));
                 controller.leftBumper().whileTrue(loggableCommand("InterpolatedShootBalls", InterpolatedShootBalls()));
                 controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
                                 .andThen(InterpolatedShootBalls()));
@@ -558,6 +558,8 @@ public class RobotContainer {
                         m_Carwash.spinUp();
                 })).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
+                })).alongWith(new RunCommand(() -> {
+                        m_Hopper.hopperSpinUp();
                 })));
         }
 

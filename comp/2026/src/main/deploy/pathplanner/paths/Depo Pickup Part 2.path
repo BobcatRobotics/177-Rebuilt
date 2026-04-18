@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.935332971643519,
+        "y": 6.449401982060185
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.1027710503472228,
+        "y": 5.474035807291666
+      },
+      "isLocked": false,
+      "linkedName": "CenterDepoPickup"
+    },
+    {
+      "anchor": {
+        "x": 1.6982522424768525,
+        "y": 4.757896846064815
+      },
+      "prevControl": {
+        "x": 0.6982522424768525,
+        "y": 4.757896846064815
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -12.70610492373567
+  },
+  "reversed": false,
+  "folder": "Center Autos",
+  "idealStartingState": {
+    "velocity": 2.0,
+    "rotation": -31.411241227676324
+  },
+  "useDefaultConstraints": false
+}
