@@ -65,7 +65,7 @@ public final class Constants {
         public static final double idleHoodPosition = 0;
 //who knows what distance
         public static final double targetDumperSpeed = 40;
-        public static final double targetHoodPosition = 19;
+        public static final double targetHoodPosition = 3.5;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -94,18 +94,19 @@ public final class Constants {
         }
 
     public final static class adjustableHood {
-            public static final boolean isInverted = false;
+            public static final boolean isInverted = true;
             public static final boolean isCoast = true;
             // Motor Constants
-            public static final double kAdjHoodMotorkP =4.7;
+            public static final double kAdjHoodMotorkP =2;
             public static final double kAdjHoodMotorkI = 0;
             public static final double kAdjHoodMotorkD = 0;
-            public static final double kAdjHoodMotorkS = 0.303;
-            public static final double kAdjHoodMotorkV = 0.25;
+            public static final double kAdjHoodMotorkS = 0.0;
+            public static final double kAdjHoodMotorkV = 0.0;
             public static final double kAdjHoodMotorkA = 0;
-            public static final double statorCurrentLimit = 80;
+            public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 60;
             public static final int ID = 21;
+            public static final boolean isSoftLimitsEnabled = true;
 
         }
 
@@ -119,16 +120,17 @@ public final class Constants {
             public static final int dumperLeftUpID = 13; 
             public static final int dumperLeftDownID = 20;
             // Motor Constants
-            public static final double kdumperLeftMotorkP = 2.8;
+            public static final double kdumperLeftMotorkP = 0.3;
             public static final double kdumperLeftMotorkI = 0.0;
             public static final double kdumperLeftMotorkD = 0;
-            public static final double kdumperLeftMotorkS = 0.78;
-            public static final double kdumperLeftMotorkV = 0.123;
+            public static final double kdumperLeftMotorkS = 0;
+            public static final double kdumperLeftMotorkV = 0;
             public static final double kdumperLeftMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
-            public static final boolean isInverted = true;
+            public static final boolean isInverted = false;
             public static final boolean isCoast = true;
+            public static final boolean isSoftLimitsEnabled = false;
 
         }
 
@@ -138,16 +140,17 @@ public final class Constants {
             public static final int dumperRightUpID = 11; 
             public static final int dumperRightDownID = 14; 
             //Motor Constants
-            public static final double kdumperRightMotorkP = 2.8;
+            public static final double kdumperRightMotorkP = 0.3;
             public static final double kdumperRightMotorkI = 0.0;
             public static final double kdumperRightMotorkD = 0;
-            public static final double kdumperRightMotorkS = 0.78;
-            public static final double kdumperRightMotorkV = 0.123;
+            public static final double kdumperRightMotorkS = 0;
+            public static final double kdumperRightMotorkV = 0;
             public static final double kdumperRightMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
-            public static final boolean isInverted = false;
+            public static final boolean isInverted = true;
             public static final boolean isCoast = true;
+            public static final boolean isSoftLimitsEnabled = false;
         }
 
         // public final static class ValuesOfKnownShots{

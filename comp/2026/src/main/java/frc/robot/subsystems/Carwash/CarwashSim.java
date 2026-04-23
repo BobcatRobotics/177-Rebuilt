@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
+import frc.robot.subsystems.Carwash.Modules.ModuleConfigurator;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;

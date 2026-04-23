@@ -28,7 +28,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.RobotState;
-import frc.robot.subsystems.Shooter.Modules.ModuleConfigurator;
+import frc.robot.subsystems.Carwash.Modules.ModuleConfigurator;
 
 public class CarwashReal implements CarwashIO {
   private TalonFX shooterIntakeMotor;
