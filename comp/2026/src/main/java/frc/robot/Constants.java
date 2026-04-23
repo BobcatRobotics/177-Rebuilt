@@ -85,10 +85,32 @@ public final class Constants {
             public static final double supplyCurrentLimit = 60;
 
             public static final int FlywheelOuterIDLeft = 14;
-            public static final int FlywheelInnerIDLeft = 13;
+            public static final int FlywheelInnerIDLeft = 13;//dumper left up
             public static final int FlywheelOuterIDRight = 11;
-            public static final int FlywheelInnerIDRight = 14; // NOT USED ANYMORE
+            public static final int dumperLeftUp = 13; 
+            public static final int dumperLeftDown = 20; 
+            public static final int dumperRightUp = 11; 
+            public static final int dumperRightDown = 14; 
+            
+            
         }
+
+    public final static class adjustableHood {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            // Motor Constants
+            public static final double kHoodmotorkP =4.7;
+            public static final double kHoodmotorkI = 0;
+            public static final double kHoodmotorkD = 0;
+            public static final double kHoodmotorkS = 0.303;
+            public static final double kHoodmotorkV = 0.25;
+            public static final double kHoodmotorkA = 0;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final int ID = 21;
+
+        }
+
 
 
 
