@@ -24,9 +24,9 @@ public class ShooterAutoOptions {
         autoChooser.addOption("Flywheel Simple FF Characterization",
                 shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(shooter)
                         .withTimeout(15));
-        autoChooser.addOption("Hood Simple FF Characterization",
-                shooterCharacterizationCommands.feedforwardCharacterization_Hood(shooter)
-                        .withTimeout(15));
+        // autoChooser.addOption("Hood Simple FF Characterization",
+        //         shooterCharacterizationCommands.feedforwardCharacterization_Hood(shooter)
+        //                 .withTimeout(15));
 
         autoChooser.addOption("Flywheel SysId (Quasistatic Forward)",
                 shooter.getRegistry().get("SysIdStateFlywheel")

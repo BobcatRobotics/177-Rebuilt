@@ -63,12 +63,12 @@ public class ShooterRealDrum implements ShooterIO {
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
   private StatusSignal<AngularVelocity> velocityOfDumperLeftUpRPS;
-  private StatusSignal<Current> statorCurrentOfOfDumperLeftUpAmps;
+  private StatusSignal<Current> statorCurrentOfDumperLeftUpAmps;
   private StatusSignal<Voltage> outputOfDumperLeftUpVolts;
   private StatusSignal<AngularAcceleration> accelerationOfDumperLeftUp;
 
   private StatusSignal<AngularVelocity> velocityOfDumperLeftDownRPS;
-  private StatusSignal<Current> statorCurrentOfOfDumperLeftDownAmps;
+  private StatusSignal<Current> statorCurrentOfDumperLeftDownAmps;
   private StatusSignal<Voltage> outputOfDumperLeftDownVolts;
   private StatusSignal<AngularAcceleration> accelerationOfDumperLeftDown;
   
@@ -88,7 +88,7 @@ public class ShooterRealDrum implements ShooterIO {
   private StatusSignal<AngularAcceleration> accelerationOfDumperRightUp;
 
   private StatusSignal<AngularVelocity> velocityOfDumperRightDownRPS;
-  private StatusSignal<Current> statorCurrentOfOfDumperRightDownAmps;
+  private StatusSignal<Current> statorCurrentOfDumperRightDownAmps;
   private StatusSignal<Voltage> outputOfDumperRightDownVolts;
   private StatusSignal<AngularAcceleration> accelerationOfDumperRightDown;
 
@@ -99,10 +99,10 @@ public class ShooterRealDrum implements ShooterIO {
 
 
 
-  public double dumperLeftUpSetPoint = 0;
-  public double dumperLeftDownSetPoint = 0;
-  public double dumperRightUpSetPoint = 0;
-  public double dumperRightDownSetPoint = 0;
+  public double dumperLeftSetPoint = 0;
+  // public double dumperLeftDownSetPoint = 0;
+  public double dumperRightSetPoint = 0;
+  // public double dumperRightDownSetPoint = 0;
   public double adjustableHoodSetPoint = 0;
 
   public ShooterRealDrum() {
@@ -146,7 +146,7 @@ public class ShooterRealDrum implements ShooterIO {
     setupDumperLeftUp(dumperLeftUpGains);
     setupDumperLeftDown(dumperLeftDownGains);
     setupDumperRightUp(dumperRightUpGains);
-    setupDumperRightUp(dumperRightDownGains);
+    setupDumperRightDown(dumperRightDownGains);
     // setupLeftHood(HoodLeftGains);
     // setupRightHood(HoodRightGains);
     setupAdjustableHood(adjustableHoodGains);
@@ -162,97 +162,90 @@ public class ShooterRealDrum implements ShooterIO {
     dumperLeftUp = new TalonFX(dumperLeftUpConfig.getMotorInnerId(), new CANBus("rio"));
     dumperLeftUpConfig.configureMotor(dumperLeftUp, g);
     if (Constants.lowTelemetryMode) {
-      velDumperLeftUpRequest = shooterFlywheelInnerLeft.getVelocity();
-      statorCurrentOfOfDumperLeftUpAmps = shooterFlywheelInnerLeft.getStatorCurrent();
-      flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
-          statorCurrentOfMainFlywheelLeftAmps);
+      velocityOfDumperLeftUpRPS = dumperLeftUp.getVelocity();
+      statorCurrentOfDumperLeftUpAmps = dumperLeftUp.getStatorCurrent();
+      dumperLeftUpConfig.configureSignals(dumperLeftUp, 50.0, velocityOfDumperLeftUpRPS,
+          statorCurrentOfDumperLeftUpAmps);
     } else {
-      velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
-      statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
-      outputOfMainFlywheelLeftVolts = shooterFlywheelInnerLeft.getMotorVoltage();
-      accelerationOfMainFlywheelLeft = shooterFlywheelInnerLeft.getAcceleration();
-      flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
-          statorCurrentOfMainFlywheelLeftAmps, outputOfMainFlywheelLeftVolts, accelerationOfMainFlywheelLeft);
+      velocityOfDumperLeftUpRPS = dumperLeftUp.getVelocity();
+      statorCurrentOfDumperLeftUpAmps = dumperLeftUp.getStatorCurrent();
+      outputOfDumperLeftUpVolts = dumperLeftUp.getMotorVoltage();
+      accelerationOfDumperLeftUp = dumperLeftUp.getAcceleration();
+      dumperLeftUpConfig.configureSignals(dumperLeftUp, 50.0, velocityOfDumperLeftUpRPS,
+          statorCurrentOfDumperLeftUpAmps, outputOfDumperLeftUpVolts, accelerationOfDumperLeftUp);
     }
 
   }
 
   public void setupDumperLeftDown(Gains g) {
-    // Flywheel Configuration
-    flywheelConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedInnerRight,
-        Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
-        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
-    shooterFlywheelInnerRight = new TalonFX(flywheelConfigRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigRight.configureMotor(shooterFlywheelInnerRight, g);
+    dumperLeftDownConfig = new ModuleConfigurator(g.toSlot0Configs(),
+        Constants.ShooterConstants.Left.dumperLeftDownID,
+        Constants.ShooterConstants.Left.isInverted,
+        Constants.ShooterConstants.Left.isCoast,
+        Constants.ShooterConstants.Left.statorCurrentLimit,
+        Constants.ShooterConstants.Left.supplyCurrentLimit);
+    dumperLeftDown = new TalonFX(dumperLeftDownConfig.getMotorInnerId(), new CANBus("rio"));
+    dumperLeftDownConfig.configureMotor(dumperLeftDown, g);
     if (Constants.lowTelemetryMode) {
-      velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
-      statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-      flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
-          statorCurrentOfMainFlywheelRightAmps);
+      velocityOfDumperLeftDownRPS = dumperLeftDown.getVelocity();
+      statorCurrentOfDumperLeftDownAmps = dumperLeftDown.getStatorCurrent();
+      dumperLeftDownConfig.configureSignals(dumperLeftDown, 50.0, velocityOfDumperLeftDownRPS,
+          statorCurrentOfDumperLeftDownAmps);
     } else {
-      velocityOfMainFlywheelRightRPS = shooterFlywheelInnerRight.getVelocity();
-      statorCurrentOfMainFlywheelRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-      outputOfMainFlywheelRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
-      accelerationOfMainFlywheelRight = shooterFlywheelInnerRight.getAcceleration();
-      flywheelConfigRight.configureSignals(shooterFlywheelInnerRight, 50.0, velocityOfMainFlywheelRightRPS,
-          statorCurrentOfMainFlywheelRightAmps, outputOfMainFlywheelRightVolts, accelerationOfMainFlywheelRight);
+      velocityOfDumperLeftDownRPS = dumperLeftDown.getVelocity();
+      statorCurrentOfDumperLeftDownAmps = dumperLeftDown.getStatorCurrent();
+      outputOfDumperLeftDownVolts = dumperLeftDown.getMotorVoltage();
+      accelerationOfDumperLeftDown = dumperLeftDown.getAcceleration();
+      dumperLeftDownConfig.configureSignals(dumperLeftDown, 50.0, velocityOfDumperLeftDownRPS,
+          statorCurrentOfDumperLeftDownAmps, outputOfDumperLeftDownVolts, accelerationOfDumperLeftDown);
     }
-
   }
 
   public void setupDumperRightUp(Gains g) {
-    // Flywheel Configuration
-    flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedOuterRight,
-        Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
-        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
-    shooterFlywheelOuterRight = new TalonFX(flywheelConfigOuterRight.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigOuterRight.configureMotor(shooterFlywheelOuterRight, g);
-    if(Constants.lowTelemetryMode){
-    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-    flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
-        statorCurrentOfMainFlywheelOuterRightAmps);
-    }else{
-    velocityOfMainFlywheelOuterRightRPS = shooterFlywheelInnerRight.getVelocity();
-    statorCurrentOfMainFlywheelOuterRightAmps = shooterFlywheelInnerRight.getStatorCurrent();
-    outputOfMainFlywheelOuterRightVolts = shooterFlywheelInnerRight.getMotorVoltage();
-    accelerationOfMainFlywheelOuterRight = shooterFlywheelInnerRight.getAcceleration();
-    flywheelConfigOuterRight.configureSignals(shooterFlywheelOuterRight, 50.0, velocityOfMainFlywheelOuterRightRPS,
-        statorCurrentOfMainFlywheelOuterRightAmps, outputOfMainFlywheelOuterRightVolts,
-        accelerationOfMainFlywheelOuterRight);
+    dumperRightUpConfig = new ModuleConfigurator(g.toSlot0Configs(),
+        Constants.ShooterConstants.Right.dumperRightUpID,
+        Constants.ShooterConstants.Right.isInverted,
+        Constants.ShooterConstants.Right.isCoast,
+        Constants.ShooterConstants.Right.statorCurrentLimit,
+        Constants.ShooterConstants.Right.supplyCurrentLimit);
+    dumperRightUp = new TalonFX(dumperRightUpConfig.getMotorInnerId(), new CANBus("rio"));
+    dumperRightUpConfig.configureMotor(dumperRightUp, g);
+    if (Constants.lowTelemetryMode) {
+      velocityOfDumperRightUpRPS = dumperRightUp.getVelocity();
+      statorCurrentOfOfDumperRightUpAmps = dumperRightUp.getStatorCurrent();
+      dumperRightUpConfig.configureSignals(dumperRightUp, 50.0, velocityOfDumperRightUpRPS,
+          statorCurrentOfOfDumperRightUpAmps);
+    } else {
+      velocityOfDumperRightUpRPS = dumperRightUp.getVelocity();
+      statorCurrentOfOfDumperRightUpAmps = dumperRightUp.getStatorCurrent();
+      outputOfDumperRightUpVolts = dumperRightUp.getMotorVoltage();
+      accelerationOfDumperRightUp = dumperRightUp.getAcceleration();
+      dumperRightUpConfig.configureSignals(dumperRightUp, 50.0, velocityOfDumperRightUpRPS,
+          statorCurrentOfOfDumperRightUpAmps, outputOfDumperRightUpVolts, accelerationOfDumperRightUp);
     }
-
   }
 
     public void setupDumperRightDown(Gains g) {
-    // Flywheel Configuration
-    flywheelConfigOuterLeft = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDLeft,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedOuterLeft,
-        Constants.ShooterConstants.SharedFlywheel.isCoastLeft,
-        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
-        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
-    shooterFlywheelOuterLeft = new TalonFX(flywheelConfigOuterLeft.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigOuterLeft.configureMotor(shooterFlywheelOuterLeft, g);
-    if(Constants.lowTelemetryMode){
-    velocityOfMainFlywheelOuterLeftRPS = shooterFlywheelOuterLeft.getVelocity();
-    statorCurrentOfMainFlywheelOuterLeftAmps = shooterFlywheelOuterLeft.getStatorCurrent();
-    flywheelConfigOuterLeft.configureSignals(shooterFlywheelOuterLeft, 50.0, velocityOfMainFlywheelOuterLeftRPS,
-        statorCurrentOfMainFlywheelOuterLeftAmps);
-    }else{
-    velocityOfMainFlywheelOuterLeftRPS = shooterFlywheelOuterLeft.getVelocity();
-    statorCurrentOfMainFlywheelOuterLeftAmps = shooterFlywheelOuterLeft.getStatorCurrent();
-    outputOfMainFlywheelOuterLeftVolts = shooterFlywheelOuterLeft.getMotorVoltage();
-    accelerationOfMainFlywheelOuterLeft = shooterFlywheelOuterLeft.getAcceleration();
-    flywheelConfigOuterLeft.configureSignals(shooterFlywheelOuterLeft, 50.0, velocityOfMainFlywheelOuterLeftRPS,
-        statorCurrentOfMainFlywheelOuterLeftAmps, outputOfMainFlywheelOuterLeftVolts,
-        accelerationOfMainFlywheelOuterLeft);
+    dumperRightDownConfig = new ModuleConfigurator(g.toSlot0Configs(),
+        Constants.ShooterConstants.Right.dumperRightDownID,
+        Constants.ShooterConstants.Right.isInverted,
+        Constants.ShooterConstants.Right.isCoast,
+        Constants.ShooterConstants.Right.statorCurrentLimit,
+        Constants.ShooterConstants.Right.supplyCurrentLimit);
+    dumperRightDown = new TalonFX(dumperRightDownConfig.getMotorInnerId(), new CANBus("rio"));
+    dumperRightDownConfig.configureMotor(dumperRightDown, g);
+    if (Constants.lowTelemetryMode) {
+      velocityOfDumperRightDownRPS = dumperRightDown.getVelocity();
+      statorCurrentOfDumperRightDownAmps = dumperRightDown.getStatorCurrent();
+      dumperRightDownConfig.configureSignals(dumperRightDown, 50.0, velocityOfDumperRightDownRPS,
+          statorCurrentOfDumperRightDownAmps);
+    } else {
+      velocityOfDumperRightDownRPS = dumperRightDown.getVelocity();
+      statorCurrentOfDumperRightDownAmps = dumperRightDown.getStatorCurrent();
+      outputOfDumperRightDownVolts = dumperRightDown.getMotorVoltage();
+      accelerationOfDumperRightDown = dumperRightDown.getAcceleration();
+      dumperRightDownConfig.configureSignals(dumperRightDown, 50.0, velocityOfDumperRightDownRPS,
+          statorCurrentOfDumperRightDownAmps, outputOfDumperRightDownVolts, accelerationOfDumperRightDown);
     }
 
   }
@@ -349,126 +342,131 @@ public class ShooterRealDrum implements ShooterIO {
 
   public void highTelemetry(ShooterIOInputs inputs) {
     BaseStatusSignal.refreshAll(
-        accelerationOfMainFlywheelLeft,
-        accelerationOfMainFlywheelRight,
-        accelerationOfMainFlywheelOuterRight,
-        accelerationOfMainFlywheelOuterLeft,
-        accelerationOfHoodLeft,
-        accelerationOfHoodRight,
-        outputOfHoodLeftVolts,
-        outputOfHoodRightVolts,
-        outputOfMainFlywheelLeftVolts,
-        outputOfMainFlywheelRightVolts,
-        outputOfMainFlywheelOuterRightVolts,
-        outputOfMainFlywheelOuterLeftVolts);
+        accelerationOfDumperLeftUp,
+        accelerationOfDumperLeftDown,
+        accelerationOfDumperRightUp,
+        accelerationOfDumperRightDown,
+        accelerationOfAdjustableHoodPosition,
+        // accelerationOfHoodLeft,
+        // accelerationOfHoodRight,
+        // outputOfHoodLeftVolts,
+        // outputOfHoodRightVolts,
+        outputOfDumperLeftUpVolts,
+        outputOfDumperLeftDownVolts,
+        outputOfDumperRightUpVolts,
+        outputOfDumperRightDownVolts,
+        outputOfAdjustableHoodPositionVolts);
 
-    inputs.accelerationOfMainFlywheelLeft = accelerationOfMainFlywheelLeft.getValue()
+    inputs.accelerationOfDumperLeftUp = accelerationOfDumperLeftUp.getValue()
         .in(RotationsPerSecondPerSecond);
-    inputs.accelerationOfMainFlywheelRight = accelerationOfMainFlywheelRight.getValue()
+    inputs.accelerationOfDumperLeftDown = accelerationOfDumperLeftDown.getValue()
         .in(RotationsPerSecondPerSecond);
-    inputs.accelerationOfHoodLeft = accelerationOfHoodLeft.getValue()
+    inputs.accelerationOfDumperRightUp = accelerationOfDumperRightUp.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfDumperRightDown = accelerationOfDumperRightDown.getValue()
+        .in(RotationsPerSecondPerSecond);
+    inputs.accelerationOfAdjustableHood = accelerationOfAdjustableHoodPosition.getValue()
         .in(RotationsPerSecondPerSecond);
 
-    inputs.outputOfHoodLeftVolts = outputOfHoodLeftVolts.getValue().in(Volts);
-    inputs.outputOfHoodRightVolts = outputOfHoodRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelLeftVolts = outputOfMainFlywheelLeftVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelRightVolts = outputOfMainFlywheelRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterRightVolts.getValue().in(Volts);
-    inputs.outputOfMainFlywheelOuterRightVolts = outputOfMainFlywheelOuterLeftVolts.getValue().in(Volts);
+    inputs.outputOfDumperLeftUpVolts = outputOfDumperLeftUpVolts.getValue().in(Volts);
+    inputs.outputOfDumperLeftDownVolts = outputOfDumperLeftDownVolts.getValue().in(Volts);
+    inputs.outputOfDumperRightUpVolts = outputOfDumperRightUpVolts.getValue().in(Volts);
+    inputs.outputOfDumperRightDownVolts = outputOfDumperRightDownVolts.getValue().in(Volts);
+    inputs.outputOfAdjustableHoodVolts = outputOfAdjustableHoodPositionVolts.getValue().in(Volts);
+
     lowTelemetry(inputs);
   }
 
   public void lowTelemetry(ShooterIOInputs inputs) {
 
     BaseStatusSignal.refreshAll(
-        velocityOfMainFlywhelLeftRPS,
-        velocityOfMainFlywheelRightRPS,
-        velocityOfHoodWheelMotorLeftRPS,
-        velocityOfHoodWheelMotorRightRPS,
-        velocityOfMainFlywheelOuterRightRPS,
-        velocityOfMainFlywheelOuterLeftRPS,
+        velocityOfDumperLeftUpRPS,
+        velocityOfDumperLeftDownRPS,
+        // velocityOfHoodWheelMotorLeftRPS,
+        // velocityOfHoodWheelMotorRightRPS,
+        velocityOfDumperRightUpRPS,
+        velocityOfDumperRightDownRPS,
         velocityOfAdjustableHoodPositionRPS,
-        statorCurrentOfHoodLeftAmps,
-        statorCurrentOfHoodRightAmps,
-        statorCurrentOfMainFlywheelLeftAmps,
-        statorCurrentOfMainFlywheelRightAmps,
-        statorCurrentOfMainFlywheelOuterRightAmps,
-        statorCurrentOfMainFlywheelOuterLeftAmps,
+        // statorCurrentOfHoodLeftAmps,
+        // statorCurrentOfHoodRightAmps,
+        statorCurrentOfDumperLeftUpAmps,
+        statorCurrentOfDumperLeftDownAmps,
+        statorCurrentOfOfDumperRightUpAmps,
+        statorCurrentOfDumperRightDownAmps,
         statorCurrentOfAdjustableHoodPositionAmps
         );
 
-    inputs.velocityOfMainFlywheelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
-    inputs.velocityOfMainFlywheelRightRPS = velocityOfMainFlywheelRightRPS.getValue().in(Rotations.per(Seconds));
-    inputs.velocityOfMainFlywheelOuterRightRPS = velocityOfMainFlywheelOuterRightRPS.getValue()
+    inputs.velocityOfDumperLeftUpRPS = velocityOfDumperLeftUpRPS.getValue().in(Rotations.per(Seconds));
+    inputs.velocityOfDumperLeftDownRPS = velocityOfDumperLeftDownRPS.getValue().in(Rotations.per(Seconds));
+    inputs.velocityOfDumperRightUpRPS = velocityOfDumperRightUpRPS.getValue()
         .in(Rotations.per(Seconds));
-    inputs.velocityOfMainFlywheelOuterLeftRPS = velocityOfMainFlywheelOuterLeftRPS.getValue()
+    inputs.velocityOfDumperRightDownRPS = velocityOfDumperRightDownRPS.getValue()
         .in(Rotations.per(Seconds));
-    inputs.velocityOfHoodWheelMotorLeftRPS = velocityOfHoodWheelMotorLeftRPS.getValue()
-        .in(Rotations.per(Seconds));
-    inputs.velocityOfHoodWheelMotorRightRPS = velocityOfHoodWheelMotorRightRPS.getValue()
-        .in(Rotations.per(Seconds));
+    // inputs.velocityOfHoodWheelMotorLeftRPS = velocityOfHoodWheelMotorLeftRPS.getValue()
+    //     .in(Rotations.per(Seconds));
+    // inputs.velocityOfHoodWheelMotorRightRPS = velocityOfHoodWheelMotorRightRPS.getValue()
+    //     .in(Rotations.per(Seconds));
     inputs.velocityOfAdjustableHoodPositionRPS = velocityOfAdjustableHoodPositionRPS.getValue()
         .in(Rotations.per(Seconds));
     
 
-    inputs.statorCurrentOfHoodLeftAmps = statorCurrentOfHoodLeftAmps.getValue().in(Amps);
-    inputs.statorCurrentOfHoodRightAmps = statorCurrentOfHoodRightAmps.getValue().in(Amps);
-    inputs.statorCurrentOfMainFlywheelLeftAmps = statorCurrentOfMainFlywheelLeftAmps.getValue().in(Amps);
-    inputs.statorCurrentOfMainFlywheelRightAmps = statorCurrentOfMainFlywheelRightAmps.getValue().in(Amps);
-    inputs.statorCurrentOfMainFlywheelOuterRightAmps = statorCurrentOfMainFlywheelOuterRightAmps.getValue().in(Amps);
-    inputs.statorCurrentOfMainFlywheelOuterLeftAmps = statorCurrentOfMainFlywheelOuterLeftAmps.getValue().in(Amps);
+    // inputs.statorCurrentOfHoodLeftAmps = statorCurrentOfHoodLeftAmps.getValue().in(Amps);
+    // inputs.statorCurrentOfHoodRightAmps = statorCurrentOfHoodRightAmps.getValue().in(Amps);
+    inputs.statorCurrentOfDumperLeftUp = statorCurrentOfDumperLeftUpAmps.getValue().in(Amps);
+    inputs.statorCurrentOfDumperLeftDown = statorCurrentOfDumperLeftDownAmps.getValue().in(Amps);
+    inputs.statorCurrentOfDumperRightUp = statorCurrentOfOfDumperRightUpAmps.getValue().in(Amps);
+    inputs.statorCurrentOfDumperRightDown = statorCurrentOfDumperRightDownAmps.getValue().in(Amps);
     inputs.statorCurrentOfAdjustableHoodPositionAmps = statorCurrentOfAdjustableHoodPositionAmps.getValue().in(Amps);
 
-    inputs.HoodWheelMotorRightConnected = HoodWheelMotorRight.isConnected();
-    inputs.HoodWheelMotorLeftConnected = HoodWheelMotorLeft.isConnected();
-    inputs.shooterFlywheelInnerLeftConnected = shooterFlywheelInnerLeft.isConnected();
-    inputs.shooterFlywheelInnerRightConnected = shooterFlywheelInnerRight.isConnected();
-    inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterRight.isConnected();
-    inputs.shooterFlywheelOuterLeftConnected = shooterFlywheelOuterLeft.isConnected();
+    inputs.positionOfAdjustableHood = adjustableHood.getPosition().getValueAsDouble();
+
+    // inputs.HoodWheelMotorRightConnected = HoodWheelMotorRight.isConnected();
+    // inputs.HoodWheelMotorLeftConnected = HoodWheelMotorLeft.isConnected();
+    inputs.DumperLeftUpConnected = dumperLeftUp.isConnected();
+    inputs.DumperLeftDownConnected = dumperLeftDown.isConnected();
+    inputs.DumperRightUpConnected = dumperRightUp.isConnected();
+    inputs.DumperRightDownConnected = dumperRightDown.isConnected();
     inputs.adjustableHoodConnected = adjustableHood.isConnected();
 
   }
 
-  public void setOutput(double shooterOutput, double HoodOutputLeft, double HoodOutputRight) {
-    shooterFlywheelInnerLeft.set(shooterOutput);
-    shooterFlywheelInnerRight.set(shooterOutput);
-    shooterFlywheelOuterRight.set(shooterOutput);
-    shooterFlywheelOuterLeft.set(shooterOutput);
-    HoodWheelMotorLeft.set(HoodOutputLeft);
-    HoodWheelMotorRight.set(HoodOutputRight);
+  public void setOutput(double dumperOutput, double hoodPosition) {
+    dumperLeftUp.set(dumperOutput);
+    dumperLeftDown.set(dumperOutput);
+    dumperRightUp.set(dumperOutput);
+    dumperRightDown.set(dumperOutput);
+    adjustableHood.setPosition(hoodPosition);
   }
 
-  public void setVelocity(ShooterState desiredState) {
-    setVelocity(desiredState.getFlywheelSpeed(),
-        desiredState.getHoodSpeed(),
-        desiredState.getHoodSpeed());
+  public void setShot(ShooterState desiredState) {
+    setVelocity(desiredState.getLeftDumperSpeed(),
+        desiredState.getRightDumperSpeed(),
+        desiredState.getAdjustableHoodPosition());
   }
 
-  public void setVelocity(double shooterFlywheelSpeed, double shooterHoodSpeedOfLeft,
-      double shooterHoodSpeedOfRight) {
-    setMainWheelSpeed(shooterFlywheelSpeed);
-    setHoodSpeedOfLeft(shooterHoodSpeedOfLeft);
-    setHoodSpeedOfRight(shooterHoodSpeedOfRight);
+  public void setVelocity(double dumperLeftSpeed, double dumperRightSpeed, double adjustableHoodPosition) {
+    setDumperLeftSpeed(dumperLeftSpeed);
+    setDumperRightSpeed(dumperRightSpeed);
+    setAdjustableHoodPosition(adjustableHoodPosition);
   }
 
-  public void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
-    mainFlywheelSetpoint = shooterFlywheelSpeedInRPS;
-    shooterFlywheelInnerLeft.setControl(velShooterLeftRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelInnerRight.setControl(velShooterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterRight.setControl(velShooterOuterRightRequest.withVelocity(mainFlywheelSetpoint));
-    shooterFlywheelOuterLeft.setControl(velShooterOuterLeftRequest.withVelocity(mainFlywheelSetpoint));
+  public void setDumperLeftSpeed(double dumperLeftSpeed) {
+    dumperLeftSetPoint = dumperLeftSpeed;
+    dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(dumperLeftSetPoint));
+    dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(dumperLeftSetPoint));
   }
 
-  public void setHoodSpeedOfLeft(double shooterHoodSpeedInRPS) {
-    HoodSetpointLeft = shooterHoodSpeedInRPS;
-    Logger.recordOutput("/Shooter/Hood/LeftSetPointSpeed",HoodSetpointLeft);
-    HoodWheelMotorLeft.setControl(velHoodLeftRequest.withVelocity(HoodSetpointLeft));
+  public void setDumperRightSpeed(double dumperRightSpeed) {
+    dumperRightSetPoint = dumperRightSpeed;
+    dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(dumperRightSetPoint));
+    dumperRightDown.setControl(velDumperRightDownRequest.withVelocity(dumperRightSetPoint));
   }
 
-  public void setHoodSpeedOfRight(double shooterHoodSpeedInRPS) {
-    HoodSetpointRight = shooterHoodSpeedInRPS;
-    Logger.recordOutput("/Shooter/Hood/RightSetPointSpeed",HoodSetpointRight);
-    HoodWheelMotorRight.setControl(velHoodRightRequest.withVelocity(HoodSetpointRight));
+  
+
+  public void setAdjustableHoodPosition(double positionOfAdjustableHood) {
+    adjustableHoodSetPoint = positionOfAdjustableHood;
+    adjustableHood.setControl(posAdjustableHoodRequest.withPosition(positionOfAdjustableHood));
   }
 
 
@@ -477,31 +475,27 @@ public class ShooterRealDrum implements ShooterIO {
 
   @Override
   public void stop(){
-    stopMainWheel();
-    stopHoodLeftWheel();
-    stopHoodRightWheel();
+    stopDumperLeft();
+    stopDumperRight();
+    stopAdjustableHood();
     setVelocity(0,0,0);
   }
 
-  public void stopMainWheel() {
-    mainFlywheelSetpoint = 0;
-    shooterFlywheelInnerLeft.stopMotor();
-    shooterFlywheelInnerRight.stopMotor();
-    shooterFlywheelOuterRight.stopMotor();
+  public void stopDumperLeft() {
+    dumperLeftSetPoint = 0;
+    dumperLeftUp.stopMotor();
+    dumperLeftDown.stopMotor();
   }
 
-  public void stopHoodLeftWheel() {
-    HoodSetpointLeft = 0;
-    
-    Logger.recordOutput("/Shooter/Hood/LeftSetPointSpeed",HoodSetpointLeft);
-    HoodWheelMotorLeft.stopMotor();
+   public void stopDumperRight() {
+    dumperRightSetPoint = 0;
+    dumperRightUp.stopMotor();
+    dumperRightDown.stopMotor();
   }
 
-  public void stopHoodRightWheel() {
-    HoodSetpointRight = 0;
-    
-    Logger.recordOutput("/Shooter/Hood/RightSetPointSpeed",HoodSetpointRight);
-    HoodWheelMotorRight.stopMotor();
+  public void stopAdjustableHood() {
+    adjustableHoodSetPoint = 0;
+    adjustableHood.stopMotor();
   }
 
   @Override
@@ -513,19 +507,19 @@ public class ShooterRealDrum implements ShooterIO {
 
   /* Characterization */
   public void runCharacterization_Flywheel(double output) {
-    shooterFlywheelInnerLeft.setControl(switch (ClosedLoopOutputType.Voltage) {
+    dumperLeftUp.setControl(switch (ClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    shooterFlywheelInnerRight.setControl(switch (ClosedLoopOutputType.Voltage) {
+    dumperLeftDown.setControl(switch (ClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    shooterFlywheelOuterRight.setControl(switch (ClosedLoopOutputType.Voltage) {
+    dumperRightUp.setControl(switch (ClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
-    shooterFlywheelOuterLeft.setControl(switch (ClosedLoopOutputType.Voltage) {
+    dumperRightDown.setControl(switch (ClosedLoopOutputType.Voltage) {
       case Voltage -> characterizationRequestVoltage.withOutput(output);
       case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
     });
@@ -533,30 +527,30 @@ public class ShooterRealDrum implements ShooterIO {
 
   /** Returns the module velocity in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity_Flywheel() {
-    double avg = (shooterFlywheelInnerLeft.getVelocity().getValue().in(RotationsPerSecond)
-                + shooterFlywheelInnerRight.getVelocity().getValue().in(RotationsPerSecond)
-                + shooterFlywheelOuterLeft.getVelocity().getValue().in(RotationsPerSecond)
-                + shooterFlywheelOuterRight.getVelocity().getValue().in(RotationsPerSecond)) / 4;
+    double avg = (dumperLeftUp.getVelocity().getValue().in(RotationsPerSecond)
+                + dumperLeftDown.getVelocity().getValue().in(RotationsPerSecond)
+                + dumperRightUp.getVelocity().getValue().in(RotationsPerSecond)
+                + dumperRightDown.getVelocity().getValue().in(RotationsPerSecond)) / 4;
     return avg;
   }
 
   /* Characterization */
-  public void runCharacterization_Hood(double output) {
-    HoodWheelMotorLeft.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
-    HoodWheelMotorRight.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
-      case Voltage -> characterizationRequestVoltage.withOutput(output);
-      case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-    });
-  }
+  // public void runCharacterization_Hood(double output) {
+  //   HoodWheelMotorLeft.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
+  //     case Voltage -> characterizationRequestVoltage.withOutput(output);
+  //     case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
+  //   });
+  //   HoodWheelMotorRight.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
+  //     case Voltage -> characterizationRequestVoltage.withOutput(output);
+  //     case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
+  //   });
+ // }
 
-  /** Returns the module velocity in rotations/sec (Phoenix native units). */
-  public double getFFCharacterizationVelocity_Hood() {
-    double avg = (HoodWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
-        HoodWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
-    return avg;
-  }
+  // /** Returns the module velocity in rotations/sec (Phoenix native units). */
+  // public double getFFCharacterizationVelocity_Hood() {
+  //   double avg = (HoodWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
+  //       HoodWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
+  //   return avg;
+  // }
 
 }

@@ -83,8 +83,8 @@ public class RobotState {
     public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
       Constants.ShooterConstants.ValuesOfKnownShots.distance,
       Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.mainFlyWheelSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.dumperSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.hoodPosition,
       false);
 
   public Pose2d robotPose = new Pose2d();

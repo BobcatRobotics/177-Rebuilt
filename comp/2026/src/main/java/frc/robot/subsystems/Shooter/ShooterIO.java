@@ -6,55 +6,68 @@ public interface ShooterIO {
 
   @AutoLog
   class ShooterIOInputs {
-    public double velocityOfMainFlywheelLeftRPS = 0;
-    public double velocityOfMainFlywheelRightRPS = 0;
-    public double velocityOfHoodWheelMotorLeftRPS = 0;
-    public double velocityOfHoodWheelMotorRightRPS = 0;
-    public double velocityOfMainFlywheelOuterRightRPS = 0;
-    public double velocityOfMainFlywheelOuterLeftRPS = 0;
-    public double accelerationOfMainFlywheelLeft = 0;
-    public double accelerationOfMainFlywheelRight = 0;
-    public double accelerationOfMainFlywheelOuterRight = 0;
-    public double accelerationOfMainFlywheelOuterLeft = 0;
-    public double accelerationOfHoodLeft = 0;
-    public double statorCurrentOfHoodLeftAmps = 0;
-    public double statorCurrentOfHoodRightAmps = 0;
-    public double statorCurrentOfMainFlywheelLeftAmps = 0;
-    public double statorCurrentOfMainFlywheelRightAmps = 0;
-    public double statorCurrentOfMainFlywheelOuterRightAmps = 0;
-    public double statorCurrentOfMainFlywheelOuterLeftAmps = 0;
-    public boolean HoodWheelMotorRightConnected = false;
-    public boolean HoodWheelMotorLeftConnected = false;
-    public boolean shooterFlywheelInnerLeftConnected = false;
-    public boolean shooterFlywheelInnerRightConnected = false;
-    public boolean shooterFlywheelOuterRightConnected = false;
-    public boolean shooterFlywheelOuterLeftConnected = false;
-    public double outputOfHoodLeftVolts = 0;
-    public double outputOfHoodRightVolts = 0;
-    public double outputOfMainFlywheelLeftVolts = 0;
-    public double outputOfMainFlywheelRightVolts = 0;
-    public double outputOfMainFlywheelOuterRightVolts = 0;
-    public double outputOfMainFlywheelOuterLeftVolts = 0;
+    public double velocityOfDumperLeftUpRPS = 0;
+    public double velocityOfDumperLeftDownRPS = 0;
+    // public double velocityOfHoodWheelMotorLeftRPS = 0;
+    // public double velocityOfHoodWheelMotorRightRPS = 0;
+    public double velocityOfDumperRightUpRPS = 0;
+    public double velocityOfDumperRightDownRPS = 0;
+
+    public double accelerationOfDumperLeftUp = 0;
+    public double accelerationOfDumperLeftDown = 0;
+    public double accelerationOfDumperRightUp = 0;
+    public double accelerationOfDumperRightDown = 0;
+    public double accelerationOfAdjustableHood = 0;
+    // public double accelerationOfHoodLeft = 0;
+    public double statorCurrentOfDumperLeftUp = 0;
+    // public double statorCurrentOfHoodRightAmps = 0;
+    public double statorCurrentOfDumperLeftDown = 0;
+    public double statorCurrentOfDumperRightUp = 0;
+    public double statorCurrentOfDumperRightDown = 0;
+    // public double statorCurrentOfMainFlywheelOuterLeftAmps = 0;
+    // public boolean HoodWheelMotorRightConnected = false;
+    // public boolean HoodWheelMotorLeftConnected = false;
+    public boolean DumperLeftUpConnected = false;
+    public boolean DumperLeftDownConnected = false;
+    public boolean DumperRightUpConnected = false;
+    public boolean DumperRightDownConnected = false;
+    // public double outputOfHoodLeftVolts = 0;
+    // public double outputOfHoodRightVolts = 0;
+    public double outputOfDumperLeftUpVolts = 0;
+    public double outputOfDumperLeftDownVolts = 0;
+    public double outputOfDumperRightUpVolts = 0;
+    public double outputOfDumperRightDownVolts = 0;
+    public double outputOfAdjustableHoodVolts = 0;
+
+    public double statorCurrentOfAdjustableHoodPositionAmps = 0; 
+    public boolean adjustableHoodConnected = false; 
+    public double velocityOfAdjustableHoodPositionRPS = 0;
+    public double positionOfAdjustableHood = -1; 
+
   }
 
   default void updateInputs(ShooterIOInputs inputs) {
   }
 
-  public default void setVelocity(ShooterState desiredState) {
+  public default void setShot(ShooterState desiredState) {
   }
 
-  public default void setVelocity(double ShooterSpeed, double ShooterHoodSpeedLeft,
-      double ShooterHoodSpeedRight) {
+  public default void setVelocity(double dumperLeftSpeed, double dumperRightSpeed,
+      double adjustableHoodPositon) {
   }
 
-  public default void setMainWheelSpeed(double shooterFlywheelSpeedInRPS) {
+  public default void setDumperLeftSpeed(double speed) {
   }
 
-  public default void setHoodSpeedRight(double shooterHoodSpeedInRPS) {
+  public default void setDumperRightSpeed(double speed) {
   }
 
-  public default void setHoodSpeedLeft(double shooterHoodSpeedInRPS) {
+  public default void setAdjustableHoodPosition(double position){
+
   }
+
+  // public default void setHoodSpeedLeft(double shooterHoodSpeedInRPS) {
+  // }
 
   public default void holdPosition() {
 
@@ -67,10 +80,14 @@ public interface ShooterIO {
   default void stop() {
   }
 
-  public default void stopMainWheel() {
+  public default void stopDumperLeft() {
   }
 
-  public default void stopHoodWheel() {
+  public default void stopDumperRight() {
+
+  }
+
+  public default void stopAdjustableHood(){
 
   }
 
@@ -85,18 +102,18 @@ public interface ShooterIO {
     return 0.0;
   }
 
-  public default void runCharacterization_Hood(double output) {
-  }
+  // public default void runCharacterization_Hood(double output) {
+  // }
 
-  public default double getFFCharacterizationVelocity_Hood() {
-    return 0.0;
-  }
+  // public default double getFFCharacterizationVelocity_Hood() {
+  //   return 0.0;
+  // }
 
-  public default double getVelocityHood() {
-    return 0.0;
-  }
+  // public default double getVelocityHood() {
+  //   return 0.0;
+  // }
 
-  public default double getVelocityMainFlywheel() {
-    return 0.0;
-  }
+  // public default double getVelocityMainFlywheel() {
+  //   return 0.0;
+  // }
 }

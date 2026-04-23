@@ -48,14 +48,14 @@ public class Shooter extends SubsystemBase {
         null, // timeout
         state -> Logger.recordOutput("Shooter/Intake/SysIdState", state.toString()));
 
-    sysIdRegistry.register("SysIdStateFlywheel", new SysIdModule(
-        "Shooter/SysIdStateFlywheel",
-        this,
-        this::runCharacterization_Flywheel, flyWheelSysIdconfig));
-    sysIdRegistry.register("SysIdStateHood", new SysIdModule(
-        "Shooter/SysIdStateHood",
-        this,
-        this::runCharacterization_Hood, HoodSysIdconfig));
+    // sysIdRegistry.register("SysIdStateFlywheel", new SysIdModule(
+    //     "Shooter/SysIdStateFlywheel",
+    //     this,
+    //     this::runCharacterization_Flywheel, flyWheelSysIdconfig));
+    // sysIdRegistry.register("SysIdStateHood", new SysIdModule(
+    //     "Shooter/SysIdStateHood",
+    //     this,
+    //     this::runCharacterization_Hood, HoodSysIdconfig));
 
     this.io = io;
 
@@ -128,28 +128,28 @@ public class Shooter extends SubsystemBase {
 
   public void setState(ShooterState state) {
     desiredState = state;
-    setVelocity(desiredState.getCurrentState());
+    setShot(desiredState.getCurrentState());
   }
 
-  private void setVelocity(ShooterState.State state) {
+  private void setShot(ShooterState.State state) {
     desiredState.setState(state);
-    io.setVelocity(desiredState);
+    io.setShot(desiredState);
   }
 
-  private void setVelocity(double shooterSpeed, double shooterHoodSpeedLeft, double shooterHoodSpeedRight) {
-    io.setVelocity(shooterSpeed, shooterHoodSpeedLeft, shooterHoodSpeedRight);
+  private void setVelocity(double dumperLeftSpeed, double dumperRightSpeed, double adjustableHoodPosition) {
+    io.setVelocity(dumperLeftSpeed, dumperRightSpeed, adjustableHoodPosition);
   }
 
-  public void setMainWheelSpeed(double shooterFlywheelSpeed) {
-    io.setMainWheelSpeed(shooterFlywheelSpeed);
+  public void dumperLeftSpeed(double dumperLeftSpeed) {
+    io.setDumperLeftSpeed(dumperLeftSpeed);
   }
 
-  public void setHoodSpeedLeft(double shooterHoodSpeed) {
-    io.setHoodSpeedLeft(shooterHoodSpeed);
+  public void dumperRightSpeed(double dumperRightSpeed) {
+    io.setDumperRightSpeed(dumperRightSpeed);
   }
 
-  public void setHoodSpeedRight(double shooterHoodSpeed) {
-    io.setHoodSpeedRight(shooterHoodSpeed);
+  public void setAdjustableHoodPosition(double adjustableHoodPosition) {
+    io.setAdjustableHoodPosition(adjustableHoodPosition);
   }
 
   public void holdPosition() {
@@ -161,13 +161,17 @@ public class Shooter extends SubsystemBase {
     io.stop();
   }
 
-  public void stopMainWheel() {
-    io.stopMainWheel();
+  public void stopDumperLeft() {
+    io.stopDumperLeft();
   }
 
-  public void stopHoodWheel() {
-    io.stopHoodWheel();
+  public void stopDumperRight() {
+    io.stopDumperRight();
 
+  }
+
+  public void stopAdjustableHood(){
+    io.stopAdjustableHood();
   }
 
 
@@ -189,18 +193,18 @@ public class Shooter extends SubsystemBase {
     return output;
   }
 
-  public void runCharacterization_Hood(double output) {
-    io.runCharacterization_Hood(output);
-  }
+  // public void runCharacterization_Hood(double output) {
+  //   io.runCharacterization_Hood(output);
+  // }
 
   /**
    * Returns the average velocity of the modules in rotations/sec (Phoenix native
    * units).
    */
-  public double getFFCharacterizationVelocity_Hood() {
-    double output = io.getFFCharacterizationVelocity_Hood();
-    return output;
-  }
+  // public double getFFCharacterizationVelocity_Hood() {
+  //   double output = io.getFFCharacterizationVelocity_Hood();
+  //   return output;
+  // }
 
 
   public SysIdRegistry getRegistry() {
@@ -211,8 +215,9 @@ public class Shooter extends SubsystemBase {
   public void setIdle() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.IDLE);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-    goal.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -220,8 +225,9 @@ public class Shooter extends SubsystemBase {
   public void manualSpinUp() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -229,8 +235,9 @@ public class Shooter extends SubsystemBase {
   public void manualShootFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-    goal.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -239,8 +246,9 @@ public class Shooter extends SubsystemBase {
   public void spinUp() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
-    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -248,8 +256,9 @@ public class Shooter extends SubsystemBase {
   public void shootFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed();
-    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed();
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -257,64 +266,68 @@ public class Shooter extends SubsystemBase {
   public void reverseFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();
-    goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed() * -1;
-    goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed() * -1;
+    // goal.flywheelSpeed = RobotState.getInstance().getShooterState().getFlywheelSpeed() * -1;
+    // goal.hoodSpeed = RobotState.getInstance().getShooterState().getHoodSpeed() * -1;
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed()*-1;
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed()*-1;
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
 
   public boolean atSpeed() {
     boolean isAtTolerance = false;
-    boolean isMainFlywheelWithinTolerance = false;
-    boolean isHoodWheelWithinTolerance = false;
+    boolean isDumperLeftWithinTolerance = false;
+    boolean isDumperRightWithinTolerance = false;
+    boolean isAdjustableHoodWithinTolerance = false;
 
-    double MAIN_SPEED_TOLERANCE = 5;
-    double HOOD_SPEED_TOLERANCE = 2;
-    isMainFlywheelWithinTolerance = Math.abs(getVelocityMainFlywheel()
-        - RobotState.getInstance().getShooterState().getFlywheelSpeed()) <= MAIN_SPEED_TOLERANCE;
-    isHoodWheelWithinTolerance = Math
-        .abs(getVelocityHood() - RobotState.getInstance().getShooterState().getHoodSpeed()) <= HOOD_SPEED_TOLERANCE;
-    if (isMainFlywheelWithinTolerance && isHoodWheelWithinTolerance) {
+    double MAIN_SPEED_TOLERANCE = 5; //Using for both dumpers
+    double HOOD_POSITION_TOLERANCE = 1;
+    isDumperLeftWithinTolerance = Math.abs(getVelocityDumperLeft()
+        - RobotState.getInstance().getShooterState().getLeftDumperSpeed()) <= MAIN_SPEED_TOLERANCE;
+    isDumperRightWithinTolerance = Math
+        .abs(getVelocityOfDumperRight() - RobotState.getInstance().getShooterState().getRightDumperSpeed()) <= MAIN_SPEED_TOLERANCE;
+    if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance) {
       isAtTolerance = true;
     }
     Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
     return isAtTolerance;
   }
 
-  public double getVelocityHood() {
+  public double getVelocityDumperLeft() {
     int count = 0;
     double avg = 0;
-    if (inputs.velocityOfHoodWheelMotorLeftRPS > 0) {
-      avg += inputs.velocityOfHoodWheelMotorLeftRPS;
+    if (inputs.velocityOfDumperLeftUpRPS > 0) {
+      avg += inputs.velocityOfDumperLeftUpRPS;
       count += 1;
     }
-    if (inputs.velocityOfHoodWheelMotorRightRPS > 0) {
-      avg += inputs.velocityOfHoodWheelMotorRightRPS;
+    if (inputs.velocityOfDumperLeftDownRPS > 0) {
+      avg += inputs.velocityOfDumperLeftDownRPS;
       count += 1;
     }
 
     return avg / count;
   }
 
-  public double getVelocityMainFlywheel() {
+  public double getVelocityOfDumperRight() {
     int count = 0;
     double avg = 0;
-    if (inputs.velocityOfMainFlywheelLeftRPS > 0) {
-      avg += inputs.velocityOfMainFlywheelLeftRPS;
+    if (inputs.velocityOfDumperRightUpRPS > 0) {
+      avg += inputs.velocityOfDumperRightUpRPS;
       count += 1;
     }
-    if (inputs.velocityOfMainFlywheelRightRPS > 0) {
-      avg += inputs.velocityOfMainFlywheelRightRPS;
+    if (inputs.velocityOfDumperRightDownRPS > 0) {
+      avg += inputs.velocityOfDumperRightDownRPS;
       count += 1;
     }
-    if (inputs.velocityOfMainFlywheelOuterRightRPS > 0) {
-      avg += inputs.velocityOfMainFlywheelOuterRightRPS;
-      count += 1;
-    }
-    if (inputs.velocityOfMainFlywheelOuterLeftRPS > 0) {
-      avg += inputs.velocityOfMainFlywheelOuterLeftRPS;
-      count += 1;
-    }
+    // if (inputs.velocityOfMainFlywheelOuterRightRPS > 0) {
+    //   avg += inputs.velocityOfMainFlywheelOuterRightRPS;
+    //   count += 1;
+    // }
+    // if (inputs.velocityOfMainFlywheelOuterLeftRPS > 0) {
+    //   avg += inputs.velocityOfMainFlywheelOuterLeftRPS;
+    //   count += 1;
+    // }
     return avg / count;
   }
 }

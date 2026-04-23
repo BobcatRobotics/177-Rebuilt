@@ -75,8 +75,9 @@ import frc.robot.subsystems.Intake.IntakeReal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
-import frc.robot.subsystems.Shooter.ShooterRealQuad;
-import frc.robot.subsystems.Shooter.ShooterSim;
+import frc.robot.subsystems.Shooter.ShooterRealDrum;
+// import frc.robot.subsystems.Shooter.ShooterRealQuad;
+// import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveAutoOptions;
@@ -165,7 +166,7 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
 
-                                m_Shooter = new Shooter(new ShooterRealQuad());
+                                m_Shooter = new Shooter(new ShooterRealDrum());
                                 m_Shooter.applyState();
 
                                 m_Carwash = new Carwash(new CarwashReal());
@@ -183,7 +184,7 @@ public class RobotContainer {
                                                 new ModuleIOSim(TunerConstants.FrontRight),
                                                 new ModuleIOSim(TunerConstants.BackLeft),
                                                 new ModuleIOSim(TunerConstants.BackRight));
-                                m_Shooter = new Shooter(new ShooterSim());
+                                m_Shooter = new Shooter(new ShooterRealDrum());
                                 m_Shooter.applyState();
 
                                 m_Carwash = new Carwash(new CarwashSim());
@@ -436,7 +437,7 @@ public class RobotContainer {
                 }, intake).withTimeout(runTestTime)).andThen(new InstantCommand(() -> intake.stop()));
                 devController.leftBumper().whileTrue(
                                 swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
-                devController.rightBumper().whileTrue(characterizeAll());
+                // devController.rightBumper().whileTrue(characterizeAll());
 
                 if (Robot.isSimulation()) {
 
@@ -448,30 +449,30 @@ public class RobotContainer {
 
         }
 
-        public Command characterizeAll() {
+        // public Command characterizeAll() {
 
-                // Carwash Flywheel
-                Command carwashFeeder = new InstantCommand(() -> {
-                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;
-                }).andThen(carwashCharacterizationCommands.feedforwardCharacterization_Intake(m_Carwash))
-                                .withTimeout(15).andThen(new InstantCommand(() -> m_Carwash.stopFeedingFuel()));
-                // Shooter Flywheels
-                Command shooterMainFlywheel = new InstantCommand(() -> {
-                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;
-                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter))
-                                .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopMainWheel()));
-                Command shooterHooder = new InstantCommand(() -> {
-                        RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;
-                }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15)
-                                .andThen(new InstantCommand(() -> m_Shooter.stopHoodWheel()));
-                // Hopper Flywheels
-                Command hopperMain = new InstantCommand(() -> {
-                        RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;
-                }).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15)
-                                .andThen(new InstantCommand(() -> m_Hopper.stop()));
+        //         // Carwash Flywheel
+        //         Command carwashFeeder = new InstantCommand(() -> {
+        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;
+        //         }).andThen(carwashCharacterizationCommands.feedforwardCharacterization_Intake(m_Carwash))
+        //                         .withTimeout(15).andThen(new InstantCommand(() -> m_Carwash.stopFeedingFuel()));
+        //         // Shooter Flywheels
+        //         Command shooterMainFlywheel = new InstantCommand(() -> {
+        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;
+        //         }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter))
+        //                         .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopMainWheel()));
+        //         Command shooterHooder = new InstantCommand(() -> {
+        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;
+        //         }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15)
+        //                         .andThen(new InstantCommand(() -> m_Shooter.stopHoodWheel()));
+        //         // Hopper Flywheels
+        //         Command hopperMain = new InstantCommand(() -> {
+        //                 RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;
+        //         }).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15)
+        //                         .andThen(new InstantCommand(() -> m_Hopper.stop()));
 
-                return carwashFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
-        }
+        //         return carwashFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
+        // }
 
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -12,8 +12,9 @@ public class ShooterState {
 
   /** Output goal for the shooter subsystem */
   public static class ShooterGoal {
-    public double flywheelSpeed;
-    public double hoodSpeed;
+    public double leftDumperSpeed;
+    public double rightDumperSpeed;
+    public double hoodPosition;
   }
 
   public enum State {
@@ -41,9 +42,10 @@ public class ShooterState {
   /**
    * Set all shooter speeds at once and switch to MANUAL mode
    */
-  public void setManualSpeeds(
-      double flywheelSpeed,
-      double hoodSpeed) {
+  public void setManualShot(
+      double leftDumperSpeed,
+      double rightDumperSpeed,
+      double hoodPosition) {
     currentState = State.MANUAL;
   }
 
@@ -52,25 +54,30 @@ public class ShooterState {
 
     switch (currentState) {
       case IDLE -> {
-        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.idleFlywheelSpeedRPS;
-        currentSetpoints.hoodSpeed = Constants.ShooterConstants.idleHoodSpeedRPS;
+        currentSetpoints.leftDumperSpeed = Constants.ShooterConstants.idleDumperSpeed;
+        currentSetpoints.rightDumperSpeed = Constants.ShooterConstants.idleDumperSpeed;
+        currentSetpoints.hoodPosition = Constants.ShooterConstants.idleHoodPosition;
       }
       case
           INTERPOLATING -> {
         // Placeholder – typically filled in by vision / interpolation
         double hubDistance = RobotState.getInstance().hubDistance;
-        currentSetpoints.flywheelSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
-        currentSetpoints.hoodSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        currentSetpoints.leftDumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        currentSetpoints.rightDumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        // currentSetpoints.hoodSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);;
 
       }
       case TARGETING -> {
         // Placeholder – typically filled in by vision / interpolation
-        currentSetpoints.flywheelSpeed = Constants.ShooterConstants.targetFlywheelSpeedRPS;
-        currentSetpoints.hoodSpeed = Constants.ShooterConstants.targetHoodSpeedRPS;
+        currentSetpoints.leftDumperSpeed = Constants.ShooterConstants.targetDumperSpeed;
+        currentSetpoints.rightDumperSpeed = Constants.ShooterConstants.targetDumperSpeed;
+        currentSetpoints.hoodPosition = Constants.ShooterConstants.targetHoodPosition;
       }
     }        
-    Logger.recordOutput("Shooter/Flywheel/GoalSpeeds", currentSetpoints.flywheelSpeed);
-    Logger.recordOutput("Shooter/Hood/GoalSpeeds", currentSetpoints.hoodSpeed);
+    Logger.recordOutput("Shooter/rightDumper/GoalSpeeds", currentSetpoints.leftDumperSpeed);
+    Logger.recordOutput("Shooter/leftDumper/GoalSpeeds", currentSetpoints.rightDumperSpeed);
+    Logger.recordOutput("Shooter/adjustableHood/GoalPosition", currentSetpoints.hoodPosition);
   }
 
   public void setCurrentSetPoints(ShooterGoal goal) {
@@ -81,11 +88,15 @@ public class ShooterState {
     return currentState;
   }
 
-  public double getFlywheelSpeed() {
-    return currentSetpoints.flywheelSpeed;
+  public double getLeftDumperSpeed() {
+    return currentSetpoints.leftDumperSpeed;
   }
 
-  public double getHoodSpeed() {
-    return currentSetpoints.hoodSpeed;
+  public double getRightDumperSpeed() {
+    return currentSetpoints.rightDumperSpeed;
+  }
+
+  public double getAdjustableHoodPosition(){
+    return currentSetpoints.hoodPosition;
   }
 }

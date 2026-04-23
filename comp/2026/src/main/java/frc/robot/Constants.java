@@ -61,11 +61,11 @@ public final class Constants {
     }
     public final static class ShooterConstants {
 
-        public static final double idleFlywheelSpeedRPS = 0;
-        public static final double idleHoodSpeedRPS = 0;
-//100 distance
-        public static final double targetFlywheelSpeedRPS = 40;
-        public static final double targetHoodSpeedRPS = 19;
+        public static final double idleDumperSpeed = 0;
+        public static final double idleHoodPosition = 0;
+//who knows what distance
+        public static final double targetDumperSpeed = 40;
+        public static final double targetHoodPosition = 19;
 
         public final static class SharedFlywheel {
             public static final boolean isInvertedInnerLeft = false;
@@ -135,8 +135,8 @@ public final class Constants {
         public final static class Right {
             // ID Constants
             //public static final int HoodID = 17;
-            public static final int dumperRightUp = 11; 
-            public static final int dumperRightDown = 14; 
+            public static final int dumperRightUpID = 11; 
+            public static final int dumperRightDownID = 14; 
             //Motor Constants
             public static final double kdumperRightMotorkP = 2.8;
             public static final double kdumperRightMotorkI = 0.0;
@@ -150,12 +150,20 @@ public final class Constants {
             public static final boolean isCoast = true;
         }
 
+        // public final static class ValuesOfKnownShots{
+        //     public static final double offsetDistanceInMeters = 0.92837;
+        //     public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
+        //     public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
+        //     public static final double[] mainFlyWheelSpeed = {  55, 45, 40, 40,  40,  41.5 }; // RPS
+        //     public static final double[] hoodSpeed =         { -24,  2, 15, 17,  19,  22.0 }; // RPS
+        // }
+
         public final static class ValuesOfKnownShots{
             public static final double offsetDistanceInMeters = 0.92837;
             public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
             public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
-            public static final double[] mainFlyWheelSpeed = {  55, 45, 40, 40,  40,  41.5 }; // RPS
-            public static final double[] hoodSpeed =         { -24,  2, 15, 17,  19,  22.0 }; // RPS
+            public static final double[] dumperSpeed = {0, 0, 0, 0,  0,  0 }; // RPS
+            public static final double[] hoodPosition =         { 0,  0, 0, 0,  0,  0 }; // RPS
         }
     }
 

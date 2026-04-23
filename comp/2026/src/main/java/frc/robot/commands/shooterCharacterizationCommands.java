@@ -151,18 +151,19 @@ public class shooterCharacterizationCommands {
                 "Flywheel");
     }
 
-    public static Command feedforwardCharacterization_Hood(Shooter shooter) {
-        return characterize(
-                shooter,
-                () -> shooter.runCharacterization_Hood(0.0),
-                shooter::runCharacterization_Hood,
-                shooter::getFFCharacterizationVelocity_Hood,
-                "Shooter/Characterization/Hood",
-                "Hood");
-    }
+    // public static Command feedforwardCharacterization_Hood(Shooter shooter) {
+    //     return characterize(
+    //             shooter,
+    //             () -> shooter.runCharacterization_Hood(0.0),
+    //             shooter::runCharacterization_Hood,
+    //             shooter::getFFCharacterizationVelocity_Hood,
+    //             "Shooter/Characterization/Hood",
+    //             "Hood");
+    // }
 
 
     public static Command characterizeForAll(Shooter shooter) {
-        return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Hood(shooter));
+        // return feedforwardCharacterization_Flywheel(shooter).andThen(feedforwardCharacterization_Hood(shooter));
+        return feedforwardCharacterization_Flywheel(shooter);
     }
 }
