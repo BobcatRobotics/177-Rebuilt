@@ -33,63 +33,64 @@ import org.bobcatrobotics.Util.Tunables.Gains;
 import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public class ShooterRealDrum implements ShooterIO {
-  private TalonFX shooterFlywheelInnerLeft;
-  public ModuleConfigurator flywheelConfigLeft;
-  private TalonFX shooterFlywheelInnerRight;
-  public ModuleConfigurator flywheelConfigRight;
-  private TalonFX shooterFlywheelOuterRight;
-  public ModuleConfigurator flywheelConfigOuterRight;
-  private TalonFX shooterFlywheelOuterLeft;
-  public ModuleConfigurator flywheelConfigOuterLeft;
-  private TalonFX HoodWheelMotorLeft;
-  public ModuleConfigurator HoodMConfigLeft;
-  private TalonFX HoodWheelMotorRight;
-  public ModuleConfigurator HoodMConfigRight;
+  private TalonFX dumperLeftUp;
+  public ModuleConfigurator dumperLeftUpConfig;
+  private TalonFX dumperLeftDown;
+  public ModuleConfigurator dumperLeftDownConfig;
+  private TalonFX dumperRightUp;
+  public ModuleConfigurator dumperRightUpConfig;
+  private TalonFX dumperRightDown;
+  public ModuleConfigurator dumperRightDownConfig;
+  // private TalonFX HoodWheelMotorLeft;
+  // public ModuleConfigurator HoodMConfigLeft;
+  // private TalonFX HoodWheelMotorRight;
+  // public ModuleConfigurator HoodMConfigRight;
   private TalonFX adjustableHood;
   private ModuleConfigurator adjustableHoodConfigurator;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
-  private VelocityTorqueCurrentFOC velShooterLeftRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterRightRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterOuterRightRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velShooterOuterLeftRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
-  private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velDumperLeftUpRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velDumperLeftDownRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velDumperRightUpRequest = new VelocityTorqueCurrentFOC(0);
+  private VelocityTorqueCurrentFOC velDumperRightDownRequest = new VelocityTorqueCurrentFOC(0);
+  // private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
+  // private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
   private PositionTorqueCurrentFOC posAdjustableHoodRequest = new PositionTorqueCurrentFOC(0);
   
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-  private StatusSignal<AngularVelocity> velocityOfMainFlywhelLeftRPS;
-  private StatusSignal<Current> statorCurrentOfMainFlywheelLeftAmps;
-  private StatusSignal<Voltage> outputOfMainFlywheelLeftVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelLeft;
-  private StatusSignal<AngularVelocity> velocityOfMainFlywheelRightRPS;
-  private StatusSignal<Current> statorCurrentOfMainFlywheelRightAmps;
-  private StatusSignal<Voltage> outputOfMainFlywheelRightVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelRight;
+  private StatusSignal<AngularVelocity> velocityOfDumperLeftUpRPS;
+  private StatusSignal<Current> statorCurrentOfOfDumperLeftUpAmps;
+  private StatusSignal<Voltage> outputOfDumperLeftUpVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperLeftUp;
 
+  private StatusSignal<AngularVelocity> velocityOfDumperLeftDownRPS;
+  private StatusSignal<Current> statorCurrentOfOfDumperLeftDownAmps;
+  private StatusSignal<Voltage> outputOfDumperLeftDownVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperLeftDown;
+  
+  // private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorLeftRPS;
+  // private StatusSignal<Current> statorCurrentOfHoodLeftAmps;
+  // private StatusSignal<Voltage> outputOfHoodLeftVolts;
+  // private StatusSignal<AngularAcceleration> accelerationOfHoodLeft;
 
-  private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorLeftRPS;
-  private StatusSignal<Current> statorCurrentOfHoodLeftAmps;
-  private StatusSignal<Voltage> outputOfHoodLeftVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfHoodLeft;
-  private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorRightRPS;
-  private StatusSignal<Current> statorCurrentOfHoodRightAmps;
-  private StatusSignal<Voltage> outputOfHoodRightVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfHoodRight;
+  // private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorRightRPS;
+  // private StatusSignal<Current> statorCurrentOfHoodRightAmps;
+  // private StatusSignal<Voltage> outputOfHoodRightVolts;
+  // private StatusSignal<AngularAcceleration> accelerationOfHoodRight;
 
-  private StatusSignal<AngularVelocity> velocityOfMainFlywheelOuterRightRPS;
-  private StatusSignal<Current> statorCurrentOfMainFlywheelOuterRightAmps;
-  private StatusSignal<Voltage> outputOfMainFlywheelOuterRightVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelOuterRight;
+  private StatusSignal<AngularVelocity> velocityOfDumperRightUpRPS;
+  private StatusSignal<Current> statorCurrentOfOfDumperRightUpAmps;
+  private StatusSignal<Voltage> outputOfDumperRightUpVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperRightUp;
 
-  private StatusSignal<AngularVelocity> velocityOfMainFlywheelOuterLeftRPS;
-  private StatusSignal<Current> statorCurrentOfMainFlywheelOuterLeftAmps;
-  private StatusSignal<Voltage> outputOfMainFlywheelOuterLeftVolts;
-  private StatusSignal<AngularAcceleration> accelerationOfMainFlywheelOuterLeft;
+  private StatusSignal<AngularVelocity> velocityOfDumperRightDownRPS;
+  private StatusSignal<Current> statorCurrentOfOfDumperRightDownAmps;
+  private StatusSignal<Voltage> outputOfDumperRightDownVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperRightDown;
 
   private StatusSignal<AngularVelocity> velocityOfAdjustableHoodPositionRPS;
   private StatusSignal<Current> statorCurrentOfAdjustableHoodPositionAmps;
@@ -98,63 +99,71 @@ public class ShooterRealDrum implements ShooterIO {
 
 
 
-  public double mainFlywheelSetpoint = 0;
-  public double intakeSetpoint = 0;
-  public double HoodSetpointRight = 0;
-  public double HoodSetpointLeft = 0;
+  public double dumperLeftUpSetPoint = 0;
+  public double dumperLeftDownSetPoint = 0;
+  public double dumperRightUpSetPoint = 0;
+  public double dumperRightDownSetPoint = 0;
+  public double adjustableHoodSetPoint = 0;
 
   public ShooterRealDrum() {
     // Flywheel Configuration
-    Gains flywheelGains = new Gains.Builder()
-        .kP(Constants.ShooterConstants.SharedFlywheel.kshooterMainkP)
-        .kI(Constants.ShooterConstants.SharedFlywheel.kshooterMainkI)
-        .kD(Constants.ShooterConstants.SharedFlywheel.kshooterMainkD)
-        .kS(Constants.ShooterConstants.SharedFlywheel.kshooterMainkS)
-        .kV(Constants.ShooterConstants.SharedFlywheel.kshooterMainkV)
-        .kA(Constants.ShooterConstants.SharedFlywheel.kshooterMainkA).build();
-    Gains HoodLeftGains = new Gains.Builder()
-        .kP(Constants.ShooterConstants.Left.kHoodMotorkP)
-        .kI(Constants.ShooterConstants.Left.kHoodMotorkI)
-        .kD(Constants.ShooterConstants.Left.kHoodMotorkD)
-        .kS(Constants.ShooterConstants.Left.kHoodMotorkS)
-        .kV(Constants.ShooterConstants.Left.kHoodMotorkV)
-        .kA(Constants.ShooterConstants.Left.kHoodMotorkA).build();
-    Gains HoodRightGains = new Gains.Builder()
-        .kP(Constants.ShooterConstants.Right.kHoodMotorkP)
-        .kI(Constants.ShooterConstants.Right.kHoodMotorkI)
-        .kD(Constants.ShooterConstants.Right.kHoodMotorkD)
-        .kS(Constants.ShooterConstants.Right.kHoodMotorkS)
-        .kV(Constants.ShooterConstants.Right.kHoodMotorkV)
-        .kA(Constants.ShooterConstants.Right.kHoodMotorkA).build();
+    Gains dumperLeftUpGains = new Gains.Builder()
+        .kP(Constants.ShooterConstants.Left.kdumperLeftMotorkP)
+        .kI(Constants.ShooterConstants.Left.kdumperLeftMotorkI)
+        .kD(Constants.ShooterConstants.Left.kdumperLeftMotorkD)
+        .kS(Constants.ShooterConstants.Left.kdumperLeftMotorkS)
+        .kV(Constants.ShooterConstants.Left.kdumperLeftMotorkV)
+        .kA(Constants.ShooterConstants.Left.kdumperLeftMotorkA).build();
+    Gains dumperLeftDownGains = new Gains.Builder()
+        .kP(Constants.ShooterConstants.Left.kdumperLeftMotorkP)
+        .kI(Constants.ShooterConstants.Left.kdumperLeftMotorkI)
+        .kD(Constants.ShooterConstants.Left.kdumperLeftMotorkD)
+        .kS(Constants.ShooterConstants.Left.kdumperLeftMotorkS)
+        .kV(Constants.ShooterConstants.Left.kdumperLeftMotorkV)
+        .kA(Constants.ShooterConstants.Left.kdumperLeftMotorkA).build();
+    Gains dumperRightUpGains = new Gains.Builder()
+        .kP(Constants.ShooterConstants.Right.kdumperRightMotorkP)
+        .kI(Constants.ShooterConstants.Right.kdumperRightMotorkI)
+        .kD(Constants.ShooterConstants.Right.kdumperRightMotorkD)
+        .kS(Constants.ShooterConstants.Right.kdumperRightMotorkS)
+        .kV(Constants.ShooterConstants.Right.kdumperRightMotorkV)
+        .kA(Constants.ShooterConstants.Right.kdumperRightMotorkA).build();
+    Gains dumperRightDownGains = new Gains.Builder()
+        .kP(Constants.ShooterConstants.Right.kdumperRightMotorkP)
+        .kI(Constants.ShooterConstants.Right.kdumperRightMotorkI)
+        .kD(Constants.ShooterConstants.Right.kdumperRightMotorkD)
+        .kS(Constants.ShooterConstants.Right.kdumperRightMotorkS)
+        .kV(Constants.ShooterConstants.Right.kdumperRightMotorkV)
+        .kA(Constants.ShooterConstants.Right.kdumperRightMotorkA).build();
     Gains adjustableHoodGains = new Gains.Builder()
-        .kP(Constants.ShooterConstants.Right.kHoodMotorkP)
-        .kI(Constants.ShooterConstants.Right.kHoodMotorkI)
-        .kD(Constants.ShooterConstants.Right.kHoodMotorkD)
-        .kS(Constants.ShooterConstants.Right.kHoodMotorkS)
-        .kV(Constants.ShooterConstants.Right.kHoodMotorkV)
-        .kA(Constants.ShooterConstants.Right.kHoodMotorkA).build();
+        .kP(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkP)
+        .kI(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkI)
+        .kD(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkD)
+        .kS(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkS)
+        .kV(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkV)
+        .kA(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkA).build();
 
-    setupLeftFlywheel(flywheelGains);
-    setupRightFlywheel(flywheelGains);
-    setupOuterRightFlywheel(flywheelGains);
-    setupOuterLeftFlywheel(flywheelGains);
-    setupLeftHood(HoodLeftGains);
-    setupRightHood(HoodRightGains);
+    setupDumperLeftUp(dumperLeftUpGains);
+    setupDumperLeftDown(dumperLeftDownGains);
+    setupDumperRightUp(dumperRightUpGains);
+    setupDumperRightUp(dumperRightDownGains);
+    // setupLeftHood(HoodLeftGains);
+    // setupRightHood(HoodRightGains);
     setupAdjustableHood(adjustableHoodGains);
   }
 
-  public void setupLeftFlywheel(Gains g) {
-    flywheelConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDLeft,
-        Constants.ShooterConstants.SharedFlywheel.isInvertedInnerLeft,
-        Constants.ShooterConstants.SharedFlywheel.isCoastRight,
-        Constants.ShooterConstants.SharedFlywheel.statorCurrentLimit,
-        Constants.ShooterConstants.SharedFlywheel.supplyCurrentLimit);
-    shooterFlywheelInnerLeft = new TalonFX(flywheelConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    flywheelConfigLeft.configureMotor(shooterFlywheelInnerLeft, g);
+  public void setupDumperLeftUp(Gains g) {
+    dumperLeftUpConfig = new ModuleConfigurator(g.toSlot0Configs(),
+        Constants.ShooterConstants.Left.dumperLeftUpID,
+        Constants.ShooterConstants.Left.isInverted,
+        Constants.ShooterConstants.Left.isCoast,
+        Constants.ShooterConstants.Left.statorCurrentLimit,
+        Constants.ShooterConstants.Left.supplyCurrentLimit);
+    dumperLeftUp = new TalonFX(dumperLeftUpConfig.getMotorInnerId(), new CANBus("rio"));
+    dumperLeftUpConfig.configureMotor(dumperLeftUp, g);
     if (Constants.lowTelemetryMode) {
-      velocityOfMainFlywhelLeftRPS = shooterFlywheelInnerLeft.getVelocity();
-      statorCurrentOfMainFlywheelLeftAmps = shooterFlywheelInnerLeft.getStatorCurrent();
+      velDumperLeftUpRequest = shooterFlywheelInnerLeft.getVelocity();
+      statorCurrentOfOfDumperLeftUpAmps = shooterFlywheelInnerLeft.getStatorCurrent();
       flywheelConfigLeft.configureSignals(shooterFlywheelInnerLeft, 50.0, velocityOfMainFlywhelLeftRPS,
           statorCurrentOfMainFlywheelLeftAmps);
     } else {
@@ -168,7 +177,7 @@ public class ShooterRealDrum implements ShooterIO {
 
   }
 
-  public void setupRightFlywheel(Gains g) {
+  public void setupDumperLeftDown(Gains g) {
     // Flywheel Configuration
     flywheelConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelInnerIDRight,
@@ -194,7 +203,7 @@ public class ShooterRealDrum implements ShooterIO {
 
   }
 
-  public void setupOuterRightFlywheel(Gains g) {
+  public void setupDumperRightUp(Gains g) {
     // Flywheel Configuration
     flywheelConfigOuterRight = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDRight,
@@ -221,7 +230,7 @@ public class ShooterRealDrum implements ShooterIO {
 
   }
 
-    public void setupOuterLeftFlywheel(Gains g) {
+    public void setupDumperRightDown(Gains g) {
     // Flywheel Configuration
     flywheelConfigOuterLeft = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.SharedFlywheel.FlywheelOuterIDLeft,
@@ -248,58 +257,58 @@ public class ShooterRealDrum implements ShooterIO {
 
   }
 
-  public void setupLeftHood(Gains g) {
-    // Flywheel Configuration
-    HoodMConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.Left.HoodID,
-        Constants.ShooterConstants.Left.isInverted,
-        Constants.ShooterConstants.Left.isCoast,
-        Constants.ShooterConstants.Left.statorCurrentLimit,
-        Constants.ShooterConstants.Left.supplyCurrentLimit);
-    HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
-    if(Constants.lowTelemetryMode){
-    velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
-    statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
-    HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
-        statorCurrentOfHoodLeftAmps);
-    }else{
-    velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
-    statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
-    outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
-    accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
-    HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
-        statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
-    }
+  // public void setupLeftHood(Gains g) {
+  //   // Flywheel Configuration
+  //   HoodMConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
+  //       Constants.ShooterConstants.Left.HoodID,
+  //       Constants.ShooterConstants.Left.isInverted,
+  //       Constants.ShooterConstants.Left.isCoast,
+  //       Constants.ShooterConstants.Left.statorCurrentLimit,
+  //       Constants.ShooterConstants.Left.supplyCurrentLimit);
+  //   HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
+  //   HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
+  //   if(Constants.lowTelemetryMode){
+  //   velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
+  //   statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
+  //   HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
+  //       statorCurrentOfHoodLeftAmps);
+  //   }else{
+  //   velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
+  //   statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
+  //   outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
+  //   accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
+  //   HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
+  //       statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
+  //   }
 
-  }
+  // }
 
-  public void setupRightHood(Gains g) {
-    // Flywheel Configuration
-    HoodMConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
-        Constants.ShooterConstants.Right.HoodID,
-        Constants.ShooterConstants.Right.isInverted,
-        Constants.ShooterConstants.Right.isCoast,
-        Constants.ShooterConstants.Right.statorCurrentLimit,
-        Constants.ShooterConstants.Right.supplyCurrentLimit);
-    HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
-    HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
-    if(Constants.lowTelemetryMode){
-    velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
-    statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
-    flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
-        statorCurrentOfHoodRightAmps);
-    }
-    else{
-    velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
-    statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
-    outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
-    accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
-    flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
-        statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
-    }
+  // public void setupRightHood(Gains g) {
+  //   // Flywheel Configuration
+  //   HoodMConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
+  //       Constants.ShooterConstants.Right.HoodID,
+  //       Constants.ShooterConstants.Right.isInverted,
+  //       Constants.ShooterConstants.Right.isCoast,
+  //       Constants.ShooterConstants.Right.statorCurrentLimit,
+  //       Constants.ShooterConstants.Right.supplyCurrentLimit);
+  //   HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
+  //   HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
+  //   if(Constants.lowTelemetryMode){
+  //   velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
+  //   statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
+  //   flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
+  //       statorCurrentOfHoodRightAmps);
+  //   }
+  //   else{
+  //   velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
+  //   statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
+  //   outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
+  //   accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
+  //   flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
+  //       statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
+  //   }
 
-  }
+  // }
 
    public void setupAdjustableHood(Gains g) {
     // Flywheel Configuration
@@ -378,12 +387,15 @@ public class ShooterRealDrum implements ShooterIO {
         velocityOfHoodWheelMotorRightRPS,
         velocityOfMainFlywheelOuterRightRPS,
         velocityOfMainFlywheelOuterLeftRPS,
+        velocityOfAdjustableHoodPositionRPS,
         statorCurrentOfHoodLeftAmps,
         statorCurrentOfHoodRightAmps,
         statorCurrentOfMainFlywheelLeftAmps,
         statorCurrentOfMainFlywheelRightAmps,
         statorCurrentOfMainFlywheelOuterRightAmps,
-        statorCurrentOfMainFlywheelOuterLeftAmps);
+        statorCurrentOfMainFlywheelOuterLeftAmps,
+        statorCurrentOfAdjustableHoodPositionAmps
+        );
 
     inputs.velocityOfMainFlywheelLeftRPS = velocityOfMainFlywhelLeftRPS.getValue().in(Rotations.per(Seconds));
     inputs.velocityOfMainFlywheelRightRPS = velocityOfMainFlywheelRightRPS.getValue().in(Rotations.per(Seconds));
@@ -395,6 +407,9 @@ public class ShooterRealDrum implements ShooterIO {
         .in(Rotations.per(Seconds));
     inputs.velocityOfHoodWheelMotorRightRPS = velocityOfHoodWheelMotorRightRPS.getValue()
         .in(Rotations.per(Seconds));
+    inputs.velocityOfAdjustableHoodPositionRPS = velocityOfAdjustableHoodPositionRPS.getValue()
+        .in(Rotations.per(Seconds));
+    
 
     inputs.statorCurrentOfHoodLeftAmps = statorCurrentOfHoodLeftAmps.getValue().in(Amps);
     inputs.statorCurrentOfHoodRightAmps = statorCurrentOfHoodRightAmps.getValue().in(Amps);
@@ -402,6 +417,7 @@ public class ShooterRealDrum implements ShooterIO {
     inputs.statorCurrentOfMainFlywheelRightAmps = statorCurrentOfMainFlywheelRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfMainFlywheelOuterRightAmps = statorCurrentOfMainFlywheelOuterRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfMainFlywheelOuterLeftAmps = statorCurrentOfMainFlywheelOuterLeftAmps.getValue().in(Amps);
+    inputs.statorCurrentOfAdjustableHoodPositionAmps = statorCurrentOfAdjustableHoodPositionAmps.getValue().in(Amps);
 
     inputs.HoodWheelMotorRightConnected = HoodWheelMotorRight.isConnected();
     inputs.HoodWheelMotorLeftConnected = HoodWheelMotorLeft.isConnected();
@@ -409,6 +425,7 @@ public class ShooterRealDrum implements ShooterIO {
     inputs.shooterFlywheelInnerRightConnected = shooterFlywheelInnerRight.isConnected();
     inputs.shooterFlywheelOuterRightConnected = shooterFlywheelOuterRight.isConnected();
     inputs.shooterFlywheelOuterLeftConnected = shooterFlywheelOuterLeft.isConnected();
+    inputs.adjustableHoodConnected = adjustableHood.isConnected();
 
   }
 

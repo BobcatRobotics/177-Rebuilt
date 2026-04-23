@@ -84,13 +84,11 @@ public final class Constants {
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
 
-            public static final int FlywheelOuterIDLeft = 14;
-            public static final int FlywheelInnerIDLeft = 13;//dumper left up
-            public static final int FlywheelOuterIDRight = 11;
-            public static final int dumperLeftUp = 13; 
-            public static final int dumperLeftDown = 20; 
-            public static final int dumperRightUp = 11; 
-            public static final int dumperRightDown = 14; 
+            // public static final int FlywheelOuterIDLeft = 14;
+            // public static final int FlywheelInnerIDLeft = 13;//dumper left up
+            // public static final int FlywheelOuterIDRight = 11;
+             
+
             
             
         }
@@ -99,12 +97,12 @@ public final class Constants {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
             // Motor Constants
-            public static final double kHoodmotorkP =4.7;
-            public static final double kHoodmotorkI = 0;
-            public static final double kHoodmotorkD = 0;
-            public static final double kHoodmotorkS = 0.303;
-            public static final double kHoodmotorkV = 0.25;
-            public static final double kHoodmotorkA = 0;
+            public static final double kAdjHoodMotorkP =4.7;
+            public static final double kAdjHoodMotorkI = 0;
+            public static final double kAdjHoodMotorkD = 0;
+            public static final double kAdjHoodMotorkS = 0.303;
+            public static final double kAdjHoodMotorkV = 0.25;
+            public static final double kAdjHoodMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
             public static final int ID = 21;
@@ -117,14 +115,16 @@ public final class Constants {
 
         public final static class Left {
 
-            public static final int HoodID = 12;
+           // public static final int HoodID = 12;
+            public static final int dumperLeftUpID = 13; 
+            public static final int dumperLeftDownID = 20;
             // Motor Constants
-            public static final double kHoodMotorkP = 2.8;
-            public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0;
-            public static final double kHoodMotorkS = 0.78;
-            public static final double kHoodMotorkV = 0.123;
-            public static final double kHoodMotorkA = 0;
+            public static final double kdumperLeftMotorkP = 2.8;
+            public static final double kdumperLeftMotorkI = 0.0;
+            public static final double kdumperLeftMotorkD = 0;
+            public static final double kdumperLeftMotorkS = 0.78;
+            public static final double kdumperLeftMotorkV = 0.123;
+            public static final double kdumperLeftMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = true;
@@ -134,13 +134,16 @@ public final class Constants {
 
         public final static class Right {
             // ID Constants
-            public static final int HoodID = 17;
-            public static final double kHoodMotorkP = 2.8;
-            public static final double kHoodMotorkI = 0.0;
-            public static final double kHoodMotorkD = 0;
-            public static final double kHoodMotorkS = 0.78;
-            public static final double kHoodMotorkV = 0.123;
-            public static final double kHoodMotorkA = 0;
+            //public static final int HoodID = 17;
+            public static final int dumperRightUp = 11; 
+            public static final int dumperRightDown = 14; 
+            //Motor Constants
+            public static final double kdumperRightMotorkP = 2.8;
+            public static final double kdumperRightMotorkI = 0.0;
+            public static final double kdumperRightMotorkD = 0;
+            public static final double kdumperRightMotorkS = 0.78;
+            public static final double kdumperRightMotorkV = 0.123;
+            public static final double kdumperRightMotorkA = 0;
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 40;
             public static final boolean isInverted = false;
