@@ -15,6 +15,8 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -46,7 +48,27 @@ public class ShooterRealDrum implements ShooterIO {
   // private TalonFX HoodWheelMotorRight;
   // public ModuleConfigurator HoodMConfigRight;
   private TalonFX adjustableHood;
+
   private ModuleConfigurator adjustableHoodConfigurator;
+
+  //Find the right kV and kA values
+  //kV and kA represents voltage requirement and max velocity output
+  dumperRightUpConfig.MotionMagicCruiseVelocity = 0;
+  dumperRightUpConfig.MotionMagicExpo_kV = 0;
+  dumperRightUpConfig.MotionMagicExpo_kA = 0;
+
+  dumperRightDownConfig.MotionMagicCruiseVelocity = 0;
+  dumperRightDownConfig.MotionMagicExpo_kV = 0;
+  dumperRightDownConfig.MotionMagicExpo_kA = 0;
+
+  dumperLeftDownConfig.MotionMagicCruiseVelocity = 0;
+  dumperLeftDownConfig.MotionMagicExpo_kV = 0;
+  dumperLeftDownConfig.MotionMagicExpo_kA = 0;
+
+  dumperLeftUpConfig.MotionMagicCruiseVelocity = 0;
+  dumperLeftUpConfig.MotionMagicExpo_kV = 0;
+  dumperLeftUpConfig.MotionMagicExpo_kA = 0;
+
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
   // )
@@ -54,11 +76,18 @@ public class ShooterRealDrum implements ShooterIO {
   private VelocityTorqueCurrentFOC velDumperLeftDownRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velDumperRightUpRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velDumperRightDownRequest = new VelocityTorqueCurrentFOC(0);
+
+  private MotionMagicExpoVoltage LeftUpRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage LeftDownRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage RightUpRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage RightDownRequest = new MotionMagicExpoVoltage(0);
+
   // private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
   // private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
   private PositionTorqueCurrentFOC posAdjustableHoodRequest = new PositionTorqueCurrentFOC(0);
-  
 
+  private MotionMagicExpoVoltage HoodRequest = new MotionMagicExpoVoltage(0); //Expo Voltage request for hood
+  
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 

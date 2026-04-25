@@ -84,6 +84,8 @@ public final class Constants {
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
 
+
+
             // public static final int FlywheelOuterIDLeft = 14;
             // public static final int FlywheelInnerIDLeft = 13;//dumper left up
             // public static final int FlywheelOuterIDRight = 11;
@@ -97,7 +99,7 @@ public final class Constants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
             // Motor Constants
-            public static final double kAdjHoodMotorkP =2;
+            public static final double kAdjHoodMotorkP = 2;
             public static final double kAdjHoodMotorkI = 0;
             public static final double kAdjHoodMotorkD = 0;
             public static final double kAdjHoodMotorkS = 0.0;
@@ -106,12 +108,11 @@ public final class Constants {
             public static final double statorCurrentLimit = 60;
             public static final double supplyCurrentLimit = 60;
             public static final int ID = 21;
-            public static final boolean isSoftLimitsEnabled = true;
+            public static final boolean isSoftLimitsEnabled = true; 
+
+            
 
         }
-
-
-
 
 
         public final static class Left {

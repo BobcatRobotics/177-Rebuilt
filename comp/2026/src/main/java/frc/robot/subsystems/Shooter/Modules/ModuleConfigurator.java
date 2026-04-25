@@ -2,6 +2,7 @@ package frc.robot.subsystems.Shooter.Modules;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -117,7 +118,9 @@ public final class ModuleConfigurator {
         slot0 = pid.toSlot0Configs();
 
         TalonFXConfiguration fxConfig = new TalonFXConfiguration();
+        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motor.getConfigurator().apply(fxConfig); // reset
+
 
         fxConfig.Slot0 = slot0;
 
