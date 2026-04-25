@@ -2,6 +2,7 @@ package frc.robot.subsystems.Shooter.Modules;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,7 +22,10 @@ public final class ModuleConfigurator {
     private final boolean isSoftLimitsEnabled;
     private final double supplyCurrentLimit;
     private final double statorCurrentLimit;
-
+    private final boolean isMotionMagicEnabled;
+    private final double cruiseVelocity;
+    private final double expo_kV;
+    private final double expo_kA;
 
     public ModuleConfigurator(
             Slot0Configs slotConfig,
@@ -30,7 +34,11 @@ public final class ModuleConfigurator {
             boolean isCoast,
             double statorCurrentLimit,
             double supplyCurrentLimit,
-            boolean isSoftLimitsEnabled) {
+            boolean isSoftLimitsEnabled,
+            boolean isMotionMagicEnabled,
+            double cruiseVelocity,
+            double expo_kV,
+            double expo_kA) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -41,29 +49,38 @@ public final class ModuleConfigurator {
         this.isSoftLimitsEnabled = isSoftLimitsEnabled;
         this.statorCurrentLimit = statorCurrentLimit;
         this.supplyCurrentLimit = supplyCurrentLimit;
+        this.isMotionMagicEnabled = isMotionMagicEnabled;
+        this.cruiseVelocity = cruiseVelocity;
+        this.expo_kV = expo_kV;
+        this.expo_kA = expo_kA;
     }
 
-    public ModuleConfigurator(
-            Slot0Configs slotConfig,
-            int motorInnerId,
-            int motorOuterId,
-            boolean isInnerInverted,
-            boolean isOuterInverted,
-            boolean isCoast,
-            double statorCurrentLimit,
-            double supplyCurrentLimit,
-            boolean isSoftLimitsEnabled) {
-        // Defensive copies (REQUIRED for immutability)
-        this.slotConfig = slotConfig;
-        this.motorInnerId = motorInnerId;
-        this.motorOuterId = motorOuterId;
-        this.isInnerInverted = isInnerInverted;
-        this.isOuterInverted = isOuterInverted;
-        this.isCoast = isCoast;
-        this.isSoftLimitsEnabled = isSoftLimitsEnabled;
-        this.statorCurrentLimit = statorCurrentLimit;
-        this.supplyCurrentLimit = supplyCurrentLimit;
-    }
+    // public ModuleConfigurator(
+    //         Slot0Configs slotConfig,
+    //         int motorInnerId,
+    //         boolean isCoast,
+    //         double statorCurrentLimit,
+    //         double supplyCurrentLimit,
+    //         boolean isSoftLimitsEnabled,
+    //         boolean isMotionMagicEnabled,
+    //         double cruiseVelocity,
+    //         double expo_kV,
+    //         double expo_kA) {
+    //     // Defensive copies (REQUIRED for immutability)
+    //     this.slotConfig = slotConfig;
+    //     this.motorInnerId = motorInnerId;
+    //     this.motorOuterId = motorOuterId;
+    //     this.isInnerInverted = isInnerInverted;
+    //     this.isOuterInverted = isOuterInverted;
+    //     this.isCoast = isCoast;
+    //     this.isSoftLimitsEnabled = isSoftLimitsEnabled;
+    //     this.statorCurrentLimit = statorCurrentLimit;
+    //     this.supplyCurrentLimit = supplyCurrentLimit;
+    //     this.isMotionMagicEnabled = isMotionMagicEnabled;
+    //     this.cruiseVelocity = cruiseVelocity;
+    //     this.expo_kV = expo_kV;
+    //     this.expo_kA = expo_kA;
+    // }
 
     /* ---------------- Getters (defensive) ---------------- */
 
@@ -103,10 +120,9 @@ public final class ModuleConfigurator {
     }
 
     public ModuleConfigurator apply(Slot0Configs slot) {
-        return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
-                statorCurrentLimit,
-                supplyCurrentLimit,
-                isSoftLimitsEnabled);
+        return new ModuleConfigurator(slot, motorInnerId, isInnerInverted, 
+        isCoast, statorCurrentLimit, supplyCurrentLimit, isSoftLimitsEnabled, 
+        isMotionMagicEnabled, cruiseVelocity, expo_kV, expo_kA);
     }
 
     public void configureMotor(
@@ -117,7 +133,15 @@ public final class ModuleConfigurator {
         slot0 = pid.toSlot0Configs();
 
         TalonFXConfiguration fxConfig = new TalonFXConfiguration();
+        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motor.getConfigurator().apply(fxConfig); // reset
+
+        if (isMotionMagicEnabled){
+            motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
+            motionMagicConfigs.MotionMagicExpo_kV = expo_kV;
+            motionMagicConfigs.MotionMagicExpo_kA = expo_kA;
+            motor.getConfigurator().apply(motionMagicConfigs);
+        }
 
         fxConfig.Slot0 = slot0;
 
@@ -143,6 +167,7 @@ public final class ModuleConfigurator {
         fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
         motor.getConfigurator().apply(fxConfig);
+    
     }
 
     public void configureMotor(
@@ -153,8 +178,15 @@ public final class ModuleConfigurator {
         pid.applyTo(slot0);
 
         TalonFXConfiguration fxConfig = new TalonFXConfiguration();
+        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motor.getConfigurator().apply(fxConfig); // reset
 
+        if (isMotionMagicEnabled){
+            motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
+            motionMagicConfigs.MotionMagicExpo_kV = expo_kV;
+            motionMagicConfigs.MotionMagicExpo_kA = expo_kA;
+            motor.getConfigurator().apply(motionMagicConfigs);
+        }
         fxConfig.Slot0 = slot0;
 
         fxConfig.MotorOutput.Inverted = isInnerInverted()

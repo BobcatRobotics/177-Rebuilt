@@ -15,6 +15,8 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -46,6 +48,7 @@ public class ShooterSim implements ShooterIO {
   // private TalonFX HoodWheelMotorRight;
   // public ModuleConfigurator HoodMConfigRight;
   private TalonFX adjustableHood;
+
   private ModuleConfigurator adjustableHoodConfigurator;
 
   // Defines tunable values , particularly for configurations of motors ( IE PIDs
@@ -54,11 +57,16 @@ public class ShooterSim implements ShooterIO {
   private VelocityTorqueCurrentFOC velDumperLeftDownRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velDumperRightUpRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velDumperRightDownRequest = new VelocityTorqueCurrentFOC(0);
+
+  private MotionMagicExpoVoltage LeftUpRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage LeftDownRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage RightUpRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicExpoVoltage RightDownRequest = new MotionMagicExpoVoltage(0);
+
   // private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
   // private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
   private PositionTorqueCurrentFOC posAdjustableHoodRequest = new PositionTorqueCurrentFOC(0);
   
-
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
   private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
@@ -159,7 +167,11 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Left.isCoast,
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit,
-        Constants.ShooterConstants.Left.isSoftLimitsEnabled);
+        Constants.ShooterConstants.Left.isSoftLimitsEnabled,
+        Constants.ShooterConstants.Left.isMotionMagicEnabled,
+        Constants.ShooterConstants.Left.cruiseVelocity,
+        Constants.ShooterConstants.Left.expo_kA,
+        Constants.ShooterConstants.Left.expo_kV);
     dumperLeftUp = new TalonFX(dumperLeftUpConfig.getMotorInnerId(), new CANBus("rio"));
     dumperLeftUpConfig.configureMotor(dumperLeftUp, g);
     if (Constants.lowTelemetryMode) {
@@ -185,7 +197,11 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Left.isCoast,
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit,
-        Constants.ShooterConstants.Left.isSoftLimitsEnabled);
+        Constants.ShooterConstants.Left.isSoftLimitsEnabled,
+        Constants.ShooterConstants.Left.isMotionMagicEnabled,
+        Constants.ShooterConstants.Left.cruiseVelocity,
+        Constants.ShooterConstants.Left.expo_kA,
+        Constants.ShooterConstants.Left.expo_kV);
     dumperLeftDown = new TalonFX(dumperLeftDownConfig.getMotorInnerId(), new CANBus("rio"));
     dumperLeftDownConfig.configureMotor(dumperLeftDown, g);
     if (Constants.lowTelemetryMode) {
@@ -210,7 +226,11 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Right.isCoast,
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit,
-        Constants.ShooterConstants.Right.isSoftLimitsEnabled);
+        Constants.ShooterConstants.Right.isSoftLimitsEnabled,
+        Constants.ShooterConstants.Right.isMotionMagicEnabled,
+        Constants.ShooterConstants.Right.cruiseVelocity,
+        Constants.ShooterConstants.Right.expo_kA,
+        Constants.ShooterConstants.Right.expo_kV);
     dumperRightUp = new TalonFX(dumperRightUpConfig.getMotorInnerId(), new CANBus("rio"));
     dumperRightUpConfig.configureMotor(dumperRightUp, g);
     if (Constants.lowTelemetryMode) {
@@ -235,7 +255,11 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.Right.isCoast,
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit,
-        Constants.ShooterConstants.Right.isSoftLimitsEnabled);
+        Constants.ShooterConstants.Right.isSoftLimitsEnabled,
+        Constants.ShooterConstants.Right.isMotionMagicEnabled,
+        Constants.ShooterConstants.Right.cruiseVelocity,
+        Constants.ShooterConstants.Right.expo_kA,
+        Constants.ShooterConstants.Right.expo_kV);
     dumperRightDown = new TalonFX(dumperRightDownConfig.getMotorInnerId(), new CANBus("rio"));
     dumperRightDownConfig.configureMotor(dumperRightDown, g);
     if (Constants.lowTelemetryMode) {
@@ -315,7 +339,11 @@ public class ShooterSim implements ShooterIO {
         Constants.ShooterConstants.adjustableHood.isCoast,
         Constants.ShooterConstants.adjustableHood.statorCurrentLimit,
         Constants.ShooterConstants.adjustableHood.supplyCurrentLimit,
-        Constants.ShooterConstants.adjustableHood.isSoftLimitsEnabled);
+        Constants.ShooterConstants.adjustableHood.isSoftLimitsEnabled,
+        Constants.ShooterConstants.adjustableHood.isMotionMagicEnabled,
+        Constants.ShooterConstants.adjustableHood.cruiseVelocity,
+        Constants.ShooterConstants.adjustableHood.expo_kA,
+        Constants.ShooterConstants.adjustableHood.expo_kV);
     adjustableHood = new TalonFX(adjustableHoodConfigurator.getMotorInnerId(), new CANBus("rio"));
     adjustableHoodConfigurator.configureMotor(adjustableHood, g);
     if(Constants.lowTelemetryMode){

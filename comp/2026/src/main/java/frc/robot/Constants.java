@@ -107,6 +107,11 @@ public final class Constants {
             public static final double supplyCurrentLimit = 60;
             public static final int ID = 21;
             public static final boolean isSoftLimitsEnabled = true;
+            public static final double cruiseVelocity = 0;
+            public static final double expo_kV = 0;
+            public static final double expo_kA = 0;
+            public static final boolean isMotionMagicEnabled = false;
+
 
         }
 
@@ -131,6 +136,10 @@ public final class Constants {
             public static final boolean isInverted = false;
             public static final boolean isCoast = true;
             public static final boolean isSoftLimitsEnabled = false;
+            public static final double cruiseVelocity = 0;
+            public static final double expo_kV = 0;
+            public static final double expo_kA = 0;
+            public static final boolean isMotionMagicEnabled = true;
 
         }
 
@@ -151,6 +160,10 @@ public final class Constants {
             public static final boolean isInverted = true;
             public static final boolean isCoast = true;
             public static final boolean isSoftLimitsEnabled = false;
+            public static final double cruiseVelocity = 0;
+            public static final double expo_kV = 0;
+            public static final double expo_kA = 0;
+            public static final boolean isMotionMagicEnabled = true;
         }
 
         // public final static class ValuesOfKnownShots{
