@@ -287,7 +287,9 @@ public class Shooter extends SubsystemBase {
         - RobotState.getInstance().getShooterState().getLeftDumperSpeed()) <= MAIN_SPEED_TOLERANCE;
     isDumperRightWithinTolerance = Math
         .abs(getVelocityOfDumperRight() - RobotState.getInstance().getShooterState().getRightDumperSpeed()) <= MAIN_SPEED_TOLERANCE;
-    if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance) {
+    isAdjustableHoodWithinTolerance = Math.abs(getAdjustableHoodPosition()
+        - RobotState.getInstance().getShooterState().getAdjustableHoodPosition()) <= HOOD_POSITION_TOLERANCE;
+    if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance && isAdjustableHoodWithinTolerance) {
       isAtTolerance = true;
     }
     Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
@@ -303,6 +305,21 @@ public class Shooter extends SubsystemBase {
     }
     if (inputs.velocityOfDumperLeftDownRPS > 0) {
       avg += inputs.velocityOfDumperLeftDownRPS;
+      count += 1;
+    }
+
+    return avg / count;
+  }
+
+  public double getAdjustableHoodPosition() {
+    int count = 0;
+    double avg = 0;
+    if (inputs.positionOfAdjustableHood > 0) {
+      avg += inputs.positionOfAdjustableHood;
+      count += 1;
+    }
+    if (inputs.positionOfAdjustableHood > 0) {
+      avg += inputs.positionOfAdjustableHood;
       count += 1;
     }
 

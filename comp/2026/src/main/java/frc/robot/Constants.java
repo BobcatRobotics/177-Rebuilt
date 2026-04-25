@@ -180,7 +180,7 @@ public final class Constants {
             public static final double kHopperV = 0.073;
             public static final double kHopperS = 0.739;
             public static final double kHopperA = 0;
-            public static final double hopperCurrentLimit = 120;
+            public static final double hopperCurrentLimit = 80;
             public static final int hopperMotorId = 16;
         }
 
