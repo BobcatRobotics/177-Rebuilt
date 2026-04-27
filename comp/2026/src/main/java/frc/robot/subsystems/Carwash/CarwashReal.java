@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.DeviceType;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 
@@ -77,7 +78,7 @@ public class CarwashReal implements CarwashIO {
       intakeWheelConfig.configureSignals(shooterIntakeMotor, 50.0, velocityOfIntakeRPS,
           statorCurrentOfIntakeAmps, outputOfIntakeVolts, accelerationOfIntake);
     }
-    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Manufacturer.Ctre,"Carwash");
+    CANDeviceDetails tmp = new CANDeviceDetails(intakeWheelConfig.getMotorId(),"rio",Manufacturer.Ctre,"Carwash",DeviceType.TALONFX);
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);

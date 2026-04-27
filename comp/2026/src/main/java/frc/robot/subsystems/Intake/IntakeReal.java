@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.bobcatrobotics.Hardware.Characterization.CharacterizationClosedLoopOutputType;
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.DeviceType;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 import org.bobcatrobotics.Util.Tunables.Gains;
 // import org.bobcatrobotics.Util.Tunables.TunablePID;
@@ -134,7 +135,7 @@ public class IntakeReal implements IntakeIO {
           rightStatorCurrentOfIntakeSpeedAmps, rightOutputOfIntakeSpeedVolts, rightAccelerationOfIntakeSpeed);
     }
 
-    CANDeviceDetails tmp = new CANDeviceDetails(rightIntakeVelocityConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake");
+    CANDeviceDetails tmp = new CANDeviceDetails(rightIntakeVelocityConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake",DeviceType.TALONFX);
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -164,7 +165,7 @@ public class IntakeReal implements IntakeIO {
       leftintakeVelocityConfig.configureSignals(leftVelocityMotor, 50.0, leftVelocityOfIntakeSpeedRPS,
           leftStatorCurrentOfIntakeSpeedAmps, leftOutputOfIntakeSpeedVolts, leftAccelerationOfIntakeSpeed);
     }
-        CANDeviceDetails tmp = new CANDeviceDetails(leftintakeVelocityConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake");
+        CANDeviceDetails tmp = new CANDeviceDetails(leftintakeVelocityConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake",DeviceType.TALONFX);
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);
@@ -194,7 +195,7 @@ public class IntakeReal implements IntakeIO {
       intakePivotConfig.configureSignals(positionMotor, 50.0, velocityOfIntakePositionRPS,
           statorCurrentOfIntakePositionAmps, outputOfIntakePositionVolts, accelerationOfIntakePosition);
     }
-    CANDeviceDetails tmp = new CANDeviceDetails(intakePivotConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake");
+    CANDeviceDetails tmp = new CANDeviceDetails(intakePivotConfig.getMotorId(),"rio",Manufacturer.Ctre,"Intake",DeviceType.TALONFX);
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace("rio", rioDevices);

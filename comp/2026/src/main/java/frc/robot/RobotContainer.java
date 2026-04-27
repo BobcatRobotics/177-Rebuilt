@@ -24,6 +24,7 @@ import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.bobcatrobotics.Hardware.CAN.CANLogger;
+import org.bobcatrobotics.Hardware.CAN.CanDiagnostic;
 import org.bobcatrobotics.Hardware.CAN.CanivoreReaderAdapter;
 import org.bobcatrobotics.Hardware.CAN.RioReaderAdapter;
 import org.bobcatrobotics.Util.CANDeviceDetails;
@@ -134,6 +135,10 @@ public class RobotContainer {
                         List.of(
                                         new RioReaderAdapter(),
                                         new CanivoreReaderAdapter("CANivore")));
+
+        private CanDiagnostic canRioDiag;
+        private CanDiagnostic canDriveDiag;
+        
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -278,6 +283,18 @@ public class RobotContainer {
 
                 table = inst.getTable("CAN");
 
+                setupCanDiagnosticLogger();
+
+        }
+
+        private void setupCanDiagnosticLogger(){
+                canRioDiag = new CanDiagnostic( RobotState.getInstance().devices.get("rio"));
+                canDriveDiag = new CanDiagnostic( RobotState.getInstance().devices.get("CANivore"));
+        }
+        private void updateCanDiagnosticLogger(){
+                canLogger.periodic();
+                canRioDiag.periodic();
+                canDriveDiag.periodic();
         }
 
         private void configureSwitchablePort() {
@@ -514,7 +531,8 @@ public class RobotContainer {
                 field.setRobotPose(RobotState.getInstance().robotPose);
                 SmartDashboard.putData("Field", field);
 
-                canLogger.periodic();
+                
+                updateCanDiagnosticLogger();
 
         }
 

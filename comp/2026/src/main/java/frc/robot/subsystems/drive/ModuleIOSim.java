@@ -10,6 +10,7 @@ package frc.robot.subsystems.drive;
 import java.util.List;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
+import org.bobcatrobotics.Util.CANDeviceDetails.DeviceType;
 import org.bobcatrobotics.Util.CANDeviceDetails.Manufacturer;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -74,11 +75,11 @@ public class ModuleIOSim implements ModuleIO {
     turnController.enableContinuousInput(-Math.PI, Math.PI);
 
     List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive",DeviceType.TALONFX);    
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive",DeviceType.TALONFX);    
     rioDevices.add(tmp);
-    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive",DeviceType.CANCODER);    
     rioDevices.add(tmp);
     RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
   }

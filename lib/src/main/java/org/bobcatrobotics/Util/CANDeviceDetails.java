@@ -11,7 +11,8 @@ public record CANDeviceDetails(
     int id,
     String bus,
     Manufacturer manufacturer,
-    String subsystemName
+    String subsystemName,
+    DeviceType deviceType
 ) {
     /**
      * Enum representing the manufacturer of the CAN device.
@@ -33,6 +34,8 @@ public record CANDeviceDetails(
         Ctre
     }
 
+    public enum DeviceType { NONE,TALONFX, CANCODER, PIGEON2 }
+
     /**
      * Constructs a {@code CANDeviceDetails} record with the specified properties.
      * All fields are required and validated to be non-null.
@@ -41,6 +44,7 @@ public record CANDeviceDetails(
      * @param bus           the name of the CAN bus the device is on (e.g., "rio", "canivore")
      * @param manufacturer  the manufacturer of the device
      * @param subsystemName the robot subsystem this device belongs to (e.g., "drive", "arm")
+     * @param deviceType the robot subsystem this device belongs to (e.g., "drive", "arm")
      * @throws NullPointerException if any of the arguments are null
      */
     public CANDeviceDetails {
@@ -48,6 +52,7 @@ public record CANDeviceDetails(
         Objects.requireNonNull(bus, "Bus name cannot be null");
         Objects.requireNonNull(manufacturer, "Manufacturer cannot be null");
         Objects.requireNonNull(subsystemName, "Subsystem name cannot be null");
+        Objects.requireNonNull(deviceType, "Device Type cannot be null");
     }
 
     /**
@@ -58,7 +63,7 @@ public record CANDeviceDetails(
      * @param id the CAN ID of the device
      */
     public CANDeviceDetails(int id) {
-        this(id, "", Manufacturer.Unknown, "");
+        this(id, "", Manufacturer.Unknown, "",DeviceType.NONE);
     }
 
     /**
@@ -69,7 +74,7 @@ public record CANDeviceDetails(
      * @param bus the name of the CAN bus
      */
     public CANDeviceDetails(int id, String bus) {
-        this(id, bus, Manufacturer.Unknown, "");
+        this(id, bus, Manufacturer.Unknown, "",DeviceType.NONE);
     }
 
     /**
@@ -81,6 +86,18 @@ public record CANDeviceDetails(
      * @param manufacturer the manufacturer of the device
      */
     public CANDeviceDetails(int id, String bus, Manufacturer manufacturer) {
-        this(id, bus, manufacturer, "");
+        this(id, bus, manufacturer, "",DeviceType.NONE);
+    }
+    /**
+     * Constructs a {@code CANDeviceDetails} with ID, bus, and manufacturer.
+     * The subsystem name is set to an empty string.
+     *
+     * @param id           the CAN ID of the device
+     * @param bus          the name of the CAN bus
+     * @param manufacturer the device type
+     * @param type the manufacturer of the device
+     */
+    public CANDeviceDetails(int id, String bus, Manufacturer manufacturer, DeviceType type) {
+        this(id, bus, manufacturer, "",type);
     }
 }
