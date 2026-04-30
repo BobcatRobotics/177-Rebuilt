@@ -16,7 +16,9 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -58,10 +60,10 @@ public class ShooterRealDrum implements ShooterIO {
   private VelocityTorqueCurrentFOC velDumperRightUpRequest = new VelocityTorqueCurrentFOC(0);
   private VelocityTorqueCurrentFOC velDumperRightDownRequest = new VelocityTorqueCurrentFOC(0);
 
-  private MotionMagicExpoVoltage LeftUpRequest = new MotionMagicExpoVoltage(0);
-  private MotionMagicExpoVoltage LeftDownRequest = new MotionMagicExpoVoltage(0);
-  private MotionMagicExpoVoltage RightUpRequest = new MotionMagicExpoVoltage(0);
-  private MotionMagicExpoVoltage RightDownRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicVelocityTorqueCurrentFOC LeftUpRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
+  private MotionMagicVelocityTorqueCurrentFOC LeftDownRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
+  private MotionMagicVelocityTorqueCurrentFOC RightUpRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
+  private MotionMagicVelocityTorqueCurrentFOC RightDownRequest = new MotionMagicVelocityTorqueCurrentFOC(0);
 
   // private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
   // private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
@@ -485,14 +487,14 @@ public class ShooterRealDrum implements ShooterIO {
 
   public void setDumperLeftSpeed(double dumperLeftSpeed) {
     dumperLeftSetPoint = dumperLeftSpeed;
-    dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(dumperLeftSetPoint));
-    dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(dumperLeftSetPoint));
+    dumperLeftUp.setControl(LeftUpRequest.withVelocity(dumperLeftSetPoint));
+    dumperLeftDown.setControl(LeftDownRequest.withVelocity(dumperLeftSetPoint));
   }
 
   public void setDumperRightSpeed(double dumperRightSpeed) {
     dumperRightSetPoint = dumperRightSpeed;
-    dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(dumperRightSetPoint));
-    dumperRightDown.setControl(velDumperRightDownRequest.withVelocity(dumperRightSetPoint));
+    dumperRightUp.setControl(RightUpRequest.withVelocity(dumperRightSetPoint));
+    dumperRightDown.setControl(RightDownRequest.withVelocity(dumperRightSetPoint));
   }
 
   
