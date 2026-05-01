@@ -133,15 +133,15 @@ public final class ModuleConfigurator {
         slot0 = pid.toSlot0Configs();
 
         TalonFXConfiguration fxConfig = new TalonFXConfiguration();
-        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motor.getConfigurator().apply(fxConfig); // reset
 
         if (isMotionMagicEnabled){
-            motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
-            motionMagicConfigs.MotionMagicExpo_kV = expo_kV;
-            motionMagicConfigs.MotionMagicExpo_kA = expo_kA;
-            motor.getConfigurator().apply(motionMagicConfigs);
+            fxConfig.MotionMagic.MotionMagicCruiseVelocity = cruiseVelocity;
+            fxConfig.MotionMagic.MotionMagicExpo_kV = expo_kV;
+            fxConfig.MotionMagic.MotionMagicExpo_kA = expo_kA;
         }
+
+        
 
         fxConfig.Slot0 = slot0;
 
@@ -178,14 +178,12 @@ public final class ModuleConfigurator {
         pid.applyTo(slot0);
 
         TalonFXConfiguration fxConfig = new TalonFXConfiguration();
-        MotionMagicConfigs motionMagicConfigs = new MotionMagicConfigs();
         motor.getConfigurator().apply(fxConfig); // reset
 
         if (isMotionMagicEnabled){
-            motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
-            motionMagicConfigs.MotionMagicExpo_kV = expo_kV;
-            motionMagicConfigs.MotionMagicExpo_kA = expo_kA;
-            motor.getConfigurator().apply(motionMagicConfigs);
+            fxConfig.MotionMagic.MotionMagicCruiseVelocity = cruiseVelocity;
+            fxConfig.MotionMagic.MotionMagicExpo_kV = expo_kV;
+            fxConfig.MotionMagic.MotionMagicExpo_kA = expo_kA;
         }
         fxConfig.Slot0 = slot0;
 
