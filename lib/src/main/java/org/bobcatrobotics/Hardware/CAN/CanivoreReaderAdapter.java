@@ -3,10 +3,12 @@ package org.bobcatrobotics.Hardware.CAN;
 import java.util.Optional;
 
 public class CanivoreReaderAdapter implements CANStatusReader {
+    private final String name;
     private final CanivoreReader reader;
 
     public CanivoreReaderAdapter(String busName) {
         this.reader = new CanivoreReader(busName);
+        this.name = busName;
     }
 
     @Override
@@ -26,5 +28,8 @@ public class CanivoreReaderAdapter implements CANStatusReader {
         data.isOk = s.Status.isOK();
 
         return Optional.of(data);
+    }
+    public String getName(){
+        return name;
     }
 }

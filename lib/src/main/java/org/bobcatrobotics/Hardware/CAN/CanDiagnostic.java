@@ -1,12 +1,14 @@
 package org.bobcatrobotics.Hardware.CAN;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.bobcatrobotics.Util.CANDeviceDetails.DeviceType;
 import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -22,6 +24,8 @@ public class CanDiagnostic {
         String bus;
         HardwareType type;
         Object device;
+
+        int sortKey;
 
         int failureCount = 0;
         int successCount = 0;
@@ -71,7 +75,13 @@ public class CanDiagnostic {
 
     private final List<Device> devices = new ArrayList<>();
 
+    private String canBusName;
+
+    public CanDiagnostic(){
+
+    }
     public CanDiagnostic(List<CANDeviceDetails> detailedDevices){
+        String busName = "";
         for (CANDeviceDetails device : detailedDevices) {
             HardwareType devType = HardwareType.NONE;
             switch(device.deviceType()){
@@ -88,8 +98,12 @@ public class CanDiagnostic {
                     devType = HardwareType.NONE;
                     break;
             }
+            if ( busName.equals("")){
+                busName = device.bus();
+            }
             add(device.bus() + "_" + device.id(), device.id() , device.bus(), devType );
         }
+        canBusName = busName;
     }
 
 
@@ -109,7 +123,7 @@ public class CanDiagnostic {
             double health = d.health();
             double lastSeenSec = (now - d.lastSeen) / 1000.0;
 
-            String base = "CAN/" + d.key();
+            String base = "CAN/" + canBusName + "/" + d.key();
 
             // ✅ Named channels
             Logger.recordOutput(base + "/Connected", connected);
@@ -129,16 +143,16 @@ public class CanDiagnostic {
 
     private void inferBreak(List<Integer> failed) {
         if (failed.isEmpty()) {
-            Logger.recordOutput("CAN/Status", "OK");
-            Logger.recordOutput("CAN/BreakConfidence", 0.0);
+            Logger.recordOutput("CAN/" + canBusName + "/Status", "OK");
+            Logger.recordOutput("CAN/" + canBusName + "/BreakConfidence", 0.0);
             return;
         }
 
         int start = failed.get(0);
 
         if (start == 0) {
-            Logger.recordOutput("CAN/Break", "StartOfBus");
-            Logger.recordOutput("CAN/BreakConfidence", 0.6);
+            Logger.recordOutput("CAN/" + canBusName + "/Break", "StartOfBus");
+            Logger.recordOutput("CAN/" + canBusName + "/BreakConfidence", 0.6);
             return;
         }
 
@@ -157,8 +171,8 @@ public class CanDiagnostic {
 
         double confidence = Math.min(1.0, 0.5 + 0.1 * clusterSize);
 
-        Logger.recordOutput("CAN/Break", msg);
-        Logger.recordOutput("CAN/BreakConfidence", confidence);
+        Logger.recordOutput("CAN/" + canBusName + "/Break", msg);
+        Logger.recordOutput("CAN/" + canBusName + "/BreakConfidence", confidence);
     }
 
     private void detectIntermittent(long now) {
@@ -166,11 +180,34 @@ public class CanDiagnostic {
             if (d.lastSeen == 0) continue;
 
             boolean intermittent = (now - d.lastSeen) > 500;
-
+            String base = "CAN/" + canBusName + "/" ;
             Logger.recordOutput(
-                "CAN/" + d.key() + "/Intermittent",
+                base + d.key() + "/Intermittent",
                 intermittent
             );
         }
+    }
+
+    public void sortByIds(List<Integer> desiredOrder){
+        Map<Integer, Integer> idOrder = new HashMap<>();
+        for (int i = 0; i < desiredOrder.size(); i++) {
+            idOrder.put(desiredOrder.get(i), i);
+        }
+
+        Map<HardwareType, Integer> typeOrder = Map.of(
+            HardwareType.TALONFX, 0,
+            HardwareType.CANCODER, 1,
+            HardwareType.PIGEON2, 2
+        );
+
+        for (Device d : devices) {
+            int idRank = idOrder.getOrDefault(d.id, Integer.MAX_VALUE / 10);
+            int typeRank = typeOrder.getOrDefault(d.type, Integer.MAX_VALUE / 10);
+
+            // combine into single key
+            d.sortKey = (idRank * 10) + typeRank;
+        }
+
+        devices.sort(Comparator.comparingInt(d -> d.sortKey));
     }
 }

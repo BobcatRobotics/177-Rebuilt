@@ -3,7 +3,11 @@ package org.bobcatrobotics.Hardware.CAN;
 import java.util.Optional;
 
 public class RioReaderAdapter implements CANStatusReader {
+    private final String name;
     private final RioReader reader = new RioReader();
+    public RioReaderAdapter(){
+        this.name = "rio";
+    }
 
     @Override
     public Optional<CANStatusData> getStatus() {
@@ -13,7 +17,7 @@ public class RioReaderAdapter implements CANStatusReader {
         var s = statusOpt.get();
 
         CANStatusData data = new CANStatusData();
-        data.name = "RIO";
+        data.name = "rio";
         data.utilization = s.percentBusUtilization;
         data.busOffCount = 0;
         data.txFullCount = 0;
@@ -22,5 +26,9 @@ public class RioReaderAdapter implements CANStatusReader {
         data.isOk = (s.receiveErrorCount == 0 && s.transmitErrorCount == 0);
 
         return Optional.of(data);
+    }
+
+    public String getName(){
+        return name;
     }
 }

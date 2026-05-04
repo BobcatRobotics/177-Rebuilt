@@ -4,4 +4,5 @@ import java.util.Optional;
 
 public interface CANStatusReader {
     Optional<CANStatusData> getStatus();
+    String getName();
 }

@@ -17,6 +17,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,7 +90,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.DebouncedCommand;
@@ -135,10 +135,6 @@ public class RobotContainer {
                         List.of(
                                         new RioReaderAdapter(),
                                         new CanivoreReaderAdapter("CANivore")));
-
-        private CanDiagnostic canRioDiag;
-        private CanDiagnostic canDriveDiag;
-        
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -283,18 +279,14 @@ public class RobotContainer {
 
                 table = inst.getTable("CAN");
 
-                setupCanDiagnosticLogger();
+                canLogger.setupCanDiagnosticLogger("rio",RobotState.getInstance().devices.get("rio"));
+                canLogger.sortByIdOrder("rio",new  ArrayList<>(Arrays.asList(13,20,15,21,11,14,16,10,19,18)));
+                canLogger.setupCanDiagnosticLogger("CANivore",RobotState.getInstance().devices.get("CANivore"));
+                canLogger.sortByIdOrder("CANivore",new  ArrayList<>(Arrays.asList(5,3,6,1,1,2,3,2,4,7,4,8,1)));
 
-        }
-
-        private void setupCanDiagnosticLogger(){
-                canRioDiag = new CanDiagnostic( RobotState.getInstance().devices.get("rio"));
-                canDriveDiag = new CanDiagnostic( RobotState.getInstance().devices.get("CANivore"));
         }
         private void updateCanDiagnosticLogger(){
                 canLogger.periodic();
-                canRioDiag.periodic();
-                canDriveDiag.periodic();
         }
 
         private void configureSwitchablePort() {
