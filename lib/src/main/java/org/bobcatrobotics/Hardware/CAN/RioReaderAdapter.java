@@ -15,8 +15,8 @@ public class RioReaderAdapter implements CANStatusReader {
         CANStatusData data = new CANStatusData();
         data.name = "RIO";
         data.utilization = s.percentBusUtilization;
-        data.busOffCount = 0;
-        data.txFullCount = 0;
+        data.busOffCount = s.busOffCount;
+        data.txFullCount = s.txFullCount;
         data.receiveErrorCount = s.receiveErrorCount;
         data.transmitErrorCount = s.transmitErrorCount;
         data.isOk = (s.receiveErrorCount == 0 && s.transmitErrorCount == 0);
