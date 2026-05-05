@@ -366,6 +366,10 @@ public class RobotContainer {
                         m_Carwash.setState(carwashState);
                 }, m_Carwash));
 
+
+                controller.povDown().onTrue(new InstantCommand(
+                                () -> m_Shooter.resetEncoder()).ignoringDisable(true));
+
                 controller.a().whileTrue(
                                 loggableCommand("AutoAlign", new AlignToHub(drive, () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX())));

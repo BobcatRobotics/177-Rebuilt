@@ -116,4 +116,8 @@ public interface ShooterIO {
   // public default double getVelocityMainFlywheel() {
   //   return 0.0;
   // }
+
+  
+
+   public default void resetEncoder() {}
 }

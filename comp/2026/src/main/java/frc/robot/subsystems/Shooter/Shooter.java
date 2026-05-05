@@ -330,4 +330,8 @@ public class Shooter extends SubsystemBase {
     // }
     return avg / count;
   }
+
+  public void resetEncoder(){
+    io.resetEncoder();
+  }
 }

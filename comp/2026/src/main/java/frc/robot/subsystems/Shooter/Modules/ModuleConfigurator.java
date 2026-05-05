@@ -1,5 +1,8 @@
 package frc.robot.subsystems.Shooter.Modules;
 
+import org.bobcatrobotics.Util.Tunables.Gains;
+import org.bobcatrobotics.Util.Tunables.TunablePID;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -7,9 +10,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import org.bobcatrobotics.Util.Tunables.Gains;
-import org.bobcatrobotics.Util.Tunables.TunablePID;
 
 public final class ModuleConfigurator {
     private final Slot0Configs slotConfig;
@@ -21,6 +21,9 @@ public final class ModuleConfigurator {
     private final boolean isSoftLimitsEnabled;
     private final double supplyCurrentLimit;
     private final double statorCurrentLimit;
+    private final double forwardSoftwareLimit;
+    private final double reverseSoftwareLimit;
+    private final boolean useMotionMagic;
 
 
     public ModuleConfigurator(
@@ -30,7 +33,8 @@ public final class ModuleConfigurator {
             boolean isCoast,
             double statorCurrentLimit,
             double supplyCurrentLimit,
-            boolean isSoftLimitsEnabled) {
+            boolean isSoftLimitsEnabled,
+            boolean useMotionMagic) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -41,8 +45,35 @@ public final class ModuleConfigurator {
         this.isSoftLimitsEnabled = isSoftLimitsEnabled;
         this.statorCurrentLimit = statorCurrentLimit;
         this.supplyCurrentLimit = supplyCurrentLimit;
+        this.forwardSoftwareLimit = Double.MAX_VALUE;
+        this.reverseSoftwareLimit = Double.MIN_VALUE;
+        this.useMotionMagic = useMotionMagic;
     }
-
+    public ModuleConfigurator(
+            Slot0Configs slotConfig,
+            int motorInnerId,
+            boolean isInverted,
+            boolean isCoast,
+            double statorCurrentLimit,
+            double supplyCurrentLimit,
+            boolean isSoftLimitsEnabled,
+            double forwardSoftwareLimit,
+            double reverseSoftwareLimit,
+            boolean useMotionMagic) {
+        // Defensive copies (REQUIRED for immutability)
+        this.slotConfig = slotConfig;
+        this.motorInnerId = motorInnerId;
+        this.motorOuterId = motorInnerId;
+        this.isInnerInverted = isInverted;
+        this.isOuterInverted = isInverted;
+        this.isCoast = isCoast;
+        this.isSoftLimitsEnabled = isSoftLimitsEnabled;
+        this.statorCurrentLimit = statorCurrentLimit;
+        this.supplyCurrentLimit = supplyCurrentLimit;
+        this.forwardSoftwareLimit = forwardSoftwareLimit;
+        this.reverseSoftwareLimit = reverseSoftwareLimit;
+        this.useMotionMagic = useMotionMagic;
+    }
     public ModuleConfigurator(
             Slot0Configs slotConfig,
             int motorInnerId,
@@ -52,7 +83,8 @@ public final class ModuleConfigurator {
             boolean isCoast,
             double statorCurrentLimit,
             double supplyCurrentLimit,
-            boolean isSoftLimitsEnabled) {
+            boolean isSoftLimitsEnabled,
+            boolean useMotionMagic) {
         // Defensive copies (REQUIRED for immutability)
         this.slotConfig = slotConfig;
         this.motorInnerId = motorInnerId;
@@ -63,6 +95,9 @@ public final class ModuleConfigurator {
         this.isSoftLimitsEnabled = isSoftLimitsEnabled;
         this.statorCurrentLimit = statorCurrentLimit;
         this.supplyCurrentLimit = supplyCurrentLimit;
+        this.forwardSoftwareLimit = Double.MAX_VALUE;
+        this.reverseSoftwareLimit = Double.MIN_VALUE;
+        this.useMotionMagic = useMotionMagic;
     }
 
     /* ---------------- Getters (defensive) ---------------- */
@@ -106,7 +141,7 @@ public final class ModuleConfigurator {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
                 statorCurrentLimit,
                 supplyCurrentLimit,
-                isSoftLimitsEnabled);
+                isSoftLimitsEnabled,useMotionMagic);
     }
 
     public void configureMotor(
@@ -138,10 +173,25 @@ public final class ModuleConfigurator {
         fxConfig.TorqueCurrent.PeakForwardTorqueCurrent = getStatorCurrentLimit();
         fxConfig.TorqueCurrent.PeakReverseTorqueCurrent = -getStatorCurrentLimit();
 
-        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = isSoftLimitsEnabled;
-        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = isSoftLimitsEnabled;
-        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
-        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
+        if (isSoftLimitsEnabled) {
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = isSoftLimitsEnabled;
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = isSoftLimitsEnabled;
+
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = forwardSoftwareLimit;
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = reverseSoftwareLimit;
+        }
+        else{
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+        }
+
+        if(useMotionMagic){
+        // --- MOTION MAGIC VELOCITY CONFIGS ---
+        fxConfig.MotionMagic.MotionMagicCruiseVelocity = 0; // Rotations per second
+        fxConfig.MotionMagic.MotionMagicAcceleration = 0.0;   // Rotations per second squared
+        fxConfig.MotionMagic.MotionMagicJerk = 0.0;          // Rotations per second cubed
+        }
+
         motor.getConfigurator().apply(fxConfig);
     }
 
@@ -170,10 +220,17 @@ public final class ModuleConfigurator {
 
         fxConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         fxConfig.CurrentLimits.StatorCurrentLimit = getStatorCurrentLimit();
-        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = isSoftLimitsEnabled;
-        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = isSoftLimitsEnabled;
-        fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
-        fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 5;
+        if (isSoftLimitsEnabled) {
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = isSoftLimitsEnabled;
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = isSoftLimitsEnabled;
+
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = forwardSoftwareLimit;
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = reverseSoftwareLimit;
+        }
+        else{
+            fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+            fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+        }
         motor.getConfigurator().apply(fxConfig);
     }
     
