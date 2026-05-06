@@ -65,7 +65,14 @@ public final class Constants {
         public static final double idleHoodPosition = 0;
 //who knows what distance
         public static final double targetDumperSpeed = 40;
-        public static final double targetHoodPosition = 3.5;
+        public static final double targetHoodPosition = -3.5;
+
+
+        public static final double motionMagicCruiseVelocity = 160;
+        public static final double motionMagicAcceleration = 320;
+        public static final double motionMagicJerk = 1600;
+        public static final double motionMagicExpoKV = 0.0;
+        public static final double motionMagicExpoKa = 0.0;
 
 
         public final static class SharedFlywheel {
@@ -110,7 +117,13 @@ public final class Constants {
             public static final boolean isSoftLimitsEnabled = true;
             public static final double forwardSoftwareLimit = 6.2;
             public static final double reverseSoftwareLimit = 0;
-             public static final boolean useMotionMagic = false;
+            public static final boolean useMotionMagic = true;
+            public static final double motionMagicCruiseVelocity = 160;
+            public static final double motionMagicAcceleration = 320;
+            public static final double motionMagicJerk = 1600;
+            public static final double motionMagicExpoKV = 0.4;
+            public static final double motionMagicExpoKa = 0.1;
+
         }
 
         public final static class Left {
@@ -122,7 +135,7 @@ public final class Constants {
             public static final double kdumperLeftMotorkP = 0;
             public static final double kdumperLeftMotorkI = 0.0;
             public static final double kdumperLeftMotorkD = 0;
-            public static final double kdumperLeftMotorkS = 0.0;
+            public static final double kdumperLeftMotorkS = 0.18;
             public static final double kdumperLeftMotorkV = 0.0;
             public static final double kdumperLeftMotorkA = 0;
             public static final double statorCurrentLimit = 80;
@@ -142,7 +155,7 @@ public final class Constants {
             public static final double kdumperRightMotorkP = 0;
             public static final double kdumperRightMotorkI = 0.0;
             public static final double kdumperRightMotorkD = 0;
-            public static final double kdumperRightMotorkS = 0.0;
+            public static final double kdumperRightMotorkS = 0.18;
             public static final double kdumperRightMotorkV = 0.0;
             public static final double kdumperRightMotorkA = 0;
             public static final double statorCurrentLimit = 80;
@@ -165,8 +178,8 @@ public final class Constants {
             public static final double offsetDistanceInMeters = 0.92837;
             public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
             public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
-            public static final double[] dumperSpeed = {0, 0, 0, 0,  0,  0 }; // RPS
-            public static final double[] hoodPosition =         { 3.5,  3.5, 3.5, 3.5,  3.5,  3.5 }; // RPS
+            public static final double[] dumperSpeed = {100, 100, 100, 100,  100,  100 }; // RPS
+            public static final double[] hoodPosition =         { -3.5,  -3.5, -3.5, -3.5,  -3.5,  -3.5 }; // RPS
         }
     }
 
