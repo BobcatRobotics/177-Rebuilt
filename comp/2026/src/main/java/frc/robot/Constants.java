@@ -47,12 +47,12 @@ public final class Constants {
         // public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
                 public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 1.708;
+            public static final double kIntakeMotorkP = 3.0;
             public static final double kIntakeMotorkI = 0;
             public static final double kIntakeMotorkD = 0;
             public static final double kIntakeMotorkS = 0.375;
-            public static final double kIntakeMotorkV = 0.117;
-            public static final double kIntakeMotorkA = 0;
+            public static final double kIntakeMotorkV = 0.20;
+            public static final double kIntakeMotorkA = 0.1;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 80;
             public static final boolean isInverted = false;
@@ -64,8 +64,8 @@ public final class Constants {
         public static final double idleDumperSpeed = 0;
         public static final double idleHoodPosition = 0;
 //who knows what distance
-        public static final double targetDumperSpeed = 40;
-        public static final double targetHoodPosition = -3.5;
+        public static final double targetDumperSpeed = 50;
+        public static final double targetHoodPosition = -6.2;
 
 
         public static final double motionMagicCruiseVelocity = 160;
@@ -115,7 +115,7 @@ public final class Constants {
             public static final double supplyCurrentLimit = 80;
             public static final int ID = 21;
             public static final boolean isSoftLimitsEnabled = true;
-            public static final double forwardSoftwareLimit = 6.2;
+            public static final double forwardSoftwareLimit = -6.2;
             public static final double reverseSoftwareLimit = 0;
             public static final boolean useMotionMagic = true;
             public static final double motionMagicCruiseVelocity = 160;
@@ -132,11 +132,11 @@ public final class Constants {
             public static final int dumperLeftUpID = 13; 
             public static final int dumperLeftDownID = 20;
             // Motor Constants
-            public static final double kdumperLeftMotorkP = 0;
+            public static final double kdumperLeftMotorkP = 0.085;
             public static final double kdumperLeftMotorkI = 0.0;
             public static final double kdumperLeftMotorkD = 0;
             public static final double kdumperLeftMotorkS = 0.18;
-            public static final double kdumperLeftMotorkV = 0.0;
+            public static final double kdumperLeftMotorkV = 0.125;
             public static final double kdumperLeftMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -152,11 +152,11 @@ public final class Constants {
             public static final int dumperRightUpID = 11; 
             public static final int dumperRightDownID = 14; 
             //Motor Constants
-            public static final double kdumperRightMotorkP = 0;
+            public static final double kdumperRightMotorkP = 0.085;
             public static final double kdumperRightMotorkI = 0.0;
             public static final double kdumperRightMotorkD = 0;
             public static final double kdumperRightMotorkS = 0.18;
-            public static final double kdumperRightMotorkV = 0.0;
+            public static final double kdumperRightMotorkV = 0.125;
             public static final double kdumperRightMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
