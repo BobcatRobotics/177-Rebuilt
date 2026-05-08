@@ -132,11 +132,11 @@ public final class Constants {
             public static final int dumperLeftUpID = 13; 
             public static final int dumperLeftDownID = 20;
             // Motor Constants
-            public static final double kdumperLeftMotorkP = 0.085;
+            public static final double kdumperLeftMotorkP = 0.14;
             public static final double kdumperLeftMotorkI = 0.0;
             public static final double kdumperLeftMotorkD = 0;
             public static final double kdumperLeftMotorkS = 0.18;
-            public static final double kdumperLeftMotorkV = 0.125;
+            public static final double kdumperLeftMotorkV = 0.1275;
             public static final double kdumperLeftMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -152,11 +152,11 @@ public final class Constants {
             public static final int dumperRightUpID = 11; 
             public static final int dumperRightDownID = 14; 
             //Motor Constants
-            public static final double kdumperRightMotorkP = 0.085;
+            public static final double kdumperRightMotorkP = 0.14;
             public static final double kdumperRightMotorkI = 0.0;
             public static final double kdumperRightMotorkD = 0;
             public static final double kdumperRightMotorkS = 0.18;
-            public static final double kdumperRightMotorkV = 0.125;
+            public static final double kdumperRightMotorkV = 0.1275;
             public static final double kdumperRightMotorkA = 0;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
@@ -178,7 +178,7 @@ public final class Constants {
             public static final double offsetDistanceInMeters = 0.92837;
             public static final double[] distance =          {  60, 70, 80, 90, 100, 110.0 };
             public static final double[] carwashSpeed =      {  80, 80, 80, 80,  80,  80.0 }; // RPS
-            public static final double[] dumperSpeed = {100, 100, 100, 100,  100,  100 }; // RPS
+            public static final double[] dumperSpeed = {10, 10, 10, 10,  10,  10 }; // RPS
             public static final double[] hoodPosition =         { -3.5,  -3.5, -3.5, -3.5,  -3.5,  -3.5 }; // RPS
         }
     }
@@ -199,7 +199,7 @@ public final class Constants {
 
 
         public static final double idleHopperSpeed = 0;
-        public static final double topMotorTargetVelocity = 90;
+        public static final double topMotorTargetVelocity = 45;
 
     }
 
