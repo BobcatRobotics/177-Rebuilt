@@ -47,12 +47,12 @@ public final class Constants {
         // public static final double[] targetIntakeSpeedInRPS = {80,80,80,80,80,80,80,80};
                 public final static class SharedIntake {
             public static final int intakeIDLeft = 15;
-            public static final double kIntakeMotorkP = 3.0;
+            public static final double kIntakeMotorkP = 8.0;
             public static final double kIntakeMotorkI = 0;
             public static final double kIntakeMotorkD = 0;
             public static final double kIntakeMotorkS = 0.375;
-            public static final double kIntakeMotorkV = 0.20;
-            public static final double kIntakeMotorkA = 0.1;
+            public static final double kIntakeMotorkV = 7.0;
+            public static final double kIntakeMotorkA = 4.8 ;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 80;
             public static final boolean isInverted = false;
@@ -68,9 +68,9 @@ public final class Constants {
         public static final double targetHoodPosition = -6.2;
 
 
-        public static final double motionMagicCruiseVelocity = 160;
-        public static final double motionMagicAcceleration = 320;
-        public static final double motionMagicJerk = 1600;
+        public static final double motionMagicCruiseVelocity = 190;
+        public static final double motionMagicAcceleration = 600;
+        public static final double motionMagicJerk = 0;
         public static final double motionMagicExpoKV = 0.0;
         public static final double motionMagicExpoKa = 0.0;
 
@@ -119,7 +119,7 @@ public final class Constants {
             public static final double reverseSoftwareLimit = 0;
             public static final boolean useMotionMagic = true;
             public static final double motionMagicCruiseVelocity = 160;
-            public static final double motionMagicAcceleration = 320;
+            public static final double motionMagicAcceleration = 700;
             public static final double motionMagicJerk = 1600;
             public static final double motionMagicExpoKV = 0.4;
             public static final double motionMagicExpoKa = 0.1;
@@ -132,12 +132,12 @@ public final class Constants {
             public static final int dumperLeftUpID = 13; 
             public static final int dumperLeftDownID = 20;
             // Motor Constants
-            public static final double kdumperLeftMotorkP = 0.14;
+            public static final double kdumperLeftMotorkP = 0.19;
             public static final double kdumperLeftMotorkI = 0.0;
             public static final double kdumperLeftMotorkD = 0;
             public static final double kdumperLeftMotorkS = 0.18;
-            public static final double kdumperLeftMotorkV = 0.1275;
-            public static final double kdumperLeftMotorkA = 0;
+            public static final double kdumperLeftMotorkV = 0.13;
+            public static final double kdumperLeftMotorkA = 0.4;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
             public static final boolean isInverted = false;
@@ -152,12 +152,12 @@ public final class Constants {
             public static final int dumperRightUpID = 11; 
             public static final int dumperRightDownID = 14; 
             //Motor Constants
-            public static final double kdumperRightMotorkP = 0.14;
+            public static final double kdumperRightMotorkP = 0.19;
             public static final double kdumperRightMotorkI = 0.0;
             public static final double kdumperRightMotorkD = 0;
             public static final double kdumperRightMotorkS = 0.18;
-            public static final double kdumperRightMotorkV = 0.1275;
-            public static final double kdumperRightMotorkA = 0;
+            public static final double kdumperRightMotorkV = 0.13;
+            public static final double kdumperRightMotorkA = 0.4;
             public static final double statorCurrentLimit = 80;
             public static final double supplyCurrentLimit = 60;
             public static final boolean isInverted = true;
