@@ -64,8 +64,8 @@ public final class Constants {
         public static final double idleDumperSpeed = 0;
         public static final double idleHoodPosition = 0;
 //who knows what distance
-        public static final double targetDumperSpeed = 50;
-        public static final double targetHoodPosition = -6.2;
+        public static final double targetDumperSpeed = 20;
+        public static final double targetHoodPosition = 0;
 
 
         public static final double motionMagicCruiseVelocity = 190;
@@ -103,7 +103,7 @@ public final class Constants {
 
     public final static class adjustableHood {
             public static final boolean isInverted = false;
-            public static final boolean isCoast = true;
+            public static final boolean isCoast = false;
             // Motor Constants
             public static final double kAdjHoodMotorkP =12;
             public static final double kAdjHoodMotorkI = 0;
@@ -207,7 +207,7 @@ public final class Constants {
 
 
         public static final double idleHopperSpeed = 0;
-        public static final double topMotorTargetVelocity = 55;
+        public static final double topMotorTargetVelocity = 57;
 
     }
 
