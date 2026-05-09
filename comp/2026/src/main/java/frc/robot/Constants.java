@@ -207,7 +207,7 @@ public final class Constants {
 
 
         public static final double idleHopperSpeed = 0;
-        public static final double topMotorTargetVelocity = 45;
+        public static final double topMotorTargetVelocity = 55;
 
     }
 
