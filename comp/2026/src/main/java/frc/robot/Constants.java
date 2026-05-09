@@ -69,37 +69,37 @@ public final class Constants {
 
 
         public static final double motionMagicCruiseVelocity = 190;
-        public static final double motionMagicAcceleration = 600;
+        public static final double motionMagicAcceleration = 175;
         public static final double motionMagicJerk = 0;
         public static final double motionMagicExpoKV = 0.0;
-        public static final double motionMagicExpoKa = 0.0;
+        public static final double motionMagicExpoKa = 0.01;
 
 
-        public final static class SharedFlywheel {
-            public static final boolean isInvertedInnerLeft = false;
-            public static final boolean isInvertedOuterLeft = true;
-            public static final boolean isInvertedInnerRight = false;
-            public static final boolean isInvertedOuterRight = false;
-            public static final boolean isCoastLeft = true;
-            public static final boolean isCoastRight = true;
-            // Motor Constants
-            public static final double kshooterMainkP =0;
-            public static final double kshooterMainkI = 0;
-            public static final double kshooterMainkD = 0;
-            public static final double kshooterMainkS = 0.0;
-            public static final double kshooterMainkV = 0.0;
-            public static final double kshooterMainkA = 0;
-            public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 60;
+        // public final static class SharedFlywheel {
+        //     public static final boolean isInvertedInnerLeft = false;
+        //     public static final boolean isInvertedOuterLeft = true;
+        //     public static final boolean isInvertedInnerRight = false;
+        //     public static final boolean isInvertedOuterRight = false;
+        //     public static final boolean isCoastLeft = true;
+        //     public static final boolean isCoastRight = true;
+        //     // Motor Constants
+        //     public static final double kshooterMainkP =0;
+        //     public static final double kshooterMainkI = 0;
+        //     public static final double kshooterMainkD = 0;
+        //     public static final double kshooterMainkS = 0.0;
+        //     public static final double kshooterMainkV = 0.0;
+        //     public static final double kshooterMainkA = 0;
+        //     public static final double statorCurrentLimit = 80;
+        //     public static final double supplyCurrentLimit = 60;
 
-            // public static final int FlywheelOuterIDLeft = 14;
-            // public static final int FlywheelInnerIDLeft = 13;//dumper left up
-            // public static final int FlywheelOuterIDRight = 11;
-             public static final boolean useMotionMagic = true;
+        //     // public static final int FlywheelOuterIDLeft = 14;
+        //     // public static final int FlywheelInnerIDLeft = 13;//dumper left up
+        //     // public static final int FlywheelOuterIDRight = 11;
+        //      public static final boolean useMotionMagic = true;
 
             
             
-        }
+        // }
 
     public final static class adjustableHood {
             public static final boolean isInverted = false;
@@ -118,11 +118,11 @@ public final class Constants {
             public static final double forwardSoftwareLimit = -6.2;
             public static final double reverseSoftwareLimit = 0;
             public static final boolean useMotionMagic = true;
-            public static final double motionMagicCruiseVelocity = 160;
+            public static final double motionMagicCruiseVelocity = 0;
             public static final double motionMagicAcceleration = 700;
-            public static final double motionMagicJerk = 1600;
+            public static final double motionMagicJerk = 0;
             public static final double motionMagicExpoKV = 0.4;
-            public static final double motionMagicExpoKa = 0.1;
+            public static final double motionMagicExpoKa = 0.01;
 
         }
 
@@ -144,6 +144,13 @@ public final class Constants {
             public static final boolean isCoast = true;
             public static final boolean isSoftLimitsEnabled = false;
             public static final boolean useMotionMagic = true;
+
+
+            public static final double motionMagicCruiseVelocity = 190;
+            public static final double motionMagicAcceleration = 600;
+            public static final double motionMagicJerk = 0;
+            public static final double motionMagicExpoKV = 0.0;
+            public static final double motionMagicExpoKa = 0.0;
         }
 
         public final static class Right {
@@ -164,6 +171,7 @@ public final class Constants {
             public static final boolean isCoast = true;
             public static final boolean isSoftLimitsEnabled = false;
              public static final boolean useMotionMagic = true;
+             
         }
 
         // public final static class ValuesOfKnownShots{

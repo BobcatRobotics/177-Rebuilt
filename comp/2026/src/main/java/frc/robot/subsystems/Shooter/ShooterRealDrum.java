@@ -12,6 +12,9 @@ import org.bobcatrobotics.Util.Tunables.Gains;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.MotionMagicExpoDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -48,9 +51,11 @@ public class ShooterRealDrum implements ShooterIO {
   private MotionMagicVelocityVoltage  velDumperLeftDownRequest = new MotionMagicVelocityVoltage(0);
   private MotionMagicVelocityVoltage  velDumperRightUpRequest = new MotionMagicVelocityVoltage(0);
   private MotionMagicVelocityVoltage  velDumperRightDownRequest = new MotionMagicVelocityVoltage(0);
+
   // private VelocityTorqueCurrentFOC velHoodLeftRequest = new VelocityTorqueCurrentFOC(0);
   // private VelocityTorqueCurrentFOC velHoodRightRequest = new VelocityTorqueCurrentFOC(0);
-  private MotionMagicVoltage posAdjustableHoodRequest = new MotionMagicVoltage(0);
+  private MotionMagicExpoVoltage posAdjustableHoodRequest = new MotionMagicExpoVoltage(0);
+  
   
 
   private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
@@ -65,16 +70,6 @@ public class ShooterRealDrum implements ShooterIO {
   private StatusSignal<Current> statorCurrentOfDumperLeftDownAmps;
   private StatusSignal<Voltage> outputOfDumperLeftDownVolts;
   private StatusSignal<AngularAcceleration> accelerationOfDumperLeftDown;
-  
-  // private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorLeftRPS;
-  // private StatusSignal<Current> statorCurrentOfHoodLeftAmps;
-  // private StatusSignal<Voltage> outputOfHoodLeftVolts;
-  // private StatusSignal<AngularAcceleration> accelerationOfHoodLeft;
-
-  // private StatusSignal<AngularVelocity> velocityOfHoodWheelMotorRightRPS;
-  // private StatusSignal<Current> statorCurrentOfHoodRightAmps;
-  // private StatusSignal<Voltage> outputOfHoodRightVolts;
-  // private StatusSignal<AngularAcceleration> accelerationOfHoodRight;
 
   private StatusSignal<AngularVelocity> velocityOfDumperRightUpRPS;
   private StatusSignal<Current> statorCurrentOfOfDumperRightUpAmps;
@@ -94,9 +89,7 @@ public class ShooterRealDrum implements ShooterIO {
 
 
   public double dumperLeftSetPoint = 0;
-  // public double dumperLeftDownSetPoint = 0;
   public double dumperRightSetPoint = 0;
-  // public double dumperRightDownSetPoint = 0;
   public double adjustableHoodSetPoint = 0;
 
   public ShooterRealDrum() {
@@ -141,8 +134,6 @@ public class ShooterRealDrum implements ShooterIO {
     setupDumperLeftDown(dumperLeftDownGains);
     setupDumperRightUp(dumperRightUpGains);
     setupDumperRightDown(dumperRightDownGains);
-    // setupLeftHood(HoodLeftGains);
-    // setupRightHood(HoodRightGains);
     setupAdjustableHood(adjustableHoodGains);
   }
 
@@ -272,59 +263,6 @@ public class ShooterRealDrum implements ShooterIO {
 
   }
 
-  // public void setupLeftHood(Gains g) {
-  //   // Flywheel Configuration
-  //   HoodMConfigLeft = new ModuleConfigurator(g.toSlot0Configs(),
-  //       Constants.ShooterConstants.Left.HoodID,
-  //       Constants.ShooterConstants.Left.isInverted,
-  //       Constants.ShooterConstants.Left.isCoast,
-  //       Constants.ShooterConstants.Left.statorCurrentLimit,
-  //       Constants.ShooterConstants.Left.supplyCurrentLimit);
-  //   HoodWheelMotorLeft = new TalonFX(HoodMConfigLeft.getMotorInnerId(), new CANBus("rio"));
-  //   HoodMConfigLeft.configureMotor(HoodWheelMotorLeft, g);
-  //   if(Constants.lowTelemetryMode){
-  //   velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
-  //   statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
-  //   HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
-  //       statorCurrentOfHoodLeftAmps);
-  //   }else{
-  //   velocityOfHoodWheelMotorLeftRPS = HoodWheelMotorLeft.getVelocity();
-  //   statorCurrentOfHoodLeftAmps = HoodWheelMotorLeft.getStatorCurrent();
-  //   outputOfHoodLeftVolts = HoodWheelMotorLeft.getMotorVoltage();
-  //   accelerationOfHoodLeft = HoodWheelMotorLeft.getAcceleration();
-  //   HoodMConfigLeft.configureSignals(HoodWheelMotorLeft, 50.0, velocityOfHoodWheelMotorLeftRPS,
-  //       statorCurrentOfHoodLeftAmps, outputOfHoodLeftVolts, accelerationOfHoodLeft);
-  //   }
-
-  // }
-
-  // public void setupRightHood(Gains g) {
-  //   // Flywheel Configuration
-  //   HoodMConfigRight = new ModuleConfigurator(g.toSlot0Configs(),
-  //       Constants.ShooterConstants.Right.HoodID,
-  //       Constants.ShooterConstants.Right.isInverted,
-  //       Constants.ShooterConstants.Right.isCoast,
-  //       Constants.ShooterConstants.Right.statorCurrentLimit,
-  //       Constants.ShooterConstants.Right.supplyCurrentLimit);
-  //   HoodWheelMotorRight = new TalonFX(HoodMConfigRight.getMotorInnerId(), new CANBus("rio"));
-  //   HoodMConfigRight.configureMotor(HoodWheelMotorRight, g);
-  //   if(Constants.lowTelemetryMode){
-  //   velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
-  //   statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
-  //   flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
-  //       statorCurrentOfHoodRightAmps);
-  //   }
-  //   else{
-  //   velocityOfHoodWheelMotorRightRPS = HoodWheelMotorRight.getVelocity();
-  //   statorCurrentOfHoodRightAmps = HoodWheelMotorRight.getStatorCurrent();
-  //   outputOfHoodRightVolts = HoodWheelMotorRight.getMotorVoltage();
-  //   accelerationOfHoodRight = HoodWheelMotorRight.getAcceleration();
-  //   flywheelConfigLeft.configureSignals(HoodWheelMotorRight, 50.0, velocityOfHoodWheelMotorRightRPS,
-  //       statorCurrentOfHoodRightAmps, outputOfHoodRightVolts, accelerationOfHoodRight);
-  //   }
-
-  // }
-
    public void setupAdjustableHood(Gains g) {
     // Flywheel Configuration
     adjustableHoodConfigurator = new ModuleConfigurator(g.toSlot0Configs(),
@@ -378,10 +316,6 @@ public class ShooterRealDrum implements ShooterIO {
         accelerationOfDumperRightUp,
         accelerationOfDumperRightDown,
         accelerationOfAdjustableHoodPosition,
-        // accelerationOfHoodLeft,
-        // accelerationOfHoodRight,
-        // outputOfHoodLeftVolts,
-        // outputOfHoodRightVolts,
         outputOfDumperLeftUpVolts,
         outputOfDumperLeftDownVolts,
         outputOfDumperRightUpVolts,
@@ -413,13 +347,9 @@ public class ShooterRealDrum implements ShooterIO {
     BaseStatusSignal.refreshAll(
         velocityOfDumperLeftUpRPS,
         velocityOfDumperLeftDownRPS,
-        // velocityOfHoodWheelMotorLeftRPS,
-        // velocityOfHoodWheelMotorRightRPS,
         velocityOfDumperRightUpRPS,
         velocityOfDumperRightDownRPS,
         velocityOfAdjustableHoodPositionRPS,
-        // statorCurrentOfHoodLeftAmps,
-        // statorCurrentOfHoodRightAmps,
         statorCurrentOfDumperLeftUpAmps,
         statorCurrentOfDumperLeftDownAmps,
         statorCurrentOfOfDumperRightUpAmps,
@@ -433,16 +363,9 @@ public class ShooterRealDrum implements ShooterIO {
         .in(Rotations.per(Seconds));
     inputs.velocityOfDumperRightDownRPS = velocityOfDumperRightDownRPS.getValue()
         .in(Rotations.per(Seconds));
-    // inputs.velocityOfHoodWheelMotorLeftRPS = velocityOfHoodWheelMotorLeftRPS.getValue()
-    //     .in(Rotations.per(Seconds));
-    // inputs.velocityOfHoodWheelMotorRightRPS = velocityOfHoodWheelMotorRightRPS.getValue()
-    //     .in(Rotations.per(Seconds));
     inputs.velocityOfAdjustableHoodPositionRPS = velocityOfAdjustableHoodPositionRPS.getValue()
         .in(Rotations.per(Seconds));
     
-
-    // inputs.statorCurrentOfHoodLeftAmps = statorCurrentOfHoodLeftAmps.getValue().in(Amps);
-    // inputs.statorCurrentOfHoodRightAmps = statorCurrentOfHoodRightAmps.getValue().in(Amps);
     inputs.statorCurrentOfDumperLeftUp = statorCurrentOfDumperLeftUpAmps.getValue().in(Amps);
     inputs.statorCurrentOfDumperLeftDown = statorCurrentOfDumperLeftDownAmps.getValue().in(Amps);
     inputs.statorCurrentOfDumperRightUp = statorCurrentOfOfDumperRightUpAmps.getValue().in(Amps);
@@ -450,9 +373,6 @@ public class ShooterRealDrum implements ShooterIO {
     inputs.statorCurrentOfAdjustableHoodPositionAmps = statorCurrentOfAdjustableHoodPositionAmps.getValue().in(Amps);
 
     inputs.positionOfAdjustableHood = adjustableHood.getPosition().getValueAsDouble();
-
-    // inputs.HoodWheelMotorRightConnected = HoodWheelMotorRight.isConnected();
-    // inputs.HoodWheelMotorLeftConnected = HoodWheelMotorLeft.isConnected();
     inputs.DumperLeftUpConnected = dumperLeftUp.isConnected();
     inputs.DumperLeftDownConnected = dumperLeftDown.isConnected();
     inputs.DumperRightUpConnected = dumperRightUp.isConnected();
@@ -485,7 +405,6 @@ public class ShooterRealDrum implements ShooterIO {
     dumperLeftSetPoint = dumperLeftSpeed;
     dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(dumperLeftSetPoint));
     dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(dumperLeftSetPoint));
-
     
   }
 
@@ -567,24 +486,6 @@ public class ShooterRealDrum implements ShooterIO {
     return avg;
   }
 
-  /* Characterization */
-  // public void runCharacterization_Hood(double output) {
-  //   HoodWheelMotorLeft.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
-  //     case Voltage -> characterizationRequestVoltage.withOutput(output);
-  //     case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-  //   });
-  //   HoodWheelMotorRight.setControl(switch (CharacterizationClosedLoopOutputType.Voltage) {
-  //     case Voltage -> characterizationRequestVoltage.withOutput(output);
-  //     case TorqueCurrentFOC -> characterizationRequestTorqueCurrentFOC.withOutput(output);
-  //   });
- // }
-
-  // /** Returns the module velocity in rotations/sec (Phoenix native units). */
-  // public double getFFCharacterizationVelocity_Hood() {
-  //   double avg = (HoodWheelMotorLeft.getVelocity().getValue().in(RotationsPerSecond) +
-  //       HoodWheelMotorRight.getVelocity().getValue().in(RotationsPerSecond)) / 2;
-  //   return avg;
-  // }
 
   public void resetEncoder() {
     adjustableHood.setPosition(0);

@@ -347,24 +347,24 @@ public class RobotContainer {
                                                 () -> -controller.getLeftX(),
                                                 () -> -controller.getRightX()));
 
-                m_Shooter.setDefaultCommand(new RunCommand(() -> {
+                m_Shooter.setDefaultCommand(loggableCommand("Default Shooter Command",new RunCommand(() -> {
                         controller.setRumble(RumbleType.kBothRumble, 0);
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
                         shooterState.setState(ShooterState.State.IDLE);
                         m_Shooter.setState(shooterState);
-                }, m_Shooter));
-                m_Hopper.setDefaultCommand(new RunCommand(() -> {
+                }, m_Shooter)));
+                m_Hopper.setDefaultCommand(loggableCommand("Default Hopper Command",new RunCommand(() -> {
                         HopperState hopperState = RobotState.getInstance().getHopperState();
                         hopperState.setState(HopperState.State.IDLE);
                         m_Hopper.setState(hopperState);
-                }, m_Hopper));
-                intake.setDefaultCommand(new RunCommand(() -> intake.stop(), intake));
-                m_Carwash.setDefaultCommand(new RunCommand(() -> {
+                }, m_Hopper)));
+                intake.setDefaultCommand(loggableCommand("Default Intake Command",new RunCommand(() -> intake.stop(), intake)));
+                m_Carwash.setDefaultCommand(loggableCommand("Default Carwash Command",new RunCommand(() -> {
                         m_Carwash.stop();
                         CarwashState carwashState = RobotState.getInstance().getCarwashState();
                         carwashState.setState(CarwashState.State.IDLE);
                         m_Carwash.setState(carwashState);
-                }, m_Carwash));
+                }, m_Carwash)));
 
 
                 controller.povDown().onTrue(new InstantCommand(
