@@ -227,7 +227,7 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
     goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
-    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
+    goal.hoodPosition = 0;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
@@ -248,7 +248,7 @@ public class Shooter extends SubsystemBase {
     ShooterGoal goal = new ShooterGoal();
     goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
     goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
-    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
+    goal.hoodPosition = 0;
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
