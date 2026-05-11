@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -385,10 +386,10 @@ public class RobotContainer {
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
                                                 drive).ignoringDisable(true));
 
-                controller.rightBumper().whileTrue(loggableCommand("InterpolatedSpinUp",InterpolatedSpinUp()));
-                controller.leftBumper().whileTrue(loggableCommand("InterpolatedShootBalls", InterpolatedShootBalls()));
-                controller.leftTrigger().whileTrue(InterpolatedSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(InterpolatedShootBalls()));
+                controller.rightBumper().whileTrue(
+                        loggableCommand("Interpolate Shoot Balls",interpolatedShootSeq()));
+                controller.leftTrigger().whileTrue(loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
+
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -400,48 +401,23 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
-                operator.rightBumper().whileTrue(manualSpinUp());
-                operator.leftBumper().whileTrue(manualShootBalls());
+
+
+                operator.rightBumper().whileTrue(
+                        loggableCommand("Manual Shoot Balls",manualShootSeq()));
+
+
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
                                 .onFalse(new InstantCommand(() -> intake.stop()));
 
                 operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
-                double runTestTime = 5;
-                Command strafeForward = DriveCommands.joystickDrive(drive, () -> 1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command strafeRight = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 1.0, () -> 0.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command strafeBackward = DriveCommands.joystickDrive(drive, () -> -1.0, () -> 0.0, () -> 0.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command strafeLeft = DriveCommands.joystickDrive(drive, () -> 0.0, () -> -1.0, () -> 0.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command rotateClockwise = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 1.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command rotateCounterClockwise = DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> -1.0)
-                                .withTimeout(runTestTime)
-                                .andThen(new InstantCommand(() -> drive.stop()).withTimeout(runTestTime));
-                Command swerveCommand = strafeForward.andThen(strafeRight).andThen(strafeBackward).andThen(strafeLeft)
-                                .andThen(rotateClockwise).andThen(rotateCounterClockwise);
-                Command runShooterFlywheel = new RunCommand(() -> {
-                        m_Shooter.shootFuel();
-                }, m_Shooter).withTimeout(runTestTime).andThen(new InstantCommand(() -> m_Shooter.stop()));
-                Command runHopper = new RunCommand(() -> {
-                        m_Hopper.runHopper();
-                }, m_Hopper).withTimeout(runTestTime).andThen(new InstantCommand(() -> m_Hopper.stop()));
-                Command runIntake = new RunCommand(() -> {
-                        intake.retractIntake();
-                }, m_Hopper).withTimeout(runTestTime).andThen(new RunCommand(() -> {
-                        intake.grabBalls();
-                }, intake).withTimeout(runTestTime)).andThen(new InstantCommand(() -> intake.stop()));
-                devController.leftBumper().whileTrue(
-                                swerveCommand.andThen(runShooterFlywheel).andThen(runHopper).andThen(runIntake));
-                // devController.rightBumper().whileTrue(characterizeAll());
+
+
+
+
+
+
 
                 if (Robot.isSimulation()) {
 
@@ -550,6 +526,51 @@ public class RobotContainer {
                 return cmd;
         }
 
+        /**
+         * This is the "new" interpolated shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command interpolatedShootSeq() {
+                return Commands.run(() -> {
+                        if (operator.leftBumper().getAsBoolean()) {
+                                m_Hopper.runHopper();
+                                m_Carwash.manualFeedFuel();
+                                m_Shooter.shootFuel();
+                                intake.setVelocity(125);
+                                drive.stopWithX();
+
+                        } else {
+                                m_Shooter.spinUp();
+                                m_Carwash.spinUp();
+                                intake.setVelocity(125);
+                                m_Hopper.hopperSpinUp();
+                        }
+                });
+        }
+
+        /**
+         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command conditionalInterpolatedShootSeq() {
+                return Commands.run(() -> {
+                        if (m_Shooter.atSpeed()) {
+                                m_Hopper.runHopper();
+                                m_Carwash.manualFeedFuel();
+                                m_Shooter.shootFuel();
+                                intake.setVelocity(125);
+                                drive.stopWithX();
+
+                        } else {
+                                m_Shooter.spinUp();
+                                m_Carwash.spinUp();
+                                intake.setVelocity(125);
+                                m_Hopper.hopperSpinUp();
+                        }
+                });
+        }
+
+
         public Command InterpolatedSpinUp() {
                 return new RunCommand(() -> {
                         m_Shooter.spinUp();
@@ -625,6 +646,47 @@ public class RobotContainer {
                 }, m_Shooter)).alongWith(new RunCommand(() -> {
                         intake.setVelocity(125);
                 }));
+        }
+
+        /**
+         * This is the "new" manual shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command manualShootSeq(){
+                return Commands.run(() -> {
+                        if (operator.leftBumper().getAsBoolean()) {
+                                m_Shooter.manualShootFuel();
+                                m_Carwash.manualFeedFuel();
+                                intake.setVelocity(125);
+                                m_Hopper.runHopper();
+                                drive.stopWithX();
+                        } else {
+                                m_Shooter.manualSpinUp();
+                                m_Carwash.spinUp();
+                                intake.setVelocity(125);
+                                m_Hopper.hopperSpinUp();
+                        }
+                });
+        }
+        /**
+         * This is the "new" conditional manual shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command conditionalManualShootSeq(){
+                return Commands.run(() -> {
+                        if (m_Shooter.atSpeed()) {
+                                m_Shooter.manualShootFuel();
+                                m_Carwash.manualFeedFuel();
+                                intake.setVelocity(125);
+                                m_Hopper.runHopper();
+                                drive.stopWithX();
+                        } else {
+                                m_Shooter.manualSpinUp();
+                                m_Carwash.spinUp();
+                                intake.setVelocity(125);
+                                m_Hopper.hopperSpinUp();
+                        }
+                });
         }
 
         public Command manualSpinUp() {
