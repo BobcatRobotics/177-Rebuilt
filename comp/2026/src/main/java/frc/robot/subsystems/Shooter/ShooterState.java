@@ -73,7 +73,7 @@ public class ShooterState {
           INTERPOLATEDPASSING -> {
         // Placeholder – typically filled in by vision / interpolation
         double hubDistance = RobotState.getInstance().targettedDistance;
-        double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        double dumperSpeed = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
         currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(2);
