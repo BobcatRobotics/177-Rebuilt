@@ -172,6 +172,27 @@ public final class HubUtil {
                     new Rotation3d());
         return hubPose;
     }
+    public static Pose3d getOutpostPassingCoordinate(Alliance alliance) {
+        Pose3d hubPose = new Pose3d();
+        Translation2d hub = hubPosition(alliance);
+        hubPose = new Pose3d(
+                    hub.getX()*0.5,
+                    hub.getY()*0.5,
+                    0,
+                    new Rotation3d());
+        return hubPose;
+    }
+    public static Pose3d getDepoPassingCoordiante(Alliance alliance) {
+        Pose3d hubPose = new Pose3d();
+        Translation2d hub = hubPosition(alliance);
+        hubPose = new Pose3d(
+                    hub.getX()*0.5,
+                    hub.getY()*1.75,
+                    0,
+                    new Rotation3d());
+        return hubPose;
+    }
+
 
     public static Translation2d hubPosition(Alliance allianceGet ) {
         if (allianceGet == Alliance.Blue) {

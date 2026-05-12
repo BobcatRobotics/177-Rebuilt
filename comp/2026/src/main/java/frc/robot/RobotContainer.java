@@ -57,6 +57,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.PassingShot;
 import frc.robot.commands.carwashCharacterizationCommands;
 import frc.robot.commands.hopperCharacterizationCommands;
 import frc.robot.commands.shooterCharacterizationCommands;
@@ -412,11 +413,7 @@ public class RobotContainer {
 
                 operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
-
-
-
-
-
+                operator.b().whileTrue(new PassingShot(drive).until(()->RobotState.getInstance().isRobotAlignedToPassingLoc).andThen(passingShotSeq()));
 
 
                 if (Robot.isSimulation()) {
@@ -532,7 +529,7 @@ public class RobotContainer {
          */
         public Command interpolatedShootSeq() {
                 return Commands.run(() -> {
-                        if (operator.leftBumper().getAsBoolean()) {
+                        if (controller.leftBumper().getAsBoolean()) {
                                 m_Hopper.runHopper();
                                 m_Carwash.manualFeedFuel();
                                 m_Shooter.shootFuel();
@@ -548,6 +545,8 @@ public class RobotContainer {
                 });
         }
 
+
+
         /**
          * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
@@ -558,6 +557,29 @@ public class RobotContainer {
                                 m_Hopper.runHopper();
                                 m_Carwash.manualFeedFuel();
                                 m_Shooter.shootFuel();
+                                intake.setVelocity(125);
+                                drive.stopWithX();
+
+                        } else {
+                                m_Shooter.spinUp();
+                                m_Carwash.spinUp();
+                                intake.setVelocity(125);
+                                m_Hopper.hopperSpinUp();
+                        }
+                });
+        }
+
+
+        /**
+         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command passingShotSeq() {
+                return Commands.run(() -> {
+                        if (m_Shooter.atSpeed()) {
+                                m_Hopper.runHopper();
+                                m_Carwash.manualFeedFuel();
+                                m_Shooter.shootPassingFuel();
                                 intake.setVelocity(125);
                                 drive.stopWithX();
 

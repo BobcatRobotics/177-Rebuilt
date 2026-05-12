@@ -89,6 +89,19 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/distanceToHub/actual", distanceToHub.getActualDistance());
     Logger.recordOutput("Shooter/distanceToHub/offset", distanceToHub.getOffsetDistance());
     Logger.recordOutput("Shooter/BallPath", shotLine);
+
+
+    Distance distanceToDepot = distanceToDepoPassingLoc();
+    Translation2d[] passingDepoShotLine = getShotLine(distanceToDepot.getActualDistance());
+    RobotState.getInstance().depoDistance = distanceToDepot.getActualDistance();
+    Logger.recordOutput("Shooter/DepoBallPath", passingDepoShotLine);
+    Logger.recordOutput("Shooter/distanceToDepoPassingLoc", distanceToDepot.getActualDistance());
+    Distance distanceToOutpost = distanceToOutpostPassingLoc();
+    Translation2d[] passingOutpostShotLine = getShotLine(distanceToOutpost.getActualDistance());
+    RobotState.getInstance().outpostDistance = distanceToOutpost.getActualDistance();
+    Logger.recordOutput("Shooter/DepoBallPath", passingOutpostShotLine);
+    Logger.recordOutput("Shooter/distanceToOutpostPassingLoc", distanceToOutpost.getActualDistance());
+
   }
 
  public Distance distanceToHub() {
@@ -99,6 +112,26 @@ public class Shooter extends SubsystemBase {
     double distance = robotTranslation.getDistance(target);
     return new Distance(distance, Constants.ShooterConstants.ValuesOfKnownShots.offsetDistanceInMeters);
   }
+
+  public Distance distanceToDepoPassingLoc(){
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose3d hubCoordinate = HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance);
+    Translation2d target = hubCoordinate.toPose2d().getTranslation();
+    Translation2d robotTranslation = robotPose.getTranslation();
+    double distance = robotTranslation.getDistance(target);
+    return new Distance(distance, Constants.ShooterConstants.ValuesOfKnownShots.offsetDistanceInMeters);
+
+  }
+  public Distance distanceToOutpostPassingLoc(){
+    Pose2d robotPose = RobotState.getInstance().robotPose;
+    Pose3d hubCoordinate = HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance);
+    Translation2d target = hubCoordinate.toPose2d().getTranslation();
+    Translation2d robotTranslation = robotPose.getTranslation();
+    double distance = robotTranslation.getDistance(target);
+    return new Distance(distance, Constants.ShooterConstants.ValuesOfKnownShots.offsetDistanceInMeters);
+    
+  }
+
 
   public Translation2d[] getShotLine(double distance) {
     Pose2d robotPose = RobotState.getInstance().robotPose;
@@ -253,6 +286,15 @@ public class Shooter extends SubsystemBase {
     setState(RobotState.getInstance().getShooterState());
   }
 
+  public void shootPassingFuel() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATEDPASSING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
   public void shootFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATING);
     ShooterGoal goal = new ShooterGoal();

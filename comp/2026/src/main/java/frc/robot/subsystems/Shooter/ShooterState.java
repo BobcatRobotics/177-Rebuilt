@@ -21,12 +21,12 @@ public class ShooterState {
     IDLE,
     MANUAL,
     INTERPOLATING,
+    INTERPOLATEDPASSING,
     TARGETING
   }
 
   private State currentState = State.IDLE;
   private ShooterGoal currentSetpoints = new ShooterGoal();
-
 
   // Manual control values
 
@@ -65,7 +65,19 @@ public class ShooterState {
         double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
-        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);;
+        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
+        ;
+
+      }
+      case
+          INTERPOLATEDPASSING -> {
+        // Placeholder – typically filled in by vision / interpolation
+        double hubDistance = RobotState.getInstance().targettedDistance;
+        double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
+        currentSetpoints.leftDumperSpeed = dumperSpeed;
+        currentSetpoints.rightDumperSpeed = dumperSpeed;
+        currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(2);
+        ;
 
       }
       case TARGETING -> {
@@ -74,7 +86,7 @@ public class ShooterState {
         currentSetpoints.rightDumperSpeed = Constants.ShooterConstants.targetDumperSpeed;
         currentSetpoints.hoodPosition = Constants.ShooterConstants.targetHoodPosition;
       }
-    }        
+    }
     Logger.recordOutput("Shooter/rightDumper/GoalSpeeds", currentSetpoints.leftDumperSpeed);
     Logger.recordOutput("Shooter/leftDumper/GoalSpeeds", currentSetpoints.rightDumperSpeed);
     Logger.recordOutput("Shooter/adjustableHood/GoalPosition", currentSetpoints.hoodPosition);
@@ -96,7 +108,7 @@ public class ShooterState {
     return currentSetpoints.rightDumperSpeed;
   }
 
-  public double getAdjustableHoodPosition(){
+  public double getAdjustableHoodPosition() {
     return currentSetpoints.hoodPosition;
   }
 }

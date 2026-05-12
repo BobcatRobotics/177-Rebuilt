@@ -86,7 +86,12 @@ public class RobotState {
       Constants.ShooterConstants.ValuesOfKnownShots.dumperSpeed,
       Constants.ShooterConstants.ValuesOfKnownShots.hoodPosition,
       false);
-
+    public TripleOutputInterpolator passingInterpolator = new TripleOutputInterpolator(
+      Constants.ShooterConstants.PassingValuesOfKnownShots.distance,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.carwashSpeed,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.dumperSpeed,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.hoodPosition,
+      false);
   public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
   public boolean hubInrange = false;
@@ -94,7 +99,10 @@ public class RobotState {
   // used by new align command not to be confused with hubInRange;
   public boolean isRobotAlignedToHub = false;
 
-
+  public double depoDistance = 0.0;
+  public double outpostDistance = 0.0;
+  public double targettedDistance = 0.0;
+  public boolean isRobotAlignedToPassingLoc = false;
 
   public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
 }
