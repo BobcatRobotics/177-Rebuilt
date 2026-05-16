@@ -410,7 +410,7 @@ public class RobotContainer {
 
 
                 operator.rightBumper().whileTrue(
-                        loggableCommand("Manual Shoot Balls",manualShootSeq()));
+                        loggableCommand("Manual Shoot Balls",conditionalManualShootSeq()));
 
 
                 operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
