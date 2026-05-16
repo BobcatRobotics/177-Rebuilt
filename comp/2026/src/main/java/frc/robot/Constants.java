@@ -65,8 +65,8 @@ public final class Constants {
         public static final double idleDumperSpeed = 0;
         public static final double idleHoodPosition = 0;
 //who knows what distance
-        public static final double targetDumperSpeed = 57;
-        public static final double targetHoodPosition = -6.2;
+        public static final double targetDumperSpeed = 50;
+        public static final double targetHoodPosition = -5.5;
 
 
         public static final double motionMagicCruiseVelocity = 190;
