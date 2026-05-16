@@ -393,6 +393,9 @@ public class RobotContainer {
                         loggableCommand("Interpolate Shoot Balls",interpolatedShootSeq()));
                 controller.leftTrigger().whileTrue(loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
 
+
+
+
                 operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
@@ -415,7 +418,11 @@ public class RobotContainer {
 
                 operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
 
-                operator.b().whileTrue(new PassingShot(drive).until(()->RobotState.getInstance().isRobotAlignedToPassingLoc).andThen(passingShotSeq()));
+                // PAssign shot allignment 
+                // operator.leftBumper().whileTrue(new PassingShot(drive).until(()->RobotState.getInstance().isRobotAlignedToPassingLoc).andThen(passingShotSeq()));
+                
+                // Passing Shot Sequence Only
+                operator.leftBumper().whileTrue(passingShotSeq());
 
 
                 if (Robot.isSimulation()) {
