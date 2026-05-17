@@ -1,14 +1,17 @@
 package frc.robot.subsystems.Shooter;
 
+import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.bobcatrobotics.Util.Tunables.TunableDouble;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.RobotState;
 
 public class ShooterState {
+  private LinearFilter clampedDistance;
 
   /** Output goal for the shooter subsystem */
   public static class ShooterGoal {
@@ -31,7 +34,7 @@ public class ShooterState {
   // Manual control values
 
   public ShooterState() {
-
+clampedDistance = LinearFilter.movingAverage(5);
   }
 
   /** Set the shooter to a predefined state */
@@ -51,7 +54,9 @@ public class ShooterState {
 
   /** Returns the shooter outputs based on the current state */
   public void update() {
-
+    
+    double hubDistance = RobotState.getInstance().hubDistance;
+    double clampedHubDistance = hubDistance;
     switch (currentState) {
       case IDLE -> {
         currentSetpoints.leftDumperSpeed = Constants.ShooterConstants.idleDumperSpeed;
@@ -61,22 +66,22 @@ public class ShooterState {
       case
           INTERPOLATING -> {
         // Placeholder – typically filled in by vision / interpolation
-        double hubDistance = RobotState.getInstance().hubDistance;
+        clampedHubDistance = clampedDistance.calculate(hubDistance);
         double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
-        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
+        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(clampedHubDistance).get(2);
         ;
 
       }
       case
           INTERPOLATEDPASSING -> {
         // Placeholder – typically filled in by vision / interpolation
-        double hubDistance = RobotState.getInstance().targettedDistance;
+        clampedHubDistance = clampedDistance.calculate(hubDistance);
         double dumperSpeed = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
-        currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(2);
+        currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(clampedHubDistance).get(2);
         ;
 
       }
@@ -90,6 +95,8 @@ public class ShooterState {
     Logger.recordOutput("Shooter/rightDumper/GoalSpeeds", currentSetpoints.leftDumperSpeed);
     Logger.recordOutput("Shooter/leftDumper/GoalSpeeds", currentSetpoints.rightDumperSpeed);
     Logger.recordOutput("Shooter/adjustableHood/GoalPosition", currentSetpoints.hoodPosition);
+    Logger.recordOutput("Shooter/hubDistance",hubDistance);
+    Logger.recordOutput("Shooter/clamedHubDistance", clampedHubDistance);
   }
 
   public void setCurrentSetPoints(ShooterGoal goal) {

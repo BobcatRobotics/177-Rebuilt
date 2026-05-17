@@ -285,6 +285,15 @@ public class Shooter extends SubsystemBase {
     RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getShooterState());
   }
+    public void spinUpPassing() {
+    RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATEDPASSING);
+    ShooterGoal goal = new ShooterGoal();
+    goal.leftDumperSpeed = RobotState.getInstance().getShooterState().getLeftDumperSpeed();
+    goal.rightDumperSpeed = RobotState.getInstance().getShooterState().getRightDumperSpeed();
+    goal.hoodPosition = 0;
+    RobotState.getInstance().getShooterState().setCurrentSetPoints(goal);
+    setState(RobotState.getInstance().getShooterState());
+  }
 
   public void shootPassingFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.INTERPOLATEDPASSING);
