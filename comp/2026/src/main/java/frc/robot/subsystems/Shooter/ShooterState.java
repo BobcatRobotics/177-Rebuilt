@@ -7,11 +7,15 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.RobotState;
 
 public class ShooterState {
   private LinearFilter clampedDistance;
+  public boolean DemoModeEnabled = false;
+  public double DemoModeDistance = 0;
 
   /** Output goal for the shooter subsystem */
   public static class ShooterGoal {
@@ -25,7 +29,8 @@ public class ShooterState {
     MANUAL,
     INTERPOLATING,
     INTERPOLATEDPASSING,
-    TARGETING
+    TARGETING,
+    DEMO
   }
 
   private State currentState = State.IDLE;
@@ -35,6 +40,8 @@ public class ShooterState {
 
   public ShooterState() {
 clampedDistance = LinearFilter.movingAverage(5);
+SmartDashboard.putBoolean("shooter/DemoMode", DemoModeEnabled);
+SmartDashboard.putNumber("shooter/DemoDistance", DemoModeDistance);
   }
 
   /** Set the shooter to a predefined state */
@@ -54,7 +61,7 @@ clampedDistance = LinearFilter.movingAverage(5);
 
   /** Returns the shooter outputs based on the current state */
   public void update() {
-    
+    DemoModeEnabled = SmartDashboard.getBoolean("shooter/DemoMode", false);
     double hubDistance = RobotState.getInstance().hubDistance;
     double clampedHubDistance = hubDistance;
     switch (currentState) {
@@ -66,7 +73,12 @@ clampedDistance = LinearFilter.movingAverage(5);
       case
           INTERPOLATING -> {
         // Placeholder – typically filled in by vision / interpolation
-        clampedHubDistance = clampedDistance.calculate(hubDistance);
+        if (DemoModeEnabled = true){
+          clampedHubDistance = SmartDashboard.getNumber("shooter/DemoDistance", 0);
+        }
+        else {
+          clampedHubDistance = clampedDistance.calculate(hubDistance);
+        }
         double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
@@ -91,6 +103,7 @@ clampedDistance = LinearFilter.movingAverage(5);
         currentSetpoints.rightDumperSpeed = Constants.ShooterConstants.targetDumperSpeed;
         currentSetpoints.hoodPosition = Constants.ShooterConstants.targetHoodPosition;
       }
+
     }
     Logger.recordOutput("Shooter/rightDumper/GoalSpeeds", currentSetpoints.leftDumperSpeed);
     Logger.recordOutput("Shooter/leftDumper/GoalSpeeds", currentSetpoints.rightDumperSpeed);
