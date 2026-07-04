@@ -12,7 +12,9 @@ public class CanivoreReaderAdapter implements CANStatusReader {
     @Override
     public Optional<CANStatusData> getStatus() {
         var statusOpt = reader.getStatus();
-        if (statusOpt.isEmpty()) return Optional.empty();
+        if (statusOpt.isEmpty()) {
+            return Optional.empty();
+        }
 
         var s = statusOpt.get();
 

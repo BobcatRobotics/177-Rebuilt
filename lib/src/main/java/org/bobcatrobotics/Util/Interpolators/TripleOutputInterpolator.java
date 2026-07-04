@@ -7,11 +7,11 @@ import java.util.List;
 /**
  * High-performance interpolator mapping:
  *
- *     distance -> (oneSpeed, twoSpeed, thirdSpeed)
+ * distance -> (oneSpeed, twoSpeed, thirdSpeed)
  *
  * Designed for real-time shooter loops.
  */
-public final class TripleOutputInterpolator implements InterpolatorIO{
+public final class TripleOutputInterpolator implements InterpolatorIO {
 
     public static final class Speeds {
         public final double one;
@@ -24,7 +24,7 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
             this.three = three;
         }
 
-        public List<Double> getAsList(){
+        public List<Double> getAsList() {
             List<Double> output = new ArrayList<>();
             output.add(one);
             output.add(two);
@@ -57,9 +57,9 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
             boolean allowExtrapolation) {
 
         if (distances.length < 2 ||
-            distances.length != oneSpeeds.length ||
-            distances.length != twoSpeeds.length ||
-            distances.length != threeSpeeds.length) {
+                distances.length != oneSpeeds.length ||
+                distances.length != twoSpeeds.length ||
+                distances.length != threeSpeeds.length) {
             throw new IllegalArgumentException("All arrays must match and contain at least 2 points.");
         }
 
@@ -84,12 +84,12 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
             threeSlopes[i] = (threeSpeeds[i + 1] - threeSpeeds[i]) / dx;
         }
     }
-        
-    public List<Double> getAsList(double distance){
+
+    public List<Double> getAsList(double distance) {
         Speeds speeds = get(distance);
         return speeds.getAsList();
     }
-    
+
     /**
      * Gets interpolated (or extrapolated) speeds.
      *
@@ -101,10 +101,9 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
 
         if (index >= 0) {
             return new Speeds(
-                oneSpeeds[index],
-                twoSpeeds[index],
-                threeSpeeds[index]
-            );
+                    oneSpeeds[index],
+                    twoSpeeds[index],
+                    threeSpeeds[index]);
         }
 
         int insertion = -index - 1;
@@ -138,6 +137,4 @@ public final class TripleOutputInterpolator implements InterpolatorIO{
 
         return new Speeds(top, bottom, feeder);
     }
-
-    
 }
