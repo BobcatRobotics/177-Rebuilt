@@ -200,37 +200,31 @@ public class RobotContainer {
         }
 
         public void teleopPeriodic() {
-                field.setRobotPose(RobotState.getInstance().robotPose);
-                SmartDashboard.putData("Field", field);
-
+                updateFieldTelemetry();
                 if (DriverStation.getAlliance().isPresent()) {
                         RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
-                HubData hubData = hub.getHubData();
-                Logger.recordOutput("Hub/Status", hubData.owner);
-                Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
-                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
-                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
-                Logger.recordOutput("Hub/RobotDistanceToHub/Offset", drive.distanceToHub().getOffsetDistance());
-                Logger.recordOutput("Hub/RobotDistanceToHub/Actual", drive.distanceToHub().getActualDistance());
-                Logger.recordOutput("Hub/RobotIsAligned", drive.isAlignedToHub());
-                
-                // Get normalized Velocity X,Y vectors
-                double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
-                double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
-                RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
-                RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+                updateFieldTelemetry();
+                updateHubTelemetry();
+                updateRobotVelocities();
         }
-        public void simTelePeriodic() {
-                field.setRobotPose(RobotState.getInstance().robotPose);
-                SmartDashboard.putData("Field", field);
 
+        public void simTelePeriodic() {
+                updateFieldTelemetry();
                 if (DriverStation.getAlliance().isPresent()) {
                         RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
+                updateFieldTelemetry();
+                updateHubTelemetry();
+                updateRobotVelocities();
+        }
+
+        public void updateFieldTelemetry() {
+                field.setRobotPose(RobotState.getInstance().robotPose);
+                SmartDashboard.putData("Field", field);
+        }
+
+        public void updateHubTelemetry() {
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
@@ -242,7 +236,10 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/RobotDistanceToHub/Offset", drive.distanceToHub().getOffsetDistance());
                 Logger.recordOutput("Hub/RobotDistanceToHub/Actual", drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Hub/RobotIsAligned", drive.isAlignedToHub());
-                
+
+        }
+
+        public void updateRobotVelocities() {
                 // Get normalized Velocity X,Y vectors
                 double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
                 double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
