@@ -1,7 +1,7 @@
 package frc.robot.subsystems.vision;
 
 
-public class limelightConstants {
+public class LimelightConstants {
   public final String name;
   public final double forward;
   public final double side;
@@ -21,7 +21,7 @@ public class limelightConstants {
    * @param pitch
    * @param yaw
    */
-  public limelightConstants(
+  public LimelightConstants(
       String name,
       double forward,
       double side,

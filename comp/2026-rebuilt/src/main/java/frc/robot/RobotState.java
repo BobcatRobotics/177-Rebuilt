@@ -8,6 +8,7 @@ public class RobotState {
     private static RobotState instance;
     public Pose2d robotPose = new Pose2d();
     public double vx,vy = 0.0;
+    public boolean isRobotAlignedToHub;
 
     public static RobotState getInstance() {
         if (instance == null) {

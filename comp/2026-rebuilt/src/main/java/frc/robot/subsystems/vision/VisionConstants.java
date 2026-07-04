@@ -13,35 +13,32 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
-
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera_0";
   public static String camera1Name = "camera_1";
 
-
-  // Limelight constants are configured here and the name should be accessed from here
-  // when constructor for the limelightConstants runs it will upload the offsets to the limelight
+  // Limelight constants are configured here and the name should be accessed from
+  // here
+  // when constructor for the limelightConstants runs it will upload the offsets
+  // to the limelight
   // Camera data, names must match names configured on coprocessor
   // side is right-positive
-  public static limelightConstants[] cameraConstants = {
-    new limelightConstants("limelight-shooter", 0.423418, 0.0, 0.310388, 0.0, 27, 0.0), 
-    //new limelightConstants("limelight-intake", 0.08586724, 0.0, 0.53385466, 0.0, 23, 180),
-    new limelightConstants("limelight-intake", -0.434, Units.inchesToMeters(-9.825), Units.inchesToMeters(19.03), 0.0, 26, 180), //update needed
-    new limelightConstants("limelight-fleft", 0.26162,-0.313182,0.165608, 0.0, 27, 90),
-    new limelightConstants("limelight-fright",  0.26162, 0.313182,0.165608, 0.0, 27, -90)
-};
+  public static LimelightConstants[] cameraConstants = {
+      new LimelightConstants("limelight-shooter", 0.423418, 0.0, 0.310388, 0.0, 27, 0.0),
+      new LimelightConstants("limelight-intake", -0.434, Units.inchesToMeters(-9.825), Units.inchesToMeters(19.03), 0.0,
+          26, 180),
+      new LimelightConstants("limelight-fleft", 0.26162, -0.313182, 0.165608, 0.0, 27, 90),
+      new LimelightConstants("limelight-fright", 0.26162, 0.313182, 0.165608, 0.0, 27, -90)
+  };
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+  public static Transform3d robotToCamera0 = new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+  public static Transform3d robotToCamera1 = new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
@@ -54,14 +51,12 @@ public class VisionConstants {
 
   // Standard deviation multipliers for each camera
   // (Adjust to trust some cameras more than others)
-  public static double[] cameraStdDevFactors =
-      new double[] {
-        1.0, // Camera 0
-        1.0 // Camera 1
-      };
+  public static double[] cameraStdDevFactors = new double[] {
+      1.0, // Camera 0
+      1.0 // Camera 1
+  };
 
   // Multipliers to apply for MegaTag 2 observations
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
-  public static double angularStdDevMegatag2Factor =
-      Double.POSITIVE_INFINITY; // No rotation data available
+  public static double angularStdDevMegatag2Factor = Double.POSITIVE_INFINITY; // No rotation data available
 }

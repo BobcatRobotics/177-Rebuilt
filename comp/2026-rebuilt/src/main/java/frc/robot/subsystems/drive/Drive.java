@@ -382,4 +382,22 @@ public class Drive extends SubsystemBase {
     double distance = robotTranslation.getDistance(target);
     return new DistanceUtility(distance, Constants.ShooterConstants.ValuesOfKnownShots.offsetDistanceInMeters);
   }
+
+  public boolean isAlignedToHub(){
+    Translation2d target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
+    Pose2d robotPose = getPose();
+    Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
+    double actual = robotPose.getRotation().getDegrees();
+    double setpoint = targetHeading.getDegrees();
+    boolean isAtSetpoint =false;
+    double alginmentTolerance = 5;
+    isAtSetpoint = Math.abs(actual - setpoint) <= alginmentTolerance ;
+    RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+    return isAtSetpoint;
+  }
+
+
+
+
+
 }

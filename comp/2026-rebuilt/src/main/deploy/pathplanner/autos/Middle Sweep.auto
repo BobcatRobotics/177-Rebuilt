@@ -9,6 +9,12 @@
           "data": {
             "pathName": "Go to Middle"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go to Shooting Position"
+          }
         }
       ]
     }
