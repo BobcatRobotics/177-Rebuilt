@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
     public static final Mode simMode = Mode.SIM;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+    public static final boolean lowTelemetryMode = true;
 
     public static enum Mode {
         /** Running on a real robot. */
@@ -53,6 +54,62 @@ public final class Constants {
             public static final double[] carwashSpeed = { 80, 80, 80, 80, 80 }; // RPS
             public static final double[] dumperSpeed = { 30, 37, 50, 57, 75 }; // RPS
             public static final double[] hoodPosition = { -5.5, -5.5, -5.9, -6.2, -6.2 }; // Degrees/Position
+        }
+    }
+
+
+    
+    public static final class IntakeConstants {
+        public static double idleIntakePosition = 0;
+        public static double targetIntakePosition = 0;
+        public static double idleRollerSpeed = 0;
+        public static double targetIntakeSpeed = 20;
+
+
+        public static final class PivotConstants {
+            public static final boolean isInverted = true;
+            public static final boolean isCoast = false;
+            public static double kP = 1.1;
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.00;
+            public static double kS = 0.00;
+            public static double kA = 0.00;
+            public static double currentLimit = 80;
+            public static int pivotMotorId = 10;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
+        }
+
+     
+        public static final class RightRollerConstants {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static double kP = 1.628; //kP based on test was 1.995
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.123;
+            public static double kS = 0.312;
+            public static double kA = 0.00;
+            public static double currentLimit = 60;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
+            public static int rollerMotorId = 19;
+        }
+         public static final class LeftRollerConstants {
+            public static final boolean isInverted = true;
+            public static final boolean isCoast = true;
+            public static double kP = 1.628; //kP based on test was 1.995
+            public static double kI = 0.00;
+            public static double kD = 0.00;
+            public static double kV = 0.123;
+            public static double kS = 0.312;
+            public static double kA = 0.00;
+            public static double currentLimit = 60;
+            public static double peakForwardLimit = 90;
+            public static double peakReverseLimit = -90;
+
+            public static int rollerMotorId = 18;
         }
     }
 }
