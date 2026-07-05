@@ -1,72 +1,92 @@
 package org.bobcatrobotics.Framework.StateMachine;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
+import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.Timer;
+public class StateMachine<T, S extends Enum<S> & State<T>> {
 
-public class StateMachine<S extends Enum<S> & State> {
+    private final T subsystem;
+
+    private final Timer timer = new Timer();
+
+    private final S defaultState;
 
     private S currentState;
-    private final List<Transition<S>> transitions = new ArrayList<>();
-    private final Timer stateTimer = new Timer();
-    private final String logPath;
+    private S previousState;
 
-    public StateMachine(S initialState, String logPath) {
-        this.logPath = logPath;
-        this.currentState = initialState;
+    private final String logKey;
 
-        stateTimer.start();
-        currentState.onEnter();
-        log();
+    public StateMachine(
+            T subsystem,
+            S defaultState,
+            String logKey) {
+
+        this.subsystem = subsystem;
+        this.defaultState = defaultState;
+        this.logKey = logKey;
+
+        currentState = defaultState;
+        previousState = defaultState;
+
+        timer.start();
+
+        currentState.initialize(subsystem);
     }
 
-    public void addTransition(Transition<S> transition) {
-        transitions.add(transition);
-        transitions.sort(
-                Comparator.comparingInt(Transition<S>::getPriority).reversed()
-        );
+    public void periodic() {
+
+        Logger.recordOutput(logKey + "/CurrentState", currentState.name());
+        Logger.recordOutput(logKey + "/PreviousState", previousState.name());
+        Logger.recordOutput(logKey + "/TimeInState", timer.get());
+
+        currentState.execute(subsystem);
     }
 
-    /** Call from robotPeriodic */
-    public void update() {
-        currentState.onUpdate();
+    public void setState(S newState) {
 
-        for (Transition<S> transition : transitions) {
-            if (transition.isTriggered(currentState)) {
-                setState(transition.getTo());
-                break;
-            }
-        }
-
-        log();
-    }
-
-    private void setState(S newState) {
         if (newState == currentState) {
             return;
         }
 
-        currentState.onExit();
+        currentState.end(subsystem);
+
+        previousState = currentState;
         currentState = newState;
 
-        stateTimer.reset();
-        currentState.onEnter();
+        timer.restart();
+
+        currentState.initialize(subsystem);
+
+        Logger.recordOutput(
+                logKey + "/Transition",
+                previousState.name() + " -> " + currentState.name());
+    }
+
+    public void reset() {
+        setState(defaultState);
     }
 
     public S getState() {
         return currentState;
     }
 
-    public double getTimeInState() {
-        return stateTimer.get();
+    public S getPreviousState() {
+        return previousState;
     }
 
-    private void log() {
-        Logger.recordOutput(logPath + "/State", currentState.name());
-        Logger.recordOutput(logPath + "/TimeInState", getTimeInState());
+    public S getDefaultState() {
+        return defaultState;
+    }
+
+    public double timeInState() {
+        return timer.get();
+    }
+
+    public boolean isState(S state) {
+        return currentState == state;
+    }
+
+    public boolean stateChanged() {
+        return currentState != previousState;
     }
 }

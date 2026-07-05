@@ -1,13 +1,10 @@
 package org.bobcatrobotics.Framework.StateMachine;
 
-public interface State {
-    /** Called once when the state becomes active */
-    default void onEnter() {}
+public interface State<T> {
 
-    /** Called periodically while the state is active */
-    default void onUpdate() {}
+    default void initialize(T subsystem) {}
 
-    /** Called once when the state is exited */
-    default void onExit() {}
+    default void execute(T subsystem) {}
+
+    default void end(T subsystem) {}
 }
-

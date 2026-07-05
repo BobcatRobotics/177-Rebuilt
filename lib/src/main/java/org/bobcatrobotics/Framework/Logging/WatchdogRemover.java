@@ -1,4 +1,4 @@
-package org.bobcatrobotics.Framework.StateMachine.Logging;
+package org.bobcatrobotics.Framework.Logging;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobotBase;

@@ -1,25 +1,27 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.carwash;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase {
+public class Carwash extends SubsystemBase {
 
-    private final IntakeIO io;
-    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+    private final CarwashIO io;
+    private final CarwashIOInputsAutoLogged inputs = new CarwashIOInputsAutoLogged();
 
-    private IntakeState currentState = IntakeState.IDLE;
+    private CarwashState currentState = CarwashState.IDLE;
 
-    public Intake(IntakeIO io) {
+    public Carwash(CarwashIO io) {
         this.io = io;
+
     }
 
     @Override
     public void periodic() {
         io.periodic();
         io.updateInputs(inputs);
-        Logger.processInputs("Intake/inputs", inputs);
+        Logger.processInputs("Carwash/inputs", inputs);
+
     }
 
     public void stop() {
@@ -30,11 +32,11 @@ public class Intake extends SubsystemBase {
         io.simulationPeriodic();
     }
 
-    public void setState(IntakeState state) {
+    public void setState(CarwashState state) {
         currentState = state;
     }
 
-    public IntakeState getState() {
+    public CarwashState getState() {
         return currentState;
     }
 }

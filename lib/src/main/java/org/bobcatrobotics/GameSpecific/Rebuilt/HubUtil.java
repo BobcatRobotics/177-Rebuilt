@@ -102,22 +102,22 @@ public final class HubUtil {
      */
     public static Pose3d getActiveHubCoordinates(Alliance alliance) {
         Pose3d blueHub = new Pose3d(
-                    hubPosition(Alliance.Blue).getX(),
-                    hubPosition(Alliance.Blue).getY(),
-                    1.12395,
-                    new Rotation3d());
+                hubPosition(Alliance.Blue).getX(),
+                hubPosition(Alliance.Blue).getY(),
+                1.12395,
+                new Rotation3d());
         Pose3d redHub = new Pose3d(
-                    hubPosition(Alliance.Red).getX(),
-                    hubPosition(Alliance.Red).getY(),
-                    1.12395,
-                    new Rotation3d());
+                hubPosition(Alliance.Red).getX(),
+                hubPosition(Alliance.Red).getY(),
+                1.12395,
+                new Rotation3d());
 
         HubData hub = getHubData();
 
         boolean sameOwner = (alliance == Alliance.Red && hub.owner == HubOwner.RED) ||
                 (alliance == Alliance.Blue && hub.owner == HubOwner.BLUE);
 
-        Pose3d currentAllianceHub  = new Pose3d();
+        Pose3d currentAllianceHub = new Pose3d();
         Pose3d opposingAllianceHub = new Pose3d();
         if (alliance == Alliance.Red) {
             if (sameOwner) {
@@ -136,7 +136,7 @@ public final class HubUtil {
                 opposingAllianceHub = blueHub;
             }
         }
-               
+
         return sameOwner ? currentAllianceHub : opposingAllianceHub;
     }
 
@@ -166,40 +166,58 @@ public final class HubUtil {
         Pose3d hubPose = new Pose3d();
         Translation2d hub = hubPosition(alliance);
         hubPose = new Pose3d(
-                    hub.getX(),
-                    hub.getY(),
-                    1.12395,
-                    new Rotation3d());
+                hub.getX(),
+                hub.getY(),
+                1.12395,
+                new Rotation3d());
         return hubPose;
     }
+
     public static Pose3d getOutpostPassingCoordinate(Alliance alliance) {
         Pose3d hubPose = new Pose3d();
         Translation2d hub = hubPosition(alliance);
+        double xCoordinate = hub.getX();
+        double yCoordinate = hub.getY();
+        if (alliance == Alliance.Red) {
+            xCoordinate =Units.inchesToMeters(469.115 + 80);
+            yCoordinate = Units.inchesToMeters(158.845 - 100);
+        } else {
+            xCoordinate =Units.inchesToMeters(182.105 - 80);
+            yCoordinate = Units.inchesToMeters(158.845 - 100);
+        }
         hubPose = new Pose3d(
-                    hub.getX()*0.5,
-                    hub.getY()*0.5,
-                    0,
-                    new Rotation3d());
+                xCoordinate,
+                yCoordinate,
+                0,
+                new Rotation3d());
         return hubPose;
     }
+
     public static Pose3d getDepoPassingCoordiante(Alliance alliance) {
         Pose3d hubPose = new Pose3d();
         Translation2d hub = hubPosition(alliance);
+        double xCoordinate = hub.getX();
+        double yCoordinate = hub.getY();
+        if (alliance == Alliance.Red) {
+            xCoordinate =Units.inchesToMeters(469.115 + 80);
+            yCoordinate = Units.inchesToMeters(158.845 + 100);
+        } else {
+            xCoordinate =Units.inchesToMeters(182.105 - 80);
+            yCoordinate = Units.inchesToMeters(158.845 + 100);
+        }
         hubPose = new Pose3d(
-                    hub.getX()*0.5,
-                    hub.getY()*1.75,
-                    0,
-                    new Rotation3d());
+                xCoordinate,
+                yCoordinate,
+                0,
+                new Rotation3d());
         return hubPose;
     }
 
-
-    public static Translation2d hubPosition(Alliance allianceGet ) {
+    public static Translation2d hubPosition(Alliance allianceGet) {
         if (allianceGet == Alliance.Blue) {
             return new Translation2d(Units.inchesToMeters(182.105), Units.inchesToMeters(158.845));
         }
         return new Translation2d(Units.inchesToMeters(469.115), Units.inchesToMeters(158.845));
     }
 
-    
 }

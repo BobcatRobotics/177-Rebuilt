@@ -28,25 +28,42 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.carwash.Carwash;
+import frc.robot.subsystems.carwash.CarwashIO;
+import frc.robot.subsystems.carwash.CarwashReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperReal;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeReal;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.util.LoggableCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -61,6 +78,10 @@ public class RobotContainer {
         // Subsystems
         private final Drive drive;
         private Vision vision;
+        public final Shooter m_Shooter;
+        public final Carwash m_Carwash;
+        private final Hopper m_Hopper;
+        public final Intake intake;
 
         // Controller
         private final CommandXboxController controller = new CommandXboxController(0);
@@ -76,6 +97,8 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+
+                RobotController.setBrownoutVoltage(6);
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
@@ -90,6 +113,10 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                m_Shooter = new Shooter(new ShooterReal());
+                                m_Carwash = new Carwash(new CarwashReal());
+                                m_Hopper = new Hopper(new HopperReal());
+                                intake = new Intake(new IntakeReal());
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
@@ -104,6 +131,10 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                m_Shooter = new Shooter(new ShooterReal());
+                                m_Carwash = new Carwash(new CarwashReal());
+                                m_Hopper = new Hopper(new HopperReal());
+                                intake = new Intake(new IntakeReal());
                                 break;
 
                         default:
@@ -121,6 +152,10 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                m_Shooter = new Shooter(new ShooterIO(){});
+                                m_Carwash = new Carwash(new CarwashIO(){});
+                                m_Hopper = new Hopper(new HopperIO(){});
+                                intake = new Intake(new IntakeIO(){});
                                 break;
                 }
 
@@ -184,6 +219,9 @@ public class RobotContainer {
                                                 () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
                                                                 Rotation2d.kZero)),
                                                 drive).ignoringDisable(true));
+
+
+                controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
         }
 
         /**
@@ -237,6 +275,13 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/RobotDistanceToHub/Actual", drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Hub/RobotIsAligned", drive.isAlignedToHub());
 
+
+                Translation2d[] shotLine = m_Shooter.getShotLine(drive.distanceToHub().getActualDistance());
+                Logger.recordOutput("Shooter/Hub/BallPath", shotLine);
+                Translation2d[] shotToDepoLine = m_Shooter.getTargetShotLine(HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance).toPose2d().getTranslation());
+                Logger.recordOutput("Shooter/Depo/BallPath", shotToDepoLine);
+                Translation2d[] shotToOutputLine = m_Shooter.getTargetShotLine(HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance).toPose2d().getTranslation());
+                Logger.recordOutput("Shooter/Output/BallPath", shotToOutputLine);
         }
 
         public void updateRobotVelocities() {
@@ -245,5 +290,22 @@ public class RobotContainer {
                 double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
                 RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
                 RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+        }
+
+
+        /**
+         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
+         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         */
+        public Command conditionalInterpolatedShootSeq() {
+                return Commands.run(() -> {
+                        boolean isShooterAtSpeed = m_Shooter.atSpeed();
+                        if (isShooterAtSpeed) {
+                                //SHOOT!
+
+                        } else {
+                                // SPIN UP
+                        }
+                });
         }
 }

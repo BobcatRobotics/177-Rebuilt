@@ -5,9 +5,6 @@ import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import org.bobcatrobotics.Framework.StateMachine.StateMachine;
-import org.bobcatrobotics.Framework.StateMachine.Transition;
 import org.bobcatrobotics.Util.Tunables.Gains;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -34,10 +31,6 @@ public class IntakeReal implements IntakeIO {
     public ModuleConfigurator leftintakeVelocityConfig;
     private TalonFX rightVelocityMotor;
     public ModuleConfigurator rightIntakeVelocityConfig;
-
-
-    public StateMachine intakeStateMachine;
-
 
     // Motor Control Requests
     private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
@@ -66,6 +59,8 @@ public class IntakeReal implements IntakeIO {
     Gains pivotMotorGains;
     Gains rightRollerMotorGains;
     Gains leftRollerMotorGains;
+
+    IntakeState currentState;
 
     public IntakeReal() {
 
@@ -96,12 +91,8 @@ public class IntakeReal implements IntakeIO {
         setUpRightRollerMotor(rightRollerMotorGains);
         setupPivotMotor(pivotMotorGains);
 
+        currentState = IntakeState.IDLE;
 
-        setupStateMachine();
-    }
-
-    public void setupStateMachine(){
-        intakeStateMachine = new StateMachine<S>(null, null);
     }
 
     public void setUpRightRollerMotor(Gains g) {
@@ -235,8 +226,34 @@ public class IntakeReal implements IntakeIO {
     }
 
     public void periodic() {
+        runMotors();
+
     }
 
     public void simulationPeriodic() {
+    }
+
+    public void setState(IntakeState state) {
+        currentState = state;
+    }
+
+    public void runMotors() {
+        double appliedFeedforward = 0;
+        if (currentState == IntakeState.STOW) {
+            appliedFeedforward = 0.8;
+        } else {
+            appliedFeedforward = 0.7;
+        }
+        positionMotor
+                .setControl(requestPositionVoltage.withPosition(currentState.getPosition())
+                        .withFeedForward(appliedFeedforward));
+        rightVelocityMotor.set(currentState.getRollerSpeed());
+        leftVelocityMotor.set(currentState.getRollerSpeed());
+    }
+
+    public void stop() {
+        positionMotor.stopMotor();
+        rightVelocityMotor.stopMotor();
+        leftVelocityMotor.stopMotor();
     }
 }

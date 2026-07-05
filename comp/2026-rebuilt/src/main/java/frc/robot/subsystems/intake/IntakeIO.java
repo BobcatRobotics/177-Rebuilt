@@ -3,7 +3,7 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
-    @AutoLog
+  @AutoLog
   public class IntakeIOInputs {
     public double velocityOfIntakePositionRPS = 0.0;
     public double statorCurrentOfIntakePositionAmps = 0.0;
@@ -25,9 +25,20 @@ public interface IntakeIO {
     public boolean rightVelocityMotorConnected = false;
   }
 
-    public default void updateInputs(IntakeIOInputs inputs) {
-    }
+  public default void updateInputs(IntakeIOInputs inputs) {
+  }
 
-    public default void stop() {
-    }
+  public default void stop() {
+  }
+
+  public default void setState(IntakeState state) {
+  }
+
+  public default void simulationPeriodic() {
+
+  }
+
+  public default void periodic() {
+
+  }
 }

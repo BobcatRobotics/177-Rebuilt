@@ -34,29 +34,6 @@ public final class Constants {
         REPLAY
     }
 
-    public final static class ShooterConstants {
-        public final static class ValuesOfKnownShots {
-            public static final double offsetDistanceInMeters = 0.92837;
-            public static final double[] distance = { 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160,
-                    170.0 }; // Inches from bumper vertex to hub face
-            public static final double[] carwashSpeed = { 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
-                    80.0 }; // RPS
-            public static final double[] dumperSpeed = { 30, 30, 32, 32.5, 33.5, 33, 34.5, 34.5, 35, 35.5, 36, 36.5,
-                    37.25, 37.75, 39, 39.0 }; // RPS
-            public static final double[] hoodPosition = { 0, 0, -0.3, -0.6, -0.85, -1.4, -1.8, -2.175, -2.25, -2.5,
-                    -2.9, -3.2, -3.3, -3.6, -4, -4.2 }; // Degrees/Position
-        }
-
-        public final static class PassingValuesOfKnownShots {
-            public static final double offsetDistanceInMeters = 0.92837;
-            public static final double[] distance = { 134, 238, 324, 420, 579 }; // Inches from bumper vertex to hub
-                                                                                 // face
-            public static final double[] carwashSpeed = { 80, 80, 80, 80, 80 }; // RPS
-            public static final double[] dumperSpeed = { 30, 37, 50, 57, 75 }; // RPS
-            public static final double[] hoodPosition = { -5.5, -5.5, -5.9, -6.2, -6.2 }; // Degrees/Position
-        }
-    }
-
 
     
     public static final class IntakeConstants {
@@ -112,4 +89,147 @@ public final class Constants {
             public static int rollerMotorId = 18;
         }
     }
+
+   public static final class CarwashConstants{
+        public static final double idleIntakeSpeedRPS = 0;
+        public static final double targetIntakeSpeedRPS = 80;
+        public static final double targetRealSpeedRPS = 90;
+        public final static class SharedIntake {
+            public static final int intakeIDLeft = 15;
+            public static final double kIntakeMotorkP = 8.0;
+            public static final double kIntakeMotorkI = 0;
+            public static final double kIntakeMotorkD = 0;
+            public static final double kIntakeMotorkS = 0.375;
+            public static final double kIntakeMotorkV = 7.0;
+            public static final double kIntakeMotorkA = 4.8 ;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 80;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = false;
+        }
+    }
+    public static final class HopperConstants {
+        public static final class Top {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static final double kHopperP = 2.755;
+            public static final double kHopperI = 0;
+            public static final double kHopperD = 0.1;
+            public static final double kHopperV = 0.073;
+            public static final double kHopperS = 0.739;
+            public static final double kHopperA = 0;
+            public static final double hopperCurrentLimit = 80;
+            public static final int hopperMotorId = 16;
+        }
+
+
+        public static final double idleHopperSpeed = 0;
+        public static final double topMotorTargetVelocity = 60;
+
+    }
+
+
+    public final static class ShooterConstants {
+
+        public static final double idleDumperSpeed = 0;
+        public static final double idleHoodPosition = 0;
+        public static final double targetDumperSpeed = 50;
+        public static final double targetHoodPosition = -5.5;
+        public static final double motionMagicCruiseVelocity = 190;
+        public static final double motionMagicAcceleration = 175;
+        public static final double motionMagicJerk = 0;
+        public static final double motionMagicExpoKV = 0.0;
+        public static final double motionMagicExpoKa = 0.01;
+
+    public final static class adjustableHood {
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = false;
+            // Motor Constants
+            public static final double kAdjHoodMotorkP =12;
+            public static final double kAdjHoodMotorkI = 0;
+            public static final double kAdjHoodMotorkD = 0;
+            public static final double kAdjHoodMotorkS = 0.25;
+            public static final double kAdjHoodMotorkV = 0.2;
+            public static final double kAdjHoodMotorkA = 0;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 80;
+            public static final int ID = 21;
+            public static final boolean isSoftLimitsEnabled = true;
+            public static final double forwardSoftwareLimit = -6.2;
+            public static final double reverseSoftwareLimit = 0;
+            public static final boolean useMotionMagic = true;
+            public static final double motionMagicCruiseVelocity = 0;
+            public static final double motionMagicAcceleration = 700;
+            public static final double motionMagicJerk = 0;
+            public static final double motionMagicExpoKV = 0.4;
+            public static final double motionMagicExpoKa = 0.01;
+
+        }
+
+        public final static class Left {
+
+           // public static final int HoodID = 12;
+            public static final int dumperLeftUpID = 13; 
+            public static final int dumperLeftDownID = 20;
+            // Motor Constants
+            public static final double kdumperLeftMotorkP = 0.19;
+            public static final double kdumperLeftMotorkI = 0.0;
+            public static final double kdumperLeftMotorkD = 0;
+            public static final double kdumperLeftMotorkS = 0.18;
+            public static final double kdumperLeftMotorkV = 0.13;
+            public static final double kdumperLeftMotorkA = 0.4;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final boolean isInverted = false;
+            public static final boolean isCoast = true;
+            public static final boolean isSoftLimitsEnabled = false;
+            public static final boolean useMotionMagic = true;
+
+
+            public static final double motionMagicCruiseVelocity = 190;
+            public static final double motionMagicAcceleration = 600;
+            public static final double motionMagicJerk = 0;
+            public static final double motionMagicExpoKV = 0.0;
+            public static final double motionMagicExpoKa = 0.0;
+        }
+
+        public final static class Right {
+            // ID Constants
+            //public static final int HoodID = 17;
+            public static final int dumperRightUpID = 11; 
+            public static final int dumperRightDownID = 14; 
+            //Motor Constants
+            public static final double kdumperRightMotorkP = 0.19;
+            public static final double kdumperRightMotorkI = 0.0;
+            public static final double kdumperRightMotorkD = 0;
+            public static final double kdumperRightMotorkS = 0.18;
+            public static final double kdumperRightMotorkV = 0.13;
+            public static final double kdumperRightMotorkA = 0.4;
+            public static final double statorCurrentLimit = 80;
+            public static final double supplyCurrentLimit = 60;
+            public static final boolean isInverted = true;
+            public static final boolean isCoast = true;
+            public static final boolean isSoftLimitsEnabled = false;
+             public static final boolean useMotionMagic = true;
+             
+        }
+
+
+        public final static class ValuesOfKnownShots{
+            public static final double offsetDistanceInMeters = 0.92837;
+            public static final double[] distance =      {  20,   30,   40,   50,   60,   70,   80,   90,  100,  110,  120,  130,  140,  150,  160,  170.0 }; // Inches from bumper vertex to hub face
+            public static final double[] carwashSpeed =  {  80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,   80.0 }; // RPS
+            public static final double[] dumperSpeed =   {  30,   30,   32,   32.5, 33.5, 33,   34.5, 34.5, 35,   35.5, 36,   36.5, 37.25,37.75, 39,   39.0 }; // RPS
+            public static final double[] hoodPosition =  {   0,    0,  -0.3, -0.6, -0.85,-1.4, -1.8, -2.175,-2.25,-2.5,-2.9, -3.2, -3.3, -3.6, -4,   -4.2 }; // Degrees/Position
+        }
+        public final static class PassingValuesOfKnownShots{
+            public static final double offsetDistanceInMeters = 0.92837;
+            public static final double[] distance =      {  134,   238,   324,   420,   579}; // Inches from bumper vertex to hub face
+            public static final double[] carwashSpeed =  {  80,   80,   80,   80,   80}; // RPS
+            public static final double[] dumperSpeed =   {  30,   37,   50,   57, 75}; // RPS
+            public static final double[] hoodPosition =  {   -5.5,    -5.5,  -5.9, -6.2, -6.2}; // Degrees/Position
+        }
+    }
+
+
 }
