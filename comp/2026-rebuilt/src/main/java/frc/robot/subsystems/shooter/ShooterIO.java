@@ -51,5 +51,9 @@ public interface ShooterIO {
   public default void periodic() {
 
   }
+
+  public default boolean atSpeed(double velocity){
+    return false;
+  }
 }
 

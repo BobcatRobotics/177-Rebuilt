@@ -29,28 +29,29 @@ public class Shooter extends SubsystemBase {
 
     }
 
-  public Translation2d[] getShotLine(double distance) {
-    Pose2d robotPose = RobotState.getInstance().robotPose;
-    Pose2d newPose = robotPose.transformBy(new Transform2d(
-        new Translation2d(Units.inchesToMeters(distance), 0),
-        new Rotation2d()));
-    Translation2d robotTranslation = robotPose.getTranslation();
-    Translation2d targetTranslation = newPose.getTranslation();
-    Translation2d[] shotLine = new Translation2d[] {
-        robotTranslation,
-        targetTranslation
-    };
-    return shotLine;
-  }
+    public Translation2d[] getShotLine(double distance) {
+        Pose2d robotPose = RobotState.getInstance().robotPose;
+        Pose2d newPose = robotPose.transformBy(new Transform2d(
+                new Translation2d(Units.inchesToMeters(distance), 0),
+                new Rotation2d()));
+        Translation2d robotTranslation = robotPose.getTranslation();
+        Translation2d targetTranslation = newPose.getTranslation();
+        Translation2d[] shotLine = new Translation2d[] {
+                robotTranslation,
+                targetTranslation
+        };
+        return shotLine;
+    }
+
     public Translation2d[] getTargetShotLine(Translation2d targetTranslation) {
-    Pose2d robotPose = RobotState.getInstance().robotPose;
-    Translation2d robotTranslation = robotPose.getTranslation();
-    Translation2d[] shotLine = new Translation2d[] {
-        robotTranslation,
-        targetTranslation
-    };
-    return shotLine;
-  }
+        Pose2d robotPose = RobotState.getInstance().robotPose;
+        Translation2d robotTranslation = robotPose.getTranslation();
+        Translation2d[] shotLine = new Translation2d[] {
+                robotTranslation,
+                targetTranslation
+        };
+        return shotLine;
+    }
 
     public void stop() {
         io.stop();
@@ -68,12 +69,9 @@ public class Shooter extends SubsystemBase {
         return currentState;
     }
 
-
     public boolean atSpeed() {
         boolean isAtTolerance = false;
-        double MAIN_SPEED_TOLERANCE = 5; // Using for both dumpers
-        double HOOD_POSITION_TOLERANCE = 1;
-
+        isAtTolerance = io.atSpeed(currentState.getRollerSpeed());
         return isAtTolerance;
     }
 }

@@ -46,6 +46,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.carwash.Carwash;
 import frc.robot.subsystems.carwash.CarwashIO;
 import frc.robot.subsystems.carwash.CarwashReal;
+import frc.robot.subsystems.carwash.CarwashState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -55,12 +56,15 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIO;
 import frc.robot.subsystems.hopper.HopperReal;
+import frc.robot.subsystems.hopper.HopperState;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeReal;
+import frc.robot.subsystems.intake.IntakeState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterReal;
+import frc.robot.subsystems.shooter.ShooterState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.LoggableCommand;
@@ -298,14 +302,23 @@ public class RobotContainer {
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
          */
         public Command conditionalInterpolatedShootSeq() {
-                return Commands.run(() -> {
+                Command shootSeq = Commands.run(() -> {
                         boolean isShooterAtSpeed = m_Shooter.atSpeed();
                         if (isShooterAtSpeed) {
                                 //SHOOT!
-
+                                m_Shooter.setState(ShooterState.INTERPOLATED);
+                                m_Carwash.setState(CarwashState.FEED);
+                                m_Hopper.setState(HopperState.INTAKE);
+                                intake.setState(IntakeState.INTAKE);
+                                drive.stopWithX();
                         } else {
                                 // SPIN UP
+                                m_Shooter.setState(ShooterState.INTERPOLATED);
+                                m_Carwash.setState(CarwashState.OUTAKE);
+                                m_Hopper.setState(HopperState.SPINUP);
+                                intake.setState(IntakeState.INTAKE);
                         }
                 });
+                return shootSeq;
         }
 }
