@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AlignToHub;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.carwash.Carwash;
@@ -156,10 +157,14 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
-                                m_Shooter = new Shooter(new ShooterIO(){});
-                                m_Carwash = new Carwash(new CarwashIO(){});
-                                m_Hopper = new Hopper(new HopperIO(){});
-                                intake = new Intake(new IntakeIO(){});
+                                m_Shooter = new Shooter(new ShooterIO() {
+                                });
+                                m_Carwash = new Carwash(new CarwashIO() {
+                                });
+                                m_Hopper = new Hopper(new HopperIO() {
+                                });
+                                intake = new Intake(new IntakeIO() {
+                                });
                                 break;
                 }
 
@@ -224,8 +229,15 @@ public class RobotContainer {
                                                                 Rotation2d.kZero)),
                                                 drive).ignoringDisable(true));
 
+                controller.leftBumper().whileTrue(LoggableCommand.loggableCommand(
+                                "Automated Interpolated Shooting Balls", conditionalInterpolatedShootSeq()));
+                controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand(
+                                "Automated Interpolated Passing Balls", conditionalAlignInterpolatedShootSeq()));
 
-                controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
+                controller.rightBumper().whileTrue(
+                                LoggableCommand.loggableCommand("AutoAlign",
+                                                new AlignToHub(drive, () -> -controller.getLeftY(),
+                                                                () -> -controller.getLeftX())));
         }
 
         /**
@@ -279,12 +291,15 @@ public class RobotContainer {
                 Logger.recordOutput("Hub/RobotDistanceToHub/Actual", drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Hub/RobotIsAligned", drive.isAlignedToHub());
 
-
                 Translation2d[] shotLine = m_Shooter.getShotLine(drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Shooter/Hub/BallPath", shotLine);
-                Translation2d[] shotToDepoLine = m_Shooter.getTargetShotLine(HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance).toPose2d().getTranslation());
+                Translation2d[] shotToDepoLine = m_Shooter
+                                .getTargetShotLine(HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance)
+                                                .toPose2d().getTranslation());
                 Logger.recordOutput("Shooter/Depo/BallPath", shotToDepoLine);
-                Translation2d[] shotToOutputLine = m_Shooter.getTargetShotLine(HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance).toPose2d().getTranslation());
+                Translation2d[] shotToOutputLine = m_Shooter.getTargetShotLine(
+                                HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance).toPose2d()
+                                                .getTranslation());
                 Logger.recordOutput("Shooter/Output/BallPath", shotToOutputLine);
         }
 
@@ -296,16 +311,17 @@ public class RobotContainer {
                 RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
         }
 
-
         /**
-         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         * This is the "new" conditional interpolated shooting sequence it takes the 2
+         * commands and refactors them into one.
+         * If the left bumper is pressed it will automatically switch too the shoot
+         * sequence.
          */
         public Command conditionalInterpolatedShootSeq() {
                 Command shootSeq = Commands.run(() -> {
                         boolean isShooterAtSpeed = m_Shooter.atSpeed();
                         if (isShooterAtSpeed) {
-                                //SHOOT!
+                                // SHOOT!
                                 m_Shooter.setState(ShooterState.INTERPOLATED);
                                 m_Carwash.setState(CarwashState.FEED);
                                 m_Hopper.setState(HopperState.INTAKE);
@@ -319,6 +335,13 @@ public class RobotContainer {
                                 intake.setState(IntakeState.INTAKE);
                         }
                 });
+                return shootSeq;
+        }
+
+        public Command conditionalAlignInterpolatedShootSeq() {
+                Command shootSeq = conditionalInterpolatedShootSeq
+                                .alongWith(new AlignToHub(drive, () -> -controller.getLeftY(),
+                                                () -> -controller.getLeftX()));
                 return shootSeq;
         }
 }
