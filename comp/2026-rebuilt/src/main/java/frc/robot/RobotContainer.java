@@ -28,7 +28,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,7 +39,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -339,7 +337,7 @@ public class RobotContainer {
         }
 
         public Command conditionalAlignInterpolatedShootSeq() {
-                Command shootSeq = conditionalInterpolatedShootSeq
+                Command shootSeq = conditionalInterpolatedShootSeq()
                                 .alongWith(new AlignToHub(drive, () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
                 return shootSeq;
