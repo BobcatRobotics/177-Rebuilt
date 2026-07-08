@@ -32,6 +32,7 @@ public class Hopper  extends SubsystemBase {
 
     public void setState(HopperState state) {
         currentState = state;
+        io.setState(currentState);
     }
 
     public HopperState getState() {

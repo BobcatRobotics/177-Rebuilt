@@ -13,16 +13,22 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
 import frc.robot.subsystems.carwash.Modules.ModuleConfigurator;
 
-public class CarwashReal implements CarwashIO {
+public class CarwashSim implements CarwashIO {
     private TalonFX shooterIntakeMotor;
+    private TalonFXSimState shooterIntakeMotorState;
+    private FlywheelSim m_motorSimModel;
     public ModuleConfigurator intakeWheelConfig;
 
     private VelocityTorqueCurrentFOC velIntakeRequest = new VelocityTorqueCurrentFOC(0);
@@ -32,7 +38,7 @@ public class CarwashReal implements CarwashIO {
     private StatusSignal<AngularAcceleration> accelerationOfIntake;
     CarwashState currentState;
 
-    public CarwashReal() {
+    public CarwashSim() {
         Gains intakeGains = new Gains.Builder()
                 .kP(Constants.CarwashConstants.SharedIntake.kIntakeMotorkP)
                 .kI(Constants.CarwashConstants.SharedIntake.kIntakeMotorkI)
@@ -41,7 +47,11 @@ public class CarwashReal implements CarwashIO {
                 .kV(Constants.CarwashConstants.SharedIntake.kIntakeMotorkV)
                 .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
-        setupIntake(intakeGains);
+    DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
+    m_motorSimModel = new FlywheelSim(LinearSystemId.createFlywheelSystem(motorModel, .00003, 1),motorModel);
+
+    setupIntake(intakeGains);
+    shooterIntakeMotorState = shooterIntakeMotor.getSimState();
 
         currentState = CarwashState.IDLE;
     }
@@ -103,6 +113,18 @@ public class CarwashReal implements CarwashIO {
     }
 
     public void simulationPeriodic() {
+        // Get Motor Output Voltage
+        shooterIntakeMotorState = shooterIntakeMotor.getSimState();
+        double motorVoltage = shooterIntakeMotorState.getMotorVoltage();
+        // Feed Into Physics Simulation
+        m_motorSimModel.setInputVoltage(motorVoltage);
+        // Udpate SIM ( 20ms loop )
+        m_motorSimModel.update(0.02);
+        // get voltage ( rad/sec -> rotations/sec)
+        double velocityRadPerSec = m_motorSimModel.getAngularVelocityRadPerSec();
+        double velocityRotPerSec = velocityRadPerSec / (2 * Math.PI);
+        // PUSH intop the TalonFX simulated Sensor the value
+        shooterIntakeMotorState.setRotorVelocity(-velocityRotPerSec);
     }
 
     public void setState(CarwashState state) {

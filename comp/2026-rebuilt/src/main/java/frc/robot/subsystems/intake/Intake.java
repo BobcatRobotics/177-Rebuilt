@@ -32,6 +32,7 @@ public class Intake extends SubsystemBase {
 
     public void setState(IntakeState state) {
         currentState = state;
+        io.setState(currentState);
     }
 
     public IntakeState getState() {

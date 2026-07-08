@@ -34,6 +34,7 @@ public class Carwash extends SubsystemBase {
 
     public void setState(CarwashState state) {
         currentState = state;
+        io.setState(currentState);
     }
 
     public CarwashState getState() {

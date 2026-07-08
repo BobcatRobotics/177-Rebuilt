@@ -63,6 +63,7 @@ public class Shooter extends SubsystemBase {
 
     public void setState(ShooterState state) {
         currentState = state;
+        io.setState(currentState);
     }
 
     public ShooterState getState() {

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,58 +25,64 @@ import frc.robot.Constants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import frc.robot.subsystems.shooter.Modules.ModuleConfigurator;
 
-public class ShooterReal implements ShooterIO{
-    private TalonFX dumperLeftUp;
-    public ModuleConfigurator dumperLeftUpConfig;
-    private TalonFX dumperLeftDown;
-    public ModuleConfigurator dumperLeftDownConfig;
-    private TalonFX dumperRightUp;
-    public ModuleConfigurator dumperRightUpConfig;
-    private TalonFX dumperRightDown;
-    public ModuleConfigurator dumperRightDownConfig;
-    // private TalonFX HoodWheelMotorLeft;
-    // public ModuleConfigurator HoodMConfigLeft;
-    // private TalonFX HoodWheelMotorRight;
-    // public ModuleConfigurator HoodMConfigRight;
-    private TalonFX adjustableHood;
-    private ModuleConfigurator adjustableHoodConfigurator;
+public class ShooterReal implements ShooterIO {
+  private TalonFX dumperLeftUp;
+  public ModuleConfigurator dumperLeftUpConfig;
+  private TalonFX dumperLeftDown;
+  public ModuleConfigurator dumperLeftDownConfig;
+  private TalonFX dumperRightUp;
+  public ModuleConfigurator dumperRightUpConfig;
+  private TalonFX dumperRightDown;
+  public ModuleConfigurator dumperRightDownConfig;
+  // private TalonFX HoodWheelMotorLeft;
+  // public ModuleConfigurator HoodMConfigLeft;
+  // private TalonFX HoodWheelMotorRight;
+  // public ModuleConfigurator HoodMConfigRight;
+  private TalonFX adjustableHood;
+  private ModuleConfigurator adjustableHoodConfigurator;
 
-    // private VelocityTorqueCurrentFOC velHoodLeftRequest = new
-    // VelocityTorqueCurrentFOC(0);
-    // private VelocityTorqueCurrentFOC velHoodRightRequest = new
-    // VelocityTorqueCurrentFOC(0);
-    private MotionMagicExpoVoltage posAdjustableHoodRequest = new MotionMagicExpoVoltage(0);
+  // private VelocityTorqueCurrentFOC velHoodLeftRequest = new
+  // VelocityTorqueCurrentFOC(0);
+  // private VelocityTorqueCurrentFOC velHoodRightRequest = new
+  // VelocityTorqueCurrentFOC(0);
+  private MotionMagicExpoVoltage posAdjustableHoodRequest = new MotionMagicExpoVoltage(0);
+  private MotionMagicVelocityVoltage velDumperLeftUpRequest = new MotionMagicVelocityVoltage(0);
+  private MotionMagicVelocityVoltage velDumperLeftDownRequest = new MotionMagicVelocityVoltage(0);
+  private MotionMagicVelocityVoltage velDumperRightUpRequest = new MotionMagicVelocityVoltage(0);
+  private MotionMagicVelocityVoltage velDumperRightDownRequest = new MotionMagicVelocityVoltage(0);
 
-    private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
-    private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
+  private TorqueCurrentFOC characterizationRequestTorqueCurrentFOC = new TorqueCurrentFOC(0);
+  private VoltageOut characterizationRequestVoltage = new VoltageOut(0);
 
-    private StatusSignal<AngularVelocity> velocityOfDumperLeftUpRPS;
-    private StatusSignal<Current> statorCurrentOfDumperLeftUpAmps;
-    private StatusSignal<Voltage> outputOfDumperLeftUpVolts;
-    private StatusSignal<AngularAcceleration> accelerationOfDumperLeftUp;
+  private StatusSignal<AngularVelocity> velocityOfDumperLeftUpRPS;
+  private StatusSignal<Current> statorCurrentOfDumperLeftUpAmps;
+  private StatusSignal<Voltage> outputOfDumperLeftUpVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperLeftUp;
 
-    private StatusSignal<AngularVelocity> velocityOfDumperLeftDownRPS;
-    private StatusSignal<Current> statorCurrentOfDumperLeftDownAmps;
-    private StatusSignal<Voltage> outputOfDumperLeftDownVolts;
-    private StatusSignal<AngularAcceleration> accelerationOfDumperLeftDown;
+  private StatusSignal<AngularVelocity> velocityOfDumperLeftDownRPS;
+  private StatusSignal<Current> statorCurrentOfDumperLeftDownAmps;
+  private StatusSignal<Voltage> outputOfDumperLeftDownVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperLeftDown;
 
-    private StatusSignal<AngularVelocity> velocityOfDumperRightUpRPS;
-    private StatusSignal<Current> statorCurrentOfOfDumperRightUpAmps;
-    private StatusSignal<Voltage> outputOfDumperRightUpVolts;
-    private StatusSignal<AngularAcceleration> accelerationOfDumperRightUp;
+  private StatusSignal<AngularVelocity> velocityOfDumperRightUpRPS;
+  private StatusSignal<Current> statorCurrentOfOfDumperRightUpAmps;
+  private StatusSignal<Voltage> outputOfDumperRightUpVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperRightUp;
 
-    private StatusSignal<AngularVelocity> velocityOfDumperRightDownRPS;
-    private StatusSignal<Current> statorCurrentOfDumperRightDownAmps;
-    private StatusSignal<Voltage> outputOfDumperRightDownVolts;
-    private StatusSignal<AngularAcceleration> accelerationOfDumperRightDown;
+  private StatusSignal<AngularVelocity> velocityOfDumperRightDownRPS;
+  private StatusSignal<Current> statorCurrentOfDumperRightDownAmps;
+  private StatusSignal<Voltage> outputOfDumperRightDownVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfDumperRightDown;
 
-    private StatusSignal<AngularVelocity> velocityOfAdjustableHoodPositionRPS;
-    private StatusSignal<Current> statorCurrentOfAdjustableHoodPositionAmps;
-    private StatusSignal<Voltage> outputOfAdjustableHoodPositionVolts;
-    private StatusSignal<AngularAcceleration> accelerationOfAdjustableHoodPosition;
+  private StatusSignal<AngularVelocity> velocityOfAdjustableHoodPositionRPS;
+  private StatusSignal<Current> statorCurrentOfAdjustableHoodPositionAmps;
+  private StatusSignal<Voltage> outputOfAdjustableHoodPositionVolts;
+  private StatusSignal<AngularAcceleration> accelerationOfAdjustableHoodPosition;
 
-    public ShooterReal(){
-        
+  ShooterState currentState;
+
+  public ShooterReal() {
+
     // Flywheel Configuration
     Gains dumperLeftUpGains = new Gains.Builder()
         .kP(Constants.ShooterConstants.Left.kdumperLeftMotorkP)
@@ -118,6 +125,8 @@ public class ShooterReal implements ShooterIO{
     setupDumperRightUp(dumperRightUpGains);
     setupDumperRightDown(dumperRightDownGains);
     setupAdjustableHood(adjustableHoodGains);
+
+    currentState = ShooterState.IDLE;
   }
 
   public void setupDumperLeftUp(Gains g) {
@@ -127,7 +136,7 @@ public class ShooterReal implements ShooterIO{
         Constants.ShooterConstants.Left.isCoast,
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit,
-        Constants.ShooterConstants.Left.isSoftLimitsEnabled,Constants.ShooterConstants.Left.useMotionMagic);
+        Constants.ShooterConstants.Left.isSoftLimitsEnabled, Constants.ShooterConstants.Left.useMotionMagic);
     dumperLeftUp = new TalonFX(dumperLeftUpConfig.getMotorInnerId(), new CANBus("rio"));
     dumperLeftUpConfig.applyMotionMagicConfig(
         Constants.ShooterConstants.motionMagicCruiseVelocity,
@@ -159,7 +168,7 @@ public class ShooterReal implements ShooterIO{
         Constants.ShooterConstants.Left.isCoast,
         Constants.ShooterConstants.Left.statorCurrentLimit,
         Constants.ShooterConstants.Left.supplyCurrentLimit,
-        Constants.ShooterConstants.Left.isSoftLimitsEnabled,Constants.ShooterConstants.Left.useMotionMagic);
+        Constants.ShooterConstants.Left.isSoftLimitsEnabled, Constants.ShooterConstants.Left.useMotionMagic);
     dumperLeftDown = new TalonFX(dumperLeftDownConfig.getMotorInnerId(), new CANBus("rio"));
     dumperLeftDownConfig.applyMotionMagicConfig(
         Constants.ShooterConstants.motionMagicCruiseVelocity,
@@ -190,7 +199,7 @@ public class ShooterReal implements ShooterIO{
         Constants.ShooterConstants.Right.isCoast,
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit,
-        Constants.ShooterConstants.Right.isSoftLimitsEnabled,Constants.ShooterConstants.Right.useMotionMagic);
+        Constants.ShooterConstants.Right.isSoftLimitsEnabled, Constants.ShooterConstants.Right.useMotionMagic);
     dumperRightUp = new TalonFX(dumperRightUpConfig.getMotorInnerId(), new CANBus("rio"));
     dumperRightUpConfig.applyMotionMagicConfig(
         Constants.ShooterConstants.motionMagicCruiseVelocity,
@@ -214,16 +223,16 @@ public class ShooterReal implements ShooterIO{
     }
   }
 
-    public void setupDumperRightDown(Gains g) {
+  public void setupDumperRightDown(Gains g) {
     dumperRightDownConfig = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.Right.dumperRightDownID,
         Constants.ShooterConstants.Right.isInverted,
         Constants.ShooterConstants.Right.isCoast,
         Constants.ShooterConstants.Right.statorCurrentLimit,
         Constants.ShooterConstants.Right.supplyCurrentLimit,
-        Constants.ShooterConstants.Right.isSoftLimitsEnabled,Constants.ShooterConstants.Right.useMotionMagic);
+        Constants.ShooterConstants.Right.isSoftLimitsEnabled, Constants.ShooterConstants.Right.useMotionMagic);
     dumperRightDown = new TalonFX(dumperRightDownConfig.getMotorInnerId(), new CANBus("rio"));
-      dumperRightDownConfig.applyMotionMagicConfig(
+    dumperRightDownConfig.applyMotionMagicConfig(
         Constants.ShooterConstants.motionMagicCruiseVelocity,
         Constants.ShooterConstants.motionMagicAcceleration,
         Constants.ShooterConstants.motionMagicJerk,
@@ -246,7 +255,7 @@ public class ShooterReal implements ShooterIO{
 
   }
 
-   public void setupAdjustableHood(Gains g) {
+  public void setupAdjustableHood(Gains g) {
     // Flywheel Configuration
     adjustableHoodConfigurator = new ModuleConfigurator(g.toSlot0Configs(),
         Constants.ShooterConstants.adjustableHood.ID,
@@ -256,7 +265,8 @@ public class ShooterReal implements ShooterIO{
         Constants.ShooterConstants.adjustableHood.supplyCurrentLimit,
         Constants.ShooterConstants.adjustableHood.isSoftLimitsEnabled,
         Constants.ShooterConstants.adjustableHood.forwardSoftwareLimit,
-        Constants.ShooterConstants.adjustableHood.reverseSoftwareLimit,Constants.ShooterConstants.adjustableHood.useMotionMagic);
+        Constants.ShooterConstants.adjustableHood.reverseSoftwareLimit,
+        Constants.ShooterConstants.adjustableHood.useMotionMagic);
     adjustableHood = new TalonFX(adjustableHoodConfigurator.getMotorInnerId(), new CANBus("rio"));
     adjustableHoodConfigurator.applyMotionMagicConfig(
         Constants.ShooterConstants.adjustableHood.motionMagicCruiseVelocity,
@@ -265,29 +275,27 @@ public class ShooterReal implements ShooterIO{
         Constants.ShooterConstants.adjustableHood.motionMagicExpoKV,
         Constants.ShooterConstants.adjustableHood.motionMagicExpoKa);
     adjustableHoodConfigurator.configureMotor(adjustableHood, g);
-    if(Constants.lowTelemetryMode){
-    velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
-    statorCurrentOfAdjustableHoodPositionAmps = adjustableHood.getStatorCurrent();
-    adjustableHoodConfigurator.configureSignals(adjustableHood, 50.0, velocityOfAdjustableHoodPositionRPS,
-        statorCurrentOfAdjustableHoodPositionAmps);
-    }
-    else{
-    velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
-    statorCurrentOfAdjustableHoodPositionAmps = adjustableHood.getStatorCurrent();
-    outputOfAdjustableHoodPositionVolts = adjustableHood.getMotorVoltage();
-    accelerationOfAdjustableHoodPosition = adjustableHood.getAcceleration();
-    adjustableHoodConfigurator.configureSignals(adjustableHood, 50.0, velocityOfAdjustableHoodPositionRPS,
-        statorCurrentOfAdjustableHoodPositionAmps, outputOfAdjustableHoodPositionVolts, accelerationOfAdjustableHoodPosition);
+    if (Constants.lowTelemetryMode) {
+      velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
+      statorCurrentOfAdjustableHoodPositionAmps = adjustableHood.getStatorCurrent();
+      adjustableHoodConfigurator.configureSignals(adjustableHood, 50.0, velocityOfAdjustableHoodPositionRPS,
+          statorCurrentOfAdjustableHoodPositionAmps);
+    } else {
+      velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
+      statorCurrentOfAdjustableHoodPositionAmps = adjustableHood.getStatorCurrent();
+      outputOfAdjustableHoodPositionVolts = adjustableHood.getMotorVoltage();
+      accelerationOfAdjustableHoodPosition = adjustableHood.getAcceleration();
+      adjustableHoodConfigurator.configureSignals(adjustableHood, 50.0, velocityOfAdjustableHoodPositionRPS,
+          statorCurrentOfAdjustableHoodPositionAmps, outputOfAdjustableHoodPositionVolts,
+          accelerationOfAdjustableHoodPosition);
     }
 
   }
 
-
   public void updateInputs(ShooterIOInputs inputs) {
-    if(Constants.lowTelemetryMode){
+    if (Constants.lowTelemetryMode) {
       lowTelemetry(inputs);
-    }
-    else{
+    } else {
       highTelemetry(inputs);
     }
   }
@@ -337,8 +345,7 @@ public class ShooterReal implements ShooterIO{
         statorCurrentOfDumperLeftDownAmps,
         statorCurrentOfOfDumperRightUpAmps,
         statorCurrentOfDumperRightDownAmps,
-        statorCurrentOfAdjustableHoodPositionAmps
-        );
+        statorCurrentOfAdjustableHoodPositionAmps);
 
     inputs.velocityOfDumperLeftUpRPS = velocityOfDumperLeftUpRPS.getValue().in(Rotations.per(Seconds));
     inputs.velocityOfDumperLeftDownRPS = velocityOfDumperLeftDownRPS.getValue().in(Rotations.per(Seconds));
@@ -348,7 +355,7 @@ public class ShooterReal implements ShooterIO{
         .in(Rotations.per(Seconds));
     inputs.velocityOfAdjustableHoodPositionRPS = velocityOfAdjustableHoodPositionRPS.getValue()
         .in(Rotations.per(Seconds));
-    
+
     inputs.statorCurrentOfDumperLeftUp = statorCurrentOfDumperLeftUpAmps.getValue().in(Amps);
     inputs.statorCurrentOfDumperLeftDown = statorCurrentOfDumperLeftDownAmps.getValue().in(Amps);
     inputs.statorCurrentOfDumperRightUp = statorCurrentOfOfDumperRightUpAmps.getValue().in(Amps);
@@ -364,7 +371,7 @@ public class ShooterReal implements ShooterIO{
 
   }
 
-  public boolean atSpeed(double targetSpeed){
+  public boolean atSpeed(double targetSpeed) {
     boolean isAtTolerance = false;
     boolean isDumperLeftWithinTolerance = false;
     boolean isDumperRightWithinTolerance = false;
@@ -377,5 +384,33 @@ public class ShooterReal implements ShooterIO{
       isAtTolerance = true;
     }
     return isAtTolerance;
+  }
+
+  public void periodic() {
+    runMotors();
+
+  }
+
+  public void simulationPeriodic() {
+  }
+
+  public void setState(ShooterState state) {
+    currentState = state;
+  }
+
+  public void runMotors() {
+    dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(currentState.getRollerSpeed()));
+    dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(currentState.getRollerSpeed()));
+    dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(currentState.getRollerSpeed()));
+    dumperRightDown.setControl(velDumperRightDownRequest.withVelocity(currentState.getRollerSpeed()));
+    adjustableHood.setControl(posAdjustableHoodRequest.withPosition(currentState.getPosition()));
+  }
+
+  public void stop() {
+    dumperLeftUp.stopMotor();
+    dumperLeftDown.stopMotor();
+    dumperRightUp.stopMotor();
+    dumperRightDown.stopMotor();
+    adjustableHood.stopMotor();
   }
 }

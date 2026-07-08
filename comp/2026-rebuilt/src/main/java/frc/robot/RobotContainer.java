@@ -24,6 +24,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
@@ -37,6 +38,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
@@ -45,6 +47,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.carwash.Carwash;
 import frc.robot.subsystems.carwash.CarwashIO;
 import frc.robot.subsystems.carwash.CarwashReal;
+import frc.robot.subsystems.carwash.CarwashSim;
 import frc.robot.subsystems.carwash.CarwashState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -55,14 +58,17 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIO;
 import frc.robot.subsystems.hopper.HopperReal;
+import frc.robot.subsystems.hopper.HopperSim;
 import frc.robot.subsystems.hopper.HopperState;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeReal;
+import frc.robot.subsystems.intake.IntakeSim;
 import frc.robot.subsystems.intake.IntakeState;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterReal;
+import frc.robot.subsystems.shooter.ShooterSim;
 import frc.robot.subsystems.shooter.ShooterState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -95,6 +101,7 @@ public class RobotContainer {
         private final HubUtil hub;
 
         Field2d field = new Field2d();
+
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -134,10 +141,10 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
-                                m_Shooter = new Shooter(new ShooterReal());
-                                m_Carwash = new Carwash(new CarwashReal());
-                                m_Hopper = new Hopper(new HopperReal());
-                                intake = new Intake(new IntakeReal());
+                                m_Shooter = new Shooter(new ShooterSim());
+                                m_Carwash = new Carwash(new CarwashSim());
+                                m_Hopper = new Hopper(new HopperSim());
+                                intake = new Intake(new IntakeSim());
                                 break;
 
                         default:
@@ -186,6 +193,7 @@ public class RobotContainer {
          * application.
          */
         private void registerNamedCammands() {
+                NamedCommands.registerCommand("AlignAndShoot", LoggableCommand.loggableCommand("AlignAndShoot",conditionalAlignInterpolatedShootSeq()));
         }
 
         /**
@@ -236,6 +244,8 @@ public class RobotContainer {
                                 LoggableCommand.loggableCommand("AutoAlign",
                                                 new AlignToHub(drive, () -> -controller.getLeftY(),
                                                                 () -> -controller.getLeftX())));
+                controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand(
+                                "Automated Interpolated ShootingWhileAligning Balls", conditionalAlignInterpolatedShootSeq()));
         }
 
         /**
@@ -269,6 +279,7 @@ public class RobotContainer {
                 updateFieldTelemetry();
                 updateHubTelemetry();
                 updateRobotVelocities();
+
         }
 
         public void updateFieldTelemetry() {
@@ -324,20 +335,54 @@ public class RobotContainer {
                                 m_Carwash.setState(CarwashState.FEED);
                                 m_Hopper.setState(HopperState.INTAKE);
                                 intake.setState(IntakeState.INTAKE);
-                                drive.stopWithX();
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", true);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", false);
+
                         } else {
                                 // SPIN UP
                                 m_Shooter.setState(ShooterState.INTERPOLATED);
                                 m_Carwash.setState(CarwashState.OUTAKE);
                                 m_Hopper.setState(HopperState.SPINUP);
                                 intake.setState(IntakeState.INTAKE);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", true);
                         }
                 });
                 return shootSeq;
         }
+        /**
+         * This is the "new" conditional interpolated shooting sequence it takes the 2
+         * commands and refactors them into one.
+         * If the left bumper is pressed it will automatically switch too the shoot
+         * sequence.
+         */
+        public Command conditionalInterpolatedShootSeqWhileAligning() {
+                Command shootSeq = Commands.run(() -> {
+                        boolean isShooterAtSpeed = m_Shooter.atSpeed();
+                        boolean isAlignedToHub = RobotState.getInstance().isRobotAlignedToHub;
+                        if (isShooterAtSpeed && isAlignedToHub) {
+                                // SHOOT!
+                                m_Shooter.setState(ShooterState.INTERPOLATED);
+                                m_Carwash.setState(CarwashState.FEED);
+                                m_Hopper.setState(HopperState.INTAKE);
+                                intake.setState(IntakeState.INTAKE);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", true);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", false);
 
+                        } else {
+                                // SPIN UP
+                                m_Shooter.setState(ShooterState.INTERPOLATED);
+                                m_Carwash.setState(CarwashState.OUTAKE);
+                                m_Hopper.setState(HopperState.SPINUP);
+                                intake.setState(IntakeState.INTAKE);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);
+                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", true);
+                        }
+                });
+                return shootSeq;
+        }
         public Command conditionalAlignInterpolatedShootSeq() {
-                Command shootSeq = conditionalInterpolatedShootSeq()
+                Command shootSeq = conditionalInterpolatedShootSeqWhileAligning()
                                 .alongWith(new AlignToHub(drive, () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
                 return shootSeq;

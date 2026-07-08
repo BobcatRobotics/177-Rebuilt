@@ -13,16 +13,22 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
 import frc.robot.subsystems.hopper.Modules.ModuleConfigurator;
 
-public class HopperReal implements HopperIO {
+public class HopperSim implements HopperIO {
     private TalonFX hopperMotor;
+    private TalonFXSimState hopperMotorState;
+    private FlywheelSim m_motorSimModel;
     public ModuleConfigurator hopperConfig;
     private final VelocityTorqueCurrentFOC topRequestVelocity = new VelocityTorqueCurrentFOC(0);
 
@@ -33,7 +39,7 @@ public class HopperReal implements HopperIO {
 
     HopperState currentState;
 
-    public HopperReal() {
+    public HopperSim() {
 
         // Flywheel Configuration
         Gains topMotorGains = new Gains.Builder()
@@ -44,7 +50,11 @@ public class HopperReal implements HopperIO {
                 .kV(Constants.HopperConstants.Top.kHopperV)
                 .kA(Constants.HopperConstants.Top.kHopperA).build();
 
+        DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
+        m_motorSimModel = new FlywheelSim(LinearSystemId.createFlywheelSystem(motorModel, .00003, 1), motorModel);
+
         setupTopMotor(topMotorGains);
+        hopperMotorState = hopperMotor.getSimState();
 
         currentState = HopperState.IDLE;
     }
@@ -103,6 +113,18 @@ public class HopperReal implements HopperIO {
     }
 
     public void simulationPeriodic() {
+        // Get Motor Output Voltage
+        hopperMotorState = hopperMotor.getSimState();
+        double motorVoltage = hopperMotorState.getMotorVoltage();
+        // Feed Into Physics Simulation
+        m_motorSimModel.setInputVoltage(motorVoltage);
+        // Udpate SIM ( 20ms loop )
+        m_motorSimModel.update(0.02);
+        // get voltage ( rad/sec -> rotations/sec)
+        double velocityRadPerSec = m_motorSimModel.getAngularVelocityRadPerSec();
+        double velocityRotPerSec = velocityRadPerSec / (2 * Math.PI);
+        // PUSH intop the TalonFX simulated Sensor the value
+        hopperMotorState.setRotorVelocity(-velocityRotPerSec);
     }
 
     public void setState(HopperState state) {
