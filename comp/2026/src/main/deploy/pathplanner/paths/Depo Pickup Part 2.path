@@ -16,28 +16,28 @@
     },
     {
       "anchor": {
-        "x": 0.935332971643519,
-        "y": 7.203582443653618
+        "x": 1.5548359486447931,
+        "y": 6.887974322396576
       },
       "prevControl": {
-        "x": 0.7104732377035126,
-        "y": 7.312844056548667
+        "x": 1.4254493580599144,
+        "y": 7.4702139800285305
       },
       "nextControl": {
-        "x": 2.3524436536180313,
-        "y": 6.514994068801898
+        "x": 1.7800097292749646,
+        "y": 5.874692309560804
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.6982522424768525,
-        "y": 4.757896846064815
+        "x": 1.5548359486447931,
+        "y": 5.141255349500714
       },
       "prevControl": {
-        "x": 0.6982522424768525,
-        "y": 4.757896846064815
+        "x": 1.308237467686757,
+        "y": 5.182355096327052
       },
       "nextControl": null,
       "isLocked": false,
@@ -66,7 +66,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 2.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -75,7 +75,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -12.70610492373567
+    "rotation": -19.74683660542617
   },
   "reversed": false,
   "folder": "Center Autos",

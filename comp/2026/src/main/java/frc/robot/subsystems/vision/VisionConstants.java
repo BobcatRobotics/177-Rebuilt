@@ -28,7 +28,7 @@ public class VisionConstants {
   public static limelightConstants[] cameraConstants = {
     new limelightConstants("limelight-shooter", 0.423418, 0.0, 0.310388, 0.0, 27, 0.0), 
     //new limelightConstants("limelight-intake", 0.08586724, 0.0, 0.53385466, 0.0, 23, 180),
-    new limelightConstants("limelight-intake", -0.434, -9.825, 19.03, 0.0, 26, 180), //update needed
+    new limelightConstants("limelight-intake", -0.434, Units.inchesToMeters(-9.825), Units.inchesToMeters(19.03), 0.0, 26, 180), //update needed
     new limelightConstants("limelight-fleft", 0.26162,-0.313182,0.165608, 0.0, 27, 90),
     new limelightConstants("limelight-fright",  0.26162, 0.313182,0.165608, 0.0, 27, -90)
 

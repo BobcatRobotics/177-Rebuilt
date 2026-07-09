@@ -593,7 +593,7 @@ public class RobotContainer {
                                 drive.stopWithX();
 
                         } else {
-                                m_Shooter.spinUp();
+                                m_Shooter.spinUpPassing();
                                 m_Carwash.spinUp();
                                 intake.setVelocity(125);
                                 m_Hopper.hopperSpinUp();
@@ -773,6 +773,7 @@ public class RobotContainer {
 
         public Command RunIntakeRollers() {
                 return new RunCommand(() -> {
+                        m_Carwash.spinUp();
                         intake.setVelocity(400);
                 }, intake);
         }
