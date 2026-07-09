@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems.vision;
 
+import java.util.List;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -29,7 +31,10 @@ public class VisionConstants {
     new limelightConstants("limelight-intake", -0.434, -9.825, 19.03, 0.0, 26, 180), //update needed
     new limelightConstants("limelight-fleft", 0.26162,-0.313182,0.165608, 0.0, 27, 90),
     new limelightConstants("limelight-fright",  0.26162, 0.313182,0.165608, 0.0, 27, -90)
+
 };
+
+public static List<Integer> IgnoreTags = List.of(23,28, 31, 32);
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
