@@ -399,11 +399,11 @@ public class ShooterSim implements ShooterIO {
         boolean isAtTolerance = false;
         boolean isDumperLeftWithinTolerance = false;
         boolean isDumperRightWithinTolerance = false;
-        double MAIN_SPEED_TOLERANCE = 5;
+        double mainSpeedTolerance = 5;
         isDumperLeftWithinTolerance = Math.abs(velocityOfDumperLeftDownRPS.getValueAsDouble()
-                - targetSpeed) <= MAIN_SPEED_TOLERANCE;
+                - targetSpeed) <= mainSpeedTolerance;
         isDumperRightWithinTolerance = Math.abs(velocityOfDumperRightDownRPS.getValueAsDouble()
-                - targetSpeed) <= MAIN_SPEED_TOLERANCE;
+                - targetSpeed) <= mainSpeedTolerance;
         if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance) {
             isAtTolerance = true;
         }
