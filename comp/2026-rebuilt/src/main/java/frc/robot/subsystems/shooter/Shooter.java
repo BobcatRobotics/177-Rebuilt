@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import org.bobcatrobotics.Framework.StateMachine.SubsystemStateMachine;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,13 +10,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotState;
+import frc.robot.subsystems.intake.IntakeState;
 
 public class Shooter extends SubsystemBase {
 
     private final ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    private ShooterState currentState = ShooterState.IDLE;
+    private final SubsystemStateMachine<ShooterState> shooterStateMachine =
+            new SubsystemStateMachine<>(ShooterState.IDLE);
 
     public Shooter(ShooterIO io) {
         this.io = io;
@@ -26,6 +29,23 @@ public class Shooter extends SubsystemBase {
         io.periodic();
         io.updateInputs(inputs);
         Logger.processInputs("Shooter/inputs", inputs);
+        switch (shooterStateMachine.getState()) {
+            case IDLE:
+                io.stop();
+                break;
+
+            case MANUAL_SPINUP:
+                io.runMotors(shooterStateMachine.getState());
+                break;
+
+            case MANUL_SHOOT:
+                io.runMotors(shooterStateMachine.getState());
+                break;
+
+            case INTERPOLATED:
+                io.runMotors(shooterStateMachine.getState());
+                break;
+        }
 
     }
 
@@ -62,17 +82,20 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setState(ShooterState state) {
-        currentState = state;
-        io.setState(currentState);
+        shooterStateMachine.setState(state);
     }
 
     public ShooterState getState() {
-        return currentState;
+        return shooterStateMachine.getState();
     }
 
     public boolean atSpeed() {
         boolean isAtTolerance = false;
-        isAtTolerance = io.atSpeed(currentState.getRollerSpeed());
+        isAtTolerance = io.atSpeed(shooterStateMachine.getState().getRollerSpeed());
         return isAtTolerance;
+    }
+
+        public boolean inState(ShooterState state) {
+        return shooterStateMachine.isInState(state);
     }
 }

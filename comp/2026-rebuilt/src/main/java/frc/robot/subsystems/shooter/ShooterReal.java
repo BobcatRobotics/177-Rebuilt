@@ -79,7 +79,6 @@ public class ShooterReal implements ShooterIO {
   private StatusSignal<Voltage> outputOfAdjustableHoodPositionVolts;
   private StatusSignal<AngularAcceleration> accelerationOfAdjustableHoodPosition;
 
-  ShooterState currentState;
 
   public ShooterReal() {
 
@@ -126,7 +125,6 @@ public class ShooterReal implements ShooterIO {
     setupDumperRightDown(dumperRightDownGains);
     setupAdjustableHood(adjustableHoodGains);
 
-    currentState = ShooterState.IDLE;
   }
 
   public void setupDumperLeftUp(Gains g) {
@@ -387,18 +385,14 @@ public class ShooterReal implements ShooterIO {
   }
 
   public void periodic() {
-    runMotors();
 
   }
 
   public void simulationPeriodic() {
   }
 
-  public void setState(ShooterState state) {
-    currentState = state;
-  }
 
-  public void runMotors() {
+  public void runMotors(ShooterState currentState) {
     dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(currentState.getRollerSpeed()));
     dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(currentState.getRollerSpeed()));
     dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(currentState.getRollerSpeed()));

@@ -1,6 +1,9 @@
 package frc.robot.subsystems.shooter;
 
-public enum ShooterState {
+import org.bobcatrobotics.Framework.StateMachine.SubsystemState;
+import org.littletonrobotics.junction.Logger;
+
+public enum ShooterState  implements SubsystemState{
     IDLE(0.0, 0.0),
     MANUAL_SPINUP(1.0, 0.0),
     MANUL_SHOOT(1.0, 0.5),
@@ -23,6 +26,17 @@ public enum ShooterState {
         this.position = 0.0;
         this.interpolated = true;
     }
+
+    @Override
+    public void onEnter() {
+        Logger.recordOutput("Shooter/"+name(),"Entered");
+    }
+
+    @Override
+    public void onExit() {
+        Logger.recordOutput("Shooter/"+name(),"Exited");
+    }
+
 
     public boolean isInterpolated() {
         return interpolated;
