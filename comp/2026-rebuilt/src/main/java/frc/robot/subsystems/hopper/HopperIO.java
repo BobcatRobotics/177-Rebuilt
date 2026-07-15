@@ -2,6 +2,8 @@ package frc.robot.subsystems.hopper;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.carwash.CarwashState;
+
 public interface HopperIO {
 
   @AutoLog
@@ -29,5 +31,7 @@ public interface HopperIO {
   public default void periodic() {
 
   }
-}
+    public default void runMotors(HopperState currentState) {
 
+    }
+}

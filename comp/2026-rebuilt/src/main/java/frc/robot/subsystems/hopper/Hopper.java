@@ -1,5 +1,6 @@
 package frc.robot.subsystems.hopper;
 
+import org.bobcatrobotics.Framework.StateMachine.SubsystemStateMachine;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -11,16 +12,40 @@ public class Hopper  extends SubsystemBase {
   private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
 
 
-    private HopperState currentState = HopperState.IDLE;
+    private final SubsystemStateMachine<HopperState> hopperStateMachine =
+            new SubsystemStateMachine<>(HopperState.IDLE);
+
 
   public Hopper(HopperIO io) {
     this.io = io;
   }
     @Override
   public void periodic() {
+
+    hopperStateMachine.periodic();
+
     io.periodic();
     io.updateInputs(inputs);
     Logger.processInputs("Hopper/inputs", inputs);
+
+            switch (hopperStateMachine.getState()) {
+            case IDLE:
+                io.stop();
+                break;
+
+            case SPINUP:
+                io.runMotors(hopperStateMachine.getState());
+                break;
+
+            case INTAKE:
+                io.runMotors(hopperStateMachine.getState());
+                break;
+
+            case OUTTAKE:
+                io.runMotors(hopperStateMachine.getState());
+                break;
+        }
+
   }
     public void stop() {
         io.stop();
@@ -31,11 +56,14 @@ public class Hopper  extends SubsystemBase {
     }
 
     public void setState(HopperState state) {
-        currentState = state;
-        io.setState(currentState);
+        hopperStateMachine.setState(state);
     }
 
     public HopperState getState() {
-        return currentState;
+        return hopperStateMachine.getState();
+    }
+
+    public boolean inState(HopperState state) {
+        return hopperStateMachine.isInState(state);
     }
 }

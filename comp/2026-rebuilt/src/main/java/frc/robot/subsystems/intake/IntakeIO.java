@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.hopper.HopperState;
+
 public interface IntakeIO {
   @AutoLog
   public class IntakeIOInputs {
@@ -41,4 +43,8 @@ public interface IntakeIO {
   public default void periodic() {
 
   }
+
+      public default void runMotors(IntakeState currentState) {
+
+    }
 }

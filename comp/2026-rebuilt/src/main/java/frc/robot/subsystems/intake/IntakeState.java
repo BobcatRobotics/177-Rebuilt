@@ -1,6 +1,9 @@
 package frc.robot.subsystems.intake;
 
-public enum IntakeState {
+import org.bobcatrobotics.Framework.StateMachine.SubsystemState;
+import org.littletonrobotics.junction.Logger;
+
+public enum IntakeState  implements SubsystemState{
     IDLE(0.0),
     STOW(0.0),
     DOWN(1.0),
@@ -24,6 +27,17 @@ public enum IntakeState {
         this.position = position;
         this.rollerSpeed = rollerSpeed;
     }
+
+    @Override
+    public void onEnter() {
+        Logger.recordOutput("Intake/"+name(),"Entered");
+    }
+
+    @Override
+    public void onExit() {
+        Logger.recordOutput("Intake/"+name(),"Exited");
+    }
+
 
     public double getPosition() {
         return position;
