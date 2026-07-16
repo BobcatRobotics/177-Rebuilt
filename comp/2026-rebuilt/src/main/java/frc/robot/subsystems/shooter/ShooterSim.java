@@ -126,12 +126,12 @@ public class ShooterSim implements ShooterIO {
                 .kV(Constants.ShooterConstants.Right.kdumperRightMotorkV)
                 .kA(Constants.ShooterConstants.Right.kdumperRightMotorkA).build();
         Gains adjustableHoodGains = new Gains.Builder()
-                .kP(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkP)
-                .kI(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkI)
-                .kD(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkD)
-                .kS(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkS)
-                .kV(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkV)
-                .kA(Constants.ShooterConstants.adjustableHood.kAdjHoodMotorkA).build();
+                .kP(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkP)
+                .kI(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkI)
+                .kD(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkD)
+                .kS(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkS)
+                .kV(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkV)
+                .kA(Constants.ShooterConstants.AdjustableHood.kAdjHoodMotorkA).build();
 
         DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
         m_motorLeftSimModel = new FlywheelSim(LinearSystemId.createFlywheelSystem(motorModel, .00003, 1), motorModel);
@@ -281,22 +281,22 @@ public class ShooterSim implements ShooterIO {
     public void setupAdjustableHood(Gains g) {
         // Flywheel Configuration
         adjustableHoodConfigurator = new ModuleConfigurator(g.toSlot0Configs(),
-                Constants.ShooterConstants.adjustableHood.ID,
-                Constants.ShooterConstants.adjustableHood.isInverted,
-                Constants.ShooterConstants.adjustableHood.isCoast,
-                Constants.ShooterConstants.adjustableHood.statorCurrentLimit,
-                Constants.ShooterConstants.adjustableHood.supplyCurrentLimit,
-                Constants.ShooterConstants.adjustableHood.isSoftLimitsEnabled,
-                Constants.ShooterConstants.adjustableHood.forwardSoftwareLimit,
-                Constants.ShooterConstants.adjustableHood.reverseSoftwareLimit,
-                Constants.ShooterConstants.adjustableHood.useMotionMagic);
+                Constants.ShooterConstants.AdjustableHood.ID,
+                Constants.ShooterConstants.AdjustableHood.isInverted,
+                Constants.ShooterConstants.AdjustableHood.isCoast,
+                Constants.ShooterConstants.AdjustableHood.statorCurrentLimit,
+                Constants.ShooterConstants.AdjustableHood.supplyCurrentLimit,
+                Constants.ShooterConstants.AdjustableHood.isSoftLimitsEnabled,
+                Constants.ShooterConstants.AdjustableHood.forwardSoftwareLimit,
+                Constants.ShooterConstants.AdjustableHood.reverseSoftwareLimit,
+                Constants.ShooterConstants.AdjustableHood.useMotionMagic);
         adjustableHood = new TalonFX(adjustableHoodConfigurator.getMotorInnerId(), new CANBus("rio"));
         adjustableHoodConfigurator.applyMotionMagicConfig(
-                Constants.ShooterConstants.adjustableHood.motionMagicCruiseVelocity,
-                Constants.ShooterConstants.adjustableHood.motionMagicAcceleration,
-                Constants.ShooterConstants.adjustableHood.motionMagicJerk,
-                Constants.ShooterConstants.adjustableHood.motionMagicExpoKV,
-                Constants.ShooterConstants.adjustableHood.motionMagicExpoKa);
+                Constants.ShooterConstants.AdjustableHood.motionMagicCruiseVelocity,
+                Constants.ShooterConstants.AdjustableHood.motionMagicAcceleration,
+                Constants.ShooterConstants.AdjustableHood.motionMagicJerk,
+                Constants.ShooterConstants.AdjustableHood.motionMagicExpoKV,
+                Constants.ShooterConstants.AdjustableHood.motionMagicExpoKa);
         adjustableHoodConfigurator.configureMotor(adjustableHood, g);
         if (Constants.lowTelemetryMode) {
             velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
@@ -399,11 +399,11 @@ public class ShooterSim implements ShooterIO {
         boolean isAtTolerance = false;
         boolean isDumperLeftWithinTolerance = false;
         boolean isDumperRightWithinTolerance = false;
-        double MAIN_SPEED_TOLERANCE = 5;
+        double mainSpeedTolerance = 5;
         isDumperLeftWithinTolerance = Math.abs(velocityOfDumperLeftDownRPS.getValueAsDouble()
-                - targetSpeed) <= MAIN_SPEED_TOLERANCE;
+                - targetSpeed) <= mainSpeedTolerance;
         isDumperRightWithinTolerance = Math.abs(velocityOfDumperRightDownRPS.getValueAsDouble()
-                - targetSpeed) <= MAIN_SPEED_TOLERANCE;
+                - targetSpeed) <= mainSpeedTolerance;
         if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance) {
             isAtTolerance = true;
         }

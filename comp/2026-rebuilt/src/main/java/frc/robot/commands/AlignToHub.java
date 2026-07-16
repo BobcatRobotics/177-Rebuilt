@@ -51,7 +51,7 @@ public class AlignToHub extends Command {
         angleController.reset(drive.getRotation().getRadians());
     }
 
-        public AlignToHub(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
+    public AlignToHub(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
 
         ANGLE_MAX_VELOCITY = 8.0;
         ANGLE_MAX_ACCELERATION = 20.0;
@@ -67,7 +67,7 @@ public class AlignToHub extends Command {
                 new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
         angleController.enableContinuousInput(-Math.PI, Math.PI);
         angleController.reset(drive.getRotation().getRadians());
-        
+
     }
 
     public AlignToHub(Drive drive, double velocity, double acceleration) {
@@ -86,23 +86,19 @@ public class AlignToHub extends Command {
         angleController.reset(drive.getRotation().getRadians());
     }
 
-
     @Override
     public void execute() {
-            target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
-            Pose2d robotPose = drive.getPose();
-            Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
-            boolean isAtSetpoint = isAligned(robotPose.getRotation().getDegrees(), targetHeading.getDegrees());
-            RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
-            Logger.recordOutput("Align/RobotHeadingPose", robotPose);
-            Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
-            Logger.recordOutput("Align/IsAligned", isAtSetpoint);
-            drive(targetHeading.getRadians());
-            
-           
-    }
+        target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
+        Pose2d robotPose = drive.getPose();
+        Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
+        boolean isAtSetpoint = isAligned(robotPose.getRotation().getDegrees(), targetHeading.getDegrees());
+        RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+        Logger.recordOutput("Align/RobotHeadingPose", robotPose);
+        Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
+        Logger.recordOutput("Align/IsAligned", isAtSetpoint);
+        drive(targetHeading.getRadians());
 
-      
+    }
 
     public boolean isAligned() {
         Translation2d targetTranslation = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d()
@@ -117,8 +113,8 @@ public class AlignToHub extends Command {
         boolean isAtTolerance = false;
         boolean isMainFlywheelWithinTolerance = false;
 
-        double MAIN_SPEED_TOLERANCE = 1;
-        isMainFlywheelWithinTolerance = Math.abs(actual - setpoint) <= MAIN_SPEED_TOLERANCE;
+        double mainSpeedTolerance = 1;
+        isMainFlywheelWithinTolerance = Math.abs(actual - setpoint) <= mainSpeedTolerance;
         if (isMainFlywheelWithinTolerance) {
             isAtTolerance = true;
         }
@@ -150,35 +146,29 @@ public class AlignToHub extends Command {
         if (xSupplier == null && ySupplier == null) {
             // Convert to field relative speeds & send command
             boolean isFlipped = DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == Alliance.Red;
-        drive.runVelocity(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        speeds,
-                        isFlipped
-                                ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                                : drive.getRotation()));
-        }
-        else {
-            Translation2d linearVelocity =
-                    DriveCommands.getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
-               // Convert to field relative speeds & send command
-             speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-            boolean isFlipped = DriverStation.getAlliance().isPresent()
-                && DriverStation.getAlliance().get() == Alliance.Red;
+                    && DriverStation.getAlliance().get() == Alliance.Red;
             drive.runVelocity(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        speeds,
-                        isFlipped
-                                ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                                : drive.getRotation()));
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            speeds,
+                            isFlipped
+                                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                                    : drive.getRotation()));
+        } else {
+            Translation2d linearVelocity = DriveCommands.getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
+                    ySupplier.getAsDouble());
+            // Convert to field relative speeds & send command
+            speeds = new ChassisSpeeds(
+                    linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
+                    linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                    omega);
+            boolean isFlipped = DriverStation.getAlliance().isPresent()
+                    && DriverStation.getAlliance().get() == Alliance.Red;
+            drive.runVelocity(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            speeds,
+                            isFlipped
+                                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                                    : drive.getRotation()));
         }
-        }
-        
-
-        
     }
-
+}

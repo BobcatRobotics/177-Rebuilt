@@ -26,11 +26,11 @@ public final class ModuleConfigurator {
     private final double reverseSoftwareLimit;
     private final boolean useMotionMagic;
 
-    public  double motionMagicCruiseVelocity;
-    public  double motionMagicAcceleration;
-    public  double motionMagicJerk;
-    public  double motionMagicExpoKV;
-    public  double motionMagicExpoKa;
+    public double motionMagicCruiseVelocity;
+    public double motionMagicAcceleration;
+    public double motionMagicJerk;
+    public double motionMagicExpoKV;
+    public double motionMagicExpoKa;
 
     public ModuleConfigurator(
             Slot0Configs slotConfig,
@@ -55,6 +55,7 @@ public final class ModuleConfigurator {
         this.reverseSoftwareLimit = Double.MIN_VALUE;
         this.useMotionMagic = useMotionMagic;
     }
+
     public ModuleConfigurator(
             Slot0Configs slotConfig,
             int motorInnerId,
@@ -80,6 +81,7 @@ public final class ModuleConfigurator {
         this.reverseSoftwareLimit = reverseSoftwareLimit;
         this.useMotionMagic = useMotionMagic;
     }
+
     public ModuleConfigurator(
             Slot0Configs slotConfig,
             int motorInnerId,
@@ -139,6 +141,7 @@ public final class ModuleConfigurator {
     public double getSupplyCurrentLimit() {
         return statorCurrentLimit;
     }
+
     public double getStatorCurrentLimit() {
         return supplyCurrentLimit;
     }
@@ -147,15 +150,16 @@ public final class ModuleConfigurator {
         return new ModuleConfigurator(slot, motorInnerId, motorOuterId, isInnerInverted, isOuterInverted, isCoast,
                 statorCurrentLimit,
                 supplyCurrentLimit,
-                isSoftLimitsEnabled,useMotionMagic);
+                isSoftLimitsEnabled, useMotionMagic);
     }
 
-    public void applyMotionMagicConfig(double motionMagicCruiseVelocity, double motionMagicAcceleration, double motionMagicJerk, double motionMagicExpoKV,double motionMagicExpoKA){
-           this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
-           this.motionMagicAcceleration = motionMagicAcceleration;
-           this.motionMagicJerk = motionMagicJerk;
-           this.motionMagicExpoKV = motionMagicExpoKV;
-           this.motionMagicExpoKa = motionMagicExpoKA;
+    public void applyMotionMagicConfig(double motionMagicCruiseVelocity, double motionMagicAcceleration,
+            double motionMagicJerk, double motionMagicExpoKV, double motionMagicExpoKA) {
+        this.motionMagicCruiseVelocity = motionMagicCruiseVelocity;
+        this.motionMagicAcceleration = motionMagicAcceleration;
+        this.motionMagicJerk = motionMagicJerk;
+        this.motionMagicExpoKV = motionMagicExpoKV;
+        this.motionMagicExpoKa = motionMagicExpoKA;
     }
 
     public void configureMotor(
@@ -193,18 +197,17 @@ public final class ModuleConfigurator {
 
             fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = forwardSoftwareLimit;
             fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = reverseSoftwareLimit;
-        }
-        else{
+        } else {
             fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
             fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         }
 
-        if(useMotionMagic){
-        fxConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity; // Rotations per second
-        fxConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration;   // Rotations per second squared
-        fxConfig.MotionMagic.MotionMagicJerk = motionMagicJerk;          // Rotations per second cubed
-        fxConfig.MotionMagic.MotionMagicExpo_kA = motionMagicExpoKa;
-        fxConfig.MotionMagic.MotionMagicExpo_kV = motionMagicExpoKV;
+        if (useMotionMagic) {
+            fxConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity; // Rotations per second
+            fxConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration; // Rotations per second squared
+            fxConfig.MotionMagic.MotionMagicJerk = motionMagicJerk; // Rotations per second cubed
+            fxConfig.MotionMagic.MotionMagicExpo_kA = motionMagicExpoKa;
+            fxConfig.MotionMagic.MotionMagicExpo_kV = motionMagicExpoKV;
         }
 
         motor.getConfigurator().apply(fxConfig);
@@ -241,25 +244,24 @@ public final class ModuleConfigurator {
 
             fxConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = forwardSoftwareLimit;
             fxConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = reverseSoftwareLimit;
-        }
-        else{
+        } else {
             fxConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
             fxConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         }
-        
-        if(useMotionMagic){
-        // --- MOTION MAGIC VELOCITY CONFIGS ---
-        fxConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity; // Rotations per second
-        fxConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration;   // Rotations per second squared
-        fxConfig.MotionMagic.MotionMagicJerk = motionMagicJerk;          // Rotations per second cubed
-        fxConfig.MotionMagic.MotionMagicExpo_kA = motionMagicExpoKa;
-        fxConfig.MotionMagic.MotionMagicExpo_kV = motionMagicExpoKV;
+
+        if (useMotionMagic) {
+            // --- MOTION MAGIC VELOCITY CONFIGS ---
+            fxConfig.MotionMagic.MotionMagicCruiseVelocity = motionMagicCruiseVelocity; // Rotations per second
+            fxConfig.MotionMagic.MotionMagicAcceleration = motionMagicAcceleration; // Rotations per second squared
+            fxConfig.MotionMagic.MotionMagicJerk = motionMagicJerk; // Rotations per second cubed
+            fxConfig.MotionMagic.MotionMagicExpo_kA = motionMagicExpoKa;
+            fxConfig.MotionMagic.MotionMagicExpo_kV = motionMagicExpoKV;
         }
 
         motor.getConfigurator().apply(fxConfig);
     }
-    
-        public void updateMotorPID(
+
+    public void updateMotorPID(
             TalonFX motor,
             TunablePID pid) {
 
@@ -268,10 +270,8 @@ public final class ModuleConfigurator {
         motor.getConfigurator().apply(slot0);
     }
 
-
-    public void configureSignals(TalonFX motor,double freq, StatusSignal<?>... signals) {
+    public void configureSignals(TalonFX motor, double freq, StatusSignal<?>... signals) {
         BaseStatusSignal.setUpdateFrequencyForAll(freq, signals);
         motor.optimizeBusUtilization();
     }
-
 }

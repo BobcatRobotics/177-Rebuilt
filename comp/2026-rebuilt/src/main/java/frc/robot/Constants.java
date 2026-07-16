@@ -141,7 +141,7 @@ public final class Constants {
         public static final double motionMagicExpoKV = 0.0;
         public static final double motionMagicExpoKa = 0.01;
 
-    public final static class adjustableHood {
+    public final static class AdjustableHood {
             public static final boolean isInverted = false;
             public static final boolean isCoast = false;
             // Motor Constants
