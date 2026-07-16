@@ -29,4 +29,8 @@ public interface CarwashIO {
     public default void periodic() {
 
     }
+
+    public default void runMotors(CarwashState currentState) {
+
+    }
 }

@@ -341,7 +341,7 @@ public class RobotContainer {
                         } else {
                                 // SPIN UP
                                 m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.OUTAKE);
+                                m_Carwash.setState(CarwashState.OUTTAKE);
                                 m_Hopper.setState(HopperState.SPINUP);
                                 intake.setState(IntakeState.INTAKE);
                                  Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);
@@ -372,7 +372,7 @@ public class RobotContainer {
                         } else {
                                 // SPIN UP
                                 m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.OUTAKE);
+                                m_Carwash.setState(CarwashState.OUTTAKE);
                                 m_Hopper.setState(HopperState.SPINUP);
                                 intake.setState(IntakeState.INTAKE);
                                  Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);

@@ -3,6 +3,8 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.subsystems.intake.IntakeState;
+
 public interface ShooterIO {
 
   @AutoLog
@@ -55,5 +57,9 @@ public interface ShooterIO {
   public default boolean atSpeed(double velocity){
     return false;
   }
+
+        public default void runMotors(ShooterState currentState) {
+
+    }
 }
 

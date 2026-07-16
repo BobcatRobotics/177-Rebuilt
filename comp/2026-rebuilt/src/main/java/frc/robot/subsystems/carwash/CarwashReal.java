@@ -30,7 +30,7 @@ public class CarwashReal implements CarwashIO {
     private StatusSignal<Current> statorCurrentOfIntakeAmps;
     private StatusSignal<Voltage> outputOfIntakeVolts;
     private StatusSignal<AngularAcceleration> accelerationOfIntake;
-    CarwashState currentState;
+    
 
     public CarwashReal() {
         Gains intakeGains = new Gains.Builder()
@@ -42,8 +42,6 @@ public class CarwashReal implements CarwashIO {
                 .kA(Constants.CarwashConstants.SharedIntake.kIntakeMotorkA).build();
 
         setupIntake(intakeGains);
-
-        currentState = CarwashState.IDLE;
     }
 
     public void setupIntake(Gains g) {
@@ -97,19 +95,12 @@ public class CarwashReal implements CarwashIO {
         inputs.torqueCurrentCarwashAmps = shooterIntakeMotor.getTorqueCurrent().getValue().in(Amps);
     }
 
-    public void periodic() {
-        runMotors();
-
-    }
 
     public void simulationPeriodic() {
     }
 
-    public void setState(CarwashState state) {
-        currentState = state;
-    }
 
-    public void runMotors() {
+    public void runMotors(CarwashState currentState) {
         shooterIntakeMotor.setControl(velIntakeRequest.withVelocity(currentState.getCarwashSpeed()));
     }
 

@@ -31,8 +31,6 @@ public class HopperReal implements HopperIO {
     private StatusSignal<Voltage> outputOfHopperTopVolts;
     private StatusSignal<AngularAcceleration> accelerationOfHopperTop;
 
-    HopperState currentState;
-
     public HopperReal() {
 
         // Flywheel Configuration
@@ -46,7 +44,6 @@ public class HopperReal implements HopperIO {
 
         setupTopMotor(topMotorGains);
 
-        currentState = HopperState.IDLE;
     }
 
     public void setupTopMotor(Gains g) {
@@ -98,18 +95,14 @@ public class HopperReal implements HopperIO {
     }
 
     public void periodic() {
-        runMotors();
 
     }
 
     public void simulationPeriodic() {
     }
 
-    public void setState(HopperState state) {
-        currentState = state;
-    }
 
-    public void runMotors() {
+    public void runMotors(HopperState currentState) {
         hopperMotor.setControl(topRequestVelocity.withVelocity(currentState.getRollerSpeed()));
     }
 

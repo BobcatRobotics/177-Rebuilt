@@ -60,7 +60,6 @@ public class IntakeReal implements IntakeIO {
     Gains rightRollerMotorGains;
     Gains leftRollerMotorGains;
 
-    IntakeState currentState;
 
     public IntakeReal() {
 
@@ -91,7 +90,6 @@ public class IntakeReal implements IntakeIO {
         setUpRightRollerMotor(rightRollerMotorGains);
         setupPivotMotor(pivotMotorGains);
 
-        currentState = IntakeState.IDLE;
 
     }
 
@@ -226,18 +224,13 @@ public class IntakeReal implements IntakeIO {
     }
 
     public void periodic() {
-        runMotors();
 
     }
 
     public void simulationPeriodic() {
     }
 
-    public void setState(IntakeState state) {
-        currentState = state;
-    }
-
-    public void runMotors() {
+    public void runMotors(IntakeState currentState) {
         double appliedFeedforward = 0;
         if (currentState == IntakeState.STOW) {
             appliedFeedforward = 0.8;
