@@ -70,7 +70,7 @@ clampedDistance = LinearFilter.movingAverage(5);
         double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
-        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(clampedHubDistance).get(2);
+        currentSetpoints.hoodPosition = RobotState.getInstance().interpolator.getAsList(hubDistance).get(2);
         ;
 
       }
@@ -81,7 +81,7 @@ clampedDistance = LinearFilter.movingAverage(5);
         double dumperSpeed = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
-        currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(clampedHubDistance).get(2);
+        currentSetpoints.hoodPosition = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(2);
         ;
 
       }

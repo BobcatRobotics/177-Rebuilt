@@ -34,7 +34,7 @@ public class VisionConstants {
 
 };
 
-//public static List<Integer> IgnoreTags = List.of(28, 31, 32,23);
+public static List<Integer> IgnoreTags = List.of(28, 29,30,31, 32,23);
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -44,9 +44,9 @@ public class VisionConstants {
       new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 99.0;
-  public static double maxZError = 1.0;
-
+  public static double maxAmbiguity = 0.3;
+  public static double maxZError = 0.75;
+  
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
   public static double linearStdDevBaseline = 0.05; // Meters originally  0.02
