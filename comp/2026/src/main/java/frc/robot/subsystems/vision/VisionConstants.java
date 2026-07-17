@@ -34,7 +34,7 @@ public class VisionConstants {
 
 };
 
-public static List<Integer> IgnoreTags = List.of(23,28, 31, 32);
+//public static List<Integer> IgnoreTags = List.of(28, 31, 32,23);
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)

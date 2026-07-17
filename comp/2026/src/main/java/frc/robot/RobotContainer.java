@@ -475,6 +475,7 @@ public class RobotContainer {
 
         public void teleopPeriodic() {
 
+                vision.periodic();
                 if (DriverStation.getAlliance().isPresent()) {
                         RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
