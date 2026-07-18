@@ -44,7 +44,23 @@ public interface IntakeIO {
 
   }
 
-      public default void runMotors(IntakeState currentState) {
+  public default void runMotors(IntakeState currentState) {
 
-    }
+  }
+
+  public default void setVelocity(IntakeState currentState) {
+
+  }
+
+  public default void setPosition(IntakeState currentState) {
+
+  }
+
+  public default boolean isAtPosition(IntakeState state) {
+    return false;
+  }
+
+  public default boolean isAtSpeed(IntakeState state) {
+    return false;
+  }
 }

@@ -100,7 +100,7 @@ public class CarwashReal implements CarwashIO {
     }
 
 
-    public void runMotors(CarwashState currentState) {
+    public void setVelocity(CarwashState currentState) {
         shooterIntakeMotor.setControl(velIntakeRequest.withVelocity(currentState.getCarwashSpeed()));
     }
 

@@ -30,7 +30,7 @@ public interface CarwashIO {
 
     }
 
-    public default void runMotors(CarwashState currentState) {
+    public default void setVelocity(CarwashState currentState) {
 
     }
 }

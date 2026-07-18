@@ -1,12 +1,12 @@
 package frc.robot.subsystems.shooter;
 
-import org.bobcatrobotics.Util.Tunables.Gains;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
+
+import org.bobcatrobotics.Util.Tunables.Gains;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -26,8 +26,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import frc.robot.Constants;
-import frc.robot.subsystems.carwash.CarwashState;
-import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import frc.robot.subsystems.shooter.Modules.ModuleConfigurator;
 
 public class ShooterSim implements ShooterIO {

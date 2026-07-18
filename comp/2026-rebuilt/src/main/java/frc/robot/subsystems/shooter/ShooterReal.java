@@ -1,6 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import org.bobcatrobotics.Util.Tunables.Gains;
+import org.littletonrobotics.junction.Logger;
+
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -78,7 +80,6 @@ public class ShooterReal implements ShooterIO {
   private StatusSignal<Current> statorCurrentOfAdjustableHoodPositionAmps;
   private StatusSignal<Voltage> outputOfAdjustableHoodPositionVolts;
   private StatusSignal<AngularAcceleration> accelerationOfAdjustableHoodPosition;
-
 
   public ShooterReal() {
 
@@ -391,12 +392,19 @@ public class ShooterReal implements ShooterIO {
   public void simulationPeriodic() {
   }
 
-
   public void runMotors(ShooterState currentState) {
+    setVelocity(currentState);
+    setPosition(currentState);
+  }
+
+  public void setVelocity(ShooterState currentState) {
     dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(currentState.getRollerSpeed()));
     dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(currentState.getRollerSpeed()));
     dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(currentState.getRollerSpeed()));
     dumperRightDown.setControl(velDumperRightDownRequest.withVelocity(currentState.getRollerSpeed()));
+  }
+
+  public void setPosition(ShooterState currentState) {
     adjustableHood.setControl(posAdjustableHoodRequest.withPosition(currentState.getPosition()));
   }
 
@@ -406,5 +414,42 @@ public class ShooterReal implements ShooterIO {
     dumperRightUp.stopMotor();
     dumperRightDown.stopMotor();
     adjustableHood.stopMotor();
+  }
+
+
+  public boolean atSpeed(ShooterState currentState) {
+    boolean isAtTolerance = false;
+    boolean isDumperLeftWithinTolerance = false;
+    boolean isDumperRightWithinTolerance = false;
+
+    double MAIN_SPEED_TOLERANCE = 5; // Using for both dumpers
+    double leftVelocityAvg = (dumperLeftUp.getVelocity().getValueAsDouble() + dumperLeftDown.getVelocity().getValueAsDouble())/2;
+    double rightVelocityAvg =(dumperRightUp.getVelocity().getValueAsDouble() + dumperRightDown.getVelocity().getValueAsDouble())/2;
+    isDumperLeftWithinTolerance = Math.abs( leftVelocityAvg
+        - currentState.getRollerSpeed()) <= MAIN_SPEED_TOLERANCE;
+    isDumperRightWithinTolerance = Math
+        .abs(rightVelocityAvg
+            - currentState.getRollerSpeed()) <= MAIN_SPEED_TOLERANCE;
+    if (isDumperLeftWithinTolerance && isDumperRightWithinTolerance) {
+      isAtTolerance = true;
+    }
+    Logger.recordOutput("Shooter/isUpToSpeed", isAtTolerance);
+    return isAtTolerance;
+  }
+
+  public boolean atPosition(ShooterState currentState) {
+    boolean isAtTolerance = false;
+    boolean isAdjustableHoodWithinTolerance = false;
+
+    double HOOD_POSITION_TOLERANCE = 1;
+    double hoodpPosition = adjustableHood.getPosition().getValueAsDouble();
+    isAdjustableHoodWithinTolerance = Math
+        .abs(hoodpPosition
+            - currentState.getPosition()) <= HOOD_POSITION_TOLERANCE;
+    if (isAdjustableHoodWithinTolerance) {
+      isAtTolerance = true;
+    }
+    Logger.recordOutput("Shooter/isAtPosition", isAtTolerance);
+    return isAtTolerance;
   }
 }

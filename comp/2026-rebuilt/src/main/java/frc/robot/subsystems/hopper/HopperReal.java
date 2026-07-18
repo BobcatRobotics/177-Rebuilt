@@ -102,7 +102,7 @@ public class HopperReal implements HopperIO {
     }
 
 
-    public void runMotors(HopperState currentState) {
+    public void setVelocity(HopperState currentState) {
         hopperMotor.setControl(topRequestVelocity.withVelocity(currentState.getRollerSpeed()));
     }
 

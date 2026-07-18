@@ -34,15 +34,15 @@ public class Hopper  extends SubsystemBase {
                 break;
 
             case SPINUP:
-                io.runMotors(hopperStateMachine.getState());
+                io.setVelocity(hopperStateMachine.getState());
                 break;
 
             case INTAKE:
-                io.runMotors(hopperStateMachine.getState());
+                io.setVelocity(hopperStateMachine.getState());
                 break;
 
             case OUTTAKE:
-                io.runMotors(hopperStateMachine.getState());
+                io.setVelocity(hopperStateMachine.getState());
                 break;
         }
 

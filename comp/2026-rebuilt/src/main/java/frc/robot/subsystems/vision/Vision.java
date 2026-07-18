@@ -9,6 +9,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +30,12 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+
+  private MedianFilter xPoseFilter = new MedianFilter(5);
+  private MedianFilter yPoseFilter = new MedianFilter(5);
+  private MedianFilter rotPoseFilter = new MedianFilter(5);
+
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -84,6 +91,11 @@ public class Vision extends SubsystemBase {
 
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
+          if (VisionConstants.IgnoreTags.contains(tagId)){
+          continue;
+        }
+
+
         var tagPose = aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tagPoses.add(tagPose.get());
@@ -133,12 +145,23 @@ public class Vision extends SubsystemBase {
           angularStdDev *= cameraStdDevFactors[cameraIndex];
         }
 
+                 Pose2d unfilteredPose =  observation.pose().toPose2d();
+         double xPose = xPoseFilter.calculate(unfilteredPose.getX());
+         double yPose = yPoseFilter.calculate(unfilteredPose.getY());
+         double rotPose = rotPoseFilter.calculate(unfilteredPose.getRotation().getRadians());
+         Pose2d filteredPose = new Pose2d(xPose,yPose,new Rotation2d(rotPose));
+         consumer.accept(
+             filteredPose,
+             observation.timestamp(),
+             VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+       }
+
         // Send vision observation
-        consumer.accept(
-            observation.pose().toPose2d(),
-            observation.timestamp(),
-            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
-      }
+      //   consumer.accept(
+      //       observation.pose().toPose2d(),
+      //       observation.timestamp(),
+      //       VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+      // }
 
       // Log camera metadata
       Logger.recordOutput(

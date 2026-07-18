@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-
 import org.littletonrobotics.junction.AutoLog;
 
 import frc.robot.subsystems.intake.IntakeState;
@@ -31,15 +30,16 @@ public interface ShooterIO {
     public double outputOfDumperRightUpVolts = 0;
     public double outputOfDumperRightDownVolts = 0;
     public double outputOfAdjustableHoodVolts = 0;
-    public double statorCurrentOfAdjustableHoodPositionAmps = 0; 
-    public boolean adjustableHoodConnected = false; 
+    public double statorCurrentOfAdjustableHoodPositionAmps = 0;
+    public boolean adjustableHoodConnected = false;
     public double velocityOfAdjustableHoodPositionRPS = 0;
-    public double positionOfAdjustableHood = -1; 
+    public double positionOfAdjustableHood = -1;
   }
 
   default void updateInputs(ShooterIOInputs inputs) {
 
   }
+
   public default void stop() {
   }
 
@@ -54,12 +54,19 @@ public interface ShooterIO {
 
   }
 
-  public default boolean atSpeed(double velocity){
+  public default boolean atSpeed(double velocity) {
     return false;
   }
 
-        public default void runMotors(ShooterState currentState) {
+  public default void runMotors(ShooterState currentState) {
 
-    }
+  }
+
+  public default void setVelocity(ShooterState currentState) {
+
+  }
+
+  public default void setPosition(ShooterState currentState) {
+
+  }
 }
-

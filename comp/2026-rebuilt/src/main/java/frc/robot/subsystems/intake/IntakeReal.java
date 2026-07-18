@@ -5,7 +5,9 @@ import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+
 import org.bobcatrobotics.Util.Tunables.Gains;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -231,6 +233,14 @@ public class IntakeReal implements IntakeIO {
     }
 
     public void runMotors(IntakeState currentState) {
+        setVelocity(currentState);
+        setPosition(currentState);
+    }
+    public void setVelocity(IntakeState currentState) {
+        rightVelocityMotor.set(currentState.getRollerSpeed());
+        leftVelocityMotor.set(currentState.getRollerSpeed());
+    }
+        public void setPosition(IntakeState currentState) {
         double appliedFeedforward = 0;
         if (currentState == IntakeState.STOW) {
             appliedFeedforward = 0.8;
@@ -240,13 +250,47 @@ public class IntakeReal implements IntakeIO {
         positionMotor
                 .setControl(requestPositionVoltage.withPosition(currentState.getPosition())
                         .withFeedForward(appliedFeedforward));
-        rightVelocityMotor.set(currentState.getRollerSpeed());
-        leftVelocityMotor.set(currentState.getRollerSpeed());
     }
-
     public void stop() {
         positionMotor.stopMotor();
         rightVelocityMotor.stopMotor();
         leftVelocityMotor.stopMotor();
     }
+
+
+  public boolean atSpeed(IntakeState currentState) {
+    boolean isAtTolerance = false;
+    boolean isRollerLeftWithinTolerance = false;
+    boolean isRollerRightWithinTolerance = false;
+
+    double MAIN_SPEED_TOLERANCE = 5; // Using for both dumpers
+    double leftVelocityAvg = (leftVelocityMotor.getVelocity().getValueAsDouble() )/1;
+    double rightVelocityAvg =(rightVelocityMotor.getVelocity().getValueAsDouble() )/1;
+    isRollerLeftWithinTolerance = Math.abs( leftVelocityAvg
+        - currentState.getRollerSpeed()) <= MAIN_SPEED_TOLERANCE;
+    isRollerRightWithinTolerance = Math
+        .abs(rightVelocityAvg
+            - currentState.getRollerSpeed()) <= MAIN_SPEED_TOLERANCE;
+    if (isRollerRightWithinTolerance && isRollerLeftWithinTolerance) {
+      isAtTolerance = true;
+    }
+    Logger.recordOutput("Intake/isUpToSpeed", isAtTolerance);
+    return isAtTolerance;
+  }
+
+  public boolean atPosition(IntakeState currentState) {
+    boolean isAtTolerance = false;
+    boolean isIntakeWithinTolerance = false;
+
+    double HOOD_POSITION_TOLERANCE = 0.5;
+    double hoodpPosition = positionMotor.getPosition().getValueAsDouble();
+    isIntakeWithinTolerance = Math
+        .abs(hoodpPosition
+            - currentState.getPosition()) <= HOOD_POSITION_TOLERANCE;
+    if (isIntakeWithinTolerance) {
+      isAtTolerance = true;
+    }
+    Logger.recordOutput("Intake/isAtPosition", isAtTolerance);
+    return isAtTolerance;
+  }
 }

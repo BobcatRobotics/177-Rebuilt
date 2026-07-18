@@ -33,11 +33,11 @@ public class Carwash extends SubsystemBase {
                 break;
 
             case FEED:
-                io.runMotors(carwashStateMachine.getState());
+                io.setVelocity(carwashStateMachine.getState());
                 break;
 
             case OUTTAKE:
-                io.runMotors(carwashStateMachine.getState());
+                io.setVelocity(carwashStateMachine.getState());
                 break;
         }
 

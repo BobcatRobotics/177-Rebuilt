@@ -31,7 +31,7 @@ public interface HopperIO {
   public default void periodic() {
 
   }
-    public default void runMotors(HopperState currentState) {
+    public default void setVelocity(HopperState currentState) {
 
     }
 }

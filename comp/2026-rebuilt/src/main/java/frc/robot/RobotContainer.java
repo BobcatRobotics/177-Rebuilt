@@ -18,7 +18,6 @@ import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
 
 import org.bobcatrobotics.Commands.ActionFactory;
 import org.bobcatrobotics.Framework.StateMachine.RobotStateMachine;
-import org.bobcatrobotics.Framework.StateMachine.SubsystemStateMachine;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
@@ -40,7 +39,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToHub;
@@ -50,7 +48,6 @@ import frc.robot.subsystems.carwash.Carwash;
 import frc.robot.subsystems.carwash.CarwashIO;
 import frc.robot.subsystems.carwash.CarwashReal;
 import frc.robot.subsystems.carwash.CarwashSim;
-import frc.robot.subsystems.carwash.CarwashState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -61,7 +58,6 @@ import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIO;
 import frc.robot.subsystems.hopper.HopperReal;
 import frc.robot.subsystems.hopper.HopperSim;
-import frc.robot.subsystems.hopper.HopperState;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeReal;
@@ -71,7 +67,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterReal;
 import frc.robot.subsystems.shooter.ShooterSim;
-import frc.robot.subsystems.shooter.ShooterState;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.LoggableCommand;
@@ -96,6 +91,7 @@ public class RobotContainer {
 
         // Controller
         private final CommandXboxController controller = new CommandXboxController(0);
+        private final CommandXboxController operator = new CommandXboxController(1);
 
         // Dashboard inputs
         private final LoggedDashboardChooser<Command> autoChooser;
@@ -254,6 +250,44 @@ public class RobotContainer {
                 controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand(
                                 "Automated Interpolated ShootingWhileAligning Balls",
                                 conditionalAlignInterpolatedShootSeq()));
+
+                operator.leftBumper().whileTrue(LoggableCommand.loggableCommand(
+                                "Intake Down",
+                                intakeDownCommand().andThen(Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.IDLE);
+                                }))));
+                operator.leftTrigger().whileTrue(LoggableCommand.loggableCommand(
+                                "Intake Fuel",
+                                intakeFuelCommand()));
+
+
+
+
+                SmartDashboard.putData("Intake Down Command", LoggableCommand.loggableCommand(
+                                "Intake Down Command",intakeDownCommand().andThen(Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.IDLE);
+                                }))));
+                SmartDashboard.putData("Intake Stow Command", LoggableCommand.loggableCommand(
+                                "Intake Stow Command",intakeStowCommand().andThen(Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.IDLE);
+                                }))));
+                SmartDashboard.putData("Intake Fuel Command", LoggableCommand.loggableCommand(
+                                "Intake Fuel Command",intakeFuelCommand().andThen(Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.IDLE);
+                                }))));
+                SmartDashboard.putData("Outtake Fuel Command", LoggableCommand.loggableCommand(
+                                "Outtake Fuel Command",outtakeFuelCommand().andThen(Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.IDLE);
+                                }))));
+                SmartDashboard.putData("SpinUpAndShoot", LoggableCommand.loggableCommand(
+                                "SpinUpAndShoot",conditionalInterpolatedShootSeq()));
+                SmartDashboard.putData("SpinUpAndShootWhileAligning", LoggableCommand.loggableCommand(
+                                "SpinUpAndShootWhileAligning",conditionalAlignInterpolatedShootSeq()));
         }
 
         /**
@@ -279,12 +313,15 @@ public class RobotContainer {
                 updateRobotVelocities();
                 updateRobotTelemetry();
 
-
                 // Set the subsystem states based upon the given robot state
-                m_Shooter.setState(robotStateMachine.getState().getShooterState());
-                m_Carwash.setState(robotStateMachine.getState().getCarwashState());
-                m_Hopper.setState(robotStateMachine.getState().getHopperState());
-                intake.setState(robotStateMachine.getState().getIntakeState());
+                if(robotStateMachine.getState() == RobotStates.IDLE){
+                }
+                else{
+                        m_Shooter.setState(robotStateMachine.getState().getShooterState());
+                        m_Carwash.setState(robotStateMachine.getState().getCarwashState());
+                        m_Hopper.setState(robotStateMachine.getState().getHopperState());
+                        intake.setState(robotStateMachine.getState().getIntakeState());
+                }
         }
 
         public void simTelePeriodic() {
@@ -296,12 +333,16 @@ public class RobotContainer {
                 updateHubTelemetry();
                 updateRobotVelocities();
                 updateRobotTelemetry();
-                
+
                 // Set the subsystem states based upon the given robot state
-                m_Shooter.setState(robotStateMachine.getState().getShooterState());
-                m_Carwash.setState(robotStateMachine.getState().getCarwashState());
-                m_Hopper.setState(robotStateMachine.getState().getHopperState());
-                intake.setState(robotStateMachine.getState().getIntakeState());
+                if(robotStateMachine.getState() == RobotStates.IDLE){
+                }
+                else{
+                        m_Shooter.setState(robotStateMachine.getState().getShooterState());
+                        m_Carwash.setState(robotStateMachine.getState().getCarwashState());
+                        m_Hopper.setState(robotStateMachine.getState().getHopperState());
+                        intake.setState(robotStateMachine.getState().getIntakeState());
+                }
         }
 
         public void updateRobotTelemetry() {
@@ -410,5 +451,37 @@ public class RobotContainer {
                                 .alongWith(new AlignToHub(drive, () -> -controller.getLeftY(),
                                                 () -> -controller.getLeftX()));
                 return shootSeq;
+        }
+
+        public Command intakeDownCommand() {
+                Command prevCmd = Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.DOWN);
+                                });
+                return Commands.run(
+                                () -> {
+                                }).beforeStarting(prevCmd);
+        }
+
+        public Command intakeStowCommand() {
+                Command prevCmd = Commands.runOnce(
+                                () -> {
+                                        intake.setState(IntakeState.STOW);
+                                });
+                return Commands.run(
+                                () -> {
+                                }).beforeStarting(prevCmd);
+        }
+
+        public Command intakeFuelCommand() {
+                return Commands.runOnce(() -> {
+                        intake.setState(IntakeState.INTAKE);
+                }, intake);
+        }
+
+        public Command outtakeFuelCommand() {
+                return Commands.runOnce(() -> {
+                        intake.setState(IntakeState.OUTTAKE);
+                }, intake);
         }
 }

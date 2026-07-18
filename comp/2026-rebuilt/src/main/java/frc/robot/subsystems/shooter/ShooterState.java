@@ -43,14 +43,16 @@ public enum ShooterState  implements SubsystemState{
         this.interpolated = true;
     }
 
-    @Override
     public void onEnter() {
-        Logger.recordOutput("Shooter/"+name(),"Entered");
+        Logger.recordOutput("ShooterState", "Entered " + getStateName());
+    }
+    
+    public void execute() {
+        Logger.recordOutput("ShooterState", "In " + getStateName());
     }
 
-    @Override
     public void onExit() {
-        Logger.recordOutput("Shooter/"+name(),"Exited");
+        Logger.recordOutput("ShooterState", "Exited " + getStateName());
     }
 
 
@@ -64,5 +66,8 @@ public enum ShooterState  implements SubsystemState{
 
     public double getRollerSpeed() {
         return rollerSpeed;
+    }
+    public String getStateName() {
+        return name();
     }
 }
