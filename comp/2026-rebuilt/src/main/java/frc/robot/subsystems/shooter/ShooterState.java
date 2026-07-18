@@ -1,7 +1,11 @@
 package frc.robot.subsystems.shooter;
 
 import org.bobcatrobotics.Framework.StateMachine.SubsystemState;
+import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 import org.littletonrobotics.junction.Logger;
+
+import frc.robot.Constants;
+import frc.robot.RobotInfo;
 
 public enum ShooterState  implements SubsystemState{
     IDLE(0.0, 0.0),
@@ -14,7 +18,18 @@ public enum ShooterState  implements SubsystemState{
     private final double rollerSpeed;
     private final double position;
     private final boolean interpolated;
-
+    public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
+      Constants.ShooterConstants.ValuesOfKnownShots.distance,
+      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.dumperSpeed,
+      Constants.ShooterConstants.ValuesOfKnownShots.hoodPosition,
+      false);
+    public TripleOutputInterpolator passingInterpolator = new TripleOutputInterpolator(
+      Constants.ShooterConstants.PassingValuesOfKnownShots.distance,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.carwashSpeed,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.dumperSpeed,
+      Constants.ShooterConstants.PassingValuesOfKnownShots.hoodPosition,
+      false);
     ShooterState(double rollerSpeed, double position) {
         this.rollerSpeed = rollerSpeed;
         this.position = position;
@@ -22,8 +37,9 @@ public enum ShooterState  implements SubsystemState{
     }
 
     ShooterState() {
-        this.rollerSpeed = 0.0;
-        this.position = 0.0;
+        double hubDistance = RobotInfo.getInstance().hubDistance;
+        this.rollerSpeed = interpolator.getAsList(hubDistance).get(1);
+        this.position = interpolator.getAsList(hubDistance).get(2);
         this.interpolated = true;
     }
 

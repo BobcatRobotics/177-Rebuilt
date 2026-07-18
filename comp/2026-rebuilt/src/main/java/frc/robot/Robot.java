@@ -127,7 +127,7 @@ public class Robot extends LoggedRobot {
     }
 
     if (DriverStation.getAlliance().isPresent()) {
-      RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+      RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
     }
 
   }

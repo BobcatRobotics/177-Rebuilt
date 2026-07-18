@@ -9,8 +9,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotState;
-import frc.robot.subsystems.intake.IntakeState;
+import frc.robot.RobotInfo;
 
 public class Shooter extends SubsystemBase {
 
@@ -50,7 +49,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Translation2d[] getShotLine(double distance) {
-        Pose2d robotPose = RobotState.getInstance().robotPose;
+        Pose2d robotPose = RobotInfo.getInstance().robotPose;
         Pose2d newPose = robotPose.transformBy(new Transform2d(
                 new Translation2d(Units.inchesToMeters(distance), 0),
                 new Rotation2d()));
@@ -64,7 +63,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Translation2d[] getTargetShotLine(Translation2d targetTranslation) {
-        Pose2d robotPose = RobotState.getInstance().robotPose;
+        Pose2d robotPose = RobotInfo.getInstance().robotPose;
         Translation2d robotTranslation = robotPose.getTranslation();
         Translation2d[] shotLine = new Translation2d[] {
                 robotTranslation,

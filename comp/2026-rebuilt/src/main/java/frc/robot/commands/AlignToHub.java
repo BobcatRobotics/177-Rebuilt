@@ -15,7 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotState;
+import frc.robot.RobotInfo;
 import frc.robot.subsystems.drive.Drive;
 
 public class AlignToHub extends Command {
@@ -88,11 +88,11 @@ public class AlignToHub extends Command {
 
     @Override
     public void execute() {
-        target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
+        target = HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance).toPose2d().getTranslation();
         Pose2d robotPose = drive.getPose();
         Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
         boolean isAtSetpoint = isAligned(robotPose.getRotation().getDegrees(), targetHeading.getDegrees());
-        RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+        RobotInfo.getInstance().isRobotAlignedToHub = isAtSetpoint;
         Logger.recordOutput("Align/RobotHeadingPose", robotPose);
         Logger.recordOutput("Align/TargetHeadingAngle", new Pose2d(robotPose.getTranslation(), targetHeading));
         Logger.recordOutput("Align/IsAligned", isAtSetpoint);
@@ -101,7 +101,7 @@ public class AlignToHub extends Command {
     }
 
     public boolean isAligned() {
-        Translation2d targetTranslation = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d()
+        Translation2d targetTranslation = HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance).toPose2d()
                 .getTranslation();
         Pose2d robotPose = drive.getPose();
         Rotation2d targetHeading = new Rotation2d(targetTranslation.getX() - robotPose.getX(),

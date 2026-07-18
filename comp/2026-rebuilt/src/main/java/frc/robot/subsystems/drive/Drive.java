@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.RobotState;
+import frc.robot.RobotInfo;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.DistanceUtility;
 import frc.robot.util.LocalADStarAK;
@@ -203,7 +203,9 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
     // Sets the Robot's pose every periodic
-    RobotState.getInstance().robotPose = getPose();
+    RobotInfo.getInstance().robotPose = getPose();
+    RobotInfo.getInstance().futurePose = getFuturePose(0.1);
+    Logger.recordOutput("Odometry/FutureRobot",RobotInfo.getInstance().futurePose);
   }
 
   /**
@@ -327,6 +329,20 @@ public ChassisSpeeds getChassisSpeeds() {
     return poseEstimator.getEstimatedPosition();
   }
 
+  public Pose2d getFuturePose(double lookAheadTime) {
+    var current = getPose();
+    var velocity = getChassisSpeeds();
+    var x = current.getX() + velocity.vxMetersPerSecond * lookAheadTime;
+    var y = current.getY() + velocity.vyMetersPerSecond * lookAheadTime;
+    var theta =
+        current
+            .getRotation()
+            .plus(Rotation2d.fromRadians(velocity.omegaRadiansPerSecond * lookAheadTime));
+
+    return new Pose2d(x, y, theta);
+  }
+
+
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
@@ -377,7 +393,7 @@ public ChassisSpeeds getChassisSpeeds() {
 
    public DistanceUtility distanceToHub() {
     Pose2d robotPose = getPose();
-    Pose3d hubCoordinate = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance);
+    Pose3d hubCoordinate = HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance);
     Translation2d target = hubCoordinate.toPose2d().getTranslation();
     Translation2d robotTranslation = robotPose.getTranslation();
     double distance = robotTranslation.getDistance(target);
@@ -387,7 +403,7 @@ public ChassisSpeeds getChassisSpeeds() {
 
   public DistanceUtility distanceToDepoPassingLoc(){
     Pose2d robotPose = getPose();
-    Pose3d hubCoordinate = HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance);
+    Pose3d hubCoordinate = HubUtil.getDepoPassingCoordiante(RobotInfo.getInstance().alliance);
     Translation2d target = hubCoordinate.toPose2d().getTranslation();
     Translation2d robotTranslation = robotPose.getTranslation();
     double distance = robotTranslation.getDistance(target);
@@ -396,7 +412,7 @@ public ChassisSpeeds getChassisSpeeds() {
   }
   public DistanceUtility distanceToOutpostPassingLoc(){
     Pose2d robotPose = getPose();
-    Pose3d hubCoordinate = HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance);
+    Pose3d hubCoordinate = HubUtil.getOutpostPassingCoordinate(RobotInfo.getInstance().alliance);
     Translation2d target = hubCoordinate.toPose2d().getTranslation();
     Translation2d robotTranslation = robotPose.getTranslation();
     double distance = robotTranslation.getDistance(target);
@@ -407,7 +423,7 @@ public ChassisSpeeds getChassisSpeeds() {
 
 
   public boolean isAlignedToHub(){
-    Translation2d target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
+    Translation2d target = HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance).toPose2d().getTranslation();
     Pose2d robotPose = getPose();
     Rotation2d targetHeading = new Rotation2d(target.getX() - robotPose.getX(), target.getY() - robotPose.getY());
     double actual = robotPose.getRotation().getDegrees();
@@ -415,7 +431,7 @@ public ChassisSpeeds getChassisSpeeds() {
     boolean isAtSetpoint =false;
     double alginmentTolerance = 5;
     isAtSetpoint = Math.abs(actual - setpoint) <= alginmentTolerance ;
-    RobotState.getInstance().isRobotAlignedToHub = isAtSetpoint;
+    RobotInfo.getInstance().isRobotAlignedToHub = isAtSetpoint;
     return isAtSetpoint;
   }
 

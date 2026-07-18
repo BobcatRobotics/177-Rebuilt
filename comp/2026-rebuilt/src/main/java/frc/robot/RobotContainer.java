@@ -17,6 +17,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
 
 import org.bobcatrobotics.Commands.ActionFactory;
+import org.bobcatrobotics.Framework.StateMachine.RobotStateMachine;
+import org.bobcatrobotics.Framework.StateMachine.SubsystemStateMachine;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubData;
 import org.bobcatrobotics.GameSpecific.Rebuilt.HubUtil;
 import org.littletonrobotics.junction.Logger;
@@ -102,6 +104,7 @@ public class RobotContainer {
 
         Field2d field = new Field2d();
 
+        private final RobotStateMachine<RobotStates> robotStateMachine = new RobotStateMachine<>(RobotStates.IDLE);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -186,6 +189,9 @@ public class RobotContainer {
                 configureButtonBindings();
 
                 hub = new HubUtil();
+
+                robotStateMachine.setState(RobotStates.IDLE);
+                robotStateMachine.setState(RobotStates.IDLE);
         }
 
         /**
@@ -193,7 +199,8 @@ public class RobotContainer {
          * application.
          */
         private void registerNamedCammands() {
-                NamedCommands.registerCommand("AlignAndShoot", LoggableCommand.loggableCommand("AlignAndShoot",conditionalAlignInterpolatedShootSeq()));
+                NamedCommands.registerCommand("AlignAndShoot", LoggableCommand.loggableCommand("AlignAndShoot",
+                                conditionalAlignInterpolatedShootSeq()));
         }
 
         /**
@@ -245,7 +252,8 @@ public class RobotContainer {
                                                 new AlignToHub(drive, () -> -controller.getLeftY(),
                                                                 () -> -controller.getLeftX())));
                 controller.leftTrigger().whileTrue(LoggableCommand.loggableCommand(
-                                "Automated Interpolated ShootingWhileAligning Balls", conditionalAlignInterpolatedShootSeq()));
+                                "Automated Interpolated ShootingWhileAligning Balls",
+                                conditionalAlignInterpolatedShootSeq()));
         }
 
         /**
@@ -264,26 +272,45 @@ public class RobotContainer {
         public void teleopPeriodic() {
                 updateFieldTelemetry();
                 if (DriverStation.getAlliance().isPresent()) {
-                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                        RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
                 }
                 updateFieldTelemetry();
                 updateHubTelemetry();
                 updateRobotVelocities();
+                updateRobotTelemetry();
+
+
+                // Set the subsystem states based upon the given robot state
+                m_Shooter.setState(robotStateMachine.getState().getShooterState());
+                m_Carwash.setState(robotStateMachine.getState().getCarwashState());
+                m_Hopper.setState(robotStateMachine.getState().getHopperState());
+                intake.setState(robotStateMachine.getState().getIntakeState());
         }
 
         public void simTelePeriodic() {
                 updateFieldTelemetry();
                 if (DriverStation.getAlliance().isPresent()) {
-                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                        RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
                 }
                 updateFieldTelemetry();
                 updateHubTelemetry();
                 updateRobotVelocities();
+                updateRobotTelemetry();
+                
+                // Set the subsystem states based upon the given robot state
+                m_Shooter.setState(robotStateMachine.getState().getShooterState());
+                m_Carwash.setState(robotStateMachine.getState().getCarwashState());
+                m_Hopper.setState(robotStateMachine.getState().getHopperState());
+                intake.setState(robotStateMachine.getState().getIntakeState());
+        }
 
+        public void updateRobotTelemetry() {
+                Logger.recordOutput("Robot/CurrentState",
+                                robotStateMachine.getState().name());
         }
 
         public void updateFieldTelemetry() {
-                field.setRobotPose(RobotState.getInstance().robotPose);
+                field.setRobotPose(RobotInfo.getInstance().robotPose);
                 SmartDashboard.putData("Field", field);
         }
 
@@ -291,11 +318,11 @@ public class RobotContainer {
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
+                Logger.recordOutput("Hub/Alliance", RobotInfo.getInstance().alliance);
                 Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
+                                HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
+                                HubUtil.getActiveHubCoordinates(RobotInfo.getInstance().alliance));
                 Logger.recordOutput("Hub/RobotDistanceToHub/Offset", drive.distanceToHub().getOffsetDistance());
                 Logger.recordOutput("Hub/RobotDistanceToHub/Actual", drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Hub/RobotIsAligned", drive.isAlignedToHub());
@@ -303,21 +330,24 @@ public class RobotContainer {
                 Translation2d[] shotLine = m_Shooter.getShotLine(drive.distanceToHub().getActualDistance());
                 Logger.recordOutput("Shooter/Hub/BallPath", shotLine);
                 Translation2d[] shotToDepoLine = m_Shooter
-                                .getTargetShotLine(HubUtil.getDepoPassingCoordiante(RobotState.getInstance().alliance)
+                                .getTargetShotLine(HubUtil
+                                                .getDepoPassingCoordiante(RobotInfo.getInstance().alliance)
                                                 .toPose2d().getTranslation());
                 Logger.recordOutput("Shooter/Depo/BallPath", shotToDepoLine);
                 Translation2d[] shotToOutputLine = m_Shooter.getTargetShotLine(
-                                HubUtil.getOutpostPassingCoordinate(RobotState.getInstance().alliance).toPose2d()
+                                HubUtil.getOutpostPassingCoordinate(RobotInfo.getInstance().alliance).toPose2d()
                                                 .getTranslation());
                 Logger.recordOutput("Shooter/Output/BallPath", shotToOutputLine);
+
+                RobotInfo.getInstance().hubDistance = drive.distanceToHub().getOffsetDistance();
         }
 
         public void updateRobotVelocities() {
                 // Get normalized Velocity X,Y vectors
                 double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
                 double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
-                RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
-                RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+                RobotInfo.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
+                RobotInfo.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
         }
 
         /**
@@ -329,27 +359,24 @@ public class RobotContainer {
         public Command conditionalInterpolatedShootSeq() {
                 Command shootSeq = Commands.run(() -> {
                         boolean isShooterAtSpeed = m_Shooter.atSpeed();
+                        String keyNameRoot = "Commands/ActiveCommands/";
+                        boolean isFiring = false;
+                        boolean isSpinningUp = true;
                         if (isShooterAtSpeed) {
+                                robotStateMachine.setState(RobotStates.FEEDANDSHOOTSEQ);
                                 // SHOOT!
-                                m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.FEED);
-                                m_Hopper.setState(HopperState.INTAKE);
-                                intake.setState(IntakeState.INTAKE);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", true);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", false);
-
+                                isFiring = true;
+                                isSpinningUp = false;
                         } else {
+                                robotStateMachine.setState(RobotStates.SPINUPSHOOTSEQ);
                                 // SPIN UP
-                                m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.OUTTAKE);
-                                m_Hopper.setState(HopperState.SPINUP);
-                                intake.setState(IntakeState.INTAKE);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", true);
                         }
+                        Logger.recordOutput(keyNameRoot + "ShootSequenceFiring", isFiring);
+                        Logger.recordOutput(keyNameRoot + "ShootSequenceSpinUp", isSpinningUp);
                 });
                 return shootSeq;
         }
+
         /**
          * This is the "new" conditional interpolated shooting sequence it takes the 2
          * commands and refactors them into one.
@@ -359,28 +386,25 @@ public class RobotContainer {
         public Command conditionalInterpolatedShootSeqWhileAligning() {
                 Command shootSeq = Commands.run(() -> {
                         boolean isShooterAtSpeed = m_Shooter.atSpeed();
-                        boolean isAlignedToHub = RobotState.getInstance().isRobotAlignedToHub;
+                        boolean isAlignedToHub = RobotInfo.getInstance().isRobotAlignedToHub;
+                        String keyNameRoot = "Commands/ActiveCommands/";
+                        boolean isFiring = false;
+                        boolean isSpinningUp = true;
                         if (isShooterAtSpeed && isAlignedToHub) {
+                                robotStateMachine.setState(RobotStates.FEEDANDSHOOTSEQ);
                                 // SHOOT!
-                                m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.FEED);
-                                m_Hopper.setState(HopperState.INTAKE);
-                                intake.setState(IntakeState.INTAKE);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", true);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", false);
-
+                                isFiring = true;
+                                isSpinningUp = false;
                         } else {
+                                robotStateMachine.setState(RobotStates.SPINUPSHOOTSEQ);
                                 // SPIN UP
-                                m_Shooter.setState(ShooterState.INTERPOLATED);
-                                m_Carwash.setState(CarwashState.OUTTAKE);
-                                m_Hopper.setState(HopperState.SPINUP);
-                                intake.setState(IntakeState.INTAKE);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceFiring", false);
-                                 Logger.recordOutput("Commands/ActiveCommands/ShootSequenceSpinUp", true);
                         }
+                        Logger.recordOutput(keyNameRoot + "ShootSequenceFiring", isFiring);
+                        Logger.recordOutput(keyNameRoot + "ShootSequenceSpinUp", isSpinningUp);
                 });
                 return shootSeq;
         }
+
         public Command conditionalAlignInterpolatedShootSeq() {
                 Command shootSeq = conditionalInterpolatedShootSeqWhileAligning()
                                 .alongWith(new AlignToHub(drive, () -> -controller.getLeftY(),
