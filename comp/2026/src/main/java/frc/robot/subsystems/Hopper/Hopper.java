@@ -15,8 +15,10 @@ public class Hopper extends SubsystemBase {
 
   private final HopperIO io;
   private final HopperIOInputsAutoLogged inputs = new HopperIOInputsAutoLogged();
+  
 
-  private HopperState desiredState;
+  private State currentState;
+  private HopperGoal currentSetpoints = new HopperGoal();
   private final SysIdRegistry sysIdRegistry = new SysIdRegistry();
 
   public Hopper(HopperIO io) {
@@ -35,29 +37,47 @@ public class Hopper extends SubsystemBase {
 
     this.io = io;
   }
+  public void setState(State state) {
+    this.currentState = state;
+  }
 
-  public void applyState() {
-    desiredState = new HopperState();
-    desiredState.setState(State.IDLE);
+  public void applyIDLE(){
+    setState(HopperState.State.IDLE);
+  }
+
+  public void applyFORWARD(){
+    setState(HopperState.State.FORWARD);
+  }
+    public void applyREVERSE(){
+    setState(HopperState.State.REVERSE);
   }
 
   @Override
   public void periodic() {
-    desiredState.update();
     io.periodic();
     io.updateInputs(inputs);
     Logger.processInputs("Hopper/inputs", inputs);
     Logger.recordOutput("Hopper/State", desiredState.getCurrentState());
+
+        switch (currentState) {
+      case IDLE -> {
+         currentSetpoints.hopperSpeedTop = State.REVERSE.rps;
+      }
+      case FORWARD -> {
+        // Placeholder – typically filled in by vision / interpolation
+        currentSetpoints.hopperSpeedTop = State.FORWARD.rps;
+      }
+      case REVERSE -> {
+        // Placeholder – typically filled in by vision / interpolation
+        currentSetpoints.hopperSpeedTop = State.REVERSE.rps;
+      }
+    }
   }
 
-  public void setState(HopperState state) {
-    desiredState = state;
-    setVelocity(desiredState.getCurrentState());
-  }
 
   private void setVelocity(HopperState.State state) {
-    desiredState.setState(state);
-    io.setVelocity(desiredState);
+    currentState.setState(state);
+    io.setVelocity(currentState);
   }
 
   private void setVelocity(double topVelocity) {
@@ -108,14 +128,14 @@ public class Hopper extends SubsystemBase {
   }
 
   public void runHopper(){
-    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
+    RobotState.getInstance().getHopperState().setState(HopperState.State.FORWARD);
     HopperGoal goal = new HopperGoal();
     goal.hopperSpeedTop = RobotState.getInstance().getHopperState().getHopperSpeedOfTop();
     RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);
     setState(RobotState.getInstance().getHopperState());
   }
     public void reverseHopper(){
-    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
+    RobotState.getInstance().getHopperState().setState(HopperState.State.FORWARD);
     HopperGoal goal = new HopperGoal();
     goal.hopperSpeedTop = 50 * -1;
     RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);
@@ -123,7 +143,7 @@ public class Hopper extends SubsystemBase {
   }
 
    public void hopperSpinUp(){
-    RobotState.getInstance().getHopperState().setState(HopperState.State.TARGETING);
+    RobotState.getInstance().getHopperState().setState(HopperState.State.FORWARD);
     HopperGoal goal = new HopperGoal();
     goal.hopperSpeedTop = -30;
     RobotState.getInstance().getHopperState().setCurrentSetPoints(goal);
