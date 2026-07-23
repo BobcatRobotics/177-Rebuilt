@@ -11,11 +11,6 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.vision.LimelightHelpers;
-import frc.robot.subsystems.vision.limelightConstants;
-
-import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
-
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -107,21 +102,13 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    robotContainer.intake.setNeturalCoast();
-    for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 0);
-    }
+    
   }
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    robotContainer.vision.periodic();
     
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
   }
 
   /**
@@ -138,22 +125,16 @@ public class Robot extends LoggedRobot {
     }
     
     if(DriverStation.getAlliance().isPresent()){
-                       RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                       RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
                 }
 
-    for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 0);
-    }
+    
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    robotContainer.m_Shooter.autoPeriodic();
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
+    
   }
 
   /** This function is called once when teleop is enabled. */
@@ -167,21 +148,13 @@ public class Robot extends LoggedRobot {
       autonomousCommand.cancel();
     }
 
-    robotContainer.intake.setNeturalBrake();
-
-    for (limelightConstants camera : cameraConstants) {
-      LimelightHelpers.SetIMUMode(camera.name, 0);
-    }
+    
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    robotContainer.teleopPeriodic();
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
+    
   }
 
   /** This function is called once when test mode is enabled. */

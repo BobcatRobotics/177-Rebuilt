@@ -14,8 +14,6 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.cameraConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,43 +53,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AlignToHub;
-import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PassingShot;
-import frc.robot.commands.carwashCharacterizationCommands;
-import frc.robot.commands.hopperCharacterizationCommands;
-import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Carwash.Carwash;
-import frc.robot.subsystems.Carwash.CarwashIO;
-import frc.robot.subsystems.Carwash.CarwashReal;
-import frc.robot.subsystems.Carwash.CarwashSim;
-import frc.robot.subsystems.Carwash.CarwashState;
-import frc.robot.subsystems.Hopper.Hopper;
-import frc.robot.subsystems.Hopper.HopperIO;
-import frc.robot.subsystems.Hopper.HopperRealSingle;
-import frc.robot.subsystems.Hopper.HopperState;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Intake.IntakeIO;
-import frc.robot.subsystems.Intake.IntakeReal;
-import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterAutoOptions;
-import frc.robot.subsystems.Shooter.ShooterIO;
-import frc.robot.subsystems.Shooter.ShooterRealDrum;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
-import frc.robot.subsystems.Shooter.ShooterState;
-import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveAutoOptions;
-import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
-import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.vision.LimelightHelpers;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.DebouncedCommand;
 
@@ -106,13 +70,7 @@ import frc.robot.util.DebouncedCommand;
  */
 public class RobotContainer {
         // Subsystems
-        public final Drive drive;
-        public Vision vision;
-        public final Shooter m_Shooter;
-        public final Carwash m_Carwash;
-        private final Hopper m_Hopper;
-        public final Intake intake;
-
+        
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -142,8 +100,8 @@ public class RobotContainer {
          */
         public RobotContainer() {
 
-                RobotState.getInstance().devices.putIfAbsent("rio", new ArrayList<CANDeviceDetails>());
-                RobotState.getInstance().devices.putIfAbsent("CANivore", new ArrayList<CANDeviceDetails>());
+                RobotInfo.getInstance().devices.putIfAbsent("rio", new ArrayList<CANDeviceDetails>());
+                RobotInfo.getInstance().devices.putIfAbsent("CANivore", new ArrayList<CANDeviceDetails>());
 
                 controller = new CommandXboxController(0);
                 operator = new CommandXboxController(1);
@@ -156,87 +114,13 @@ public class RobotContainer {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
 
-                                drive = new Drive(new GyroIOPigeon2(),
-                                                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                                                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                                                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                                                new ModuleIOTalonFX(TunerConstants.BackRight));
-                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
-                                vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                                //new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
-
-                                m_Shooter = new Shooter(new ShooterRealDrum());
-                                m_Shooter.applyState();
-
-                                m_Carwash = new Carwash(new CarwashReal());
-                                m_Carwash.applyState();
-
-                                m_Hopper = new Hopper(new HopperRealSingle());
-                                m_Hopper.applyState();
-                                intake = new Intake(new IntakeReal());
-                                intake.applyState();
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
-                                drive = new Drive(new GyroIO() {
-                                }, new ModuleIOSim(TunerConstants.FrontLeft),
-                                                new ModuleIOSim(TunerConstants.FrontRight),
-                                                new ModuleIOSim(TunerConstants.BackLeft),
-                                                new ModuleIOSim(TunerConstants.BackRight));
-                                m_Shooter = new Shooter(new ShooterRealDrum());
-                                m_Shooter.applyState();
-
-                                m_Carwash = new Carwash(new CarwashSim());
-                                m_Carwash.applyState();
-
-                                m_Hopper = new Hopper(new HopperRealSingle());
-                                m_Hopper.applyState();
-
-                                intake = new Intake(new IntakeReal());
-                                intake.applyState();
-
-                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
-                                vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                               // new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
                                 break;
 
                         default:
                                 // Replayed robot, disable IO implementations
-                                drive = new Drive(new GyroIO() {
-                                }, new ModuleIO() {
-                                }, new ModuleIO() {
-                                }, new ModuleIO() {
-                                },
-                                                new ModuleIO() {
-                                                });
-                                m_Shooter = new Shooter(new ShooterIO() {
-                                });
-                                m_Shooter.applyState();
-
-                                m_Carwash = new Carwash(new CarwashIO() {
-                                });
-                                m_Carwash.applyState();
-
-                                m_Hopper = new Hopper(new HopperIO() {
-
-                                });
-                                intake = new Intake(new IntakeIO() {
-                                });
-
-                                // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
-                                vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
                                 break;
                 }
 
@@ -292,45 +176,7 @@ public class RobotContainer {
         }
 
         private void registerCommands() {
-                NamedCommands.registerCommand(
-                                "AutoStopShooter", loggableCommand("AutoStopShooter", AutonomousStopShooter()));
-                NamedCommands.registerCommand(
-                                "AutoSpinUp", loggableCommand("AutoSpinUp", AutonomousSpinUp()));
-                NamedCommands.registerCommand(
-                                "AutoShootBalls", loggableCommand("AutoShootBalls", AutonomousShootBalls()));
-                NamedCommands.registerCommand("AutoSpinUpAndShootAndEnd",
-                                loggableCommand("AutoSpinUpAndShootAndEnd", AutoSpinUpAndShoot()));
-                NamedCommands.registerCommand(
-                                "CalculatedSpinUp", loggableCommand("CalculatedSpinUp", InterpolatedSpinUp()));
-                NamedCommands.registerCommand(
-                                "CalculatedShootBalls",
-                                loggableCommand("CalculatedShootBalls", InterpolatedShootBalls()));
-                NamedCommands.registerCommand(
-                                "PresetSpinUp", loggableCommand("PresetSpinUp", manualSpinUp()));
-                NamedCommands.registerCommand(
-                                "PresetShootBalls", loggableCommand("PresetShootBalls", manualShootBalls()));
-                NamedCommands.registerCommand(
-                                "IntakeDown", loggableCommand("IntakeDown", IntakeDown()));
-                NamedCommands.registerCommand("IntakeUp", loggableCommand("IntakeUp", intake.retractAndStop()));
-                NamedCommands.registerCommand("IntakePosReset",
-                                loggableCommand("IntakePosReset", new InstantCommand(() -> intake.resetEncoder())));
-                NamedCommands.registerCommand("AutoRunHopper", loggableCommand("AutoRunHopper", AutoRunHopper()));
-                NamedCommands.registerCommand("RunIntakeRollers",
-                                loggableCommand("RunIntakeRollers", RunIntakeRollers()));
-                NamedCommands.registerCommand("StopIntake", loggableCommand("StopIntake", new InstantCommand(() -> {
-                        intake.stop();
-                }, intake)));
-                NamedCommands.registerCommand("WaitHumanLoad", loggableCommand("WaitHumanLoad", new WaitCommand(5)));
-                NamedCommands.registerCommand("SpinupAndShoot", loggableCommand("SpinupAndShoot", InterpolatedSpinUp()
-                                .until(() -> m_Shooter.atSpeed()).andThen(InterpolatedShootBalls())));
-                NamedCommands.registerCommand("AutoAim", loggableCommand("AutoAim", new AlignToHub(drive, 4, 10)
-                                .until(() -> RobotState.getInstance().isRobotAlignedToHub))); // was 1
-                NamedCommands.registerCommand("X-Mode", loggableCommand("X-Mode", new RunCommand(() -> {
-                        drive.stopWithX();
-                }, drive)));
-                NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
-                                loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
-                NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
+           //     
         }
 
         /**
@@ -344,91 +190,7 @@ public class RobotContainer {
         private void configureButtonBindings() {
 
                 // Default command, normal field-relative drive
-                drive.setDefaultCommand(
-                                DriveCommands.joystickDrive(
-                                                drive,
-                                                () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX(),
-                                                () -> -controller.getRightX()));
-
-                m_Shooter.setDefaultCommand(loggableCommand("Default Shooter Command",new RunCommand(() -> {
-                        controller.setRumble(RumbleType.kBothRumble, 0);
-                        ShooterState shooterState = RobotState.getInstance().getShooterState();
-                        shooterState.setState(ShooterState.State.IDLE);
-                        m_Shooter.setState(shooterState);
-                }, m_Shooter)));
-                m_Hopper.setDefaultCommand(loggableCommand("Default Hopper Command",new RunCommand(() -> {
-                        HopperState hopperState = RobotState.getInstance().getHopperState();
-                        hopperState.setState(HopperState.State.IDLE);
-                        m_Hopper.setState(hopperState);
-                }, m_Hopper)));
-                intake.setDefaultCommand(loggableCommand("Default Intake Command",new RunCommand(() -> intake.stop(), intake)));
-                m_Carwash.setDefaultCommand(loggableCommand("Default Carwash Command",new RunCommand(() -> {
-                        m_Carwash.stop();
-                        CarwashState carwashState = RobotState.getInstance().getCarwashState();
-                        carwashState.setState(CarwashState.State.IDLE);
-                        m_Carwash.setState(carwashState);
-                }, m_Carwash)));
-
-
-                controller.povDown().onTrue(new InstantCommand(
-                                () -> m_Shooter.resetEncoder()).ignoringDisable(true));
-
-                controller.a().whileTrue(
-                                loggableCommand("AutoAlign", new AlignToHub(drive, () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX())));
-
-                // Switch to X pattern when X button is pressed
-                controller.x()
-                                .onTrue(new ActionFactory().singleAction("X-Command", () -> drive.stopWithX(), drive));
-
-                // Reset gyro to 0° when B button is pressed
-                controller.b()
-                                .onTrue(new ActionFactory().singleAction("ZeroGyroCommand",
-                                                () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
-                                                                AllianceFlipUtil.apply(Rotation2d.kZero))),
-                                                drive).ignoringDisable(true));
-
-                controller.rightBumper().whileTrue(
-                        loggableCommand("Interpolate Shoot Balls",interpolatedShootSeq()));
-                controller.leftTrigger().whileTrue(loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
-
-
-
-
-                operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
-                        intake.stop();
-                }, intake));
-                operator.a().whileTrue(intake.retractAndStop());
-                operator.y().onTrue(new InstantCommand(
-                                () -> intake.resetEncoder()).ignoringDisable(true));
-
-                operator.x().whileTrue(RunIntakeRollers())
-                                .onFalse(new InstantCommand(() -> {
-                                        intake.stop();
-                                }, intake));
-
-
-                operator.rightBumper().whileTrue(
-                        loggableCommand("Manual Shoot Balls",conditionalManualShootSeq()));
-
-
-                operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
-                                .onFalse(new InstantCommand(() -> intake.stop()));
-
-                operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
-
-                // PAssign shot allignment 
-                // operator.leftBumper().whileTrue(new PassingShot(drive).until(()->RobotState.getInstance().isRobotAlignedToPassingLoc).andThen(passingShotSeq()));
                 
-                // Passing Shot Sequence Only
-                operator.leftBumper().whileTrue(passingShotSeq());
-
-
-                if (Robot.isSimulation()) {
-
-                        simulationButtonBindings();
-                }
         }
 
         public void simulationButtonBindings() {
@@ -469,41 +231,41 @@ public class RobotContainer {
                 return autoChooser.get();
         }
 
-        public Pose2d getPose2D() {
-                return drive.getPose();
-        }
+        // public Pose2d getPose2D() {
+        //         return drive.getPose();
+        // }
 
-        public void teleopPeriodic() {
+        // public void teleopPeriodic() {
 
-                vision.periodic();
-                if (DriverStation.getAlliance().isPresent()) {
-                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
-                }
-                HubData hubData = hub.getHubData();
-                Logger.recordOutput("Hub/Status", hubData.owner);
-                Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
-                Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
-                Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
+        //         vision.periodic();
+        //         if (DriverStation.getAlliance().isPresent()) {
+        //                 RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
+        //         }
+        //         HubData hubData = hub.getHubData();
+        //         Logger.recordOutput("Hub/Status", hubData.owner);
+        //         Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
+        //         Logger.recordOutput("Hub/Alliance", RobotInfo.getInstance().alliance);
+        //         Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+        //                         HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance));
+        //         Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+        //                         HubUtil.getActiveHubCoordinates(RobotInfo.getInstance().alliance));
 
-                double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
-                double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
-                RobotState.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
-                RobotState.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+        //         double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
+        //         double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
+        //         RobotInfo.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
+        //         RobotInfo.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
 
-                List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get("rio");
-                publishCanDevices("rio", rioDevices);
-                List<CANDeviceDetails> canivoreDevices = RobotState.getInstance().devices.get("CANivore");
-                publishCanDevices("CANivore", canivoreDevices);
+        //         List<CANDeviceDetails> rioDevices = RobotInfo.getInstance().devices.get("rio");
+        //         publishCanDevices("rio", rioDevices);
+        //         List<CANDeviceDetails> canivoreDevices = RobotInfo.getInstance().devices.get("CANivore");
+        //         publishCanDevices("CANivore", canivoreDevices);
 
-                field.setRobotPose(RobotState.getInstance().robotPose);
-                SmartDashboard.putData("Field", field);
+        //         field.setRobotPose(RobotInfo.getInstance().robotPose);
+        //         SmartDashboard.putData("Field", field);
 
-                canLogger.periodic();
+        //         canLogger.periodic();
 
-        }
+        // }
 
         public void publishCanDevices(String name, List<CANDeviceDetails> devices) {
                 table.getEntry(name).setStringArray(devices.stream().map(Object::toString).toArray(String[]::new));
@@ -511,272 +273,16 @@ public class RobotContainer {
 
         public void simTelePeriodic() {
                 if (DriverStation.getAlliance().isPresent()) {
-                        RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+                        RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
                 }
                 HubData hubData = hub.getHubData();
                 Logger.recordOutput("Hub/Status", hubData.owner);
                 Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-                Logger.recordOutput("Hub/Alliance", RobotState.getInstance().alliance);
+                Logger.recordOutput("Hub/Alliance", RobotInfo.getInstance().alliance);
                 Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-                                HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
+                                HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-                                HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
-        }
-
-        public Command AutoRunHopper() {
-                Command cmd = new RunCommand(() -> m_Hopper.runHopper(), m_Hopper);
-                return cmd;
-        }
-
-        public Command RunHopper() {
-                Command cmd = new RunCommand(() -> m_Hopper.runHopper());
-                return cmd;
-        }
-
-        /**
-         * This is the "new" interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
-        public Command interpolatedShootSeq() {
-                return Commands.run(() -> {
-                        if (controller.leftBumper().getAsBoolean()) {
-                                m_Hopper.runHopper();
-                                m_Carwash.manualFeedFuel();
-                                m_Shooter.shootFuel();
-                                intake.setVelocity(125);
-                                drive.stopWithX();
-
-                        } else {
-                                m_Shooter.spinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
-        }
-
-
-
-        /**
-         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
-        public Command conditionalInterpolatedShootSeq() {
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Hopper.runHopper();
-                                m_Carwash.manualFeedFuel();
-                                m_Shooter.shootFuel();
-                                intake.setVelocity(125);
-                                drive.stopWithX();
-
-                        } else {
-                                m_Shooter.spinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
-        }
-
-
-        /**
-         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
-        public Command passingShotSeq() {
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Hopper.runHopper();
-                                m_Carwash.manualFeedFuel();
-                                m_Shooter.shootPassingFuel();
-                                intake.setVelocity(125);
-                                drive.stopWithX();
-
-                        } else {
-                                m_Shooter.spinUpPassing();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
-        }
-
-
-        public Command InterpolatedSpinUp() {
-                return new RunCommand(() -> {
-                        m_Shooter.spinUp();
-                        if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
-                                controller.setRumble(RumbleType.kBothRumble, 1);
-                        }
-                }).alongWith(new RunCommand(() -> {
-                        controller.setRumble(RumbleType.kBothRumble, 0);
-                        m_Shooter.spinUp();
-                }).alongWith(new RunCommand(() -> {
-                        m_Carwash.spinUp();
-                })).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                })).alongWith(new RunCommand(() -> {
-                        m_Hopper.hopperSpinUp();
-                }).withTimeout(1)));
-        }
-
-        public Command InterpolatedShootBalls() {
-                return new RunCommand(() -> {
-                        m_Hopper.runHopper();
-                }).alongWith(new RunCommand(() -> {
-                        m_Carwash.manualFeedFuel();
-                })).alongWith(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
-                })).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                })).alongWith(new InstantCommand(() -> drive.stopWithX(), drive));
-        }
-
-        public Command AutonomousSpinUp() {
-                return new RunCommand(() -> {
-                        m_Shooter.spinUp();
-                }, m_Shooter).alongWith(new RunCommand(() -> {
-                        m_Carwash.spinUp();
-                }, m_Carwash)).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                }).alongWith(new RunCommand(() -> {
-                        m_Hopper.hopperSpinUp();
-                }).withTimeout(1)));
-        }
-
-        public Command AutoSpinUpAndShoot() {
-                Timer timer = new Timer();
-                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.2,
-                                                () -> m_Carwash.atSpeed()))
-                                .andThen(AutonomousStopShooter());
-        }
-
-        public Command longAutoSpinUpAndShoot() {
-                Timer timer = new Timer();
-                return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.34,
-                                                () -> m_Carwash.atSpeed()))
-                                .andThen(AutonomousStopShooter());
-        }
-
-        public Command AutonomousStopShooter() {
-                return new InstantCommand(() -> m_Shooter.stop())
-                                .andThen(new InstantCommand(() -> m_Carwash.spinUp()).andThen(new InstantCommand(() -> {
-                                        HopperState hopperState = RobotState.getInstance().getHopperState();
-                                        hopperState.setState(HopperState.State.IDLE);
-                                        m_Hopper.setState(hopperState);
-                                })));
-        }
-
-        public Command AutonomousShootBalls() {
-                return new RunCommand(() -> {
-                        m_Carwash.manualFeedFuel();
-                }, m_Carwash).alongWith(new RunCommand(() -> {
-                        m_Shooter.shootFuel();
-                }, m_Shooter)).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                }));
-        }
-
-        /**
-         * This is the "new" manual shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
-        public Command manualShootSeq(){
-                return Commands.run(() -> {
-                        if (operator.leftBumper().getAsBoolean()) {
-                                m_Shooter.manualShootFuel();
-                                m_Carwash.manualFeedFuel();
-                                intake.setVelocity(125);
-                                m_Hopper.runHopper();
-                                drive.stopWithX();
-                        } else {
-                                m_Shooter.manualSpinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
-        }
-        /**
-         * This is the "new" conditional manual shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
-        public Command conditionalManualShootSeq(){
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Shooter.manualShootFuel();
-                                m_Carwash.manualFeedFuel();
-                                intake.setVelocity(125);
-                                m_Hopper.runHopper();
-                                drive.stopWithX();
-                        } else {
-                                m_Shooter.manualSpinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
-        }
-
-        public Command manualSpinUp() {
-                return new RunCommand(() -> {
-                        m_Shooter.manualSpinUp();
-                        if (RobotState.getInstance().hubInrange && RobotState.getInstance().shooterUpToSpeed) {
-                                controller.setRumble(RumbleType.kBothRumble, 1);
-                        } else {
-                                controller.setRumble(RumbleType.kBothRumble, 0);
-                        }
-                }).alongWith(new RunCommand(() -> {
-                        m_Carwash.spinUp();
-                })).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                }).alongWith(new RunCommand(() -> {
-                        m_Hopper.hopperSpinUp();
-                }).withTimeout(1)));
-        }
-
-        public Command manualShootBalls() {
-                return new RunCommand(() -> {
-                        m_Hopper.runHopper();
-                }).alongWith(new RunCommand(() -> {
-                        m_Carwash.manualFeedFuel();
-                })).alongWith(new RunCommand(() -> {
-                        m_Shooter.manualShootFuel();
-                })).alongWith(new RunCommand(() -> {
-                        intake.setVelocity(125);
-                })).alongWith(new InstantCommand(() -> drive.stopWithX(), drive));
-        }
-
-        public Command manualOuttake() { // PR check for revision
-                return new RunCommand(() -> {
-                        intake.manualReverseIntake();
-                }).alongWith(new RunCommand(() -> {
-                        m_Hopper.reverseHopper();
-                })).alongWith(new RunCommand(() -> {
-                        m_Carwash.reverseCarwash(-20);
-                }));
-        }
-
-        public Command IntakeMid() {
-                return new InstantCommand(() -> {
-                        intake.setPosition(4.5);
-                }, intake);
-        }
-
-        public Command IntakeDown() {
-                return new RunCommand(() -> {
-                        intake.setPosition(11.7);
-                }, intake);
-        }
-
-        public Command RunIntakeRollers() {
-                return new RunCommand(() -> {
-                        m_Carwash.spinUp();
-                        intake.setVelocity(400);
-                }, intake);
+                                HubUtil.getActiveHubCoordinates(RobotInfo.getInstance().alliance));
         }
 
         public static Command loggableCommand(String name, Command command) {
