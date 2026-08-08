@@ -73,7 +73,7 @@ import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
-import frc.robot.subsystems.Intake.IntakeReal;
+import frc.robot.subsystems.Intake.IntakeIOReal;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
@@ -177,7 +177,7 @@ public class RobotContainer {
 
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeIOReal());
                                 intake.applyState();
                                 break;
                         case SIM:
@@ -196,7 +196,7 @@ public class RobotContainer {
                                 m_Hopper = new Hopper(new HopperRealSingle());
                                 m_Hopper.applyState();
 
-                                intake = new Intake(new IntakeReal());
+                                intake = new Intake(new IntakeIOReal());
                                 intake.applyState();
 
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)

@@ -1,5 +1,5 @@
 package frc.robot.subsystems.Carwash;
 
-public class Carwash {
+public class CarwashIOReal {
     
 }

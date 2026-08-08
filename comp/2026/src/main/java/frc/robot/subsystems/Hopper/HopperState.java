@@ -1,66 +1,28 @@
 package frc.robot.subsystems.Hopper;
 
 
-//import org.bobcatrobotics.Util.Tunables.TunableDouble;
+public enum HopperState {
+  IDLE(0),
+  FORWARD(60),
+  REVERSE(60);
 
-//import frc.robot.Constants;
-
-public class HopperState {
-
-  /** Output goal for the shooter subsystem */
-  public static class HopperGoal {
-    public double hopperSpeedTop;
+  private final double rps;
+    
+  HopperState(double rps){
+    this.rps = rps;
   }
-
-  public enum State {
-    IDLE(0),
-    FORWARD(60),
-    REVERSE(60);
-
-    public final double rps;
-
-    State(double rps){
-      this.rps = rps;
-    }
+    
+  public double getRPS() {
+    return rps;
   }
-
-  private State currentState = State.IDLE;
-  private HopperGoal currentSetpoints = new HopperGoal();
-
-
-  // Manual control values
-
-
-
-  public HopperState() {
-
   }
+/*  State currentState = State.IDLE;
+  
+  public HopperState(){}
 
-  /** Set the shooter to a predefined state */
-
-
-  /**
-   * Set all shooter speeds at once and switch to MANUAL mode
-   */
-
-
-   /** Returns the shooter outputs based on the current state */
-  public void update() {
-    this.currentState = State.IDLE;
-  }
+  public void setState(State state){
+    this.currentState = state;
+  } */
 
 
 
-  public void setCurrentSetPoints(HopperGoal goal){
-    currentSetpoints = goal;
-  }
-
-  public State getCurrentState() {
-    return currentState;
-  }
-
-
-  public double getHopperSpeedOfTop() {
-    return currentSetpoints.hopperSpeedTop;
-  }
-}
