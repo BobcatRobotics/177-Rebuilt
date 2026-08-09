@@ -1,0 +1,30 @@
+package frc.robot.subsystems.Hopper;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Hopper extends SubsystemBase {
+
+    private final HopperIO io;
+
+    private HopperState hopperState = HopperState.IDLE;
+
+    Hopper(HopperIO io)
+    {
+        this.io = io;
+    }
+
+    public void setState(HopperState state)
+    {
+        this.hopperState = state;
+    }
+
+    public HopperState getState()
+    {
+        return this.hopperState;
+    }
+
+    @Override
+    public void periodic(){
+        io.setVelocity(hopperState.getRPS());
+    }
+}
