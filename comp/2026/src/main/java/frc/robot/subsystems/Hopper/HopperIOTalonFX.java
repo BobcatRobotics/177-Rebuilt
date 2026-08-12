@@ -9,7 +9,7 @@ public class HopperIOTalonFX implements HopperIO {
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0); // should we use HopperState.IDLE.getRPS()?
 
     //TODO: PID configurations
-    HopperIOTalonFX(TalonFX motor){
+    public HopperIOTalonFX(TalonFX motor){
         this.motor = motor;
     }
 

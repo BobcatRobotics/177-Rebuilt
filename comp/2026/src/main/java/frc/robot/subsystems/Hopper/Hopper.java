@@ -8,7 +8,7 @@ public class Hopper extends SubsystemBase {
 
     private HopperState hopperState = HopperState.IDLE;
 
-    Hopper(HopperIO io)
+    public Hopper(HopperIO io)
     {
         this.io = io;
     }

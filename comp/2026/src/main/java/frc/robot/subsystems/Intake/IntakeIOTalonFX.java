@@ -8,7 +8,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     private TalonFX motor;
     private VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-    IntakeIOTalonFX(TalonFX motor){
+    public IntakeIOTalonFX(TalonFX motor){
         this.motor = motor;
     }
 

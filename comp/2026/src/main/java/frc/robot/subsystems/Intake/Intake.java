@@ -7,7 +7,7 @@ public class Intake extends SubsystemBase {
     private final IntakeIO io;
     private IntakeState intakeState = IntakeState.IDLE;
 
-    Intake(IntakeIO io){
+    public Intake(IntakeIO io){
         this.io = io;
     }
 

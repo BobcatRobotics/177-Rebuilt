@@ -29,6 +29,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -54,6 +55,15 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperIO;
+import frc.robot.subsystems.Hopper.HopperIOTalonFX;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterIO;
+import frc.robot.subsystems.Shooter.ShooterIOTalonFX;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.util.AllianceFlipUtil;
@@ -75,6 +85,8 @@ public class RobotContainer {
         private final CommandXboxController controller;
         private final CommandXboxController operator;
         private final CommandXboxController devController;
+
+        private final RobotState robotState;
 
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
@@ -107,13 +119,30 @@ public class RobotContainer {
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
-                configureSwitchablePort();
-                RobotController.setBrownoutVoltage(6);
+                // configureSwitchablePort();
+                // RobotController.setBrownoutVoltage(6);
 
+                // Motors. //TODO: update motor ids
+                final TalonFX hopperMotor = new TalonFX(10); 
+                final TalonFX shooterMotor = new TalonFX(11);  
+                final TalonFX intakeMotor = new TalonFX(12);
+
+                // IO
+                final HopperIO hopperIO = new HopperIOTalonFX(hopperMotor);
+                final IntakeIO intakeIO = new IntakeIOTalonFX(intakeMotor);
+                final ShooterIO shooterIO = new ShooterIOTalonFX(shooterMotor);
+
+                // Subsystems
+                final Hopper hopper = new Hopper(hopperIO);
+                final Intake intake = new Intake(intakeIO);
+                final Shooter shooter = new Shooter(shooterIO);
+
+                robotState = new RobotState(hopper, intake, shooter);
+                
                 switch (Constants.currentMode) {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
-
+                                
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
@@ -125,8 +154,8 @@ public class RobotContainer {
                 }
 
                 // Set up auto routines
-                registerCommands();
-                autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+                // registerCommands();
+                // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
@@ -151,13 +180,13 @@ public class RobotContainer {
                 // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
                 // Depot Trench Shot"));
 
-                flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
-                hoodChooser = new LoggedDashboardChooser<>("Hood");
-                carwashChooser = new LoggedDashboardChooser<>("Carwash");
+                // flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
+                // hoodChooser = new LoggedDashboardChooser<>("Hood");
+                // carwashChooser = new LoggedDashboardChooser<>("Carwash");
 
-                flywheelChooser.addDefaultOption("rps", 0.0);
-                hoodChooser.addDefaultOption("rps", 0.0);
-                carwashChooser.addDefaultOption("rps", 0.0);
+                // flywheelChooser.addDefaultOption("rps", 0.0);
+                // hoodChooser.addDefaultOption("rps", 0.0);
+                // carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -165,7 +194,6 @@ public class RobotContainer {
                 hub = new HubUtil();
 
                 table = inst.getTable("CAN");
-
         }
 
         private void configureSwitchablePort() {
@@ -175,9 +203,6 @@ public class RobotContainer {
                 }
         }
 
-        private void registerCommands() {
-           //     
-        }
 
         /**
          * Use this method to define your button->command mappings. Buttons can be
@@ -188,40 +213,27 @@ public class RobotContainer {
          * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
+                //Driver
+                controller.a().onTrue(
+                        Commands.runOnce(() -> robotState.setState(RobotStateType.INTAKING))
+                );
 
-                // Default command, normal field-relative drive
-                
+                controller.b().onTrue(
+                        Commands.runOnce(() -> robotState.setState(RobotStateType.SHOOTING))
+                );
+
+                controller.x().onTrue(
+                        Commands.runOnce(() -> robotState.setState(RobotStateType.EJECTING))
+                );
+
+                //Operator
         }
 
         public void simulationButtonBindings() {
 
         }
 
-        // public Command characterizeAll() {
-
-        //         // Carwash Flywheel
-        //         Command carwashFeeder = new InstantCommand(() -> {
-        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_FEEDER;
-        //         }).andThen(carwashCharacterizationCommands.feedforwardCharacterization_Intake(m_Carwash))
-        //                         .withTimeout(15).andThen(new InstantCommand(() -> m_Carwash.stopFeedingFuel()));
-        //         // Shooter Flywheels
-        //         Command shooterMainFlywheel = new InstantCommand(() -> {
-        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_MAIN;
-        //         }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Flywheel(m_Shooter))
-        //                         .withTimeout(15).andThen(new InstantCommand(() -> m_Shooter.stopMainWheel()));
-        //         Command shooterHooder = new InstantCommand(() -> {
-        //                 RobotState.getInstance().characterizationType = CharacterizationType.SHOOTER_HOOD;
-        //         }).andThen(shooterCharacterizationCommands.feedforwardCharacterization_Hood(m_Shooter)).withTimeout(15)
-        //                         .andThen(new InstantCommand(() -> m_Shooter.stopHoodWheel()));
-        //         // Hopper Flywheels
-        //         Command hopperMain = new InstantCommand(() -> {
-        //                 RobotState.getInstance().characterizationType = CharacterizationType.HOPPER;
-        //         }).andThen(hopperCharacterizationCommands.feedforwardCharacterization_Hopper(m_Hopper)).withTimeout(15)
-        //                         .andThen(new InstantCommand(() -> m_Hopper.stop()));
-
-        //         return carwashFeeder.andThen(shooterMainFlywheel).andThen(shooterHooder).andThen(hopperMain);
-        // }
-
+        
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.
          *
