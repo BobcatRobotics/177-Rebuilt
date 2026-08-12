@@ -7,9 +7,6 @@ public interface HopperIO {
     public default void stop(){
 
     }
-    public default void setState(HopperState state){
-
-    }
     public default void setRPS(double rps){
 
     }
