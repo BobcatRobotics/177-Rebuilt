@@ -1,5 +1,16 @@
 package frc.robot.subsystems.Carwash;
 
-public class CarwashIO {
-    
+public interface CarwashIO {
+    public default void stop(){
+
+    }
+    public default void periodic(){
+
+    }
+    public default void setRPS(double rps){
+
+    }
+    public default void setState(CarwashState state){
+
+    }
 }

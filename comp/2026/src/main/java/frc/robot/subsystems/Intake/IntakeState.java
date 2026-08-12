@@ -1,33 +1,22 @@
 package frc.robot.subsystems.Intake;
 
-public class IntakeState {
-    public enum State{
+
+    public enum IntakeState{
         IDLE(0),
         ROLLING_IN(0),
         ROLLING_OUT(0),
         INTAKE_IN(0),
         INTAKE_OUT(0);
         
-        public double rps;
+        private final double rps;
 
-        State(double rps){
+        IntakeState(double rps){
             this.rps = rps;
         }
-    }
-    public double rps;
 
-    IntakeState(){
-        
+    public double getRPS() {
+        return rps;
     }
 
-    public void intake_in(){
 
-    }
-
-    public void intake_out(){
-
-    }
-    public void run_roller(){
-
-    }
 }

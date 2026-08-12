@@ -16,13 +16,7 @@ public enum HopperState {
     return rps;
   }
   }
-/*  State currentState = State.IDLE;
-  
-  public HopperState(){}
 
-  public void setState(State state){
-    this.currentState = state;
-  } */
 
 
 
