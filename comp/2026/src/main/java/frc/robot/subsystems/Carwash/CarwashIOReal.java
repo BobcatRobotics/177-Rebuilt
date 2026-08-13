@@ -20,6 +20,8 @@ public class CarwashIOReal implements CarwashIO{
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 60;
         carwash_config.apply(config);
     }
 

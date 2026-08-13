@@ -45,10 +45,10 @@ public class RobotState {
   }
 
     // Save Carwash State
-  private CarwashState.State desiredCarwashStateType = CarwashState.State.IDLE;
+  private CarwashState desiredCarwashStateType = CarwashState.IDLE;
   private CarwashState desiredCarwashState = new CarwashState();
 
-  public CarwashState.State getDesiredCarwashStateType() {
+  public CarwashState getDesiredCarwashStateType() {
     return desiredCarwashStateType;
   }
 
@@ -57,10 +57,10 @@ public class RobotState {
   }
 
   // Save Hopper State
-  private HopperState.State desiredHopperStateType = HopperState.State.IDLE;
-  private HopperState desiredHopperState  = new HopperState();
+  private HopperState desiredHopperStateType = HopperState.IDLE;
+  private HopperState desiredHopperState 
 
-  public HopperState.State getDesiredHopperStateType() {
+  public HopperState getDesiredHopperStateType() {
     return desiredHopperStateType;
   }
 
@@ -69,7 +69,7 @@ public class RobotState {
   }
 
   // Save Intake State
-  private IntakeState.State desiredIntakeStateType = IntakeState.State.IDLE;
+  private IntakeState desiredIntakeStateType = IntakeState.IDLE;
   private IntakeState desiredIntakeState = new IntakeState();
 
   public IntakeState.State getDesiredIntakeStateType() {

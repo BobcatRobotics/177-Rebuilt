@@ -1,6 +1,4 @@
 package frc.robot.subsystems.Intake;
-
-
     public enum IntakeState{
         IDLE(0),
         ROLLING_IN(0),
