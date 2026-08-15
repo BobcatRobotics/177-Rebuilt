@@ -56,14 +56,20 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperConstants;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperIOTalonFX;
+import frc.robot.subsystems.Hopper.HopperIOTalonFXSim;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeConstants;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+import frc.robot.subsystems.Intake.IntakeIOTalonFXSim;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterConstants;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.Shooter.ShooterIOTalonFXSim;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.util.AllianceFlipUtil;
@@ -86,7 +92,7 @@ public class RobotContainer {
         private final CommandXboxController operator;
         private final CommandXboxController devController;
 
-        private final RobotState robotState;
+        private RobotState robotState;
 
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
@@ -119,33 +125,51 @@ public class RobotContainer {
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
-                // configureSwitchablePort();
-                // RobotController.setBrownoutVoltage(6);
-
-                // Motors. //TODO: update motor ids
-                final TalonFX hopperMotor = new TalonFX(10); 
-                final TalonFX shooterMotor = new TalonFX(11);  
-                final TalonFX intakeMotor = new TalonFX(12);
-
                 // IO
-                final HopperIO hopperIO = new HopperIOTalonFX(hopperMotor);
-                final IntakeIO intakeIO = new IntakeIOTalonFX(intakeMotor);
-                final ShooterIO shooterIO = new ShooterIOTalonFX(shooterMotor);
+                final HopperIO hopperIO;
+                final IntakeIO intakeIO;
+                final ShooterIO shooterIO;
 
-                // Subsystems
-                final Hopper hopper = new Hopper(hopperIO);
-                final Intake intake = new Intake(intakeIO);
-                final Shooter shooter = new Shooter(shooterIO);
+                final Hopper hopper;
+                final Intake intake;
+                final Shooter shooter ;
 
-                robotState = new RobotState(hopper, intake, shooter);
-                
                 switch (Constants.currentMode) {
                         case REAL:
-                                // Real robot, instantiate hardware IO implementations
-                                
+                                hopperIO = new HopperIOTalonFX(HopperConstants.MOTOR_ID);
+                                intakeIO = new IntakeIOTalonFX(
+                                        IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                        IntakeConstants.RightRollerConstants.rollerMotorId,
+                                        IntakeConstants.PivotConstants.pivotMotorId);
+                                shooterIO = new ShooterIOTalonFX(ShooterConstants.Left.dumperLeftUpID, 
+                                                                 ShooterConstants.Left.dumperLeftDownID, 
+                                                                 ShooterConstants.Right.dumperRightDownID, 
+                                                                 ShooterConstants.Right.dumperRightUpID);
+
+                                hopper = new Hopper(hopperIO);
+                                intake = new Intake(intakeIO);
+                                shooter = new Shooter(shooterIO);
+
+                                robotState = new RobotState(hopper, intake, shooter);
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
+                                hopperIO = new HopperIOTalonFXSim(HopperConstants.MOTOR_ID);
+                                intakeIO = new IntakeIOTalonFXSim(
+                                        IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                        IntakeConstants.RightRollerConstants.rollerMotorId,
+                                        IntakeConstants.PivotConstants.pivotMotorId);
+                                shooterIO = new ShooterIOTalonFXSim(ShooterConstants.Left.dumperLeftUpID, 
+                                                                 ShooterConstants.Left.dumperLeftDownID, 
+                                                                 ShooterConstants.Right.dumperRightDownID, 
+                                                                 ShooterConstants.Right.dumperRightUpID);
+
+                                // Subsystems
+                                hopper = new Hopper(hopperIO);
+                                intake = new Intake(intakeIO);
+                                shooter = new Shooter(shooterIO);
+
+                                robotState = new RobotState(hopper, intake, shooter);
                                 break;
 
                         default:

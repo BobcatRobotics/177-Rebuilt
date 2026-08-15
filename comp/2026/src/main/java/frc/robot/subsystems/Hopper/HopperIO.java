@@ -6,4 +6,8 @@ public interface HopperIO {
     void stop();
 
     double getVelocityRPS();
+
+    default void simulationPeriodic(){
+        // Nothing to do on real robot
+    }
 }

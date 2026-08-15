@@ -6,7 +6,7 @@ public class Shooter extends SubsystemBase {
 
     private final ShooterIO io;
 
-    private ShooterState state = ShooterState.IDLE;
+    private ShooterState state = ShooterState.OFF;
 
     public Shooter(ShooterIO io) {
         this.io = io;
@@ -20,23 +20,22 @@ public class Shooter extends SubsystemBase {
         return state;
     }
 
-    public double getVelocityRPS() {
-        return io.getVelocityRPS();
+    public boolean atTargetSpeed() {
+        return io.atTargetSpeed(state.getFlywheelRPS());
     }
 
-    public boolean atTargetSpeed() {
-
-        double target = state.getRPS();
-        double actual = io.getVelocityRPS();
-
-        return Math.abs(target - actual) < 2.0;
+    public double getVelocityRPS() {
+        return io.getFlywheelVelocityRPS();
     }
 
     @Override
     public void periodic() {
+        io.setFlywheelVelocity(state.getFlywheelRPS());
+    }
 
-        io.setVelocity(
-            state.getRPS()
-        );
+    @Override
+    public void simulationPeriodic() {
+
+        io.simulationPeriodic();
     }
 }

@@ -23,6 +23,6 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic(){
-        io.setVelocity(intakeState.getRPS());
+        io.setRollerVelocity(intakeState.getRPS());
     }
 }

@@ -1,16 +1,19 @@
 package frc.robot.subsystems.Shooter;
 
 public enum ShooterState {
-    IDLE(0),
-    SHOOT(40);
+    OFF(0.0),
+    IDLE(0.0),
+    SHOOT(60.0),
+    AMP(30.0),
+    REVERSE(-20.0);
 
-    private final double rps;
+    private final double flywheelRPS;
 
-    ShooterState(double rps) {
-        this.rps = rps;
+    ShooterState(double flywheelRPS) {
+        this.flywheelRPS = flywheelRPS;
     }
 
-    public double getRPS() {
-        return rps;
+    public double getFlywheelRPS() {
+        return flywheelRPS;
     }
 }

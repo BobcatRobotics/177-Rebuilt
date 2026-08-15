@@ -25,6 +25,14 @@ public class Hopper extends SubsystemBase {
 
     @Override
     public void periodic(){
-        io.setVelocity(hopperState.getRPS());
+        double targetVelocity = hopperState.getRPS();
+
+        switch(hopperState){
+            case IDLE:
+                io.stop();
+            default:
+                io.setVelocity(targetVelocity);
+        }
+
     }
 }

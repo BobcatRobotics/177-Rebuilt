@@ -1,10 +1,24 @@
 package frc.robot.subsystems.Shooter;
 
 public interface ShooterIO {
+    void setFlywheelVelocity(double rps);
 
-    void setVelocity(double rps);
+    void stopFlywheel();
 
-    void stop();
+    // Average velocity of all 4 flywheels
+    double getFlywheelVelocityRPS();
 
-    double getVelocityRPS();
+    double getLeftInnerVelocityRPS();
+
+    double getRightInnerVelocityRPS();
+
+    double getLeftOuterVelocityRPS();
+
+    double getRightOuterVelocityRPS();
+
+    boolean atTargetSpeed(double targetRPS);
+
+    default void simulationPeriodic() {
+        // Nothing to do on real robot
+    }
 }

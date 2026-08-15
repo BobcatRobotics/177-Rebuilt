@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bobcatrobotics.Util.CANDeviceDetails;
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -27,21 +26,7 @@ public class RobotInfo {
   // Save Odometry,
   // Save Swerve Module Details
   // Save Vision Tags
-
-  // Save Shooter State
-    public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.ValuesOfKnownShots.distance,
-      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.dumperSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodPosition,
-      false);
-    public TripleOutputInterpolator passingInterpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.PassingValuesOfKnownShots.distance,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.dumperSpeed,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.hoodPosition,
-      false);
-  public Pose2d robotPose = new Pose2d();
+ public Pose2d robotPose = new Pose2d();
   public boolean shooterUpToSpeed = false;
   public boolean hubInrange = false;
   public double hubDistance = 0.0;
