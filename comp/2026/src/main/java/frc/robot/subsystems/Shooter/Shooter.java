@@ -30,7 +30,14 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.setFlywheelVelocity(state.getFlywheelRPS());
+        switch(state){
+            case IDLE:
+                io.stopFlywheel();
+                break;
+            default:
+                io.setFlywheelVelocity(state.getFlywheelRPS());
+                break;
+        }
     }
 
     @Override

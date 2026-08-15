@@ -49,12 +49,18 @@ public class Carwash extends SubsystemBase {
 
     @Override
     public void periodic() {
-        io.setVelocity(state.getRPS());
+        switch(state){
+            case IDLE:
+                io.stop();
+                break;
+            default:
+                io.setVelocity(state.getRPS());
+                break;
+        }
     }
 
    public void stop() {
         io.stop();
-        setState(CarwashState.IDLE);
     }
 
 

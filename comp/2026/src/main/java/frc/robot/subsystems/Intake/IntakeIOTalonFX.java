@@ -96,9 +96,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-        configuration.MotorOutput.Inverted = IntakeConstants.LeftRollerConstants.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         configuration.MotorOutput.NeutralMode = IntakeConstants.LeftRollerConstants.isCoast
                 ? NeutralModeValue.Coast
@@ -121,9 +119,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-        configuration.MotorOutput.Inverted = IntakeConstants.RightRollerConstants.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         configuration.MotorOutput.NeutralMode = IntakeConstants.RightRollerConstants.isCoast
                 ? NeutralModeValue.Coast
@@ -148,9 +144,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-        configuration.MotorOutput.Inverted = IntakeConstants.PivotConstants.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        configuration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         configuration.MotorOutput.NeutralMode = IntakeConstants.PivotConstants.isCoast
                 ? NeutralModeValue.Coast

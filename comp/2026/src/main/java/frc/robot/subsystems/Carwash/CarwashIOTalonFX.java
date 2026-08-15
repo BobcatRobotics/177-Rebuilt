@@ -47,9 +47,7 @@ public class CarwashIOTalonFX implements CarwashIO {
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-        configuration.MotorOutput.Inverted = CarwashConstants.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         configuration.MotorOutput.NeutralMode = CarwashConstants.isCoast
                 ? NeutralModeValue.Coast

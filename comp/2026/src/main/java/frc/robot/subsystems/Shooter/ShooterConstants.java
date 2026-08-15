@@ -20,12 +20,12 @@ public final class ShooterConstants {
         public static final int dumperLeftUpID = 13;
         public static final int dumperLeftDownID = 20;
         // Motor Constants
-        public static final double kdumperLeftMotorkP = 0.19;
+        public static final double kdumperLeftMotorkP = 2.0;
         public static final double kdumperLeftMotorkI = 0.0;
         public static final double kdumperLeftMotorkD = 0;
         public static final double kdumperLeftMotorkS = 0.18;
         public static final double kdumperLeftMotorkV = 0.13;
-        public static final double kdumperLeftMotorkA = 0.4;
+        public static final double kdumperLeftMotorkA = 0.0;
         public static final double statorCurrentLimit = 80;
         public static final double supplyCurrentLimit = 60;
         public static final boolean isInverted = false;
@@ -46,12 +46,12 @@ public final class ShooterConstants {
         public static final int dumperRightUpID = 11;
         public static final int dumperRightDownID = 14;
         // Motor Constants
-        public static final double kdumperRightMotorkP = 0.19;
+        public static final double kdumperRightMotorkP = 2.0;
         public static final double kdumperRightMotorkI = 0.0;
         public static final double kdumperRightMotorkD = 0;
         public static final double kdumperRightMotorkS = 0.18;
         public static final double kdumperRightMotorkV = 0.13;
-        public static final double kdumperRightMotorkA = 0.4;
+        public static final double kdumperRightMotorkA = 0.0;
         public static final double statorCurrentLimit = 80;
         public static final double supplyCurrentLimit = 60;
         public static final boolean isInverted = true;

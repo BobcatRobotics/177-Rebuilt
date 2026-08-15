@@ -83,9 +83,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.MotorOutput.Inverted = ShooterConstants.Left.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -108,9 +106,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.MotorOutput.Inverted = ShooterConstants.Right.isInverted
-                ? InvertedValue.CounterClockwise_Positive
-                : InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 

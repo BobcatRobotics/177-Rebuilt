@@ -13,7 +13,7 @@ public final class CarwashConstants{
     public static final double kA = 4.8 ;
     public static final double statorCurrentLimit = 80;
     public static final double supplyCurrentLimit = 80;
-    public static final boolean isInverted = false;
+    public static final boolean isInverted = true;
     public static final boolean isCoast = false;  
 
 

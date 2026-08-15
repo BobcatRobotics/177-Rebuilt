@@ -34,9 +34,7 @@ public class HopperIOTalonFX implements HopperIO {
     private TalonFXConfiguration createConfiguration(){
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         
-        configuration.MotorOutput.Inverted = HopperConstants.ISINVERTED 
-            ? InvertedValue.CounterClockwise_Positive 
-            : InvertedValue.Clockwise_Positive;
+        configuration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         
         configuration.MotorOutput.NeutralMode = HopperConstants.ISCOAST 
             ? NeutralModeValue.Coast 

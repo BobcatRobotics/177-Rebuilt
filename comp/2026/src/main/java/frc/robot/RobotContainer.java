@@ -160,9 +160,9 @@ public class RobotContainer {
                                                 IntakeConstants.LeftRollerConstants.rollerMotorId,
                                                 IntakeConstants.RightRollerConstants.rollerMotorId,
                                                 IntakeConstants.PivotConstants.pivotMotorId);
-                                shooterIO = new ShooterIOTalonFX(ShooterConstants.Left.dumperLeftUpID,
-                                                ShooterConstants.Left.dumperLeftDownID,
+                                shooterIO = new ShooterIOTalonFX(ShooterConstants.Left.dumperLeftDownID,
                                                 ShooterConstants.Right.dumperRightDownID,
+                                                ShooterConstants.Left.dumperLeftUpID,
                                                 ShooterConstants.Right.dumperRightUpID);
                                 hoodIO = new HoodIOTalonFX(HoodConstants.ID);
                                 carwashIO = new CarwashIOTalonFX(CarwashConstants.ID);
@@ -201,6 +201,23 @@ public class RobotContainer {
 
                         default:
                                 // Replayed robot, disable IO implementations
+                                 hopperIO = new HopperIOTalonFXSim(HopperConstants.MOTOR_ID);
+                                intakeIO = new IntakeIOTalonFXSim(
+                                                IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                                IntakeConstants.RightRollerConstants.rollerMotorId,
+                                                IntakeConstants.PivotConstants.pivotMotorId);
+                                shooterIO = new ShooterIOTalonFXSim(ShooterConstants.Left.dumperLeftDownID,
+                                                ShooterConstants.Right.dumperRightDownID,
+                                                ShooterConstants.Left.dumperLeftUpID,
+                                                ShooterConstants.Right.dumperRightUpID);
+                                hoodIO = new HoodIOTalonFXSim(HoodConstants.ID);
+                                carwashIO = new CarwashIOTalonFXSim(CarwashConstants.ID);
+                                                                // Subsystems
+                                hopper = new Hopper(hopperIO);
+                                intake = new Intake(intakeIO);
+                                shooter = new Shooter(shooterIO);
+                                hood = new Hood(hoodIO);
+                                carwash = new Carwash(carwashIO);
                                 break;
                 }
 
@@ -284,20 +301,24 @@ public class RobotContainer {
         private void configureDriverSubsystemTests() {
 
                 // A = Intake
-                controller.a().onTrue(
-                                Commands.runOnce(() -> intake.setState(IntakeState.INTAKE)));
+                controller.a()
+                        .whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.INTAKE)))
+                        .onFalse(Commands.runOnce(() -> intake.setState(IntakeState.IDLE)));
 
                 // B = Shooter
-                controller.b().onTrue(
-                                Commands.runOnce(() -> shooter.setState(ShooterState.SHOOT)));
+                controller.b()
+                        .whileTrue(Commands.runOnce(() -> shooter.setState(ShooterState.SHOOT)))
+                        .onFalse(Commands.runOnce(() -> shooter.setState(ShooterState.IDLE)));
 
                 // X = Hopper
-                controller.x().onTrue(
-                                Commands.runOnce(() -> hopper.setState(HopperState.FORWARD)));
+                controller.x()
+                        .whileTrue(Commands.runOnce(() -> hopper.setState(HopperState.FORWARD)))
+                        .onFalse(Commands.runOnce(() -> hopper.setState(HopperState.IDLE)));
 
                 // Y = Carwash
-                controller.y().onTrue(
-                                Commands.runOnce(() -> carwash.setState(CarwashState.FEED)));
+                controller.y()
+                        .whileTrue(Commands.runOnce(() -> carwash.setState(CarwashState.FEED)))
+                        .onFalse(Commands.runOnce(() -> carwash.setState(CarwashState.IDLE)));
 
                 // Back = IDLE robot
                 controller.back().onTrue(

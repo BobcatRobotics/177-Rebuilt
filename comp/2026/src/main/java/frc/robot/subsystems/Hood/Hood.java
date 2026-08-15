@@ -28,7 +28,14 @@ public class Hood extends SubsystemBase {
     @Override
     public void periodic() {
 
-        io.setAngle(state.getAngleDegrees());
+        switch(state){
+            case IDLE:
+                io.stop();
+                break;
+            default:
+                io.setAngle(state.getAngleDegrees());
+                break;
+        }
     }
 
     @Override
