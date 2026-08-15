@@ -30,9 +30,15 @@ public class Hopper extends SubsystemBase {
         switch(hopperState){
             case IDLE:
                 io.stop();
+                break;
             default:
                 io.setVelocity(targetVelocity);
+                break;
         }
 
+    }
+    @Override
+    public void simulationPeriodic() {
+        io.simulationPeriodic();
     }
 }

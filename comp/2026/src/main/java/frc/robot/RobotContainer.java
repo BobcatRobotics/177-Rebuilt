@@ -55,21 +55,36 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Carwash.Carwash;
+import frc.robot.subsystems.Carwash.CarwashConstants;
+import frc.robot.subsystems.Carwash.CarwashIO;
+import frc.robot.subsystems.Carwash.CarwashIOTalonFX;
+import frc.robot.subsystems.Carwash.CarwashIOTalonFXSim;
+import frc.robot.subsystems.Carwash.CarwashState;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hood.HoodConstants;
+import frc.robot.subsystems.Hood.HoodIO;
+import frc.robot.subsystems.Hood.HoodIOTalonFX;
+import frc.robot.subsystems.Hood.HoodIOTalonFXSim;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperConstants;
 import frc.robot.subsystems.Hopper.HopperIO;
 import frc.robot.subsystems.Hopper.HopperIOTalonFX;
 import frc.robot.subsystems.Hopper.HopperIOTalonFXSim;
+import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeConstants;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.Intake.IntakeIOTalonFXSim;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterConstants;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.Shooter.ShooterIOTalonFXSim;
+import frc.robot.subsystems.Shooter.ShooterState;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.util.AllianceFlipUtil;
@@ -86,7 +101,7 @@ import frc.robot.util.DebouncedCommand;
  */
 public class RobotContainer {
         // Subsystems
-        
+
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -113,6 +128,19 @@ public class RobotContainer {
                                         new RioReaderAdapter(),
                                         new CanivoreReaderAdapter("CANivore")));
 
+        // IO
+        final HopperIO hopperIO;
+        final IntakeIO intakeIO;
+        final ShooterIO shooterIO;
+        final HoodIO hoodIO;
+        final CarwashIO carwashIO;
+
+        final Hopper hopper;
+        final Intake intake;
+        final Shooter shooter;
+        final Hood hood;
+        final Carwash carwash;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -125,51 +153,50 @@ public class RobotContainer {
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
-                // IO
-                final HopperIO hopperIO;
-                final IntakeIO intakeIO;
-                final ShooterIO shooterIO;
-
-                final Hopper hopper;
-                final Intake intake;
-                final Shooter shooter ;
-
                 switch (Constants.currentMode) {
                         case REAL:
                                 hopperIO = new HopperIOTalonFX(HopperConstants.MOTOR_ID);
                                 intakeIO = new IntakeIOTalonFX(
-                                        IntakeConstants.LeftRollerConstants.rollerMotorId,
-                                        IntakeConstants.RightRollerConstants.rollerMotorId,
-                                        IntakeConstants.PivotConstants.pivotMotorId);
-                                shooterIO = new ShooterIOTalonFX(ShooterConstants.Left.dumperLeftUpID, 
-                                                                 ShooterConstants.Left.dumperLeftDownID, 
-                                                                 ShooterConstants.Right.dumperRightDownID, 
-                                                                 ShooterConstants.Right.dumperRightUpID);
+                                                IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                                IntakeConstants.RightRollerConstants.rollerMotorId,
+                                                IntakeConstants.PivotConstants.pivotMotorId);
+                                shooterIO = new ShooterIOTalonFX(ShooterConstants.Left.dumperLeftUpID,
+                                                ShooterConstants.Left.dumperLeftDownID,
+                                                ShooterConstants.Right.dumperRightDownID,
+                                                ShooterConstants.Right.dumperRightUpID);
+                                hoodIO = new HoodIOTalonFX(HoodConstants.ID);
+                                carwashIO = new CarwashIOTalonFX(CarwashConstants.ID);
 
                                 hopper = new Hopper(hopperIO);
                                 intake = new Intake(intakeIO);
                                 shooter = new Shooter(shooterIO);
+                                hood = new Hood(hoodIO);
+                                carwash = new Carwash(carwashIO);
 
-                                robotState = new RobotState(hopper, intake, shooter);
+                                robotState = new RobotState(hopper, intake, shooter, hood, carwash);
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
                                 hopperIO = new HopperIOTalonFXSim(HopperConstants.MOTOR_ID);
                                 intakeIO = new IntakeIOTalonFXSim(
-                                        IntakeConstants.LeftRollerConstants.rollerMotorId,
-                                        IntakeConstants.RightRollerConstants.rollerMotorId,
-                                        IntakeConstants.PivotConstants.pivotMotorId);
-                                shooterIO = new ShooterIOTalonFXSim(ShooterConstants.Left.dumperLeftUpID, 
-                                                                 ShooterConstants.Left.dumperLeftDownID, 
-                                                                 ShooterConstants.Right.dumperRightDownID, 
-                                                                 ShooterConstants.Right.dumperRightUpID);
+                                                IntakeConstants.LeftRollerConstants.rollerMotorId,
+                                                IntakeConstants.RightRollerConstants.rollerMotorId,
+                                                IntakeConstants.PivotConstants.pivotMotorId);
+                                shooterIO = new ShooterIOTalonFXSim(ShooterConstants.Left.dumperLeftUpID,
+                                                ShooterConstants.Left.dumperLeftDownID,
+                                                ShooterConstants.Right.dumperRightDownID,
+                                                ShooterConstants.Right.dumperRightUpID);
+                                hoodIO = new HoodIOTalonFXSim(HoodConstants.ID);
+                                carwashIO = new CarwashIOTalonFXSim(CarwashConstants.ID);
 
                                 // Subsystems
                                 hopper = new Hopper(hopperIO);
                                 intake = new Intake(intakeIO);
                                 shooter = new Shooter(shooterIO);
+                                hood = new Hood(hoodIO);
+                                carwash = new Carwash(carwashIO);
 
-                                robotState = new RobotState(hopper, intake, shooter);
+                                robotState = new RobotState(hopper, intake, shooter, hood, carwash);
                                 break;
 
                         default:
@@ -179,7 +206,8 @@ public class RobotContainer {
 
                 // Set up auto routines
                 // registerCommands();
-                // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+                // autoChooser = new LoggedDashboardChooser<>("Auto Choices",
+                // AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
@@ -213,7 +241,7 @@ public class RobotContainer {
                 // carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
-                configureButtonBindings();
+                configureDriverSubsystemTests();
 
                 hub = new HubUtil();
 
@@ -227,7 +255,6 @@ public class RobotContainer {
                 }
         }
 
-
         /**
          * Use this method to define your button->command mappings. Buttons can be
          * created by
@@ -235,29 +262,54 @@ public class RobotContainer {
          * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
          * passing it to a
          * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+         * //
          */
-        private void configureButtonBindings() {
-                //Driver
+        // private void configureButtonBindings() {
+        // //Driver
+        // controller.a().onTrue(
+        // Commands.runOnce(() -> robotState.setState(RobotStateType.INTAKING))
+        // );
+
+        // controller.b().onTrue(
+        // Commands.runOnce(() -> robotState.setState(RobotStateType.SHOOTING))
+        // );
+
+        // controller.x().onTrue(
+        // Commands.runOnce(() -> robotState.setState(RobotStateType.EJECTING))
+        // );
+
+        // //Operator
+        // }
+
+        private void configureDriverSubsystemTests() {
+
+                // A = Intake
                 controller.a().onTrue(
-                        Commands.runOnce(() -> robotState.setState(RobotStateType.INTAKING))
-                );
+                                Commands.runOnce(() -> intake.setState(IntakeState.INTAKE)));
 
+                // B = Shooter
                 controller.b().onTrue(
-                        Commands.runOnce(() -> robotState.setState(RobotStateType.SHOOTING))
-                );
+                                Commands.runOnce(() -> shooter.setState(ShooterState.SHOOT)));
 
+                // X = Hopper
                 controller.x().onTrue(
-                        Commands.runOnce(() -> robotState.setState(RobotStateType.EJECTING))
-                );
+                                Commands.runOnce(() -> hopper.setState(HopperState.FORWARD)));
 
-                //Operator
+                // Y = Carwash
+                controller.y().onTrue(
+                                Commands.runOnce(() -> carwash.setState(CarwashState.FEED)));
+
+                // Back = IDLE robot
+                controller.back().onTrue(
+                                Commands.runOnce(() -> {
+                                        robotState.setState(RobotStateType.IDLE);
+                                }));
         }
 
         public void simulationButtonBindings() {
 
         }
 
-        
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.
          *
@@ -268,38 +320,40 @@ public class RobotContainer {
         }
 
         // public Pose2d getPose2D() {
-        //         return drive.getPose();
+        // return drive.getPose();
         // }
 
         // public void teleopPeriodic() {
 
-        //         vision.periodic();
-        //         if (DriverStation.getAlliance().isPresent()) {
-        //                 RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
-        //         }
-        //         HubData hubData = hub.getHubData();
-        //         Logger.recordOutput("Hub/Status", hubData.owner);
-        //         Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
-        //         Logger.recordOutput("Hub/Alliance", RobotInfo.getInstance().alliance);
-        //         Logger.recordOutput("Hub/MyHubLocation/Pose3d",
-        //                         HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance));
-        //         Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
-        //                         HubUtil.getActiveHubCoordinates(RobotInfo.getInstance().alliance));
+        // vision.periodic();
+        // if (DriverStation.getAlliance().isPresent()) {
+        // RobotInfo.getInstance().alliance = DriverStation.getAlliance().get();
+        // }
+        // HubData hubData = hub.getHubData();
+        // Logger.recordOutput("Hub/Status", hubData.owner);
+        // Logger.recordOutput("Hub/TimeRemaing", hubData.timeRemaining);
+        // Logger.recordOutput("Hub/Alliance", RobotInfo.getInstance().alliance);
+        // Logger.recordOutput("Hub/MyHubLocation/Pose3d",
+        // HubUtil.getMyHubCoordinates(RobotInfo.getInstance().alliance));
+        // Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
+        // HubUtil.getActiveHubCoordinates(RobotInfo.getInstance().alliance));
 
-        //         double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
-        //         double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
-        //         RobotInfo.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
-        //         RobotInfo.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
+        // double x = MathUtil.applyDeadband(-controller.getLeftY(), 0.1);
+        // double y = MathUtil.applyDeadband(-controller.getLeftX(), 0.1);
+        // RobotInfo.getInstance().vx = x * drive.getMaxLinearSpeedMetersPerSec();
+        // RobotInfo.getInstance().vy = y * drive.getMaxLinearSpeedMetersPerSec();
 
-        //         List<CANDeviceDetails> rioDevices = RobotInfo.getInstance().devices.get("rio");
-        //         publishCanDevices("rio", rioDevices);
-        //         List<CANDeviceDetails> canivoreDevices = RobotInfo.getInstance().devices.get("CANivore");
-        //         publishCanDevices("CANivore", canivoreDevices);
+        // List<CANDeviceDetails> rioDevices =
+        // RobotInfo.getInstance().devices.get("rio");
+        // publishCanDevices("rio", rioDevices);
+        // List<CANDeviceDetails> canivoreDevices =
+        // RobotInfo.getInstance().devices.get("CANivore");
+        // publishCanDevices("CANivore", canivoreDevices);
 
-        //         field.setRobotPose(RobotInfo.getInstance().robotPose);
-        //         SmartDashboard.putData("Field", field);
+        // field.setRobotPose(RobotInfo.getInstance().robotPose);
+        // SmartDashboard.putData("Field", field);
 
-        //         canLogger.periodic();
+        // canLogger.periodic();
 
         // }
 

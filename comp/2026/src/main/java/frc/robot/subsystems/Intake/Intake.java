@@ -22,7 +22,14 @@ public class Intake extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
-        io.setRollerVelocity(intakeState.getRPS());
+    public void periodic() {
+
+        io.setPivotAngle(
+            intakeState.getPivotAngleDegrees()
+        );
+
+        io.setRollerVelocity(
+            intakeState.getRollerRPS()
+        );
     }
 }

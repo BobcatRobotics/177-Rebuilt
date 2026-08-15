@@ -1,5 +1,9 @@
 package frc.robot;
 
+import frc.robot.subsystems.Carwash.Carwash;
+import frc.robot.subsystems.Carwash.CarwashState;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hood.HoodState;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
@@ -11,6 +15,8 @@ public class RobotState  {
     private final Hopper hopper;
     private final Intake intake;
     private final Shooter shooter;
+    private final Hood hood;
+    private final Carwash carwash;
     
     private RobotStateType state = RobotStateType.IDLE;
 
@@ -18,10 +24,14 @@ public class RobotState  {
     public RobotState(
         Hopper hopper, 
         Intake intake, 
-        Shooter shooter){
+        Shooter shooter,
+        Hood hood,
+        Carwash carwash){
             this.hopper = hopper;
             this.intake = intake;
             this.shooter = shooter;
+            this.hood = hood;
+            this.carwash = carwash;
     }
 
     public void setState(RobotStateType newState) {
@@ -32,6 +42,8 @@ public class RobotState  {
                 hopper.setState(HopperState.IDLE);
                 intake.setState(IntakeState.IDLE);
                 shooter.setState(ShooterState.IDLE);
+                hood.setState(HoodState.IDLE);
+                carwash.setState(CarwashState.IDLE);
                 break;
 
             case INTAKING:
@@ -41,12 +53,16 @@ public class RobotState  {
                 break;
 
             case SHOOTING:
+                hood.setState(HoodState.DEPLOYED);
+                carwash.setState(CarwashState.FEED);
                 shooter.setState(ShooterState.SHOOT);
                 hopper.setState(HopperState.FORWARD);
                 intake.setState(IntakeState.INTAKE);
                 break;
 
             case EJECTING:
+                hood.setState(HoodState.IDLE);
+                carwash.setState(CarwashState.REVERSE);
                 shooter.setState(ShooterState.IDLE);
                 hopper.setState(HopperState.REVERSE);
                 intake.setState(IntakeState.EJECT);
