@@ -130,16 +130,16 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    //autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
     
-    if(DriverStation.getAlliance().isPresent()){
-                       RobotState.getInstance().alliance = DriverStation.getAlliance().get();
-                }
+    // if(DriverStation.getAlliance().isPresent()){
+    //                    RobotState.getInstance().alliance = DriverStation.getAlliance().get();
+    //             }
 
     for (limelightConstants camera : cameraConstants) {
       LimelightHelpers.SetIMUMode(camera.name, 0);
@@ -177,7 +177,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    robotContainer.teleopPeriodic();
+    //robotContainer.teleopPeriodic();
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();
@@ -208,7 +208,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    robotContainer.simTelePeriodic();
+   // robotContainer.simTelePeriodic();
 
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {

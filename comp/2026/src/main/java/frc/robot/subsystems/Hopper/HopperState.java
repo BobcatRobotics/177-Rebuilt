@@ -15,7 +15,7 @@ public enum HopperState {
   public double getRPS() {
     return rps;
   }
-  }
+}
 
 
 

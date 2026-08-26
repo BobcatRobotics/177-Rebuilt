@@ -13,4 +13,7 @@ public interface IntakeIO {
     public default void setState(IntakeState state){
 
     }
+    public default void simulationPeriodic(){
+
+    }
 }

@@ -41,4 +41,12 @@ public class Intake extends SubsystemBase{
   public IntakeState getState(){
     return currentState;
   }
+
+public void setNeturalCoast() {
+    //requires implementation to change motor contorl config to neutral coast mode
+}
+
+public void setNeturalBrake() {
+    //requires implementation to change motor contorl config to neutral break mode
+}
 }

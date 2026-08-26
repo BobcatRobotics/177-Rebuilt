@@ -10,4 +10,7 @@ public interface HopperIO {
     public default void setRPS(double rps){
 
     }
+    public default void simulationPeriodic(){
+        
+    }
 }

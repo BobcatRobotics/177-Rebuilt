@@ -39,4 +39,8 @@ public class CarwashIOReal implements CarwashIO{
     public void setRPS(double rps) {
         carwash_Motor.setControl(velocityRequest.withVelocity(rps));
     }
+    @Override
+    public void simulationPeriodic(){
+        
+    }
 }

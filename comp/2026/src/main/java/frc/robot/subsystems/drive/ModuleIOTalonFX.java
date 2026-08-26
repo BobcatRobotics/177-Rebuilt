@@ -195,15 +195,15 @@ public class ModuleIOTalonFX implements ModuleIO {
         turnCurrent);
     ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
 
-
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
+/*    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
     CANDeviceDetails tmp = new CANDeviceDetails(constants.DriveMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
     tmp = new CANDeviceDetails(constants.SteerMotorId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
     tmp = new CANDeviceDetails(constants.EncoderId,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
     rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
+    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices); */
+
 
 
 

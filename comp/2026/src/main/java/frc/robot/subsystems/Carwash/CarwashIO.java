@@ -13,4 +13,7 @@ public interface CarwashIO {
     public default void setState(CarwashState state){
 
     }
+    public default void simulationPeriodic(){
+        
+    }
 }

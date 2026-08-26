@@ -40,4 +40,8 @@ public class Hopper extends SubsystemBase{
   public HopperState getState(){
     return currentState;
   }
+  @Override
+  public void simulationPeriodic(){
+    io.simulationPeriodic();
+  }
 }

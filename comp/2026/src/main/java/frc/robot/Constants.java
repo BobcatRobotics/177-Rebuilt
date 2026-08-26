@@ -216,6 +216,11 @@ public final class Constants {
 
         public static final double idleHopperSpeed = 0;
         public static final double topMotorTargetVelocity = 60;
+        public static double kHopperS;
+        public static double kHopperV;
+        public static double kHopperP;
+        public static double kHopperI;
+        public static double kHopperD;
 
     }
 

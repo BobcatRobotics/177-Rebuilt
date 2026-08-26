@@ -48,10 +48,10 @@ public class GyroIOPigeon2 implements GyroIO {
     yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
     yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw.clone());
 
-    List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
-    CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
-    rioDevices.add(tmp);
-    RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
+    // List<CANDeviceDetails> rioDevices = RobotState.getInstance().devices.get(TunerConstants.kCANBus.getName());
+    // CANDeviceDetails tmp = new CANDeviceDetails(TunerConstants.DrivetrainConstants.Pigeon2Id,TunerConstants.kCANBus.getName(),Manufacturer.Ctre,"Drive");    
+    // rioDevices.add(tmp);
+    //RobotState.getInstance().devices.replace(TunerConstants.kCANBus.getName(), rioDevices);
   }
 
   @Override

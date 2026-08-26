@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.HopperConstants;
+
 public class HopperIOReal implements HopperIO{
 
     private final TalonFX hopper;
@@ -22,6 +24,17 @@ public class HopperIOReal implements HopperIO{
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 60;
+
+        config.Slot0.kS = HopperConstants.kHopperS;
+        config.Slot0.kV= HopperConstants.kHopperV;
+        config.Slot0.kP= HopperConstants.kHopperP;
+        config.Slot0.kI= HopperConstants.kHopperI;
+        config.Slot0.kD= HopperConstants.kHopperD;
+
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 60;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = 80;
 
         hopperConfig.apply(config);
     }

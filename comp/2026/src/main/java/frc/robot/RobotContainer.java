@@ -55,38 +55,33 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.AlignToHub;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.PassingShot;
-import frc.robot.commands.carwashCharacterizationCommands;
-import frc.robot.commands.hopperCharacterizationCommands;
-import frc.robot.commands.shooterCharacterizationCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Carwash.Carwash;
 import frc.robot.subsystems.Carwash.CarwashIO;
-import frc.robot.subsystems.Carwash.CarwashReal;
-import frc.robot.subsystems.Carwash.CarwashSim;
+//import frc.robot.subsystems.Carwash.CarwashReal;
+//import frc.robot.subsystems.Carwash.CarwashSim;
 import frc.robot.subsystems.Carwash.CarwashState;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIO;
-import frc.robot.subsystems.Hopper.HopperRealSingle;
 import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIO;
 import frc.robot.subsystems.Intake.IntakeIOReal;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterAutoOptions;
+//import frc.robot.subsystems.Shooter.ShooterAutoOptions;
 import frc.robot.subsystems.Shooter.ShooterIO;
-import frc.robot.subsystems.Shooter.ShooterRealDrum;
+import frc.robot.subsystems.Shooter.ShooterIOReal;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.subsystems.Shooter.ShooterState;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveAutoOptions;
+//import frc.robot.subsystems.drive.DriveAutoOptions;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
+//import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.vision.Vision;
@@ -106,12 +101,14 @@ import frc.robot.util.DebouncedCommand;
  */
 public class RobotContainer {
         // Subsystems
-        public final Drive drive;
+        public Drive drive;
         public Vision vision;
-        public final Shooter m_Shooter;
-        public final Carwash m_Carwash;
-        private final Hopper m_Hopper;
-        public final Intake intake;
+        public  Shooter m_Shooter;
+        public  Carwash m_Carwash;
+        private Hopper m_Hopper;
+        public  Intake intake;
+
+        private RobotState robotState;
 
         // Controller
         private final CommandXboxController controller;
@@ -132,25 +129,25 @@ public class RobotContainer {
 
         Field2d field = new Field2d();
 
-        private final CANLogger canLogger = new CANLogger(
-                        List.of(
-                                        new RioReaderAdapter(),
-                                        new CanivoreReaderAdapter("CANivore")));
+        // private final CANLogger canLogger = new CANLogger(
+        //                 List.of(
+        //                                 new RioReaderAdapter(),
+        //                                 new CanivoreReaderAdapter("CANivore")));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
 
-                RobotState.getInstance().devices.putIfAbsent("rio", new ArrayList<CANDeviceDetails>());
-                RobotState.getInstance().devices.putIfAbsent("CANivore", new ArrayList<CANDeviceDetails>());
+                //RobotState.getInstance().devices.putIfAbsent("rio", new ArrayList<CANDeviceDetails>());
+                //RobotState.getInstance().devices.putIfAbsent("CANivore", new ArrayList<CANDeviceDetails>());
 
                 controller = new CommandXboxController(0);
                 operator = new CommandXboxController(1);
                 devController = new CommandXboxController(2);
 
                 configureSwitchablePort();
-                RobotController.setBrownoutVoltage(6);
+                //RobotController.setBrownoutVoltage(6);
 
                 switch (Constants.currentMode) {
                         case REAL:
@@ -169,43 +166,41 @@ public class RobotContainer {
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
 
-                                m_Shooter = new Shooter(new ShooterRealDrum());
-                                m_Shooter.applyState();
+                               // m_Shooter = new Shooter(new ShooterIOReal(0, null));
 
-                                m_Carwash = new Carwash(new CarwashReal());
-                                m_Carwash.applyState();
+                                //m_Carwash = new Carwash(new CarwashReal());
 
-                                m_Hopper = new Hopper(new HopperRealSingle());
-                                m_Hopper.applyState();
-                                intake = new Intake(new IntakeIOReal());
-                                intake.applyState();
+                                //m_Hopper = new Hopper(new HopperRealSingle());
+                                
+                                intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.LeftRollerConstants.rollerMotorId, "rio"));
+                                
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
-                                drive = new Drive(new GyroIO() {
+                                /*drive = new Drive(new GyroIO() {
                                 }, new ModuleIOSim(TunerConstants.FrontLeft),
                                                 new ModuleIOSim(TunerConstants.FrontRight),
                                                 new ModuleIOSim(TunerConstants.BackLeft),
-                                                new ModuleIOSim(TunerConstants.BackRight));
-                                m_Shooter = new Shooter(new ShooterRealDrum());
-                                m_Shooter.applyState();
+                                                new ModuleIOSim(TunerConstants.BackRight));  */
+                                //m_Shooter = new Shooter(new ShooterRealDrum());
+                                //m_Shooter.applyState();
 
-                                m_Carwash = new Carwash(new CarwashSim());
-                                m_Carwash.applyState();
+                                //m_Carwash = new Carwash(new CarwashSim());
+                                //m_Carwash.applyState();
 
-                                m_Hopper = new Hopper(new HopperRealSingle());
-                                m_Hopper.applyState();
+                                //m_Hopper = new Hopper(new HopperRealSingle());
+                                //m_Hopper.applyState();
 
-                                intake = new Intake(new IntakeIOReal());
-                                intake.applyState();
+                                intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.LeftRollerConstants.rollerMotorId, "rio"));
+                                //intake.applyState();
 
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
-                                vision = new Vision(drive::addVisionMeasurement,
+                                /*vision = new Vision(drive::addVisionMeasurement,
                                                 new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
-                                               // new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
+                                               // new VisionIOLimelight(cameraConstants[1].name, drive::getRotation), 
                                                 new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
                                                 new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));  */
                                 break;
 
                         default:
@@ -219,11 +214,11 @@ public class RobotContainer {
                                                 });
                                 m_Shooter = new Shooter(new ShooterIO() {
                                 });
-                                m_Shooter.applyState();
+                                //m_Shooter.applyState();
 
                                 m_Carwash = new Carwash(new CarwashIO() {
                                 });
-                                m_Carwash.applyState();
+                                //m_Carwash.applyState();
 
                                 m_Hopper = new Hopper(new HopperIO() {
 
@@ -241,7 +236,7 @@ public class RobotContainer {
                 }
 
                 // Set up auto routines
-                registerCommands();
+                //registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
@@ -267,13 +262,13 @@ public class RobotContainer {
                 // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
                 // Depot Trench Shot"));
 
-                flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
-                hoodChooser = new LoggedDashboardChooser<>("Hood");
-                carwashChooser = new LoggedDashboardChooser<>("Carwash");
+                // flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
+                // hoodChooser = new LoggedDashboardChooser<>("Hood");
+                // carwashChooser = new LoggedDashboardChooser<>("Carwash");
 
-                flywheelChooser.addDefaultOption("rps", 0.0);
-                hoodChooser.addDefaultOption("rps", 0.0);
-                carwashChooser.addDefaultOption("rps", 0.0);
+                // flywheelChooser.addDefaultOption("rps", 0.0);
+                // hoodChooser.addDefaultOption("rps", 0.0);
+                // carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -290,8 +285,7 @@ public class RobotContainer {
                         pdh.setSwitchableChannel(true);
                 }
         }
-
-        private void registerCommands() {
+/*private void registerCommands() {
                 NamedCommands.registerCommand(
                                 "AutoStopShooter", loggableCommand("AutoStopShooter", AutonomousStopShooter()));
                 NamedCommands.registerCommand(
@@ -331,7 +325,8 @@ public class RobotContainer {
                 NamedCommands.registerCommand("LongAutoSpinUpAndShootAndEnd",
                                 loggableCommand("LongAutoSpinUpAndShootAndEnd", longAutoSpinUpAndShoot()));
                 NamedCommands.registerCommand("IntakeMid", loggableCommand("IntakeMid", IntakeMid()));
-        }
+        } */
+        
 
         /**
          * Use this method to define your button->command mappings. Buttons can be
@@ -351,7 +346,7 @@ public class RobotContainer {
                                                 () -> -controller.getLeftX(),
                                                 () -> -controller.getRightX()));
 
-                m_Shooter.setDefaultCommand(loggableCommand("Default Shooter Command",new RunCommand(() -> {
+                /*m_Shooter.setDefaultCommand(loggableCommand("Default Shooter Command",new RunCommand(() -> {
                         controller.setRumble(RumbleType.kBothRumble, 0);
                         ShooterState shooterState = RobotState.getInstance().getShooterState();
                         shooterState.setState(ShooterState.State.IDLE);
@@ -368,18 +363,17 @@ public class RobotContainer {
                         CarwashState carwashState = RobotState.getInstance().getCarwashState();
                         carwashState.setState(CarwashState.State.IDLE);
                         m_Carwash.setState(carwashState);
-                }, m_Carwash)));
+                }, m_Carwash)));   */
 
+                //controller.povDown().onTrue(new InstantCommand(
+                                //() -> m_Shooter.resetEncoder()).ignoringDisable(true));
 
-                controller.povDown().onTrue(new InstantCommand(
-                                () -> m_Shooter.resetEncoder()).ignoringDisable(true));
-
-                controller.a().whileTrue(
-                                loggableCommand("AutoAlign", new AlignToHub(drive, () -> -controller.getLeftY(),
-                                                () -> -controller.getLeftX())));
+               // controller.a().whileTrue(
+                                //loggableCommand("AutoAlign", new AlignToHub(drive, () -> -controller.getLeftY(),
+                                              //  () -> -controller.getLeftX())));
 
                 // Switch to X pattern when X button is pressed
-                controller.x()
+                /*                controller.x()
                                 .onTrue(new ActionFactory().singleAction("X-Command", () -> drive.stopWithX(), drive));
 
                 // Reset gyro to 0° when B button is pressed
@@ -387,54 +381,52 @@ public class RobotContainer {
                                 .onTrue(new ActionFactory().singleAction("ZeroGyroCommand",
                                                 () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(),
                                                                 AllianceFlipUtil.apply(Rotation2d.kZero))),
-                                                drive).ignoringDisable(true));
-
-                controller.rightBumper().whileTrue(
-                        loggableCommand("Interpolate Shoot Balls",interpolatedShootSeq()));
-                controller.leftTrigger().whileTrue(loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
+                                                drive).ignoringDisable(true)); */
 
 
+                //controller.rightBumper().whileTrue(
+                       // loggableCommand("Interpolate Shoot Balls",interpolatedShootSeq()));
+                //controller.leftTrigger().whileTrue(loggableCommand("Automated Interpolated Shooting Balls",conditionalInterpolatedShootSeq()));
 
 
-                operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
+
+                /*                operator.b().whileTrue(IntakeDown()).onFalse(new InstantCommand(() -> {
                         intake.stop();
                 }, intake));
                 operator.a().whileTrue(intake.retractAndStop());
                 operator.y().onTrue(new InstantCommand(
-                                () -> intake.resetEncoder()).ignoringDisable(true));
+                                () -> intake.resetEncoder()).ignoringDisable(true)); 
+
 
                 operator.x().whileTrue(RunIntakeRollers())
                                 .onFalse(new InstantCommand(() -> {
                                         intake.stop();
                                 }, intake));
 
+ */
+                operator.rightBumper().whileTrue(Commands.runOnce(() -> m_Shooter.setState(ShooterState.SHOOT))); //Shoot
 
-                operator.rightBumper().whileTrue(
-                        loggableCommand("Manual Shoot Balls",conditionalManualShootSeq()));
 
+                operator.rightTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_IN)))
+                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
 
-                operator.rightTrigger().whileTrue(new RunCommand(() -> intake.manualRetractIntake(), intake))
-                                .onFalse(new InstantCommand(() -> intake.stop()));
-
-                operator.leftTrigger().whileTrue(loggableCommand("Outtake", manualOuttake()));
+                operator.leftTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_OUT)))
+                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
 
                 // PAssign shot allignment 
                 // operator.leftBumper().whileTrue(new PassingShot(drive).until(()->RobotState.getInstance().isRobotAlignedToPassingLoc).andThen(passingShotSeq()));
                 
                 // Passing Shot Sequence Only
-                operator.leftBumper().whileTrue(passingShotSeq());
+                //operator.leftBumper().whileTrue(passingShotSeq());
 
 
                 if (Robot.isSimulation()) {
 
-                        simulationButtonBindings();
+                        //simulationButtonBindings();
                 }
         }
 
-        public void simulationButtonBindings() {
-
-        }
-
+        
         // public Command characterizeAll() {
 
         //         // Carwash Flywheel
@@ -464,7 +456,7 @@ public class RobotContainer {
          * Use this to pass the autonomous command to the main {@link Robot} class.
          *
          * @return the command to run in autonomous
-         */
+         
         public Command getAutonomousCommand() {
                 return autoChooser.get();
         }
@@ -536,7 +528,7 @@ public class RobotContainer {
         /**
          * This is the "new" interpolated shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
+         
         public Command interpolatedShootSeq() {
                 return Commands.run(() -> {
                         if (controller.leftBumper().getAsBoolean()) {
@@ -560,7 +552,7 @@ public class RobotContainer {
         /**
          * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
+         
         public Command conditionalInterpolatedShootSeq() {
                 return Commands.run(() -> {
                         if (m_Shooter.atSpeed()) {
@@ -583,7 +575,7 @@ public class RobotContainer {
         /**
          * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
+         
         public Command passingShotSeq() {
                 return Commands.run(() -> {
                         if (m_Shooter.atSpeed()) {
@@ -683,7 +675,7 @@ public class RobotContainer {
         /**
          * This is the "new" manual shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
+         
         public Command manualShootSeq(){
                 return Commands.run(() -> {
                         if (operator.leftBumper().getAsBoolean()) {
@@ -703,7 +695,7 @@ public class RobotContainer {
         /**
          * This is the "new" conditional manual shooting sequence it takes the 2 commands and refactors them into one. 
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
-         */
+         
         public Command conditionalManualShootSeq(){
                 return Commands.run(() -> {
                         if (m_Shooter.atSpeed()) {
@@ -785,4 +777,6 @@ public class RobotContainer {
                                 .finallyDo((interrupted) -> Logger.recordOutput("Commands/ActiveCommands/" + name,
                                                 false));
         }
+}
+ */
 }

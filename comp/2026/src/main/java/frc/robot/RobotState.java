@@ -1,108 +1,25 @@
 package frc.robot;
 
-import java.util.HashMap;
-import java.util.List;
-
-import org.bobcatrobotics.Util.CANDeviceDetails;
-import org.bobcatrobotics.Util.Interpolators.TripleOutputInterpolator;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.subsystems.Carwash.CarwashState;
-import frc.robot.subsystems.Hopper.HopperState;
-import frc.robot.subsystems.Intake.IntakeState;
-import frc.robot.subsystems.Shooter.ShooterState;
+import frc.robot.subsystems.Carwash.Carwash;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Shooter.Shooter;
 
 public class RobotState {
-  public CharacterizationType characterizationType = CharacterizationType.DRIVE;
-  public Alliance alliance;
-  private static RobotState instance;
-  public double vx = 0.0;
-  public double vy = 0.0;
+    private final Hopper hopper; 
+    private final Shooter shooter;
+    private final Intake intake;
+    private final Carwash carwash;
+    private final Hood hood;
 
-  public static RobotState getInstance() {
-    if (instance == null)
-    {
-      instance = new RobotState();
+    //private RobotState state = //RobotState.IDLE;
+
+    RobotState(Hopper hopper, Shooter shooter, Intake intake, Carwash carwash, Hood hood){
+      this.hopper = hopper;
+      this.shooter = shooter;
+      this.intake = intake;
+      this.carwash = carwash;
+      this.hood = hood; 
     }
-    return instance;
-  }
-
-  // Save Odometry,
-  // Save Swerve Module Details
-  // Save Vision Tags
-
-  // Save Shooter State
-  private ShooterState.State desiredShooterStateType = ShooterState.State.IDLE;
-  private ShooterState desiredShooterState = new ShooterState();
-
-  public ShooterState.State getDesiredShooterStateType() {
-    return desiredShooterStateType;
-  }
-
-  public ShooterState getShooterState() {
-    return desiredShooterState;
-  }
-
-    // Save Carwash State
-  private CarwashState desiredCarwashStateType = CarwashState.IDLE;
-  private CarwashState desiredCarwashState = new CarwashState();
-
-  public CarwashState getDesiredCarwashStateType() {
-    return desiredCarwashStateType;
-  }
-
-  public CarwashState getCarwashState() {
-    return desiredCarwashState;
-  }
-
-  // Save Hopper State
-  private HopperState desiredHopperStateType = HopperState.IDLE;
-  private HopperState desiredHopperState 
-
-  public HopperState getDesiredHopperStateType() {
-    return desiredHopperStateType;
-  }
-
-  public HopperState getHopperState() {
-    return desiredHopperState;
-  }
-
-  // Save Intake State
-  private IntakeState desiredIntakeStateType = IntakeState.IDLE;
-  private IntakeState desiredIntakeState = new IntakeState();
-
-  public IntakeState.State getDesiredIntakeStateType() {
-    return desiredIntakeStateType;
-  }
-
-  public IntakeState getIntakeState() {
-    return desiredIntakeState;
-  }
-
-    public TripleOutputInterpolator interpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.ValuesOfKnownShots.distance,
-      Constants.ShooterConstants.ValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.dumperSpeed,
-      Constants.ShooterConstants.ValuesOfKnownShots.hoodPosition,
-      false);
-    public TripleOutputInterpolator passingInterpolator = new TripleOutputInterpolator(
-      Constants.ShooterConstants.PassingValuesOfKnownShots.distance,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.carwashSpeed,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.dumperSpeed,
-      Constants.ShooterConstants.PassingValuesOfKnownShots.hoodPosition,
-      false);
-  public Pose2d robotPose = new Pose2d();
-  public boolean shooterUpToSpeed = false;
-  public boolean hubInrange = false;
-  public double hubDistance = 0.0;
-  // used by new align command not to be confused with hubInRange;
-  public boolean isRobotAlignedToHub = false;
-
-  public double depoDistance = 0.0;
-  public double outpostDistance = 0.0;
-  public double targettedDistance = 0.0;
-  public boolean isRobotAlignedToPassingLoc = false;
-
-  public HashMap<String, List<CANDeviceDetails>> devices = new HashMap<String, List<CANDeviceDetails>>();
 }

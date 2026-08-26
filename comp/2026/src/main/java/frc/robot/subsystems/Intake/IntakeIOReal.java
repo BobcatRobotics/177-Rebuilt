@@ -7,6 +7,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.HopperConstants;
+
 
 public class IntakeIOReal implements IntakeIO{
     private final TalonFX intake_motor;
@@ -18,11 +20,20 @@ public class IntakeIOReal implements IntakeIO{
         intake_config = intake_motor.getConfigurator();
 
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 60;
+
+
+        config.Slot0.kV= 0.11;
+        config.Slot0.kP= 1;
+
+
+        
         intake_config.apply(config);
+
+        
 
 
 }
@@ -39,5 +50,9 @@ public class IntakeIOReal implements IntakeIO{
     @Override
     public void setRPS(double rps) {
         intake_motor.setControl(velocityRequest.withVelocity(rps));
+    }
+    @Override
+    public void simulationPeriodic(){
+        
     }
 }
