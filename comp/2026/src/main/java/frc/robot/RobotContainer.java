@@ -54,6 +54,14 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Hopper.Hopper;
+import frc.robot.subsystems.Hopper.HopperIOReal;
+import frc.robot.subsystems.Intake.Carwash.Carwash;
+import frc.robot.subsystems.Intake.Carwash.CarwashIOReal;
+import frc.robot.subsystems.Intake.Intake.Intake;
+import frc.robot.subsystems.Intake.Intake.IntakeIOReal;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterIOReal;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.util.AllianceFlipUtil;
@@ -70,7 +78,14 @@ import frc.robot.util.DebouncedCommand;
  */
 public class RobotContainer {
         // Subsystems
-        
+        //public Drive drive;
+        //public Vision vision;
+        public  Shooter m_Shooter;
+        public  Carwash m_Carwash;
+        private Hopper m_Hopper;
+        public  Intake intake;
+
+        private RobotState robotState;
         // Controller
         private final CommandXboxController controller;
         private final CommandXboxController operator;
@@ -114,6 +129,14 @@ public class RobotContainer {
                         case REAL:
                                 // Real robot, instantiate hardware IO implementations
 
+                                //Add in all dumper modules
+                                m_Shooter = new Shooter(new ShooterIOReal(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
+
+                                m_Carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+
+                                m_Hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                
+                                intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.LeftRollerConstants.rollerMotorId, "rio"));
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations

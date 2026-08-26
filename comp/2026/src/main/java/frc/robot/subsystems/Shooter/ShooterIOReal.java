@@ -1,50 +1,38 @@
 package frc.robot.subsystems.Shooter;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 public class ShooterIOReal implements ShooterIO{
-    ShooterState currentState = ShooterState.IDLE;
-    private final ShooterIO io;
+    private final TalonFX shooter;
+    private final TalonFXConfigurator shooterConfig;
+    private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-    public ShooterIOReal(ShooterIO io){
-      this.io = io;
+    public ShooterIOReal(int id, String bus){
+        this.shooter = new TalonFX(id,bus);
+        shooterConfig = shooter.getConfigurator();
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 60;
+
+        shooterConfig.apply(config);
     }
-
-    public void autoPeriodic(){
-      
-    }
-
     public void periodic(){
-      io.periodic();
-
-        switch(currentState){
-      case IDLE -> {
-        io.stop();
-        break;
-      }
-      case SHOOT -> {
-        io.setRPS(currentState.getRPS());
-        break;
-      }
-      case REVERSE_SHOOT -> {
-        io.setRPS(currentState.getRPS());
-        break;
-      }
-      case SPIN_UP -> {
-        io.setRPS(currentState.getRPS());
-        break;
-      }
 
     }
-  }
-  public void stop(){
-    io.stop();
-  }
 
-  public void setState(ShooterState state){
-    this.currentState = state;
-  }
-
-  public ShooterState getState(){
-    return currentState;
-  }
-
+    public void stop(){
+        shooter.stopMotor();
+    }
+    @Override
+      public void setRPS(double rps) {
+        shooter.setControl(velocityRequest.withVelocity(rps));
+    }
 }
