@@ -56,12 +56,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIOReal;
+import frc.robot.subsystems.Hopper.HopperIOSim;
 import frc.robot.subsystems.Intake.Carwash.Carwash;
 import frc.robot.subsystems.Intake.Carwash.CarwashIOReal;
+import frc.robot.subsystems.Intake.Carwash.CarwashIOSim;
 import frc.robot.subsystems.Intake.Intake.Intake;
 import frc.robot.subsystems.Intake.Intake.IntakeIOReal;
+import frc.robot.subsystems.Intake.Intake.IntakeIOSim;
+import frc.robot.subsystems.Intake.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIOReal;
+import frc.robot.subsystems.Shooter.ShooterIOSim;
 // import frc.robot.subsystems.Shooter.ShooterRealQuad;
 // import frc.robot.subsystems.Shooter.ShooterSim;
 import frc.robot.util.AllianceFlipUtil;
@@ -80,9 +85,9 @@ public class RobotContainer {
         // Subsystems
         //public Drive drive;
         //public Vision vision;
-        public  Shooter m_Shooter;
-        public  Carwash m_Carwash;
-        private Hopper m_Hopper;
+        //public  Shooter m_Shooter;
+        //public  Carwash m_Carwash;
+        //private Hopper m_Hopper;
         public  Intake intake;
 
         private RobotState robotState;
@@ -94,9 +99,9 @@ public class RobotContainer {
         // Dashboard inputs
         private LoggedDashboardChooser<Command> autoChooser;
 
-        private LoggedDashboardChooser<Double> flywheelChooser;
-        private LoggedDashboardChooser<Double> hoodChooser;
-        private LoggedDashboardChooser<Double> carwashChooser;
+        //private LoggedDashboardChooser<Double> flywheelChooser;
+        //private LoggedDashboardChooser<Double> hoodChooser;
+        //private LoggedDashboardChooser<Double> carwashChooser;
 
         private final HubUtil hub;
 
@@ -130,16 +135,23 @@ public class RobotContainer {
                                 // Real robot, instantiate hardware IO implementations
 
                                 //Add in all dumper modules
-                                m_Shooter = new Shooter(new ShooterIOReal(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
+                                //m_Shooter = new Shooter(new ShooterIOReal(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
 
-                                m_Carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+                                //m_Carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
 
-                                m_Hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                //m_Hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
                                 
-                                intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.LeftRollerConstants.rollerMotorId, "rio"));
+                                intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.RightRollerConstants.rollerMotorId, Constants.IntakeConstants.LeftRollerConstants.rollerMotorId));
                                 break;
                         case SIM:
                                 // Sim robot, instantiate physics sim IO implementations
+                                //m_Shooter = new Shooter(new ShooterIOSim(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
+
+                                //m_Carwash = new Carwash(new CarwashIOSim(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+
+                                //m_Hopper = new Hopper(new HopperIOSim(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                
+                                intake = new Intake(new IntakeIOSim(Constants.IntakeConstants.RightRollerConstants.rollerMotorId, "rio"));
                                 break;
 
                         default:
@@ -149,7 +161,7 @@ public class RobotContainer {
 
                 // Set up auto routines
                 registerCommands();
-                autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+                //autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
                 // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
                 // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
 
@@ -174,13 +186,13 @@ public class RobotContainer {
                 // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
                 // Depot Trench Shot"));
 
-                flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
-                hoodChooser = new LoggedDashboardChooser<>("Hood");
-                carwashChooser = new LoggedDashboardChooser<>("Carwash");
+                //flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
+                //hoodChooser = new LoggedDashboardChooser<>("Hood");
+                //carwashChooser = new LoggedDashboardChooser<>("Carwash");
 
-                flywheelChooser.addDefaultOption("rps", 0.0);
-                hoodChooser.addDefaultOption("rps", 0.0);
-                carwashChooser.addDefaultOption("rps", 0.0);
+                //flywheelChooser.addDefaultOption("rps", 0.0);
+                //hoodChooser.addDefaultOption("rps", 0.0);
+                //carwashChooser.addDefaultOption("rps", 0.0);
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -213,6 +225,11 @@ public class RobotContainer {
         private void configureButtonBindings() {
 
                 // Default command, normal field-relative drive
+                operator.rightTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_IN)))
+                                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
+
+                operator.leftTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_OUT)))
+                .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
                 
         }
 

@@ -1,6 +1,8 @@
 package frc.robot.subsystems.Intake.Intake;
 
-public class Intake {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Intake  extends SubsystemBase{
      IntakeState currentState = IntakeState.IDLE;
     private final IntakeIO io;
 
