@@ -92,6 +92,7 @@ import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOSim;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.DebouncedCommand;
 
@@ -201,11 +202,11 @@ public class RobotContainer {
 
                                 // Vision (0 = shooter, 1 = intake, 2 = fleft, 3 = fright)
                                 vision = new Vision(drive::addVisionMeasurement,
-                                                new VisionIOLimelight(cameraConstants[0].name, drive::getRotation),
+                                                new VisionIOSim(cameraConstants[0].name, drive::getRotation).withField2d(field),
                                                // new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[1].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[2].name, drive::getRotation),
-                                                new VisionIOLimelight(cameraConstants[3].name, drive::getRotation));
+                                                new VisionIOSim(cameraConstants[1].name, drive::getRotation).withField2d(field),
+                                                new VisionIOSim(cameraConstants[2].name, drive::getRotation).withField2d(field),
+                                                new VisionIOSim(cameraConstants[3].name, drive::getRotation).withField2d(field));
                                 break;
 
                         default:
@@ -243,29 +244,6 @@ public class RobotContainer {
                 // Set up auto routines
                 registerCommands();
                 autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-                // autoChooser = new DriveAutoOptions(autoChooser, drive).getOptions();
-                // autoChooser = new IntakeAutoOptions(autoChooser, intake).getOptions();
-
-                // autoChooser = new ShooterAutoOptions(autoChooser, m_Shooter).getOptions();
-
-                // autoChooser.addOption("Long Trench Depot Sweep",
-                // new PathPlannerAuto("Long Trench Depot Sweep"));
-                // autoChooser.addOption("Long Trench Outpost Sweep",
-                // new PathPlannerAuto("Long Trench Outpost Sweep"));
-
-                // // autoChooser.addOption("Anand OP to Hub", new PathPlannerAuto("Anand OP to
-                // // Hub"));
-                // autoChooser.addOption("Anand Depot Side Clean Sweep",
-                // new PathPlannerAuto("Anand Depot Side Clean Sweep"));
-                // autoChooser.addOption("Anand OP Side Clean Sweep", new PathPlannerAuto("Anand
-                // OP Side Clean Sweep"));
-                // autoChooser.addOption("Trench Outpost Sweep", new PathPlannerAuto("Trench
-                // Outpost Sweep"));
-                // autoChooser.addOption("Trench Depot Sweep", new PathPlannerAuto("Trench Depot
-                // Sweep"));
-                // // autoChooser.addOption("Test Hopper", new PathPlannerAuto("TestHopper"));
-                // autoChooser.addOption("Anand Depot Trench Shot", new PathPlannerAuto("Anand
-                // Depot Trench Shot"));
 
                 flywheelChooser = new LoggedDashboardChooser<>("Flywheel");
                 hoodChooser = new LoggedDashboardChooser<>("Hood");
@@ -521,6 +499,9 @@ public class RobotContainer {
                                 HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance));
                 Logger.recordOutput("Hub/ActiveHubLocation/Pose3d",
                                 HubUtil.getActiveHubCoordinates(RobotState.getInstance().alliance));
+                
+                field.setRobotPose(RobotState.getInstance().robotPose);
+                SmartDashboard.putData("Field", field);
         }
 
         public Command AutoRunHopper() {
