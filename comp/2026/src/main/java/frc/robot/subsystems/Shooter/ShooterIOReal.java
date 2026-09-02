@@ -9,6 +9,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ShooterIOReal implements ShooterIO{
     private final TalonFX shooter;
+    //private final TalonFX bottomRight;
+    //private final TalonFX topLeft;
+    //private final TalonFX bottomLeft;
+
     private final TalonFXConfigurator shooterConfig;
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 

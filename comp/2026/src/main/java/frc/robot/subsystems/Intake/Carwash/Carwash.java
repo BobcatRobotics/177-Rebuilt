@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Intake.Carwash;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Carwash extends SubsystemBase{
@@ -11,20 +13,21 @@ public class Carwash extends SubsystemBase{
     }
     public void periodic(){
         switch(currentState){
-            case IDLE -> {
+            case IDLE:
                 io.stop();
                 break;
-            }
-            case INTAKE -> {
+            case INTAKE:
                 io.setRPS(currentState.getRPS());
                 break;
-            }
-            case OUTTAKE ->{
+            case OUTTAKE:
                 io.setRPS(currentState.getRPS());
                 break;
-            }
         }
+        Logger.recordOutput("carwashState", currentState);
+
+        Logger.recordOutput("carwash", currentState.getRPS());
     }
+
     public void stop(){
     io.stop();
   }

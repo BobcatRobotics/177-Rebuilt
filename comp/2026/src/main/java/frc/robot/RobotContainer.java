@@ -57,9 +57,11 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Hopper.Hopper;
 import frc.robot.subsystems.Hopper.HopperIOReal;
 import frc.robot.subsystems.Hopper.HopperIOSim;
+import frc.robot.subsystems.Hopper.HopperState;
 import frc.robot.subsystems.Intake.Carwash.Carwash;
 import frc.robot.subsystems.Intake.Carwash.CarwashIOReal;
 import frc.robot.subsystems.Intake.Carwash.CarwashIOSim;
+import frc.robot.subsystems.Intake.Carwash.CarwashState;
 import frc.robot.subsystems.Intake.Intake.Intake;
 import frc.robot.subsystems.Intake.Intake.IntakeIOReal;
 import frc.robot.subsystems.Intake.Intake.IntakeIOSim;
@@ -86,8 +88,8 @@ public class RobotContainer {
         //public Drive drive;
         //public Vision vision;
         //public  Shooter m_Shooter;
-        //public  Carwash m_Carwash;
-        //private Hopper m_Hopper;
+        public  Carwash carwash;
+        private Hopper hopper;
         public  Intake intake;
 
         private RobotState robotState;
@@ -137,9 +139,9 @@ public class RobotContainer {
                                 //Add in all dumper modules
                                 //m_Shooter = new Shooter(new ShooterIOReal(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
 
-                                //m_Carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+                                carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
 
-                                //m_Hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                hopper = new Hopper(new HopperIOReal(Constants.HopperConstants.Top.hopperMotorId, "rio"));
                                 
                                 intake = new Intake(new IntakeIOReal(Constants.IntakeConstants.RightRollerConstants.rollerMotorId, Constants.IntakeConstants.LeftRollerConstants.rollerMotorId));
                                 break;
@@ -147,9 +149,9 @@ public class RobotContainer {
                                 // Sim robot, instantiate physics sim IO implementations
                                 //m_Shooter = new Shooter(new ShooterIOSim(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
 
-                                //m_Carwash = new Carwash(new CarwashIOSim(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
+                                carwash = new Carwash(new CarwashIOSim(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
 
-                                //m_Hopper = new Hopper(new HopperIOSim(Constants.HopperConstants.Top.hopperMotorId, "rio"));
+                                hopper = new Hopper(new HopperIOSim(Constants.HopperConstants.Top.hopperMotorId, "rio"));
                                 
                                 intake = new Intake(new IntakeIOSim(Constants.IntakeConstants.RightRollerConstants.rollerMotorId, "rio"));
                                 break;
@@ -225,11 +227,35 @@ public class RobotContainer {
         private void configureButtonBindings() {
 
                 // Default command, normal field-relative drive
+
+                //Intake
                 operator.rightTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_IN)))
                                 .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
 
                 operator.leftTrigger().whileTrue(Commands.runOnce(() -> intake.setState(IntakeState.ROLLING_OUT)))
                 .onFalse(new InstantCommand(() -> intake.setState(IntakeState.IDLE)));
+
+                //Hopper Button Bindings
+
+                //operator.rightBumper().whileTrue(Commands.runOnce(() -> hopper.setState(HopperState.FORWARD)))
+                //.onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE)));
+
+                operator.leftBumper().whileTrue(Commands.runOnce(() -> hopper.setState(HopperState.REVERSE)))
+                .onFalse(new InstantCommand(() -> hopper.setState(HopperState.IDLE)));
+
+                //Carwash Button Bindings 
+                //TODO:Make this as a RobotState
+                controller.rightTrigger().whileTrue(Commands.runOnce(() -> {
+                        carwash.setState(CarwashState.INTAKE);
+                        hopper.setState(HopperState.FORWARD);
+                }))
+                .onFalse(new InstantCommand(() -> {
+                        carwash.setState(CarwashState.IDLE);
+                        hopper.setState(HopperState.IDLE);
+                }));
+
+
+                
                 
         }
 

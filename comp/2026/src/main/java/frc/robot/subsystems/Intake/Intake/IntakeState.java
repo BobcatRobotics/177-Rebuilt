@@ -2,8 +2,8 @@ package frc.robot.subsystems.Intake.Intake;
 
 public enum IntakeState {
            IDLE(0),
-        ROLLING_IN(30),
-        ROLLING_OUT(-30),
+        ROLLING_IN(60),
+        ROLLING_OUT(-60),
         INTAKE_IN(0),
         INTAKE_OUT(0);
         

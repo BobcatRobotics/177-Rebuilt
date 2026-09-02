@@ -14,13 +14,17 @@ public class CarwashIOReal implements CarwashIO{
 
     public CarwashIOReal(int id, String bus){
         this.carwash_Motor = new TalonFX(id);
-        carwash_config = new TalonFXConfigurator(null);
+        carwash_config =  carwash_Motor.getConfigurator();
         TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 60;
+
+        config.Slot0.kP= 8.0;
+        config.Slot0.kV= 7.0;
+
         carwash_config.apply(config);
     }
 
@@ -30,6 +34,7 @@ public class CarwashIOReal implements CarwashIO{
     public void setState(){
 
     }
+    
     @Override
     public void stop(){
         carwash_Motor.stopMotor();
