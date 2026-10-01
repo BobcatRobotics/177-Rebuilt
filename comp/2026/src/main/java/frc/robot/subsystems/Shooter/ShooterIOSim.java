@@ -12,6 +12,6 @@ public class ShooterIOSim implements ShooterIO{
 
     }
     @Override
-      public void setRPS(double rps) {
+      public void setRPS(double rps, double pos) {
     }  
 }

@@ -87,7 +87,7 @@ public class RobotContainer {
         // Subsystems
         //public Drive drive;
         //public Vision vision;
-        //public  Shooter m_Shooter;
+        public  Shooter m_shooter;
         public  Carwash carwash;
         private Hopper hopper;
         public  Intake intake;
@@ -137,7 +137,13 @@ public class RobotContainer {
                                 // Real robot, instantiate hardware IO implementations
 
                                 //Add in all dumper modules
-                                //m_Shooter = new Shooter(new ShooterIOReal(Constants.ShooterConstants.Left.dumperLeftUpID, "rio"));
+                                m_shooter = new Shooter(new ShooterIOReal(
+                                        Constants.ShooterConstants.Left.dumperLeftUpID, 
+                                        Constants.ShooterConstants.Left.dumperLeftDownID, 
+                                        Constants.ShooterConstants.Right.dumperRightUpID, 
+                                        Constants.ShooterConstants.Right.dumperRightUpID, 
+                                        Constants.ShooterConstants.adjustableHood.ID
+                                        ));
 
                                 carwash = new Carwash(new CarwashIOReal(Constants.CarwashConstants.SharedIntake.intakeIDLeft, "rio"));
 

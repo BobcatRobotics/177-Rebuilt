@@ -23,15 +23,15 @@ public class Shooter extends SubsystemBase{
         break;
       }
       case SHOOT -> {
-        io.setRPS(currentState.getRPS());
+        io.setRPS(currentState.getRPS(), currentState.getHoodAngle());
         break;
       }
       case REVERSE_SHOOT -> {
-        io.setRPS(currentState.getRPS());
+        io.setRPS(currentState.getRPS(), currentState.getHoodAngle());
         break;
       }
       case SPIN_UP -> {
-        io.setRPS(currentState.getRPS());
+        io.setRPS(currentState.getRPS(), currentState.getHoodAngle());
         break;
       }
 
