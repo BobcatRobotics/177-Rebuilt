@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import org.bobcatrobotics.Util.Tunables.Gains;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
@@ -401,24 +402,28 @@ public class ShooterRealDrum implements ShooterIO {
     setAdjustableHoodPosition(adjustableHoodPosition);
   }
 
+  // "Shooter/Commanded/*" logs the last value actually sent to the motors each loop. The goal
+  // logged in ShooterState.update() runs before commands and can differ from what is sent.
   public void setDumperLeftSpeed(double dumperLeftSpeed) {
     dumperLeftSetPoint = dumperLeftSpeed;
     dumperLeftUp.setControl(velDumperLeftUpRequest.withVelocity(dumperLeftSetPoint));
     dumperLeftDown.setControl(velDumperLeftDownRequest.withVelocity(dumperLeftSetPoint));
-    
+    Logger.recordOutput("Shooter/Commanded/LeftDumperRPS", dumperLeftSetPoint);
   }
 
   public void setDumperRightSpeed(double dumperRightSpeed) {
     dumperRightSetPoint = dumperRightSpeed;
     dumperRightUp.setControl(velDumperRightUpRequest.withVelocity(dumperRightSetPoint));
     dumperRightDown.setControl(velDumperRightDownRequest.withVelocity(dumperRightSetPoint));
+    Logger.recordOutput("Shooter/Commanded/RightDumperRPS", dumperRightSetPoint);
   }
 
-  
+
 
   public void setAdjustableHoodPosition(double positionOfAdjustableHood) {
     adjustableHoodSetPoint = positionOfAdjustableHood;
     adjustableHood.setControl(posAdjustableHoodRequest.withPosition(positionOfAdjustableHood));
+    Logger.recordOutput("Shooter/Commanded/HoodPositionRotations", adjustableHoodSetPoint);
   }
 
 
@@ -437,17 +442,20 @@ public class ShooterRealDrum implements ShooterIO {
     dumperLeftSetPoint = 0;
     dumperLeftUp.stopMotor();
     dumperLeftDown.stopMotor();
+    Logger.recordOutput("Shooter/Commanded/LeftDumperRPS", dumperLeftSetPoint);
   }
 
    public void stopDumperRight() {
     dumperRightSetPoint = 0;
     dumperRightUp.stopMotor();
     dumperRightDown.stopMotor();
+    Logger.recordOutput("Shooter/Commanded/RightDumperRPS", dumperRightSetPoint);
   }
 
   public void stopAdjustableHood() {
     adjustableHoodSetPoint = 0;
     adjustableHood.stopMotor();
+    Logger.recordOutput("Shooter/Commanded/HoodPositionRotations", adjustableHoodSetPoint);
   }
 
   @Override
