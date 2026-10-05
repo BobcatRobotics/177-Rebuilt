@@ -165,7 +165,13 @@ public class CarwashSim implements CarwashIO {
     double velocityRotPerSec = velocityRadPerSec / (2*Math.PI);
     // PUSH intop the TalonFX simulated Sensor the value
     shooterIntakeMotorState.setRotorVelocity(-velocityRotPerSec);
+    // Last speed actually commanded to the carwash (+ feeds, - holds back). The shooter sim reads
+    // this to apply ball load only when the carwash is really feeding.
+    simCommandedVelocityRps = intakeSetpoint;
   }
+
+  /** Sim only: last carwash velocity sent to the motor, in RPS. */
+  public static double simCommandedVelocityRps = 0.0;
 
   /* Characterization */
   public void runCharacterization_Intake(double output) {

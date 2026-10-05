@@ -21,7 +21,16 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.ClosedLoopOutputType;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import frc.robot.subsystems.Carwash.CarwashSim;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -431,6 +440,11 @@ public class ShooterRealDrum implements ShooterIO {
   }
 
   @Override
+  public double getCommandedHoodPosition() {
+    return adjustableHoodSetPoint;
+  }
+
+  @Override
   public void stop(){
     stopDumperLeft();
     stopDumperRight();
@@ -462,7 +476,77 @@ public class ShooterRealDrum implements ShooterIO {
   public void periodic() {
   }
 
+  // ---------------- Simulation only (WPILib never calls simulationPeriodic on the robot) -----------
+  // Rough physics so the drum and hood respond in sim. Values are at the rotor (no
+  // SensorToMechanismRatio is configured), matching the RPS/rotation units in the shot table.
+  private static final double SIM_DRUM_MOI = 0.004; // kg*m^2 per side, reflected to the rotor
+  private static final double SIM_HOOD_MOI = 0.0005; // kg*m^2, reflected to the rotor
+  // Fake ball load while the carwash is feeding: each ball removes some drum speed
+  public static double simBallsPerSecond = 8.0;
+  public static double simVelocityLossPerBallRPS = 4.0;
+
+  private FlywheelSim simLeftDrum;
+  private FlywheelSim simRightDrum;
+  private DCMotorSim simHood;
+  private double simBallTimer = 0.0;
+
   public void simulationPeriodic() {
+    if (simLeftDrum == null) {
+      DCMotor drumMotors = DCMotor.getKrakenX60(2);
+      simLeftDrum = new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(drumMotors, SIM_DRUM_MOI, 1.0), drumMotors);
+      simRightDrum = new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(drumMotors, SIM_DRUM_MOI, 1.0), drumMotors);
+      DCMotor hoodMotor = DCMotor.getKrakenX60(1);
+      simHood = new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(hoodMotor, SIM_HOOD_MOI, 1.0), hoodMotor);
+    }
+    double dt = 0.02;
+    double battery = RobotController.getBatteryVoltage();
+
+    stepDrumSim(simLeftDrum, dumperLeftUp.getSimState(), dumperLeftDown.getSimState(), battery, dt);
+    stepDrumSim(simRightDrum, dumperRightUp.getSimState(), dumperRightDown.getSimState(), battery, dt);
+
+    // Ball load: while the carwash is actually feeding forward, knock speed off both drum sides
+    // per ball. Uses the speed actually sent to the carwash (CarwashState's goal can read 80 during
+    // spin-up even though the command sends -13).
+    if (CarwashSim.simCommandedVelocityRps > 40.0) {
+      simBallTimer += dt;
+      if (simBallTimer >= 1.0 / simBallsPerSecond) {
+        simBallTimer = 0.0;
+        double loss = Units.rotationsToRadians(simVelocityLossPerBallRPS);
+        // Slow toward zero in either direction (the right side is inverted, so its sim spins negative)
+        simLeftDrum.setAngularVelocity(slowBy(simLeftDrum.getAngularVelocityRadPerSec(), loss));
+        simRightDrum.setAngularVelocity(slowBy(simRightDrum.getAngularVelocityRadPerSec(), loss));
+      }
+    } else {
+      simBallTimer = 0.0;
+    }
+
+    TalonFXSimState hoodState = adjustableHood.getSimState();
+    hoodState.setSupplyVoltage(battery);
+    simHood.setInputVoltage(hoodState.getMotorVoltage());
+    simHood.update(dt);
+    hoodState.setRawRotorPosition(simHood.getAngularPositionRotations());
+    hoodState.setRotorVelocity(Units.radiansToRotations(simHood.getAngularVelocityRadPerSec()));
+  }
+
+  private static double slowBy(double velocity, double loss) {
+    return Math.signum(velocity) * Math.max(0.0, Math.abs(velocity) - loss);
+  }
+
+  private static void stepDrumSim(
+      FlywheelSim sim, TalonFXSimState up, TalonFXSimState down, double battery, double dt) {
+    up.setSupplyVoltage(battery);
+    down.setSupplyVoltage(battery);
+    // Both motors drive the same side, so average their output voltage
+    sim.setInputVoltage((up.getMotorVoltage() + down.getMotorVoltage()) / 2.0);
+    sim.update(dt);
+    double rotorRps = Units.radiansToRotations(sim.getAngularVelocityRadPerSec());
+    up.setRotorVelocity(rotorRps);
+    down.setRotorVelocity(rotorRps);
+    up.addRotorPosition(rotorRps * dt);
+    down.addRotorPosition(rotorRps * dt);
   }
 
   /* Characterization */

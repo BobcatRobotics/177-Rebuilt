@@ -120,4 +120,9 @@ public interface ShooterIO {
   
 
    public default void resetEncoder() {}
+
+  /** Last hood position actually sent to the motor (used by sim tests). */
+  public default double getCommandedHoodPosition() {
+    return 0.0;
+  }
 }

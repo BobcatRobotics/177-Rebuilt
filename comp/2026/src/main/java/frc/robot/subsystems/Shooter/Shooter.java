@@ -398,4 +398,9 @@ public class Shooter extends SubsystemBase {
   public void resetEncoder(){
     io.resetEncoder();
   }
+
+  /** Last hood position actually sent to the motor (rotations). */
+  public double getCommandedHoodPosition() {
+    return io.getCommandedHoodPosition();
+  }
 }
