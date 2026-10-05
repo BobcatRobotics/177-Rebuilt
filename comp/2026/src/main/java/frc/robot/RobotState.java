@@ -19,6 +19,8 @@ public class RobotState {
   private static RobotState instance;
   public double vx = 0.0;
   public double vy = 0.0;
+  // Gyro yaw rate, set by Drive.periodic(); used by Vision to reject frames while spinning
+  public double yawRateRadPerSec = 0.0;
 
   public static RobotState getInstance() {
     if (instance == null)

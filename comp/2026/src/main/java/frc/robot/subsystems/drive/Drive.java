@@ -219,6 +219,7 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
     RobotState.getInstance().robotPose = getPose();
+    RobotState.getInstance().yawRateRadPerSec = gyroInputs.yawVelocityRadPerSec;
 
 
   }

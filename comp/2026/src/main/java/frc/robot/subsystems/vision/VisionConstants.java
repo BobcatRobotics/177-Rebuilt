@@ -44,8 +44,16 @@ public class VisionConstants {
       new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
 
   // Basic filtering thresholds
-  public static double maxAmbiguity = 99.0;
+  // Single-tag ambiguity limit, same as 581's PoseEstimateValidator (was 99 = disabled)
+  public static double maxAmbiguity = 0.7;
   public static double maxZError = 1.0;
+  // Reject observations while spinning faster than this; MegaTag2 depends on an accurate yaw
+  // (581 uses 100 deg/s)
+  public static double maxYawRateDegPerSec = 100.0;
+
+  // true: std devs scale with tag distance and count (formula below).
+  // false: old behavior, every frame trusted at linearStdDevMegatag2Base.
+  public static boolean useDistanceScaledStdDevs = true;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)

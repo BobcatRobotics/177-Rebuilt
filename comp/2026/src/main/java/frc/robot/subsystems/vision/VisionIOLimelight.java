@@ -141,8 +141,9 @@ public class VisionIOLimelight implements VisionIO {
               // 3D pose estimate
               parsePose(rawSample.value),
 
-              // Ambiguity, zeroed because the pose is already disambiguated
-              0.0,
+              // Ambiguity of the first tag (only checked for single-tag observations, like
+              // 581's PoseEstimateValidator)
+              rawSample.value.length >= 18 ? rawSample.value[17] : 0.0,
 
               // Tag count
               (int) rawSample.value[7],
