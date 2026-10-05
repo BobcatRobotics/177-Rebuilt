@@ -68,6 +68,11 @@ public final class Constants {
         public static final double targetDumperSpeed = 50;
         public static final double targetHoodPosition = -5.5;
 
+        // Teleop staged shooting (spin up -> aim -> feed). Feeding starts once the drum is at speed
+        // and the hood has been within tolerance for the debounce time, or after the max aim time.
+        public static final double feedStartHoodToleranceRotations = 0.15;
+        public static final double feedStartDebounceSeconds = 0.1;
+        public static final double maxAimSecondsBeforeFeed = 0.5;
 
         public static final double motionMagicCruiseVelocity = 190;
         public static final double motionMagicAcceleration = 175;

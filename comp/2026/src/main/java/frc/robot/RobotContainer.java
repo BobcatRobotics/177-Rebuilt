@@ -36,6 +36,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -538,6 +540,8 @@ public class RobotContainer {
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
          */
         public Command interpolatedShootSeq() {
+                // Requires shooter/carwash/hopper so their default commands don't fight this one.
+                // Intake is left unrequired so operator intake buttons can't cancel a shot.
                 return Commands.run(() -> {
                         if (controller.leftBumper().getAsBoolean()) {
                                 m_Hopper.runHopper();
@@ -552,54 +556,87 @@ public class RobotContainer {
                                 intake.setVelocity(125);
                                 m_Hopper.hopperSpinUp();
                         }
-                });
+                }, m_Shooter, m_Carwash, m_Hopper);
         }
 
-
+        private enum ShootStage {
+                SPIN_UP, // hood held at 0 for trench clearance
+                AIM, // drum at speed, hood moving to the shot angle, not feeding yet
+                FEED // feeding; latched until the button is released
+        }
 
         /**
-         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         * Spin up -> aim -> feed. Stages only move forward while the button is held, so a drum dip
+         * while feeding can't send the hood back to 0 or stop the feed mid-volley.
+         *
+         * @param name          log key under Shooter/ShootSeq/
+         * @param shooterSpinUp shooter call for the spin-up stage (hood at 0)
+         * @param shooterShoot  shooter call for the aim and feed stages (hood at shot angle)
+         */
+        private Command stagedShootSeq(String name, Runnable shooterSpinUp, Runnable shooterShoot) {
+                ShootStage[] stage = { ShootStage.SPIN_UP };
+                Debouncer hoodSettled = new Debouncer(
+                                Constants.ShooterConstants.feedStartDebounceSeconds, DebounceType.kRising);
+                Timer aimTimer = new Timer();
+                return Commands.runEnd(() -> {
+                        if (stage[0] == ShootStage.SPIN_UP && m_Shooter.atShotSpeed()) {
+                                stage[0] = ShootStage.AIM;
+                                aimTimer.restart();
+                        }
+                        if (stage[0] == ShootStage.AIM) {
+                                boolean settled = hoodSettled.calculate(m_Shooter.isHoodAtGoal(
+                                                Constants.ShooterConstants.feedStartHoodToleranceRotations));
+                                boolean aimTimedOut = aimTimer.hasElapsed(
+                                                Constants.ShooterConstants.maxAimSecondsBeforeFeed);
+                                if (m_Shooter.atShotSpeed() && (settled || aimTimedOut)) {
+                                        stage[0] = ShootStage.FEED;
+                                        Logger.recordOutput("Shooter/ShootSeq/" + name + "/FeedStartedByTimeout",
+                                                        !settled);
+                                }
+                        }
+
+                        switch (stage[0]) {
+                                case SPIN_UP -> {
+                                        shooterSpinUp.run();
+                                        m_Carwash.spinUp();
+                                        m_Hopper.hopperSpinUp();
+                                }
+                                case AIM -> {
+                                        shooterShoot.run();
+                                        m_Carwash.spinUp();
+                                        m_Hopper.hopperSpinUp();
+                                }
+                                case FEED -> {
+                                        shooterShoot.run();
+                                        m_Carwash.manualFeedFuel();
+                                        m_Hopper.runHopper();
+                                        drive.stopWithX();
+                                }
+                        }
+                        intake.setVelocity(125);
+                        Logger.recordOutput("Shooter/ShootSeq/" + name + "/Stage", stage[0].name());
+                }, () -> {
+                        stage[0] = ShootStage.SPIN_UP;
+                        hoodSettled.calculate(false);
+                        Logger.recordOutput("Shooter/ShootSeq/" + name + "/Stage", "OFF");
+                }, m_Shooter, m_Carwash, m_Hopper);
+        }
+
+        /**
+         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one.
+         * Spins up, aims the hood once the drum is at speed, then feeds automatically.
          */
         public Command conditionalInterpolatedShootSeq() {
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Hopper.runHopper();
-                                m_Carwash.manualFeedFuel();
-                                m_Shooter.shootFuel();
-                                intake.setVelocity(125);
-                                drive.stopWithX();
-
-                        } else {
-                                m_Shooter.spinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
+                return stagedShootSeq("Interpolated", m_Shooter::spinUp, m_Shooter::shootFuel);
         }
 
 
         /**
-         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one. 
-         * If the left bumper is pressed it will automatically switch too the shoot sequence.
+         * This is the "new" conditional interpolated shooting sequence it takes the 2 commands and refactors them into one.
+         * Spins up, aims the hood once the drum is at speed, then feeds automatically.
          */
         public Command passingShotSeq() {
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Hopper.runHopper();
-                                m_Carwash.manualFeedFuel();
-                                m_Shooter.shootPassingFuel();
-                                intake.setVelocity(125);
-                                drive.stopWithX();
-
-                        } else {
-                                m_Shooter.spinUpPassing();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
+                return stagedShootSeq("Passing", m_Shooter::spinUpPassing, m_Shooter::shootPassingFuel);
         }
 
 
@@ -705,20 +742,7 @@ public class RobotContainer {
          * If the left bumper is pressed it will automatically switch too the shoot sequence.
          */
         public Command conditionalManualShootSeq(){
-                return Commands.run(() -> {
-                        if (m_Shooter.atSpeed()) {
-                                m_Shooter.manualShootFuel();
-                                m_Carwash.manualFeedFuel();
-                                intake.setVelocity(125);
-                                m_Hopper.runHopper();
-                                drive.stopWithX();
-                        } else {
-                                m_Shooter.manualSpinUp();
-                                m_Carwash.spinUp();
-                                intake.setVelocity(125);
-                                m_Hopper.hopperSpinUp();
-                        }
-                });
+                return stagedShootSeq("Manual", m_Shooter::manualSpinUp, m_Shooter::manualShootFuel);
         }
 
         public Command manualSpinUp() {

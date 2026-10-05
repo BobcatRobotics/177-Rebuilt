@@ -345,6 +345,19 @@ public class Shooter extends SubsystemBase {
     return isAtTolerance;
   }
 
+  /** Drum within tolerance of a non-zero target (a stale 0 setpoint from IDLE doesn't count). */
+  public boolean atShotSpeed() {
+    return RobotState.getInstance().getShooterState().getLeftDumperSpeed() > 0 && atSpeed();
+  }
+
+  /** Hood measured position within tolerance (rotations) of the current goal. */
+  public boolean isHoodAtGoal(double toleranceRotations) {
+    double error = inputs.positionOfAdjustableHood
+        - RobotState.getInstance().getShooterState().getAdjustableHoodPosition();
+    Logger.recordOutput("Shooter/adjustableHood/ErrorRotations", error);
+    return Math.abs(error) <= toleranceRotations;
+  }
+
   public double getVelocityDumperLeft() {
     int count = 0;
     double avg = 0;
