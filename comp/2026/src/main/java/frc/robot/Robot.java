@@ -116,8 +116,8 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    robotContainer.vision.periodic();
-    
+    // Vision.periodic() already runs from the CommandScheduler (also while disabled).
+
     // run the garbage collector every 5 seconds
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();

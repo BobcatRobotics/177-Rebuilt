@@ -476,8 +476,8 @@ public class RobotContainer {
         }
 
         public void teleopPeriodic() {
-
-                vision.periodic();
+                // Vision.periodic() already runs from the CommandScheduler; calling it again here
+                // read an empty queue and logged empty arrays over the real vision data.
                 if (DriverStation.getAlliance().isPresent()) {
                         RobotState.getInstance().alliance = DriverStation.getAlliance().get();
                 }
