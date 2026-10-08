@@ -175,7 +175,7 @@ public class Carwash extends SubsystemBase {
     double CARWASH_SPEED_TOLERANCE = 5;
     isHoodWheelWithinTolerance = Math
         .abs(
-            getVelocityCarwash() - (RobotState.getInstance().getCarwashState().getIntakeSpeed()+10)) <= CARWASH_SPEED_TOLERANCE;
+            getVelocityCarwash() - (RobotState.getInstance().getCarwashState().getIntakeSpeed())) <= CARWASH_SPEED_TOLERANCE;
     if (isHoodWheelWithinTolerance) {
       isAtTolerance = true;
     }
