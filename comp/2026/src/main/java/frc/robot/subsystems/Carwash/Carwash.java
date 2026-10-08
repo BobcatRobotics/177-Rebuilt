@@ -169,16 +169,18 @@ public class Carwash extends SubsystemBase {
 
 
 
+  /**
+   * True when the carwash is at or above its setpoint, i.e. no fuel is loading it. The auto shoot
+   * commands use this (debounced) to tell when the hopper is empty.
+   *
+   * One-sided on purpose: with an 80 RPS setpoint, an empty carwash runs about 84.5-91 RPS
+   * depending on battery, so a +/- band around any one value misses some batteries and the auto
+   * shot never ends. A fed carwash dips to about 40-77 RPS.
+   */
   public boolean atSpeed() {
-    boolean isAtTolerance = false;
-    boolean isHoodWheelWithinTolerance = false;
-    double CARWASH_SPEED_TOLERANCE = 5;
-    isHoodWheelWithinTolerance = Math
-        .abs(
-            getVelocityCarwash() - (RobotState.getInstance().getCarwashState().getIntakeSpeed())) <= CARWASH_SPEED_TOLERANCE;
-    if (isHoodWheelWithinTolerance) {
-      isAtTolerance = true;
-    }
+    // getVelocityCarwash() is NaN when stopped or reversed, which compares false
+    boolean isAtTolerance =
+        getVelocityCarwash() >= RobotState.getInstance().getCarwashState().getIntakeSpeed();
     Logger.recordOutput("Carwash/isUpToSpeed", isAtTolerance);
     return isAtTolerance;
   }
