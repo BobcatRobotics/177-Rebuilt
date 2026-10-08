@@ -31,6 +31,16 @@ public class ShooterState {
   private State currentState = State.IDLE;
   private ShooterGoal currentSetpoints = new ShooterGoal();
 
+  // 2910-style shot latch: while a shoot command keeps requesting it (every loop while feeding),
+  // update() reuses the distances from the loop before the lock started, so pose noise can't move
+  // the drum speed or hood mid-volley. The request expires one loop after the last call.
+  private boolean distanceLockRequested = false;
+  private boolean distanceLocked = false;
+  private double lockedHubDistance;
+  private double lockedClampedHubDistance;
+  private double lastHubDistance;
+  private double lastClampedHubDistance;
+
   // Manual control values
 
   public ShooterState() {
@@ -54,8 +64,14 @@ clampedDistance = LinearFilter.movingAverage(5);
 
   /** Returns the shooter outputs based on the current state */
   public void update() {
-    
-    double hubDistance = RobotState.getInstance().hubDistance;
+    if (distanceLockRequested && !distanceLocked) {
+      lockedHubDistance = lastHubDistance;
+      lockedClampedHubDistance = lastClampedHubDistance;
+    }
+    distanceLocked = distanceLockRequested;
+    distanceLockRequested = false;
+
+    double hubDistance = distanceLocked ? lockedHubDistance : RobotState.getInstance().hubDistance;
     double clampedHubDistance = hubDistance;
     switch (currentState) {
       case IDLE -> {
@@ -66,7 +82,7 @@ clampedDistance = LinearFilter.movingAverage(5);
       case
           INTERPOLATING -> {
         // Placeholder – typically filled in by vision / interpolation
-        clampedHubDistance = clampedDistance.calculate(hubDistance);
+        clampedHubDistance = distanceLocked ? lockedClampedHubDistance : clampedDistance.calculate(hubDistance);
         double dumperSpeed = RobotState.getInstance().interpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
@@ -77,7 +93,7 @@ clampedDistance = LinearFilter.movingAverage(5);
       case
           INTERPOLATEDPASSING -> {
         // Placeholder – typically filled in by vision / interpolation
-        clampedHubDistance = clampedDistance.calculate(hubDistance);
+        clampedHubDistance = distanceLocked ? lockedClampedHubDistance : clampedDistance.calculate(hubDistance);
         double dumperSpeed = RobotState.getInstance().passingInterpolator.getAsList(hubDistance).get(1);
         currentSetpoints.leftDumperSpeed = dumperSpeed;
         currentSetpoints.rightDumperSpeed = dumperSpeed;
@@ -95,8 +111,21 @@ clampedDistance = LinearFilter.movingAverage(5);
     Logger.recordOutput("Shooter/rightDumper/GoalSpeeds", currentSetpoints.leftDumperSpeed);
     Logger.recordOutput("Shooter/leftDumper/GoalSpeeds", currentSetpoints.rightDumperSpeed);
     Logger.recordOutput("Shooter/adjustableHood/GoalPosition", currentSetpoints.hoodPosition);
-    Logger.recordOutput("Shooter/hubDistance",hubDistance);
+    // Live distance from the pose; ShotHubDistance is what the shot used (differs while locked)
+    Logger.recordOutput("Shooter/hubDistance", RobotState.getInstance().hubDistance);
+    Logger.recordOutput("Shooter/ShotHubDistance", hubDistance);
     Logger.recordOutput("Shooter/clamedHubDistance", clampedHubDistance);
+    Logger.recordOutput("Shooter/DistanceLocked", distanceLocked);
+    lastHubDistance = hubDistance;
+    lastClampedHubDistance = clampedHubDistance;
+  }
+
+  /**
+   * Freeze the shot distance (drum speed and hood) at its current value. Call every loop while
+   * feeding; the lock releases on the first loop it isn't requested.
+   */
+  public void requestDistanceLock() {
+    distanceLockRequested = true;
   }
 
   public void setCurrentSetPoints(ShooterGoal goal) {

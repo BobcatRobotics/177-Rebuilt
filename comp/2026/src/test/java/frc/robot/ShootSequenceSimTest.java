@@ -144,4 +144,53 @@ class ShootSequenceSimTest {
         held.stream().skip(1).anyMatch(Sample::defaultsIdle),
         "A shooter/carwash default command ran while the shoot button was held");
   }
+
+  /**
+   * Driver RB (spin up) + LB (feed), the way the driver shot at CT States. Teleports the robot
+   * mid-volley to fake a vision pose jump: with the dashboard lock on, the drum and hood goals must
+   * not move; with it off, they must.
+   */
+  @Test
+  void shotDistanceLockHoldsDrumAndHoodThroughPoseJump() {
+    double[] lockedChange = poseJumpDuringFeed(true);
+    double[] unlockedChange = poseJumpDuringFeed(false);
+    System.out.printf(
+        "Pose jump mid-volley: lock on -> drum goal moved %.2f RPS, hood goal %.3f;"
+            + " lock off -> drum %.2f RPS, hood %.3f%n",
+        lockedChange[0], lockedChange[1], unlockedChange[0], unlockedChange[1]);
+
+    assertTrue(
+        unlockedChange[0] > 0.5 || unlockedChange[1] > 0.05,
+        "With the lock off the pose jump didn't change the shot, so this test can't detect the lock");
+    assertTrue(lockedChange[0] == 0.0, "Drum goal moved " + lockedChange[0] + " RPS while locked");
+    assertTrue(lockedChange[1] == 0.0, "Hood goal moved " + lockedChange[1] + " while locked");
+  }
+
+  /** Returns {|drum goal change|, |hood goal change|} across a pose jump while feeding. */
+  private static double[] poseJumpDuringFeed(boolean lock) {
+    container.lockShotDistanceWhileFeeding.set(lock);
+    container.lockShotDistanceWhileFeeding.periodic();
+    container.drive.setPose(new Pose2d(2.5, 4.03, Rotation2d.kZero));
+
+    driver.setRightBumperButton(true);
+    run(2.0);
+    driver.setLeftBumperButton(true);
+    run(0.5);
+    var shot = RobotState.getInstance().getShooterState();
+    double drumBefore = shot.getLeftDumperSpeed();
+    double hoodBefore = shot.getAdjustableHoodPosition();
+
+    // About 1 m farther from the hub, as if a bad vision frame moved the pose
+    container.drive.setPose(new Pose2d(3.5, 4.03, Rotation2d.kZero));
+    run(0.5);
+    double drumAfter = shot.getLeftDumperSpeed();
+    double hoodAfter = shot.getAdjustableHoodPosition();
+
+    driver.setLeftBumperButton(false);
+    driver.setRightBumperButton(false);
+    run(0.5);
+    container.lockShotDistanceWhileFeeding.set(false);
+    container.lockShotDistanceWhileFeeding.periodic();
+    return new double[] {Math.abs(drumAfter - drumBefore), Math.abs(hoodAfter - hoodBefore)};
+  }
 }

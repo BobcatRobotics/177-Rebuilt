@@ -314,6 +314,11 @@ public class Shooter extends SubsystemBase {
     setState(RobotState.getInstance().getShooterState());
   }
 
+  /** Freeze drum speed and hood at the current shot distance; call every loop while feeding. */
+  public void requestShotDistanceLock() {
+    RobotState.getInstance().getShooterState().requestDistanceLock();
+  }
+
   public void reverseFuel() {
     RobotState.getInstance().getShooterState().setState(ShooterState.State.TARGETING);
     ShooterGoal goal = new ShooterGoal();

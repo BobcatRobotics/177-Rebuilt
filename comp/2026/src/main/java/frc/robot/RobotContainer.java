@@ -30,6 +30,7 @@ import org.bobcatrobotics.Util.CANDeviceDetails;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.ConsoleSource.RoboRIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -126,6 +127,10 @@ public class RobotContainer {
         private LoggedDashboardChooser<Double> flywheelChooser;
         private LoggedDashboardChooser<Double> hoodChooser;
         private LoggedDashboardChooser<Double> carwashChooser;
+
+        // Test toggle: freeze drum speed and hood at the shot distance once feeding starts (2910-style)
+        final LoggedNetworkBoolean lockShotDistanceWhileFeeding = new LoggedNetworkBoolean(
+                        "/SmartDashboard/Shooter/LockShotDistanceWhileFeeding", false);
 
         private final HubUtil hub;
 
@@ -544,6 +549,9 @@ public class RobotContainer {
                 // Intake is left unrequired so operator intake buttons can't cancel a shot.
                 return Commands.run(() -> {
                         if (controller.leftBumper().getAsBoolean()) {
+                                if (lockShotDistanceWhileFeeding.get()) {
+                                        m_Shooter.requestShotDistanceLock();
+                                }
                                 m_Hopper.runHopper();
                                 m_Carwash.manualFeedFuel();
                                 m_Shooter.shootFuel();
@@ -607,6 +615,9 @@ public class RobotContainer {
                                         m_Hopper.hopperSpinUp();
                                 }
                                 case FEED -> {
+                                        if (lockShotDistanceWhileFeeding.get()) {
+                                                m_Shooter.requestShotDistanceLock();
+                                        }
                                         shooterShoot.run();
                                         m_Carwash.manualFeedFuel();
                                         m_Hopper.runHopper();
