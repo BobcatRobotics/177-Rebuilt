@@ -709,8 +709,10 @@ public class RobotContainer {
 
         public Command AutoSpinUpAndShoot() {
                 Timer timer = new Timer();
+                // Carwash must stay at speed (empty) this long before the shot ends. 0.2 s left the
+                // last few balls in the hopper on 10/12; mid-volley gaps were only 40-80 ms.
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.2,
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.4,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
