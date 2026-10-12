@@ -107,6 +107,10 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
+    robotContainer.stopMechanisms();
+    // advanceIfElapsed() only moves 5 s per call, so without this the first disabled loops after
+    // a long enabled period would run System.gc() back to back
+    m_gcTimer.reset();
     robotContainer.intake.setNeturalCoast();
     for (limelightConstants camera : cameraConstants) {
       LimelightHelpers.SetIMUMode(camera.name, 0);
@@ -118,7 +122,8 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     // Vision.periodic() already runs from the CommandScheduler (also while disabled).
 
-    // run the garbage collector every 5 seconds
+    // run the garbage collector every 5 seconds, only while disabled: each System.gc() freezes
+    // the loop ~230 ms, and while enabled the motors keep their last command during the freeze
     if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();
     }
@@ -150,10 +155,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic() {
     robotContainer.m_Shooter.autoPeriodic();
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -178,10 +179,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopPeriodic() {
     robotContainer.teleopPeriodic();
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
   }
 
   /** This function is called once when test mode is enabled. */
@@ -194,10 +191,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    // run the garbage collector every 5 seconds
-    if (m_gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
   }
 
   /** This function is called once when the robot is first started up. */

@@ -480,6 +480,20 @@ public class RobotContainer {
                 return drive.getPose();
         }
 
+        /**
+         * Neutral the shooter, intake, hopper and carwash motors. Talons resume their last control
+         * request when the robot re-enables, so without this a robot disabled mid-auto would keep
+         * shooting/deploying the intake until the first enabled loop sends new commands (Drive
+         * already stops its modules while disabled).
+         */
+        public void stopMechanisms() {
+                m_Shooter.stop();
+                intake.stop();
+                m_Hopper.stop();
+                // Carwash.stop() is a no-op on the real robot (CarwashReal doesn't implement it)
+                m_Carwash.stopIntakeWheel();
+        }
+
         public void teleopPeriodic() {
                 // Vision.periodic() already runs from the CommandScheduler; calling it again here
                 // read an empty queue and logged empty arrays over the real vision data.

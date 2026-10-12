@@ -136,6 +136,11 @@ public class CarwashReal implements CarwashIO {
   }
 
   @Override
+  public void stopIntakeWheel() {
+    stopIntakeMotor();
+  }
+
+  @Override
   public void periodic() {
   }
 
