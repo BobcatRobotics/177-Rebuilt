@@ -185,3 +185,5 @@ compile_commands.json
 
 # Version file
 src/main/java/frc/robot/BuildConstants.java
+# Limelight calibration run data (large; keep locally or copy out)
+vision-cal/runs/

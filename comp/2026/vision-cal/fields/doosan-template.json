@@ -1,0 +1,13 @@
+{
+  "name": "doosan-practice",
+  "layout": "k2025ReefscapeWelded",
+  "_layoutNote": "Replace with this season's layout JSON or .fmap. After a fieldmap run, point this at the generated Doosan layout.",
+  "spots": [
+    { "id": "D1", "type": "absolute", "x": 2.00, "y": 4.00, "headingDeg": 180, "weight": 2.0,
+      "note": "main shooting spot - measure from your chosen reference" },
+    { "id": "D2", "type": "absolute", "x": 3.50, "y": 2.00, "headingDeg": 150, "note": "near trench" },
+    { "id": "D3", "type": "absolute", "x": 3.50, "y": 6.00, "headingDeg": 210 },
+    { "id": "D4", "type": "absolute", "x": 5.00, "y": 4.00, "headingDeg": 180, "enabled": false,
+      "note": "far spot, enable when needed" }
+  ]
+}

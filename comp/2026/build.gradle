@@ -85,6 +85,30 @@ task(replayWatch, type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 }
 
+// Limelight field calibration tool (runs on the laptop, never deployed to the robot).
+// Usage: gradlew limelightCal --console=plain -Pcal="backup"   (see vision-cal/README.md)
+sourceSets {
+	calibration {
+		java { srcDir 'src/calibration/java' }
+		compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+		runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+	}
+	test {
+		compileClasspath += sourceSets.calibration.output
+		runtimeClasspath += sourceSets.calibration.output
+	}
+}
+
+task(limelightCal, type: JavaExec) {
+	dependsOn 'extractReleaseNative'
+	mainClass = "frc.vision.cal.LimelightCal"
+	classpath = sourceSets.calibration.runtimeClasspath
+	workingDir = projectDir
+	standardInput = System.in
+	jvmArgs "-Djava.library.path=${projectDir}/build/jni/release"
+	args = (project.findProperty('cal') ?: 'help').toString().trim().split(/\s+/).toList()
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {

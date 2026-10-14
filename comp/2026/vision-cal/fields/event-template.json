@@ -1,0 +1,14 @@
+{
+  "name": "event-template",
+  "layout": "k2025ReefscapeWelded",
+  "_layoutNote": "Use this season's official layout: an AprilTagFields name, a WPILib layout JSON, or the Limelight .fmap (then also set fieldLengthM/fieldWidthM). Check welded vs AndyMark with the event.",
+  "spots": [
+    { "id": "E1", "type": "tagRelative", "tag": 18, "touching": "front", "faceGapM": 0.0, "lateralM": 0.0,
+      "weight": 2.0, "note": "bumper flush, centered on tag 18" },
+    { "id": "E2", "type": "tagRelative", "tag": 17, "touching": "front", "faceGapM": 0.0, "lateralM": 0.0 },
+    { "id": "E3", "type": "tagRelative", "tag": 19, "touching": "back", "faceGapM": 0.0, "lateralM": 0.0,
+      "note": "back bumper against the face, robot facing away" },
+    { "id": "E4", "type": "tagRelative", "tag": 21, "touching": "front", "faceGapM": 0.5, "lateralM": 0.3,
+      "enabled": false, "note": "0.5 m off the face, 0.3 m to the left (as seen from the field)" }
+  ]
+}
