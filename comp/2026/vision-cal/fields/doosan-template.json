@@ -1,7 +1,7 @@
 {
   "name": "doosan-practice",
-  "layout": "k2025ReefscapeWelded",
-  "_layoutNote": "Replace with this season's layout JSON or .fmap. After a fieldmap run, point this at the generated Doosan layout.",
+  "layout": "2026-rebuilt-welded.json",
+  "_layoutNote": "Official 2026 layouts (from WPILib): 2026-rebuilt-welded.json or 2026-rebuilt-andymark.json - ask the event which one. For Doosan, point this at the generated Doosan layout once you have one.",
   "spots": [
     { "id": "D1", "type": "absolute", "x": 2.00, "y": 4.00, "headingDeg": 180, "weight": 2.0,
       "note": "main shooting spot - measure from your chosen reference" },

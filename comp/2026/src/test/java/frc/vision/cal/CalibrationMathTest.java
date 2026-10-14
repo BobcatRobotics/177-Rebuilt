@@ -248,6 +248,19 @@ class CalibrationMathTest {
     assertEquals("the red alliance wall", MountWords.robotFacing(Rotation2d.kZero));
   }
 
+  @Test
+  void official2026LayoutsLoad() throws Exception {
+    for (String v : List.of("welded", "andymark")) {
+      AprilTagFieldLayout l =
+          FieldConfig.loadLayout("2026-rebuilt-" + v + ".json", new java.io.File("vision-cal/fields"), 0, 0);
+      assertEquals(32, l.getTags().size(), v);
+      // Tag 1 per WPILib's 2026 CSV: 35 in high, facing 180°
+      Pose3d t1 = l.getTagPose(1).orElseThrow();
+      assertEquals(0.889, t1.getZ(), 1e-3);
+      assertEquals(180, Math.abs(Math.toDegrees(t1.getRotation().getZ())), 1e-6);
+    }
+  }
+
   static SweepScorer.Cell cell(String spot, String setting, double exposure, double score) {
     return new SweepScorer.Cell("cam", spot, setting, exposure, 20, 1, 2, 0.01, 60, Double.NaN, score);
   }

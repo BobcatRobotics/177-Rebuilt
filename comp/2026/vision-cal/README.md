@@ -74,6 +74,46 @@ During `session`, add these in Elastic:
 
 Enter in the terminal also marks a spot; `s` + Enter skips it, `q` + Enter stops.
 
+## Field layouts
+
+- `fields/2026-rebuilt-welded.json` and `fields/2026-rebuilt-andymark.json` are the official 2026
+  tag layouts, converted from WPILib's field files (wpilibsuite/allwpilib `fields/.../frc/`).
+  Ask each event which one its field uses.
+
+### Making a custom layout for Doosan
+
+The layout uses the official field frame, so set up Doosan in the same frame:
+- **Origin (0, 0):** where the blue alliance wall meets the right side wall, as seen standing at the
+  blue driver station. At Doosan, pick a real corner or line to stand in for this, and use it for
+  everything.
+- **+x** runs toward the red alliance wall. **+y** runs toward the left side wall. **z** is the
+  height of the tag's center above the carpet.
+- **Facing:** the direction the tag's printed face points. 0° = toward the red wall, 90° = toward
+  the left side wall, 180° = toward the blue wall, 270° = toward the right side wall.
+
+**Option A: let the tool measure the tags.** You only measure 2–3 robot spots.
+1. Start from the official layout (`"layout": "2026-rebuilt-welded.json"` in `doosan.json`). Only
+   tags you actually have will be seen.
+2. Measure 2–3 floor spots (x, y, robot heading) in the frame above. Put them in `doosan.json` as
+   `absolute` spots, and pick spots where several tags are visible.
+3. `session --field vision-cal/fields/doosan.json --no-sweep`, then
+   `fieldmap --out vision-cal/fields/doosan-layout`. This writes `doosan-layout.json` (WPILib) and
+   `doosan-layout.fmap` (Limelight). Tags seen confidently from more than one spot or camera get
+   their measured position; others keep the official one. Tag facing is kept from the official
+   layout, so if a Doosan tag faces a different way than on the real field, fix its rotation by hand.
+4. Point `doosan.json` at `doosan-layout.json` and run a `--no-sweep` session again. Tag offsets
+   should now be near 0.
+
+**Option B: tape-measure every tag.** Copy `2026-rebuilt-welded.json` and edit the `translation`
+(x, y, z in meters) of each tag you have. Use the Limelight Map Builder
+(https://tools.limelightvision.io/map-builder) to edit visually and export a `.fmap`. Option A is
+a good check on Option B.
+
+**Using it on the robot:** `upload-fieldmap --file vision-cal/fields/doosan-layout.fmap` replaces
+the map on the cameras (asks first). Localization at Doosan then matches your field. **Before an
+event, upload the official `.fmap` again.** Keep both files in the repo so swapping back is one
+command.
+
 ## Direction questions
 
 `VisionConstants.cameraConstants` is the source of truth for mounts. To catch a camera that's set

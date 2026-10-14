@@ -1,7 +1,8 @@
 {
   "name": "event-template",
-  "layout": "k2025ReefscapeWelded",
-  "_layoutNote": "Use this season's official layout: an AprilTagFields name, a WPILib layout JSON, or the Limelight .fmap (then also set fieldLengthM/fieldWidthM). Check welded vs AndyMark with the event.",
+  "_spotsNote": "Tag numbers below are placeholders - pick 2026 tags you can park against (e.g. hub faces) from the field drawings.",
+  "layout": "2026-rebuilt-welded.json",
+  "_layoutNote": "Official 2026 layouts (from WPILib): 2026-rebuilt-welded.json or 2026-rebuilt-andymark.json - ask the event which one. For Doosan, point this at the generated Doosan layout once you have one.",
   "spots": [
     { "id": "E1", "type": "tagRelative", "tag": 18, "touching": "front", "faceGapM": 0.0, "lateralM": 0.0,
       "weight": 2.0, "note": "bumper flush, centered on tag 18" },
