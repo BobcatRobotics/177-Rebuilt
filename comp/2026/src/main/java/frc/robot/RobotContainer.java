@@ -721,7 +721,8 @@ public class RobotContainer {
         public Command longAutoSpinUpAndShoot() {
                 Timer timer = new Timer();
                 return AutonomousSpinUp().until(() -> m_Shooter.atSpeed())
-                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.34,
+                                // Same empty debounce as the first shot (was 0.34 s)
+                                .andThen(DebouncedCommand.debouncer(AutonomousShootBalls(), timer, 0.4,
                                                 () -> m_Carwash.atSpeed()))
                                 .andThen(AutonomousStopShooter());
         }
