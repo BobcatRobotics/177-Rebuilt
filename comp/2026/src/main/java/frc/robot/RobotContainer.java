@@ -128,9 +128,10 @@ public class RobotContainer {
         private LoggedDashboardChooser<Double> hoodChooser;
         private LoggedDashboardChooser<Double> carwashChooser;
 
-        // Test toggle: freeze drum speed and hood at the shot distance once feeding starts (2910-style)
+        // Freeze drum speed and hood at the shot distance once feeding starts (2910-style).
+        // On by default; can be turned off from the dashboard.
         final LoggedNetworkBoolean lockShotDistanceWhileFeeding = new LoggedNetworkBoolean(
-                        "/SmartDashboard/Shooter/LockShotDistanceWhileFeeding", false);
+                        "/SmartDashboard/Shooter/LockShotDistanceWhileFeeding", true);
 
         private final HubUtil hub;
 
