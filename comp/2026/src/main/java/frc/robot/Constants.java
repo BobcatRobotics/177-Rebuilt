@@ -199,7 +199,8 @@ public final class Constants {
             public static final double offsetDistanceInMeters = 0.92837;
             public static final double[] distance =      {  134,   238,   324,   420,   579}; // Inches from bumper vertex to hub face
             public static final double[] carwashSpeed =  {  80,   80,   80,   80,   80}; // RPS
-            public static final double[] dumperSpeed =   {  30,   37,   50,   57, 75}; // RPS
+            // Akash edited dumperSpeed on 10/14/2026; original values were {30, 37, 50, 57, 75}
+            public static final double[] dumperSpeed =   {  31,   38,   52,   59, 75}; // RPS
             public static final double[] hoodPosition =  {   -5.5,    -5.5,  -5.9, -6.2, -6.2}; // Degrees/Position
         }
     }
