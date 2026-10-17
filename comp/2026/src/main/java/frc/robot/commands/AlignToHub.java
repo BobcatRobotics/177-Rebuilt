@@ -87,13 +87,6 @@ public class AlignToHub extends Command {
     }
 
 
-    // The command object is reused for every press; start the profile from the current heading
-    // instead of wherever the last press left it.
-    @Override
-    public void initialize() {
-        angleController.reset(drive.getRotation().getRadians());
-    }
-
     @Override
     public void execute() {
             target = HubUtil.getMyHubCoordinates(RobotState.getInstance().alliance).toPose2d().getTranslation();
