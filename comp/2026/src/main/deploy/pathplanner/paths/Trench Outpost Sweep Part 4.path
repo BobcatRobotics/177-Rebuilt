@@ -116,12 +116,12 @@
         "y": 2.663202846975089
       },
       "prevControl": {
-        "x": 3.3226421098164693,
-        "y": 2.7872478435729593
+        "x": 3.2942869231810805,
+        "y": 2.8271919020171783
       },
       "nextControl": {
-        "x": 2.6752194543297754,
-        "y": 2.4172514359742774
+        "x": 2.2018149466192183,
+        "y": 1.8777817319098462
       },
       "isLocked": false,
       "linkedName": null
@@ -194,8 +194,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.0,
-    "rotation": 64.0577045101284
+    "velocity": 0.0,
+    "rotation": 63.0
   },
   "reversed": false,
   "folder": "Trench Outpost Sweep",
