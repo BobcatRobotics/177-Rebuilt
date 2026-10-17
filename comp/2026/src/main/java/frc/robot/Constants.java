@@ -117,8 +117,10 @@ public final class Constants {
             public static final double kAdjHoodMotorkS = 0.25;
             public static final double kAdjHoodMotorkV = 0.2;
             public static final double kAdjHoodMotorkA = 0;
-            public static final double statorCurrentLimit = 80;
-            public static final double supplyCurrentLimit = 80;
+            // 10/17: was 80/80. Normal moves peak ~43 A; with a bad zero the hood stalled into its
+            // stop at ~70 A all match and cut out. Keep both equal: ModuleConfigurator's getters are swapped.
+            public static final double statorCurrentLimit = 60;
+            public static final double supplyCurrentLimit = 60;
             public static final int ID = 21;
             public static final boolean isSoftLimitsEnabled = true;
             public static final double forwardSoftwareLimit = -6.2;

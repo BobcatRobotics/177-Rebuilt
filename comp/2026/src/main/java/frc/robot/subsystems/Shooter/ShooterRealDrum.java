@@ -292,6 +292,8 @@ public class ShooterRealDrum implements ShooterIO {
         Constants.ShooterConstants.adjustableHood.motionMagicExpoKV,
         Constants.ShooterConstants.adjustableHood.motionMagicExpoKa);
     adjustableHoodConfigurator.configureMotor(adjustableHood, g);
+    // Hood rests on its bottom stop at power-on; the Talon boots at the rotor angle (~-0.2), not 0.
+    adjustableHood.setPosition(0);
     if(Constants.lowTelemetryMode){
     velocityOfAdjustableHoodPositionRPS = adjustableHood.getVelocity();
     statorCurrentOfAdjustableHoodPositionAmps = adjustableHood.getStatorCurrent();
